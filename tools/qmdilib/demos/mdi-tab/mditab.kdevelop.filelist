@@ -1,0 +1,21 @@
+# KDevelop Custom Project File List
+../../src/actiongroup.cpp 
+../../src/actiongrouplist.cpp 
+../../src/qmdiclient.cpp
+../../src/qmdihost.cpp 
+../../src/qmdiserver.cpp 
+../../src/actiongroup.h
+../../src/actiongrouplist.h
+../../src/qmdiclient.h
+../../src/qmdihost.h 
+../../src/qmdiserver.h
+
+main2.cpp
+mainwindow2.cpp
+mainwindow2.h
+Makefile
+qexeditor.cpp
+qexeditor.h
+qmditabwidget.cpp
+qmditabwidget.h
+mdi-tab.pro

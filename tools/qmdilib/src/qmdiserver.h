@@ -14,8 +14,8 @@
 class qmdiServer
 {
 public:
-// 	qmdiActionGroup menus;
-// 	qmdiActionGroup toolbars;
+	virtual ~qmdiServer();
+	virtual void clientDeleted( QObject *o );
 };
 
-#endif // __QMDI_CLIENT_H__
+#endif // __QMDI_SERVER_H__

@@ -13,7 +13,7 @@
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>adv-menus</mainprogram>
+      <mainprogram>mdi-tab</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>
@@ -21,9 +21,6 @@
       <autocompile>true</autocompile>
       <envvars/>
     </run>
-    <general>
-      <activedir/>
-    </general>
     <build>
       <buildtool>make</buildtool>
       <builddir/>
@@ -114,10 +111,13 @@
       <type ext="h" />
     </useglobaltypes>
   </kdevfilecreate>
+  <cppsupportpart>
+    <filetemplates>
+      <interfacesuffix>.h</interfacesuffix>
+      <implementationsuffix>.cpp</implementationsuffix>
+    </filetemplates>
+  </cppsupportpart>
   <kdevcppsupport>
-    <references>
-      <pcs>qt4</pcs>
-    </references>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>
@@ -138,6 +138,9 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
+    <references>
+      <pcs>qt4</pcs>
+    </references>
   </kdevcppsupport>
   <kdevfileview>
     <groups>
@@ -146,24 +149,7 @@
     </groups>
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
-      <hidenonprojectfiles>true</hidenonprojectfiles>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>
-  <cppsupportpart>
-    <filetemplates>
-      <interfacesuffix>.h</interfacesuffix>
-      <implementationsuffix>.cpp</implementationsuffix>
-    </filetemplates>
-  </cppsupportpart>
-  <ctagspart>
-    <customArguments/>
-    <customTagfilePath/>
-  </ctagspart>
-  <kdevdocumentation>
-    <projectdoc>
-      <docsystem/>
-      <docurl/>
-      <usermanualurl/>
-    </projectdoc>
-  </kdevdocumentation>
 </kdevelop>

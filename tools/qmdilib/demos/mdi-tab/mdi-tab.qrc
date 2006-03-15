@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/" >
+		<file alias="mdi-tab.html">mdi-tab.html</file>
+    </qresource>
+</RCC>
+

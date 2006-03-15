@@ -1,7 +1,14 @@
 #ifndef __QEX_EDITOR_H__
 #define __QEX_EDITOR_H__
 
-// #include <QString>
+/**
+ * \file qextexteditor.h
+ * \brief Definition of the extended text editor class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ * License LGPL
+ * \see MainWindow
+ */
+
 #include <QTextEdit>
 
 #include "qmdiclient.h"
@@ -17,6 +24,8 @@ public:
 	QexTextEdit( QWidget *parent=0 );
 
 private:
+	QAction *actionSave;
+	QAction *actionClose;
 	QAction *actionCopy;
 	QAction *actionPaste;
 	QAction *actionFind;

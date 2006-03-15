@@ -1,0 +1,73 @@
+<html>
+
+<head>
+	<title>qtmdi library - Mdi TabWidget</title>
+</head>
+
+<body>
+<h1 style=" display: block; background-color: rgb(166,206,57); ">Target</h1>
+<p>
+	This application demostrates how to assign different menus for different widgets.
+	The menus and toolbars of the widgets inside the tab widget (qmdiClients) will be
+	merged into the main application window toolbars and menus.
+	<br>
+	There are 2 sets of widgets on this app:
+	<ol>
+		<li> The start page - without menus nor toolbars
+		<li> Text editor - text manipulating menus and toolbars
+		<li> Help browse - with browser related menus and toolbars
+	</ol>
+</p>
+
+<h1 style=" display: block; background-color: rgb(166,206,57); ">The code</h1>
+<p>This code is used to generate the normal menus:</p>
+<pre style="width: 70%; display: block; margin-left: 15%; margin-right: 15%; border:1px solid gray; background-color: silver; font-family: monospace;">
+	menus["&amp;File"]->addAction( actionFileNew );
+	menus["&amp;File"]->addAction( actionFileSave );
+	menus["&amp;File"]->addSeparator();
+	menus["&amp;File"]->addAction( actionQuit );
+
+	menus["&amp;Edit"];
+	menus["&amp;Test"];
+	menus["&amp;Settings"]->addAction( actionShowAll );
+	menus["&amp;Help"]->addAction( actionAbout );
+</pre>
+
+<p>This code is used to generate the advanced menus:</p>
+<pre style="width: 70%; display: block; margin-left: 15%; margin-right: 15%; border:1px solid gray; background-color: silver; font-family: monospace;">
+	advanced.menus["&amp;File"]->addAction( actionFileSaveAs );
+	advanced.menus["&amp;Test"]->addAction( test1 );
+	advanced.menus["&amp;Test"]->addAction( test2 );
+	advanced.menus["&amp;Help"]->addAction( actionAboutQt );
+</pre>
+
+<p>
+The <code>actionShowAll</code> action is connected to a slot which merges, unmerges
+the advaced menus from the normal ones:
+</p>
+
+<pre style="width: 70%; display: block; margin-left: 15%; margin-right: 15%; border:1px solid gray; background-color: silver; font-family: monospace;">
+	void MainWindow::slot_showMenus()
+	{
+		bool isChecked = actionShowAll->isChecked();
+	
+		if (isChecked)
+		{
+			menus.mergeGroupList( &amp;advanced.menus );
+			toolbars.mergeGroupList( &amp;advanced.toolbars );
+		}
+		else
+		{
+			menus.unmergeGroupList( &amp;advanced.menus );
+			toolbars.unmergeGroupList( &amp;advanced.toolbars );
+		}
+	
+		toolBarList = toolbars.updateToolBar( toolBarList, this );
+		menus.updateMenu( menuBar() );
+	}
+</pre>
+
+
+</body>
+
+</html>

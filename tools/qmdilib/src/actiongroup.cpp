@@ -41,11 +41,7 @@ qmdiActionGroup::qmdiActionGroup( QString name )
 
 
 /**
- * Empty constructor. Builds a new qmdiActionGroup 
- * with empty name. To assign to it a name afterwars,
- * use setName.
- * 
- * \see setName
+ * Empty destructor. Destroyes the object.
  */
 qmdiActionGroup::qmdiActionGroup()
 {
@@ -282,4 +278,3 @@ QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
 	
 	return toolbar;
 }
-
