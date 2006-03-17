@@ -19,3 +19,5 @@ qexeditor.h
 qmditabwidget.cpp
 qmditabwidget.h
 mdi-tab.pro
+helpbrowse.cpp
+helpbrowse.h

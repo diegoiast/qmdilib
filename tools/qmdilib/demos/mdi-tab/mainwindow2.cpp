@@ -5,9 +5,13 @@
 #include <QTabWidget>
 #include <QTextBrowser>
 #include <QMessageBox>
+#include <QToolButton>
+#include <QUrl>
+#include <QLibraryInfo>
 
 #include "mainwindow2.h"
 #include "qexeditor.h"
+#include "helpbrowse.h"
 
 /**
  * \file mainwindow.cpp
@@ -23,32 +27,22 @@ MainWindow::MainWindow( QWidget *owner ):QMainWindow(owner)
 	statusBar();
 	init_actions();
 	init_gui();
-
-	tabWidget = new qmdiTabWidget( this );
-	setCentralWidget( tabWidget );
-
-	QTextBrowser *browser = new QTextBrowser;
-	browser->setObjectName("welcome_tab");
-	browser->setSource( QUrl(":mdi-tab.html") );
-	tabWidget->addTab( browser, "Welcome" );
 }
 
 void MainWindow::init_actions()
 {
-	actionQuit = new QAction( "&Quit", this );
+	actionQuit = new QAction( QIcon(":images/quit.png"), "&Quit", this );
 	actionQuit->setShortcut( QKeySequence("Ctrl+Q") );
 	connect( actionQuit, SIGNAL(triggered()), this, SLOT(close()) );
 
-	actionFileNew = new QAction( "&New...", this );
+	actionFileNew = new QAction( QIcon(":images/new.png"), "&New...", this );
 	actionFileNew->setShortcut( QKeySequence("Ctrl+N") );
 	connect( actionFileNew, SIGNAL(triggered()), this, SLOT(fileNew()) );
 	
-	actionFileClose = new QAction( "&Close", this );
-	actionFileClose->setShortcut( QKeySequence("Ctrl+W") );
-	actionFileClose->setToolTip( "Closing from the main window" );
-	connect( actionFileClose, SIGNAL(triggered()), this, SLOT(fileClose()) );
+	actionQtTopics = new QAction( QIcon(":images/qt-logo.png"), "&Qt Help", this );
+	connect( actionQtTopics, SIGNAL(triggered()), this, SLOT(helpQtTopics()) );
 	
-	actionAbout		= new QAction( "&About", this );
+	actionAbout = new QAction( "&About", this );
 	connect( actionAbout, SIGNAL(triggered()), this, SLOT(about()) );
 }
 
@@ -59,17 +53,42 @@ void MainWindow::init_gui()
 	menus["&File"]->addSeparator();
 	menus["&File"]->addAction( actionQuit );
 	menus["&Edit"];
+	menus["&Navigation"];
 	menus["&Search"];
 	menus["&Configuration"];
+	menus["&Help"]->addAction( actionQtTopics );
 	menus["&Help"]->addAction( actionAbout );
 
 	// toolbars
 	toolbars["File"]->addAction( actionFileNew );
-	toolbars["File"]->addAction( actionFileClose );
+	toolbars["File"]->addAction( actionQtTopics );
 
 	// show the stuff on screen
 	menus.updateMenu( menuBar() );
 	toolBarList = toolbars.updateToolBar( toolBarList, this );
+
+	// make the tab widget
+	tabWidget = new qmdiTabWidget( this );
+	tabNewBtn = new QToolButton(tabWidget);
+        tabNewBtn->setAutoRaise( true );
+        connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));
+	tabNewBtn->setIcon(QIcon(":images/addtab.png"));
+	
+	tabCloseBtn = new QToolButton(tabWidget);
+        tabCloseBtn->setAutoRaise( true );
+        connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(fileClose()));
+	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
+	
+	tabWidget->setCornerWidget( tabNewBtn, Qt::TopLeftCorner );
+	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
+	setCentralWidget( tabWidget );
+
+
+	// feed it with a default widget
+	QTextBrowser *browser = new QTextBrowser;
+	browser->setObjectName("welcome_tab");
+	browser->setSource( QUrl(":mdi-tab.html") );
+	tabWidget->addTab( browser, "Welcome" );
 }
 
 void MainWindow::about()
@@ -82,6 +101,7 @@ void MainWindow::about()
 void MainWindow::fileNew()
 {
 	QexTextEdit *editor = new QexTextEdit;
+	editor->hide();
 	tabWidget->addTab( editor, "MDI Editor" );
 }
 
@@ -89,3 +109,12 @@ void MainWindow::fileClose()
 {
 	delete tabWidget->currentWidget();
 }
+
+void MainWindow::helpQtTopics()
+{
+        QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
+	QexHelpBrowser *browser = new QexHelpBrowser( QUrl(helpFile) );
+	browser->hide();
+	tabWidget->addTab( browser, "Qt help" );
+}
+

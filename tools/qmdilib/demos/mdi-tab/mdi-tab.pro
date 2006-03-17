@@ -23,6 +23,7 @@ HEADERS += ../../src/actiongroup.h \
            ../../src/qmdiserver.h \
            ../../src/qmditabwidget.h \
            qexeditor.h \
+           helpbrowse.h \
            mainwindow2.h \
 
 SOURCES += ../../src/actiongroup.cpp \
@@ -33,5 +34,6 @@ SOURCES += ../../src/actiongroup.cpp \
            ../../src/qmditabwidget.cpp \
            qexeditor.cpp \
            mainwindow2.cpp \
+           helpbrowse.cpp \
            main2.cpp \
 

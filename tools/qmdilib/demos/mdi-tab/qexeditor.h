@@ -26,10 +26,13 @@ public:
 private:
 	QAction *actionSave;
 	QAction *actionClose;
+
+	QAction *actionUndo;
+	QAction *actionRedo;	
 	QAction *actionCopy;
+	QAction *actionCut;
 	QAction *actionPaste;
 	QAction *actionFind;
-	QAction *actionOptions;
 };
 
 #endif //__QEX_EDITOR_H__

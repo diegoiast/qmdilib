@@ -16,6 +16,7 @@
 
 
 class QTabWidget;
+class QToolButton;
 
 class MainWindow: public QMainWindow, public qmdiHost
 {
@@ -29,12 +30,17 @@ public slots:
 	void about();
 	void fileNew();
 	void fileClose();
+	void helpQtTopics();
 	
 private:
 	QAction *actionQuit;
-	QAction *actionFileNew, *actionFileClose;
+	QAction *actionFileNew;
+	QAction *actionQtTopics;
 	QAction *actionAbout;
 	QTabWidget *tabWidget;
+
+	QToolButton *tabCloseBtn;
+	QToolButton *tabNewBtn;
 };
 
 #endif // __MAIN_WIN_H__
