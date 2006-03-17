@@ -4,6 +4,14 @@
 #include "qmdihost.h"
 #include "qmdiclient.h"
 
+/**
+ * \file qmditabwidget.cpp
+ * \brief Implementation of the qmdi tab widget
+ * \author Diego Iastrubni (elcuco@kde.org)
+ * License LGPL
+ * \see qmdiServer, QTabWidget
+ */
+
 
 qmdiTabWidget::qmdiTabWidget( QWidget *parent )
 	: QTabWidget( parent )
