@@ -10,6 +10,24 @@
  * \see MainWindow
  */
 
+/**
+ * \class QexHelpBrowser
+ * \brief a small help browser based on QTextBrowser
+ *
+ * This class demostrates how to make a small help browser
+ * using QTextBrowser from the Qt library and qmdilib.
+ * 
+ * The class contains the basic next/previous/home actions,
+ * as well as zoom in and out. IT full integrates into the host 
+ * application, by adding context menus and toolbars when the 
+ * widget is selected on a qmdiTabWidget.
+ * 
+ * The class is a qmdiClient and all the menus and toolbars are defined
+ * using that interface.
+ * 
+ * \see qmdiClient
+ */
+ 
 QexHelpBrowser::QexHelpBrowser( QUrl home, QWidget *parent )
 	:QTextBrowser(parent)
 {

@@ -19,13 +19,13 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer
 {
 	Q_OBJECT
 public:
-	qmdiTabWidget( QWidget *parent=NULL );
+	qmdiTabWidget( QWidget *parent=NULL, qmdiHost *host=NULL );
 
 public slots:
 	void tabChanged( int i );
-	void clientDeleted( QObject *o );
 
 protected:
+	void clientDeleted( QObject *o );
 	void tabInserted ( int index );
 	void tabRemoved ( int index );
 	

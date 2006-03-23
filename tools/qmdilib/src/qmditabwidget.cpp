@@ -4,6 +4,7 @@
 #include "qmdihost.h"
 #include "qmdiclient.h"
 
+
 /**
  * \file qmditabwidget.cpp
  * \brief Implementation of the qmdi tab widget
@@ -13,17 +14,72 @@
  */
 
 
-qmdiTabWidget::qmdiTabWidget( QWidget *parent )
+/**
+ * \class qmdiTabWidget
+ * \brief an advanced tab widget, which is capable of changing menus and toolbars on the fly
+ * 
+ * This is a derived class from QTabWidget which is capable of modifing the window
+ * menus and toolbars according to the widgets selected. This new tab widget,
+ * will connect the lower level objecs (the qmdiClient, the objects in the tabs) to the
+ * higher level object (the qmdiHost , ussually the main window).
+ * 
+ * The relations are:
+ *  - qmdiHost   : main window
+ *  - qmdiClient : you new widgets
+ *  - qmdiServert: this class
+ *
+ * When a new widget is selected on the qmdiServer (the user changes ), the old
+ * widget is removed from the qmdiHost, and only then the new mdi client is added
+ * to the qmdiHost.
+ *  
+ * To use this class properly, insert it into a QMainWindow which also derives qmdiHost,
+ * and insert into it QWidgets which also derive qmdiClient.
+ */
+
+
+/**
+ * \brief default constructor
+ * \param parent the parent widget and the qmdiHost
+ * \param host the default mdi host to modify
+ * 
+ * This is the default constructor for qmdiTabWidget.
+ * If no host is passed, the parent widget will be queried for the qmdiHost
+ * interface. This means that the easiest way to work with this
+ * class is to insert it into a qmdiHost derived QMainWindow.
+ * 
+ * This constructor also connects the tabChanged(int) slot to the currentChanged(int) signal.
+ * 
+ * \see QWidget::parentWidget()
+ */
+qmdiTabWidget::qmdiTabWidget( QWidget *parent, qmdiHost *host )
 	: QTabWidget( parent )
 {
-	mdiHost = dynamic_cast<qmdiHost*>(parent);
+	if (host == NULL)
+		mdiHost = dynamic_cast<qmdiHost*>(parent);
+	else
+		mdiHost = host;
+	
 	activeWidget = NULL;
-
+	
 	connect( this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 }
 
+
+/**
+ * \brief callback function for modifing the menu structure
+ * \param i the number of the new widget
+ *
+ * When the user changes the active tab this this slot gets called.
+ * It removes the menus and toolbars of the old mdi client and 
+ * installs the ones of the new client on screen.
+ * 
+ * \see QTabWidget::currentChanged()
+ */
 void qmdiTabWidget::tabChanged( int i )
 {
+	if (mdiHost == NULL)
+		mdiHost = dynamic_cast<qmdiHost*>(parentWidget());
+		
 	if (mdiHost == NULL)
 		return;
 		
@@ -35,31 +91,33 @@ void qmdiTabWidget::tabChanged( int i )
 		return;
 
 	if (activeWidget)
-	{
-		client = dynamic_cast<qmdiClient*>(activeWidget);
-		if (client != NULL)
-		{
-			mdiHost->menus.unmergeGroupList( &client->menus );
-			mdiHost->toolbars.unmergeGroupList( &client->toolbars );
-		}
-	}
+		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 	
-	activeWidget = w;	
+	activeWidget = w;
+	
 	if (activeWidget)
-	{
-		client = dynamic_cast<qmdiClient*>(activeWidget);
-		if (client != NULL)
-		{
-			mdiHost->menus.mergeGroupList( &client->menus );
-			mdiHost->toolbars.mergeGroupList( &client->toolbars );
-		}
-	}
+		mdiHost->mergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
-	mdiHost->toolBarList = mdiHost->toolbars.updateToolBar( mdiHost->toolBarList, m );
-	mdiHost->menus.updateMenu( m->menuBar() );
+	mdiHost->updateGUI( m );
 }
 
+
+/**
+ * \brief callback to get alarm of deleted object
+ * \param o the deleted object
+ * 
+ * As requested by qmdiServer this function implements the needed
+ * interface. When an object is deleted, eighter by QTabWidget::removeTab(int), or 
+ * by deleting the object, this function will be called.
+ * 
+ * This function removes the menus and toolbars of the widget (if it is the
+ * active widget) and sets the active widget to NULL. When a new tab will be selected,
+ * which will happen if there is another widget on the tab widget, the new client 
+ * will be merged.
+ * 
+ * \see qmdiServer::clientDeleted( QObject * )
+ */
 void qmdiTabWidget::clientDeleted( QObject *o )
 {
 	if (o == NULL)
@@ -71,19 +129,26 @@ void qmdiTabWidget::clientDeleted( QObject *o )
 	if (activeWidget != o)
 		return;
 
-	qmdiClient *client = dynamic_cast<qmdiClient*>(activeWidget);
-	if (client != NULL)
-	{
-		mdiHost->menus.unmergeGroupList( &client->menus );
-		mdiHost->toolbars.unmergeGroupList( &client->toolbars );
-	}
+	mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
+	mdiHost->updateGUI( dynamic_cast<QMainWindow*>(mdiHost) );
 	activeWidget = NULL;
-	
-	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
-	mdiHost->toolBarList = mdiHost->toolbars.updateToolBar( mdiHost->toolBarList, m );
-	mdiHost->menus.updateMenu( m->menuBar() );
 }
 
+/**
+ * \brief callback for getting informred of new mdi clients
+ * \param index the index of the new widget
+ *
+ * This function will be called when the a new tab is inserted
+ * into the tab widget. This sets the mdiServer property of the qmdiClient
+ * to \b this, which is needed to call clientDeleted(), and the myself property.
+ * 
+ * If this is the only widget on the tab widget it generates a call to tabChanged()
+ * to update the menus and toolbars. If there are more then 1 widget 
+ * the call will be generated by Qt for us. 
+ * 
+ * \bug Is this a buig in Qt...?
+ * \see QTabWidget::tabInserted( int )
+ */
 void qmdiTabWidget::tabInserted ( int index )
 {
 	QWidget *w = widget( index );
@@ -101,21 +166,36 @@ void qmdiTabWidget::tabInserted ( int index )
 		tabChanged( 0 );
 }
 
+
+/**
+ * \brief callback for getting informred of removed mdi client
+ * \param index the index of the new widget
+ *
+ * This function will be called when a tab is removed. The mdi client
+ * will unmerge itself on it's destructor, however if it was the only 
+ * widget available (and the tab widget is now empty), the GUI needs
+ * to be updated as the tabChanged() function will not get called.
+ * 
+ * This function will be called \b after the widget has been deleted, and thus
+ * widget(index) is not the deleted widget! For this reason the qmdiClient must
+ * unmerge itself - the mdi server has no way of knowing why object has been
+ * deleted.
+ * 
+ * \see QTabWidget::tabRemoved( int )
+ */
 void qmdiTabWidget::tabRemoved ( int index )
 {
 	if (mdiHost == NULL)
 		return;
 
-	// this is done to shut up gcc warnings
-	index = 0;
 	if (count() == 0)
 	{
-		tabChanged( 0 );
 		activeWidget = NULL;
 
 		// the deletion of menus and toolbars is made by qmdiClient itself
-		QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
-		mdiHost->toolBarList = mdiHost->toolbars.updateToolBar( mdiHost->toolBarList, m );
-		mdiHost->menus.updateMenu( m->menuBar() );
+		mdiHost->updateGUI( dynamic_cast<QMainWindow*>(mdiHost) );
 	}
+
+	// this is done to shut up gcc warnings
+	index = 0;
 }

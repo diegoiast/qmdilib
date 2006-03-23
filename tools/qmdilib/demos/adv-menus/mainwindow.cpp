@@ -19,7 +19,7 @@
 
 MainWindow::MainWindow( QWidget *owner ):QMainWindow(owner)
 {
-	QTextBrowser *browser = new QTextBrowser;
+	QTextBrowser *browser = new QTextBrowser;	
 	browser->setSource( QUrl(":adv-menus.html") );
 	setCentralWidget( browser );
 	statusBar();
@@ -27,6 +27,12 @@ MainWindow::MainWindow( QWidget *owner ):QMainWindow(owner)
 	init_actions();
 	init_gui();
 }
+
+MainWindow::~MainWindow()
+{
+	delete advanced;
+}
+
 
 void MainWindow::init_actions()
 {
@@ -69,19 +75,19 @@ void MainWindow::init_gui()
 	toolbars["Main"]->addAction( actionShowAll );
 
 	// extra menus
-	advanced.menus["&File"]->addAction( actionFileSaveAs );
-	advanced.menus["&Test"]->addAction( test1 );
-	advanced.menus["&Test"]->addAction( test2 );
-	advanced.menus["&Help"]->addAction( actionAboutQt );
+	advanced = new qmdiClient;
+	advanced->menus["&File"]->addAction( actionFileSaveAs );
+	advanced->menus["&Test"]->addAction( test1 );
+	advanced->menus["&Test"]->addAction( test2 );
+	advanced->menus["&Help"]->addAction( actionAboutQt );
 
 	// extra toolbars
-	advanced.toolbars["Main"]->addAction( actionQuit );
-	advanced.toolbars["File operations"]->addAction( test1 );
-	advanced.toolbars["File operations"]->addAction( test2 );
+	advanced->toolbars["Main"]->addAction( actionQuit );
+	advanced->toolbars["File operations"]->addAction( test1 );
+	advanced->toolbars["File operations"]->addAction( test2 );
 	
 	// show the stuff on screen
-	menus.updateMenu( menuBar() );
-	toolBarList = toolbars.updateToolBar( toolBarList, this );
+	updateGUI( this );
 }
 
 void MainWindow::showMenus()
@@ -89,18 +95,12 @@ void MainWindow::showMenus()
 	bool isChecked = actionShowAll->isChecked();
 
 	if (isChecked)
-	{
-		menus.mergeGroupList( &advanced.menus );
-		toolbars.mergeGroupList( &advanced.toolbars );
-	}
+		mergeClient( advanced );
 	else
-	{
-		menus.unmergeGroupList( &advanced.menus );
-		toolbars.unmergeGroupList( &advanced.toolbars );
-	}
+		unmergeClient( advanced );
 
-	toolBarList = toolbars.updateToolBar( toolBarList, this );
-	menus.updateMenu( menuBar() );
+	// show the stuff on screen
+	updateGUI( this );
 }
 
 void MainWindow::about()

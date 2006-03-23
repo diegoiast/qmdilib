@@ -18,11 +18,11 @@
 class QTabWidget;
 class QToolButton;
 
-class MainWindow: public QMainWindow, public qmdiHost
+class MainWindow2: public QMainWindow, public qmdiHost
 {
 Q_OBJECT
 public:
-	MainWindow( QWidget *owner=NULL );
+	MainWindow2( QWidget *owner=NULL );
 
 public slots:
 	void init_actions();

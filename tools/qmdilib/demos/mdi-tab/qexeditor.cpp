@@ -11,6 +11,24 @@
 
 #include "qexeditor.h"
 
+/**
+ * \class QexTextEdit
+ * \brief a small text editor based on QTextEdit
+ *
+ * This class demostrates how to make a small text editor
+ * using QTextEdit from the Qt library and qmdilib.
+ * 
+ * The class contains the basic cut/copy/paste/undo/redo actions,
+ * as well as close. It full integrates into the host
+ * application, by adding context menus and toolbars when the 
+ * widget is selected on a qmdiTabWidget.
+ * 
+ * The class is a qmdiClient and all the menus and toolbars are defined
+ * using that interface.
+ * 
+ * \see qmdiClient
+ */
+ 
 QexTextEdit::QexTextEdit( QWidget *parent ):QTextEdit( parent )
 {
 	QFont font;

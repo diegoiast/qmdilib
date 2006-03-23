@@ -21,15 +21,23 @@
  * \see MainWindow
  */
 
+/**
+ * \class MainWindow2
+ * \brief a window with an qmdiTabWidget
+ * 
+ * This example demostrates how to use qmdiTabWidget, and
+ * define different qmdiClient. It also shows what happens when
+ * you insert a non mdi client into a qmdiTabWidget.
+ */
 
-MainWindow::MainWindow( QWidget *owner ):QMainWindow(owner)
+MainWindow2::MainWindow2( QWidget *owner ):QMainWindow(owner)
 {
 	statusBar();
 	init_actions();
 	init_gui();
 }
 
-void MainWindow::init_actions()
+void MainWindow2::init_actions()
 {
 	actionQuit = new QAction( QIcon(":images/quit.png"), "&Quit", this );
 	actionQuit->setShortcut( QKeySequence("Ctrl+Q") );
@@ -46,7 +54,7 @@ void MainWindow::init_actions()
 	connect( actionAbout, SIGNAL(triggered()), this, SLOT(about()) );
 }
 
-void MainWindow::init_gui()
+void MainWindow2::init_gui()
 {
 	// create own menus
 	menus["&File"]->addAction( actionFileNew );
@@ -64,11 +72,10 @@ void MainWindow::init_gui()
 	toolbars["File"]->addAction( actionQtTopics );
 
 	// show the stuff on screen
-	menus.updateMenu( menuBar() );
-	toolBarList = toolbars.updateToolBar( toolBarList, this );
+	updateGUI( this );
 
 	// make the tab widget
-	tabWidget = new qmdiTabWidget( this );
+	tabWidget = new qmdiTabWidget;
 	tabNewBtn = new QToolButton(tabWidget);
         tabNewBtn->setAutoRaise( true );
         connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));
@@ -83,38 +90,37 @@ void MainWindow::init_gui()
 	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
 	setCentralWidget( tabWidget );
 
-
-	// feed it with a default widget
+	// feed it with a default widget, this browser is a
+	// non mdi client, and will add no new menus nor toolbars
 	QTextBrowser *browser = new QTextBrowser;
 	browser->setObjectName("welcome_tab");
 	browser->setSource( QUrl(":mdi-tab.html") );
 	tabWidget->addTab( browser, "Welcome" );
 }
 
-void MainWindow::about()
+void MainWindow2::about()
 {
 	QMessageBox::about(NULL, "About Program",
 		"This demo is part of the qmdi library.\nDiego Iasturbni <elcuco@kde.org> - LGPL"
 	);
 }
 
-void MainWindow::fileNew()
+void MainWindow2::fileNew()
 {
 	QexTextEdit *editor = new QexTextEdit;
 	editor->hide();
 	tabWidget->addTab( editor, "MDI Editor" );
 }
 
-void MainWindow::fileClose()
+void MainWindow2::fileClose()
 {
 	delete tabWidget->currentWidget();
 }
 
-void MainWindow::helpQtTopics()
+void MainWindow2::helpQtTopics()
 {
         QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
 	QexHelpBrowser *browser = new QexHelpBrowser( QUrl(helpFile) );
 	browser->hide();
 	tabWidget->addTab( browser, "Qt help" );
 }
-

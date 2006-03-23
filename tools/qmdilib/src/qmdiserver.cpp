@@ -8,6 +8,7 @@
  
 #include "qmdiserver.h"
 
+
 /**
  * \class qmdiServer
  * \brief a default niterface for mdi servers
@@ -18,6 +19,7 @@
  * Classes which derive this class, MUST implement the clientDeleted
  * function.
  */
+
 
 /**
  * Empty destructor. Destroyes the object.
@@ -35,6 +37,7 @@ qmdiServer::~qmdiServer()
 
 /**
  * \brief callback to get alarm of deleted object
+ * \param o the deleted object
  *
  * This function gets called on the destructor of qmdiClient,
  * to announce that the object is about to be deleted. This
@@ -56,6 +59,9 @@ qmdiServer::~qmdiServer()
  * Why this function is not pure virtual?
  *  - Since I found that it gives you warnings, about calling a pure virtual
  *    function, lame excuse, which I would like to get rid of :)
+ *  - On some rare implementations the mdi server implemented, would like
+ *    to ignore those events. I prefear that the dummy functions be implemented 
+ *    by the library, and not the end clients.
  */
 void qmdiServer::clientDeleted( QObject *o )
 {

@@ -21,6 +21,7 @@ class MainWindow: public QMainWindow, public qmdiHost
 Q_OBJECT
 public:
 	MainWindow( QWidget *owner=NULL );
+	~MainWindow();
 
 public slots:
 	void init_actions();
@@ -36,7 +37,7 @@ private:
 	QAction *actionAbout, *actionAboutQt;
 	QAction *test1, *test2;
 	
- 	qmdiClient advanced;
+ 	qmdiClient *advanced;
 };
 
 #endif // __MAIN_WIN_H__

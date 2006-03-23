@@ -11,6 +11,9 @@
  * \see qmdiHost
  */
 
+class QMainWindow;
+class qmdiClient;
+
 class qmdiHost
 {
 public:
@@ -19,6 +22,10 @@ public:
 	
 	qmdiActionGroupList menus;
 	qmdiActionGroupList toolbars;
+
+	void updateGUI( QMainWindow *window );
+	void mergeClient( qmdiClient *client );
+	void unmergeClient( qmdiClient *client );
 	
 	QList<QToolBar*>* toolBarList;
 };

@@ -6,6 +6,7 @@
 
 #include "actiongrouplist.h"
 
+
 /**
  * \file actiongrouplist.cpp
  * \brief Implementation of the action group list class
@@ -36,7 +37,6 @@
 qmdiActionGroupList::qmdiActionGroupList()
 {
 }
-
 
 /**
  * \brief overloaded operator for getting the instance of a action group
@@ -134,6 +134,7 @@ void qmdiActionGroupList::unmergeGroupList( qmdiActionGroupList *group )
 	}
 }
 
+
 /**
  * \brief update a QMenuBar from the definitions on this action group list
  * \param menubar a QMenuBar to be updated
@@ -166,6 +167,21 @@ QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
 	return menubar;
 }
 
+
+/**
+ * \brief update a list of QToolBars from the definitions on this action group list
+ * \param window the window in which the toolbars should be placed
+ * \return a list of toolbars which has been created from this action group list
+ *
+ * This function generates from the defintions on this class a valid list of
+ * QToolBar which will be showed on the \c window .
+ * 
+ * If the \c toolbars array will be NULL, a new one will be allocated for you.
+ * 
+ * While you can add toolbars "manually" to your main window, it's not recomended,
+ * because new actions will not get merged into your toolbar. Instead you might get 
+ * 2 toolbars with a similar name.
+ */
 QList<QToolBar*>* qmdiActionGroupList::updateToolBar( QList<QToolBar*> *toolbars, QMainWindow *window )
 {
 	if (toolbars == NULL)
@@ -190,6 +206,7 @@ QList<QToolBar*>* qmdiActionGroupList::updateToolBar( QList<QToolBar*> *toolbars
 		if (tb == NULL)
 		{
 			tb = new QToolBar( actionName );
+			tb->setObjectName( actionName );
 			*toolbars << tb;
 			window->addToolBar( tb );
 		}
