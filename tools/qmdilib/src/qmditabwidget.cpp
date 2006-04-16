@@ -26,7 +26,7 @@
  * The relations are:
  *  - qmdiHost   : main window
  *  - qmdiClient : you new widgets
- *  - qmdiServert: this class
+ *  - qmdiServer : this class
  *
  * When a new widget is selected on the qmdiServer (the user changes ), the old
  * widget is removed from the qmdiHost, and only then the new mdi client is added
@@ -83,7 +83,6 @@ void qmdiTabWidget::tabChanged( int i )
 	if (mdiHost == NULL)
 		return;
 		
-	qmdiClient *client = NULL;
 	QWidget *w = widget( i );
 
 	// nothing to do, if the same tab has been selected twise
@@ -198,4 +197,29 @@ void qmdiTabWidget::tabRemoved ( int index )
 
 	// this is done to shut up gcc warnings
 	index = 0;
+}
+
+/**
+ * \brief add a new mdi client to this tab widget
+ * \param client the new client to be added
+ *
+ * This function is demanded by qmdiServer, and is implemented
+ * as a simple call to:
+ *
+ * \code
+ * QTabWidget::addTab( client, client->name ).
+ * \endcode
+ * 
+ * The client must derive also QWidget, since only widgets can
+ * be inserted into QTabWidget. If the client does not derive
+ * QWidget the function returns without doying anything.
+ */
+void qmdiTabWidget::addClient( qmdiClient *client )
+{
+	QWidget *w = dynamic_cast<QWidget*>(client);
+
+	if (w == NULL)
+		return;
+	
+	addTab( w, client->name );
 }

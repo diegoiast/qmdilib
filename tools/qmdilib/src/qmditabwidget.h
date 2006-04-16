@@ -29,6 +29,8 @@ protected:
 	void tabInserted ( int index );
 	void tabRemoved ( int index );
 	
+	void addClient( qmdiClient *client );
+	
 private:
 	QWidget *activeWidget;
 	qmdiHost *mdiHost;

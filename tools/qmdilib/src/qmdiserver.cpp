@@ -35,6 +35,30 @@ qmdiServer::~qmdiServer()
 {
 }
 
+
+/**
+ * \fn qmdiServer::addClient( qmdiClient *client  )
+ * \brief insert a new client to the server
+ * \param client the new client to be added
+ * 
+ * When deriving this class, you should also supply a function 
+ * for adding new clients to it. For example when deriving QTabWidget,
+ * your new function should actually call QTabWidget::insertTab().
+ * 
+ * Users of this class should be able to add new clients, and 
+ * set the properties needed using this function, but you should 
+ * also supply more advanced fuctions provided by your new widget, like
+ * add the widget into another location, setting an icon for this client,
+ * etc.
+ *
+ * \see qmdiTabWidget
+ */
+#if 0
+void qmdiServer::addClient( qmdiClient *client  )
+{
+}
+#endif
+
 /**
  * \brief callback to get alarm of deleted object
  * \param o the deleted object

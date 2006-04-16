@@ -43,7 +43,10 @@ qmdiHost::~qmdiHost()
 void qmdiHost::updateGUI( QMainWindow *window )
 {
 	if (window == NULL)
+	{
+		qDebug("%s - warning, no QMainWindow specified", __FUNCTION__ );
 		return;
+	}
 		
 	toolBarList = toolbars.updateToolBar( toolBarList, window );
 	menus.updateMenu( window->menuBar() );

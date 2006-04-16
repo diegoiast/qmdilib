@@ -11,10 +11,13 @@
 
 #include "actiongroup.h"
 
+class qmdiClient;
+
 class qmdiServer
 {
 public:
 	virtual ~qmdiServer();
+	virtual void addClient( qmdiClient *client ) = 0;
 	virtual void clientDeleted( QObject *o );
 };
 
