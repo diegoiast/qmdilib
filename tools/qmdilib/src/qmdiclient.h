@@ -20,6 +20,9 @@ class qmdiClient
 public:
 	qmdiClient();
 	virtual ~qmdiClient();
+
+	virtual bool closeClient();
+	virtual bool canCloseClient();
 	
 	QString name;
 	QString fileName;

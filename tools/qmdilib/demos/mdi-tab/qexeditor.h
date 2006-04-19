@@ -17,11 +17,21 @@ class QString;
 class QTextEdit;
 class QToolBar;
 class QAction;
+class QTextCodec;
 
 class QexTextEdit : public QTextEdit, public qmdiClient
 {
+	Q_OBJECT
 public:
-	QexTextEdit( QWidget *parent=0 );
+	QexTextEdit( QString file="", QWidget *parent=0 );
+	bool canCloseClient();
+	bool openFile( QString newFile, QTextCodec *c=NULL  );
+	bool saveFile( QString newFile, QTextCodec *c=NULL  );
+	
+public slots:
+	bool fileSave();
+	bool fileSaveAs();
+	bool fileClose();
 
 private:
 	QAction *actionSave;
@@ -33,6 +43,8 @@ private:
 	QAction *actionCut;
 	QAction *actionPaste;
 	QAction *actionFind;
+
+	QString fileName;
 };
 
 #endif //__QEX_EDITOR_H__

@@ -1,5 +1,10 @@
 #include <QAction>
 #include <QString>
+#include <QTextCodec>
+#include <QTextStream>
+#include <QFile>
+#include <QMessageBox>
+#include <QFileDialog>
 
 /**
  * \file qextexteditor.cpp
@@ -29,7 +34,7 @@
  * \see qmdiClient
  */
  
-QexTextEdit::QexTextEdit( QWidget *parent ):QTextEdit( parent )
+QexTextEdit::QexTextEdit( QString file, QWidget *parent):QTextEdit( parent )
 {
 	QFont font;
 	font.setFamily("Courier New");
@@ -59,7 +64,7 @@ QexTextEdit::QexTextEdit( QWidget *parent ):QTextEdit( parent )
         connect( actionCopy, SIGNAL(triggered()), this, SLOT(copy()) );
         connect( actionCut, SIGNAL(triggered()), this, SLOT(cut()) );
         connect( actionPaste, SIGNAL(triggered()), this, SLOT(paste()) );
-	connect( actionClose, SIGNAL(triggered()), this, SLOT(deleteLater()));
+	connect( actionClose, SIGNAL(triggered()), this, SLOT(fileClose()));
 
 	actionUndo->setEnabled( false );
 	actionRedo->setEnabled( false );
@@ -88,5 +93,106 @@ QexTextEdit::QexTextEdit( QWidget *parent ):QTextEdit( parent )
 	toolbars["Edit operations"]->addSeparator();
 	toolbars["Edit operations"]->addAction( actionUndo );
 	toolbars["Edit operations"]->addAction( actionRedo );
+
+	openFile( file );
 }
 
+
+bool QexTextEdit::canCloseClient()
+{
+	if (!document()->isModified())
+		return true;
+
+	// ask for saving
+	int ret = QMessageBox::warning(this, tr("Application"),
+		tr("The document has been modified.\n"
+		"Do you want to save your changes?"),
+		QMessageBox::Yes | QMessageBox::Default,
+		QMessageBox::No,
+		QMessageBox::Cancel | QMessageBox::Escape);
+
+	if (ret == QMessageBox::Yes)
+		return fileSave();
+	else if (ret == QMessageBox::Cancel)
+		return false;
+
+	// shut up GCC warnings
+	return true;
+}
+
+bool QexTextEdit::openFile( QString newFile, QTextCodec *c )
+{
+	fileName = newFile;	// the full path of the loaded file
+	name = newFile;		// the name of the object for it's mdi server
+	setObjectName( name );	// the QObject name (same as "name" \?)
+
+	if (newFile.isEmpty())
+		return true;
+
+	QFile f( fileName );
+
+	if (!f.open( QIODevice::ReadOnly ) )
+		return false;
+
+	if (c == NULL)
+		c = QTextCodec::codecForLocale();
+
+	QTextStream t(&f);
+	t.setCodec( c );
+	setPlainText( t.readAll() );
+	f.close();
+
+	return true;
+}
+
+bool QexTextEdit::saveFile( QString newFile, QTextCodec *c  )
+{
+	QFile f( newFile );
+
+	if (!f.open( QIODevice::WriteOnly ) )
+		return false;
+	
+	if (c == NULL)
+		c = QTextCodec::codecForLocale();
+	
+	QTextStream t(&f);
+	t.setCodec( c );
+	t << toPlainText();
+	f.close();
+
+	return true;
+}
+
+bool QexTextEdit::fileSave()
+{
+	if (fileName.isEmpty())
+		return fileSaveAs();
+
+	return saveFile( fileName );
+}
+
+bool QexTextEdit::fileSaveAs()
+{
+
+	QString s = QFileDialog::getSaveFileName(
+		NULL,
+		"Choose a filename to save under",
+		"",
+		"Sources (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc);;"
+				"Headers (*.h *.hpp *.hxx *.inc);;"
+				"Qt project (*.pro *.pri);;"
+				"All files (*.*)"
+	);
+
+	if (s.isEmpty())
+		return false;
+
+	fileName = s;
+	return saveFile( fileName );
+}
+
+
+bool QexTextEdit::fileClose()
+{
+	return closeClient();
+}
