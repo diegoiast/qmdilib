@@ -12,8 +12,9 @@
 #include <QTextBrowser>
 #include "qmdiclient.h"
 
-class QWidget;
 class QAction;
+class QWidget;
+class QComboBox;
 
 class QexHelpBrowser: public QTextBrowser, public qmdiClient
 {
@@ -23,6 +24,7 @@ public:
 
 public slots:
 	void goHome();
+	void on_zoomCombo_currentIndexChanged( int index );
 
 private:
 	QAction *actionBack;
@@ -34,6 +36,7 @@ private:
 	QAction *actionCopy;
 	QAction *actionFind;
 
+	QComboBox *zoomCombo;
 	QUrl homePage;
 };
 

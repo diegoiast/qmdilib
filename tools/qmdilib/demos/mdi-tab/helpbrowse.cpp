@@ -1,5 +1,7 @@
 #include <QIcon>
 #include <QAction>
+#include <QComboBox>
+
 #include "helpbrowse.h"
 
 /**
@@ -31,6 +33,10 @@
 QexHelpBrowser::QexHelpBrowser( QUrl home, QWidget *parent )
 	:QTextBrowser(parent)
 {
+	zoomCombo = new QComboBox;
+	zoomCombo->addItem( tr("Smaller text"), -5 );
+	zoomCombo->addItem( tr("Bigger text"), 5 );
+	
 	actionBack	= new QAction( QIcon(":images/prev.png"), tr("&Back"), this );
 	actionNext	= new QAction( QIcon(":images/next.png"), tr("&Next"), this );
 	actionHome	= new QAction( QIcon(":images/home.png"), tr("&Home"), this );
@@ -46,6 +52,7 @@ QexHelpBrowser::QexHelpBrowser( QUrl home, QWidget *parent )
 	connect( actionHome, SIGNAL(triggered()), this, SLOT(goHome()));
 	connect( actionZoomIn, SIGNAL(triggered()), this, SLOT(zoomIn()));
 	connect( actionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOut()));
+	connect( zoomCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(on_zoomCombo_currentIndexChanged(int)));
 
 	actionCopy->setEnabled(false);
 	actionNext->setShortcut( QKeySequence("Alt+Right") );
@@ -72,6 +79,7 @@ QexHelpBrowser::QexHelpBrowser( QUrl home, QWidget *parent )
 	toolbars["Navigation"]->addSeparator();
 	toolbars["Navigation"]->addAction( actionZoomIn );
 	toolbars["Navigation"]->addAction( actionZoomOut );
+	toolbars["Navigation"]->addWidget( zoomCombo );
 	
 	homePage = home;
 	setSource( homePage );
@@ -80,4 +88,10 @@ QexHelpBrowser::QexHelpBrowser( QUrl home, QWidget *parent )
 void QexHelpBrowser::goHome()
 {
 	setSource( homePage );
+}
+
+void QexHelpBrowser::on_zoomCombo_currentIndexChanged( int index )
+{
+	zoomIn( 0 );
+	zoomIn( zoomCombo->itemData(index).toInt() );
 }

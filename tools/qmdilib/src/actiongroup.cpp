@@ -103,6 +103,11 @@ void qmdiActionGroup::addAction( QAction *action )
 	actionGroupItems << action;
 }
 
+void qmdiActionGroup::addWidget( QWidget *widget )
+{
+	actionGroupItems << widget;
+}
+
 /**
  * \brief adds a separator to the menu or toolbar
  * 
@@ -150,6 +155,14 @@ void qmdiActionGroup::removeAction( QAction *action )
 		actionGroupItems.removeAt( i );
 }
 
+void qmdiActionGroup::removeWidget( QWidget *widget )
+{
+	int i =	actionGroupItems.indexOf( widget );
+
+	if ( i != -1 )
+		actionGroupItems.removeAt( i );
+}
+
 
 /**
  * \brief merges another action group actions into this action group
@@ -171,6 +184,15 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 		QAction *a = qobject_cast<QAction*> (o);
 		if (a)
 			addAction( a );
+		else
+		{
+			QWidget *w = qobject_cast<QWidget*> (o);
+			if (w)
+			{
+				addWidget( w );
+				w->setVisible(true);
+			}
+		}
 	}	
 }
 
@@ -194,6 +216,15 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
 		QAction *a = qobject_cast<QAction*> (o);
 		if (a)
 			removeAction( a );
+		else
+		{
+			QWidget *w = qobject_cast<QWidget*> (o);
+			if (w)
+			{
+				w->setVisible(false);
+				removeWidget( w );
+			}
+		}
 	}	
 }
 
@@ -263,12 +294,24 @@ QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
 		toolbar = new QToolBar( name );
 
 	toolbar->clear();
-	
+	int i = 0;
+
 	foreach( QObject *o, actionGroupItems )
 	{
 		QAction *a = qobject_cast<QAction*> (o);
 		if (a)
 			toolbar->addAction( a );
+		else
+		{
+			QWidget *w = qobject_cast<QWidget*> (o);
+			if (w)
+			{
+				toolbar->addWidget( w );
+				w->setVisible(true);
+			}
+		}
+
+		i++;
 	}
 
 	if (actionGroupItems.count() == 0)
