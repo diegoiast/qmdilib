@@ -83,6 +83,7 @@ qmdiActionGroup* qmdiActionGroupList::getActionGroup( const QString name )
 	return item;
 }
 
+
 /**
  * \brief merge another action group list
  * \param group the new group to merge into this one
@@ -154,7 +155,7 @@ QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
 	if (menubar)
 		menubar->clear();
 	else
-		menubar = new QMenuBar();
+		menubar = new QMenuBar( menubar );
 
 	foreach( qmdiActionGroup* i, actionGroups )
 	{
@@ -205,10 +206,12 @@ QList<QToolBar*>* qmdiActionGroupList::updateToolBar( QList<QToolBar*> *toolbars
 		// if none found, create one
 		if (tb == NULL)
 		{
-			tb = new QToolBar( actionName );
+			tb = new QToolBar( actionName, window );
 			tb->setObjectName( actionName );
 			*toolbars << tb;
 			window->addToolBar( tb );
+			if (i->breakAfter)
+				window->addToolBarBreak();
 		}
 		
 		// merge it with the corresponding group list

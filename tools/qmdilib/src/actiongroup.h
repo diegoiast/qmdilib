@@ -40,9 +40,12 @@ public:
 	QMenu*		updateMenu( QMenu *menu=NULL );
 	QToolBar*	updateToolBar( QToolBar *toolbar );
 
+	bool		breakAfter;
 private:
 	QString name;
 	QList<QObject*> actionGroupItems;
+
+	int breakCount;
 };
 
 #endif //__ACTION_GROUP__

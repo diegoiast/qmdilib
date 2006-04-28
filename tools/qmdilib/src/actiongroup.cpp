@@ -37,6 +37,9 @@
 qmdiActionGroup::qmdiActionGroup( QString name )
 {
 	this->name = name;
+
+	breakAfter = false;
+	breakCount = -1;
 }
 
 
@@ -103,6 +106,22 @@ void qmdiActionGroup::addAction( QAction *action )
 	actionGroupItems << action;
 }
 
+/**
+ * \brief add a new widget to the action group
+ * \param widget item to be added to the action group
+ *
+ * When calling this function, you are adding a new
+ * widget to the toolbar or menu represented by the action
+ * group.
+ *
+ * Widget are added to the end of the list. There is no way
+ * to reorder the actions once they are in the group. If you
+ * are are generating a menu, this wiget is ignored.
+ *
+ * \see removeWidget
+ * \see updateMenu
+ * \see updateToolBar
+ */
 void qmdiActionGroup::addWidget( QWidget *widget )
 {
 	actionGroupItems << widget;
@@ -155,6 +174,20 @@ void qmdiActionGroup::removeAction( QAction *action )
 		actionGroupItems.removeAt( i );
 }
 
+
+/**
+ * \brief remove an action from the action group
+ * \param action QAction item to be removed
+ *
+ * Use this function for removing widgets from the menu or
+ * toolbar reporesented by this action group.
+ *
+ * \see addAction
+ * \see removeAction
+ * \see addWidget
+ * \see updateMenu
+ * \see updateToolBar
+ */
 void qmdiActionGroup::removeWidget( QWidget *widget )
 {
 	int i =	actionGroupItems.indexOf( widget );
@@ -178,7 +211,10 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 {
 	if (!group)
 		return;
-		
+
+	if ( (group->breakAfter) )
+		breakCount = breakCount == -1 ? 1 : breakCount+1;
+	
 	foreach( QObject *o, group->actionGroupItems )
 	{
 		QAction *a = qobject_cast<QAction*> (o);
@@ -193,7 +229,10 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 				w->setVisible(true);
 			}
 		}
-	}	
+	}
+
+	if (breakCount>0)
+		breakAfter = true;
 }
 
 
@@ -211,6 +250,9 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
 	if (!group)
 		return;
 		
+	if ( (group->breakAfter) )
+		breakCount = breakCount >1  ? -1 : breakCount-1;
+	
 	foreach( QObject *o, group->actionGroupItems )
 	{
 		QAction *a = qobject_cast<QAction*> (o);
@@ -225,7 +267,10 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
 				removeWidget( w );
 			}
 		}
-	}	
+	}
+
+	if (breakCount>0)
+		breakAfter = true;
 }
 
 /**
