@@ -1,4 +1,5 @@
 #include <QMainWindow>
+#include <QAction>
 
 #include "qmditabwidget.h"
 #include "qmdihost.h"
@@ -197,6 +198,11 @@ void qmdiTabWidget::tabRemoved ( int index )
 
 	// this is done to shut up gcc warnings
 	index = 0;
+	
+//	if it's the only widget available, show it's number
+//	BUG is this supposed to be done by Qt?
+	if (count() == 1)
+		tabChanged( 0 );
 }
 
 /**

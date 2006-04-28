@@ -32,8 +32,8 @@ protected:
 	void addClient( qmdiClient *client );
 	
 private:
-	QWidget *activeWidget;
-	qmdiHost *mdiHost;
+	QWidget		*activeWidget;
+	qmdiHost	*mdiHost;
 };
 
 #endif // __QMDI_TAB_WIDGET_H__

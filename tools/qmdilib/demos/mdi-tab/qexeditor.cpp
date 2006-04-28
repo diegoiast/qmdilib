@@ -85,8 +85,11 @@ QexTextEdit::QexTextEdit( QString file, QWidget *parent):QTextEdit( parent )
 	menus["&Search"]	->addAction( actionFind );
 
 	// define the toolbars for this widget
-	toolbars["File"]	->addAction( actionSave );
-	toolbars["File"]	->addAction( actionClose );
+	toolbars["File"]->breakAfter = true;
+	toolbars["File"]->addAction( actionSave );
+	toolbars["File"]->addAction( actionClose );
+
+	
 	toolbars["Edit operations"]->addAction( actionCopy );
 	toolbars["Edit operations"]->addAction( actionCut );
 	toolbars["Edit operations"]->addAction( actionPaste );
@@ -122,9 +125,26 @@ bool QexTextEdit::canCloseClient()
 
 bool QexTextEdit::openFile( QString newFile, QTextCodec *c )
 {
-	fileName = newFile;	// the full path of the loaded file
-	name = newFile;		// the name of the object for it's mdi server
-	setObjectName( name );	// the QObject name (same as "name" \?)
+	fileName = newFile;		// the full path of the loaded file
+	setObjectName( newFile );	// set the object name to the file name,
+	
+
+	// the name of the object for it's mdi server
+	// is the file name alone, without the directory
+	int i = newFile.lastIndexOf( '/' );
+	QString s;
+	if ( i != -1 )
+		s = newFile.mid( i+1 );
+	else
+	{
+		i = newFile.lastIndexOf( '\\' );
+		if ( i != -1 )
+			s = newFile.mid( i+1 );
+		else
+			s = newFile;
+	}
+	name = s;
+	
 
 	if (newFile.isEmpty())
 		return true;
