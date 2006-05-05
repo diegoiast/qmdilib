@@ -20,8 +20,8 @@ INCLUDEPATH += ../mdi-tab \
 
 RESOURCES += ../mdi-tab/mdi-tab.qrc
 
-MOC_DIR = ../../tmp 
-UI_DIR = ../../tmp 
+MOC_DIR = .tmp 
+UI_DIR = .tmp 
 OBJECTS_DIR = .tmp 
 CONFIG += debug \
           warn_on 

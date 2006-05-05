@@ -1,62 +1,56 @@
-/****************************************************************************
-**
-** Copyright (C) 2005-2006 Trolltech AS. All rights reserved.
-**
-** This file is part of the example classes of the Qt Toolkit.
-**
-** This file may be used under the terms of the GNU General Public
-** License version 2.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of
-** this file.  Please review the following information to ensure GNU
-** General Public Licensing requirements will be met:
-** http://www.trolltech.com/products/qt/opensource.html
-**
-** If you are unsure which license is appropriate for your use, please
-** review the following information:
-** http://www.trolltech.com/products/qt/licensing.html or contact the
-** sales department at sales@trolltech.com.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-**
-****************************************************************************/
-
 #include <QtGui>
 #include <QIcon>
+#include <QLabel>
 
 #include "configdialog.h"
-// #include "pages.h"
 
 ConfigDialog::ConfigDialog()
 {
+	setSizeGripEnabled(true);
+	
 	contentsWidget = new QListWidget;
 	contentsWidget->setViewMode(QListView::IconMode);
 	contentsWidget->setIconSize(QSize(96, 84));
 	contentsWidget->setMovement(QListView::Static);
 	contentsWidget->setMaximumWidth(128);
-// 	contentsWidget->setSpacing(12);
-// 	contentsWidget->setModelColumn( 0 );
+	contentsWidget->setSpacing( 0 );
+	contentsWidget->setModelColumn( 0 );
 	contentsWidget->setFlow( QListView::TopToBottom );
+	
+	pagesWidget = new QStackedWidget(this);
+	applyButton = new QPushButton(tr("&Apply"));
+	closeButton = new QPushButton(tr("&Close"));
 
+	QHBoxLayout *mainLayout		= new QHBoxLayout(this);
+	QVBoxLayout *vLayout		= new QVBoxLayout;
+	QHBoxLayout *buttonsLayout	= new QHBoxLayout;
+
+	vLayout->setObjectName("vLayout");
+	buttonsLayout->setObjectName("buttonsLayout");
+	mainLayout->setObjectName("mainLayout");
 	
-	pagesWidget = new QStackedWidget;
-	QPushButton *closeButton = new QPushButton(tr("Close"));
+// 	QFrame *line1 = new QFrame;
+	QFrame *line2 = new QFrame;
+// 	currentPageLabel = new QLabel;
 	
-	QHBoxLayout *horizontalLayout = new QHBoxLayout;
-	horizontalLayout->addWidget(contentsWidget);
-	horizontalLayout->addWidget(pagesWidget, 1);
+// 	line1->setFrameShape(QFrame::HLine);
+	line2->setFrameShape(QFrame::HLine);
 	
-	QHBoxLayout *buttonsLayout = new QHBoxLayout;
 	buttonsLayout->addStretch(1);
+	buttonsLayout->addWidget(applyButton);
 	buttonsLayout->addWidget(closeButton);
+
+// 	vLayout->addWidget( currentPageLabel );
+// 	vLayout->addWidget( line1 );
+	vLayout->addWidget( pagesWidget );
+	vLayout->addWidget( line2 );
+	vLayout->addLayout( buttonsLayout );
 	
-	QVBoxLayout *mainLayout = new QVBoxLayout;
-	mainLayout->addLayout(horizontalLayout);
-	mainLayout->addStretch(1);
-	mainLayout->addSpacing(12);
-	mainLayout->addLayout(buttonsLayout);
+	mainLayout->addWidget(contentsWidget);
+	mainLayout->addLayout(vLayout);
 	setLayout(mainLayout);
 	
+	connect(applyButton, SIGNAL(clicked()), this, SLOT(applyChanges()));
 	connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect(contentsWidget,
 		SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
@@ -65,12 +59,26 @@ ConfigDialog::ConfigDialog()
 	setWindowTitle(tr("Config Dialog"));
 }
 
+ConfigDialog::~ConfigDialog()
+{
+	contentsWidget->clear();
+
+	// objects are not deleted by the GUI, but the plugins
+	// without this code, glibc will complain about deleting the same 
+	// object twise: the dangling pointer problem
+	for( int i=pagesWidget->count(); i!=0; i--)
+		pagesWidget->removeWidget( pagesWidget->currentWidget() );
+}
+
 void ConfigDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)
 {
 	if (!current)
         	current = previous;
 
-	pagesWidget->setCurrentIndex(contentsWidget->row(current));
+	int newRow = contentsWidget->row(current);
+	pagesWidget->setCurrentIndex( newRow );
+// 	QListWidgetItem *w = contentsWidget->item(newRow);
+// 	currentPageLabel->setText( w->text() );
 }
 
 void ConfigDialog::addPage( QWidget *w, QIcon i )
@@ -81,7 +89,23 @@ void ConfigDialog::addPage( QWidget *w, QIcon i )
 	item->setTextAlignment( Qt::AlignHCenter );
 	item->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
 	
-	contentsWidget->insertItem( 0, item );
+	// QListWidget
+	contentsWidget->insertItem( contentsWidget->count(), item );
 
+	//QStackedWidget
 	pagesWidget->addWidget( w );
+}
+
+void ConfigDialog::removePage( QWidget *w )
+{
+	int k = pagesWidget->indexOf ( w );
+	contentsWidget->takeItem( k );
+	
+	//QStackedWidget 
+	pagesWidget->removeWidget( w );
+}
+
+
+void ConfigDialog::applyChanges()
+{
 }

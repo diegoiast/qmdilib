@@ -29,6 +29,7 @@ public:
 	virtual void SaveConfig( QSettings &settings );
 
 	bool 	isEnabled();
+	QIcon	getIcon();
 	QString	getName();
 	QString getAuthor();
 	QString getsVersion();
@@ -44,4 +45,5 @@ protected:
 	bool autoEnabled;
 	bool enabled;
 };
+
 #endif // __IPLUGIN_H__

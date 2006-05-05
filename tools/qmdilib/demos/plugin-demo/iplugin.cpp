@@ -57,6 +57,11 @@ bool 	IPlugin::isEnabled()
 	return enabled;
 }
 
+QIcon	IPlugin::getIcon()
+{
+	return QIcon("images/config.png");
+}
+
 QString	IPlugin::getName()
 {
 	return name;

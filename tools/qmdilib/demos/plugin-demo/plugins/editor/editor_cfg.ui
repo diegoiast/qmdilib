@@ -1,5 +1,5 @@
 <ui version="4.0" >
- <author></author>
+ <author>Diego Iastrubni &lt;elcuco@kde.org></author>
  <comment></comment>
  <exportmacro></exportmacro>
  <class>EditorCfgUI</class>
@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>287</width>
-    <height>245</height>
+    <width>317</width>
+    <height>325</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -51,28 +51,28 @@
            <number>6</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="checkBox" >
+           <widget class="QCheckBox" name="cbMakeBackup" >
             <property name="text" >
              <string>Make backups</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox_2" >
+           <widget class="QCheckBox" name="cbShowLineNumbers" >
             <property name="text" >
              <string>Show line numbers</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox_3" >
+           <widget class="QCheckBox" name="cbMarkCurrentLine" >
             <property name="text" >
              <string>Mark current line</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox_4" >
+           <widget class="QCheckBox" name="cbWorkWrap" >
             <property name="text" >
              <string>Word wrap</string>
             </property>
@@ -90,7 +90,7 @@
           <number>6</number>
          </property>
          <item>
-          <widget class="QToolButton" name="toolButton" >
+          <widget class="QToolButton" name="btnChooseFont" >
            <property name="text" >
             <string>...</string>
            </property>
@@ -131,7 +131,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="comboBox" >
+          <widget class="QComboBox" name="comboEOL" >
            <item>
             <property name="text" >
              <string>Don't modify</string>
@@ -167,6 +167,7 @@
    </item>
   </layout>
  </widget>
+ <layoutdefault spacing="0" margin="0" />
  <pixmapfunction></pixmapfunction>
  <resources/>
  <connections/>

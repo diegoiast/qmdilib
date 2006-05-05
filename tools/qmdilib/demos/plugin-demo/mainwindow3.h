@@ -17,6 +17,7 @@ public:
 
 public slots:
 	void initGUI();
+	void closeClient();
 	
 private:
 	QTabWidget	*tabWidget;

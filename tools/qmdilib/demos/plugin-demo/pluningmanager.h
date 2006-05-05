@@ -13,6 +13,7 @@
 #define PLUNINGMANAGER_H
 
 #include <QObject>
+#include "qmdiclient.h"
 #include "configdialog.h"
 #include "ui_plugin_list.h"
 
@@ -23,7 +24,7 @@ class IPlugin;
 class PluginModel;
 class QStandardItemModel;
 
-class PluginManager: public QObject
+class PluginManager: public QObject, public qmdiClient
 {
 	Q_OBJECT
 	
@@ -37,7 +38,11 @@ public slots:
 	void on_listWidget_activated(const QModelIndex & index );
 	void on_cbEnabled_togglged( bool checked );
 	void on_aboutPlugin_clicked();
-	
+	void on_mainOpen_clicked();
+
+	void on_apply_dialog();
+	void on_close_dialog();
+
 private:
 	QList<IPlugin*>		plugins;
 	QStandardItemModel	*pluginModel;
@@ -45,6 +50,8 @@ private:
 	qmdiServer		*mdiServer;
 	ConfigDialog		dlg;
 	Ui::plugin_list ui;
+
+// 	QAction			*mainOpen;
 };
 
 #endif

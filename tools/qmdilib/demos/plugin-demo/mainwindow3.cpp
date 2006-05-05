@@ -26,14 +26,15 @@ MainWindow3::~MainWindow3()
 void MainWindow3::initGUI()
 {
 	tabWidget = new qmdiTabWidget(this);
-	setCentralWidget( tabWidget );
 	
 	QToolButton *tabCloseBtn = new QToolButton(tabWidget);
 	tabCloseBtn->setAutoRaise( true );
-// 	connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(fileClose()));
+	connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(closeClient()));
 	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
+	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
+	setCentralWidget( tabWidget );
 
-	actionConfig = new QAction( "config", this );
+	actionConfig = new QAction( "&Config", this );
 
 	menus[tr("&File")];
 	menus[tr("&Edit")];
@@ -51,4 +52,14 @@ void MainWindow3::initGUI()
 	
 	connect( actionConfig, SIGNAL(triggered()), pluginManager, SLOT(configurePlugins()));
 	statusBar()->showMessage("Welcome - feel free to configure the GUI to your needs",5000);
+}
+
+void MainWindow3::closeClient()
+{
+	qmdiClient *client = dynamic_cast<qmdiClient*>( tabWidget->currentWidget());
+
+	if (client == NULL)
+		tabWidget->currentWidget()->deleteLater();
+
+	client->closeClient();
 }
