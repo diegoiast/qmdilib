@@ -23,29 +23,37 @@ RESOURCES += ../mdi-tab/mdi-tab.qrc
 MOC_DIR = .tmp 
 UI_DIR = .tmp 
 OBJECTS_DIR = .tmp 
-CONFIG += debug \
-          warn_on 
+unix{
+    CONFIG += debug warn_on 
+}
+
+win32{
+    CONFIG -= debug
+}
+
 TEMPLATE = app 
 FORMS += plugins/editor/editor_cfg.ui \
          plugins/help/help_cfg.ui \
          plugin_list.ui 
 IDLS += plugin_list.ui 
 HEADERS += configdialog.h \
+           plugins/help/help.h \
+           plugins/editor/editor.h \
            iplugin.h \
            mainwindow3.h \
+           pluningmanager.h \
+           pluginmodel.h \
            ../../src/actiongroup.h \
            ../../src/actiongrouplist.h \
            ../../src/qmdiclient.h \
            ../../src/qmdihost.h \
            ../../src/qmdiserver.h \
            ../../src/qmditabwidget.h \
-           pluningmanager.h \
-           pluginmodel.h \
-           plugins/help/help.h \
-           plugins/editor/editor.h \
            ../mdi-tab/helpbrowse.h \
            ../mdi-tab/qexeditor.h 
 SOURCES += configdialog.cpp \
+           plugins/help/help.cpp \
+           plugins/editor/editor.cpp \
            iplugin.cpp \
            main3.cpp \
            mainwindow3.cpp \
@@ -57,7 +65,5 @@ SOURCES += configdialog.cpp \
            ../../src/qmditabwidget.cpp \
            pluningmanager.cpp \
            pluginmodel.cpp \
-           plugins/help/help.cpp \
-           plugins/editor/editor.cpp \
            ../mdi-tab/helpbrowse.cpp \
            ../mdi-tab/qexeditor.cpp 
