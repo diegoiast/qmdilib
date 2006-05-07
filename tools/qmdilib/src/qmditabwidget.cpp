@@ -1,5 +1,8 @@
-#include <QMainWindow>
+#include <QEvent>
+#include <QMouseEvent>
 #include <QAction>
+#include <QMenu>
+#include <QMainWindow>
 
 #include "qmditabwidget.h"
 #include "qmdihost.h"
@@ -14,6 +17,48 @@
  * \see qmdiServer, QTabWidget
  */
 
+/**
+ * \class qmdiTabBar
+ * \brief helper class for qmdiTabWidget
+ */
+
+/**
+ * \brief mouse pressed event handler
+ * \param event
+ *
+ * This is an overloaded function, which will emit a signal
+ * with the tab number which was pressed. There are 2 signals
+ * emited: middleMousePressed(int) and rightMousePressed(int)
+ */
+void qmdiTabBar::mousePressEvent ( QMouseEvent * event )
+{
+	if (event->button() == Qt::MidButton)
+	{
+		int tabCount = count();
+		for( int i=0; i<tabCount; i++ )
+		{
+			if (tabRect(i).contains(event->pos()))
+			{
+				emit middleMousePressed(i, event->pos());
+				break;
+			}
+		}
+	}
+	else if (event->button() == Qt::RightButton)
+	{
+		int tabCount = count();
+		for( int i=0; i<tabCount; i++ )
+		{
+			if (tabRect(i).contains(event->pos()))
+			{
+				emit rightMousePressed(i, event->pos());
+				break;
+			}
+		}
+	}
+
+	QTabBar::mousePressEvent(event);
+}
 
 /**
  * \class qmdiTabWidget
@@ -63,6 +108,11 @@ qmdiTabWidget::qmdiTabWidget( QWidget *parent, qmdiHost *host )
 	activeWidget = NULL;
 	
 	connect( this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+
+	QTabBar *b = new qmdiTabBar;
+	connect( b, SIGNAL(middleMousePressed(int,QPoint)), this, SLOT(tryCloseClient(int)));
+	connect( b, SIGNAL(rightMousePressed(int,QPoint)), this, SLOT(showClientMenu(int,QPoint)));
+	setTabBar( b );
 }
 
 
@@ -99,9 +149,106 @@ void qmdiTabWidget::tabChanged( int i )
 		mdiHost->mergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
-	mdiHost->updateGUI( m );
+	mdiHost->updateGUI( m );	
 }
 
+
+/**
+ * \brief request an mdi client to close
+ * \param i the number of the client (tab) to be closed
+ *
+ * Call this slot to ask the mdi client to close itself.
+ * The mdi client may show a dialog to ask for saving. It's not
+ * ganranteed that the action will be handled as the mdi client
+ * can abort the action.
+ *
+ * \see qmdiClient::closeClient()
+ */
+void qmdiTabWidget::tryCloseClient( int i )
+{
+	qmdiClient *client = dynamic_cast<qmdiClient*>(widget(i));
+	if (!client)
+		return;
+
+	client->closeClient();
+}
+
+
+/**
+ * \brief request to close all other clients
+ * \param i the number of the client to keep open
+ *
+ * Call this slot to ask all the mdi clients (but the i parameter).
+ * Each mdi client may show a dialog to ask for saving. It's not
+ * ganranteed that the action will be handled as the mdi client
+ * can abort the action. At the end, only the client number i will
+ * not be asked to close itself.
+ *
+ * \see qmdiClient::closeClient() tryCloseClient() tryCloseAllCliens
+ */
+void qmdiTabWidget::tryCloseAllButClient( int i )
+{
+	int c = count();
+
+	for( int j=0; j<c; j++ )
+	{
+		if (j == i)
+			continue;
+		
+		qmdiClient *client = dynamic_cast<qmdiClient*>(widget(j));
+		if (!client)
+			continue;
+
+		client->closeClient();
+	}
+}
+
+
+/**
+ * \brief try to close all mdi clients
+ *
+ * Call this slot when you want to close all the mdi clients.
+ */
+void qmdiTabWidget::tryCloseAllCliens()
+{
+	int c = count();
+
+	for( int i=0; i<c; i++ )
+	{
+		qmdiClient *client = dynamic_cast<qmdiClient*>(widget(i));
+		if (!client)
+			continue;
+
+		client->closeClient();
+	}	
+}
+
+
+void qmdiTabWidget::showClientMenu( int i, QPoint p )
+{
+	QAction *closeThis	= new QAction(tr("Close this window"), this);
+	QAction *closeOthers	= new QAction(tr("Close other windows"), this);
+	QAction *closeAll	= new QAction(tr("Close all windows"), this);
+	QMenu *menu = new QMenu( tr("Local actions") );
+	menu->addAction( closeThis );
+	menu->addAction( closeOthers );
+	menu->addAction( closeAll );
+
+	QAction *q = menu->exec( this->mapToGlobal(p) );
+
+	if ( q == closeThis)
+	{
+		tryCloseClient( i );
+	}
+	else if  (q == closeOthers)
+	{
+		tryCloseAllButClient( i );
+	}
+	else if (q == closeAll )
+	{
+		tryCloseAllCliens();
+	}
+}
 
 /**
  * \brief callback to get alarm of deleted object
