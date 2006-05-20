@@ -52,6 +52,7 @@ QexTextEdit::QexTextEdit( QString file, QWidget *parent):QTextEdit( parent )
 	actionCut	= new QAction( QIcon(":images/cut.png"), tr("&cut"), this );
 	actionPaste	= new QAction( QIcon(":images/paste.png"), tr("&Paste"), this  );
 	actionFind	= new QAction( QIcon(":images/find.png"), tr("&Find"), this  );
+	actiohAskHelp	= new QAction( tr("Help about this calss"), this );
 
 	connect( this, SIGNAL(copyAvailable(bool)), actionCopy, SLOT(setEnabled(bool)) );
 	connect( this, SIGNAL(copyAvailable(bool)), actionCut, SLOT(setEnabled(bool)) );
@@ -65,6 +66,7 @@ QexTextEdit::QexTextEdit( QString file, QWidget *parent):QTextEdit( parent )
         connect( actionCut, SIGNAL(triggered()), this, SLOT(cut()) );
         connect( actionPaste, SIGNAL(triggered()), this, SLOT(paste()) );
 	connect( actionClose, SIGNAL(triggered()), this, SLOT(fileClose()));
+	connect( actiohAskHelp, SIGNAL(triggered()), this, SLOT(helpShowHelp()));
 
 	actionUndo->setEnabled( false );
 	actionRedo->setEnabled( false );
@@ -211,8 +213,15 @@ bool QexTextEdit::fileSaveAs()
 	return saveFile( fileName );
 }
 
-
 bool QexTextEdit::fileClose()
 {
 	return closeClient();
+}
+
+void QexTextEdit::helpShowHelp()
+{
+	if (!mdiServer)
+		return;
+
+// 	mdiServer->
 }

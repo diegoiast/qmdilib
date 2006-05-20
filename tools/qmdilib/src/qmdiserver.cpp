@@ -11,7 +11,7 @@
 
 /**
  * \class qmdiServer
- * \brief a default niterface for mdi servers
+ * \brief A default interface for mdi servers
  *  
  * This class is used only to get messages from the qmdiClient
  * that it asks to be removed from the list.

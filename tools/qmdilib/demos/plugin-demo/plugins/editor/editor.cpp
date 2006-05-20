@@ -1,4 +1,5 @@
 #include <QAction>
+#include <QUrl>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QMainWindow>
@@ -53,6 +54,18 @@ QWidget* EditorPlugin::getConfigDialog()
 	return configUI;
 }
 
+QStringList EditorPlugin::myExtensions()
+{
+	QStringList s;
+	s << tr("Sources"	,"EditorPlugin::fileOpen: open source files")	+ " (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc)";
+	s << tr("Headers",	 "EditorPlugin::fileOpen: open header files")	+ " (*.h *.hpp *.hxx *.inc)";
+	s << tr("Qt project", "EditorPlugin::fileOpen: open *.pro")		+ " (*.pro *.pri)";
+// 	s << tr("All files",  "EditorPlugin::fileOpen: open any file")	+ " (*.*)";
+
+	return s;
+}
+
+
 void EditorPlugin::getData()
 {
 	makeBackups	= ui.cbMakeBackup->isChecked();
@@ -70,6 +83,28 @@ void EditorPlugin::setData()
 
 	// emit a signal and notify all editors
 	// about the new settings
+}
+
+int EditorPlugin::canOpenFile( const QString fileName )
+{
+	QUrl u(fileName);
+
+	if (u.scheme().isEmpty())
+		return 1;
+
+	if (u.scheme().toLower() == "file")
+		return 1;
+
+	return -1;
+}
+
+bool EditorPlugin::openFile( const QString fileName, int x, int y, int z )
+{
+	QexTextEdit *editor = new QexTextEdit( fileName, dynamic_cast<QMainWindow*>(mdiServer) );
+	editor->hide();
+	mdiServer->addClient( editor );
+
+	return true;
 }
 
 void EditorPlugin::fileNew()

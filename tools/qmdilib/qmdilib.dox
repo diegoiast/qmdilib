@@ -1,0 +1,104 @@
+/**
+
+\mainpage qmdilib
+
+This is a simple mdi library for Qt 4. The goal of this project, is to provide an easy way to 
+modifying menus and toolbars of windows on demand. This can be used to present different menus 
+and toolbars to widgets inside a QTabWidget, hiding or showing a different set of menus on demand
+or even enabling a small plugin system.
+
+The library is fully documented, and contains some demostrations. It should compile flawlessly 
+(no warnings) with a single "qmake; make" on the root directory of the project. It is known to work
+on Windows and Linux, and there is no reason why it should not work on other platforms supported by Qt4.
+Currently only gcc is tested, but other compilers should be able to compile this library
+
+\section getting_started Getting started
+Click here to see read the \ref small_tutor
+
+You can see the documentation for the classes of this library:
+
+ - qmdiClient
+ - qmdiServer
+ - qmdiHost
+ - qmdiActionGroup
+
+\section license License of qmdilib
+The license of qmdilib is the LGPL 2.1, which can be found here
+http://www.gnu.org/licenses/lgpl.html
+
+
+
+
+
+\page small_tutor Small tutorial and introduction
+
+The libtrary conatins 3 main classes:
+
+-# an mdi client, a class which inherits qmdiClient
+-# an mdi server, for example qmdiServer
+-# an mdi host, a class which inherits qmdiHost
+
+The mdi host is generally the main window.
+The mdi server is usually a qmdiTabWidget.
+The mdi clients are any widget you define, these are the widgets
+inserted into the mdi server.
+
+When a new client is selected on the mdi server (for example a users selects
+a new tab), the mdi server (qmdiTabWidget) will try and merge the menus and
+toolbars in the mdi client (the widget inside the tab widget) into the mdi host
+(the main window). The mdi server will also unmerge the last mdi client from the
+mdi host. It also does a few other things behind the scenes, but you don't have
+to worry about it.
+
+There are a few steps you should follow to use the library on your application:
+
+-# Inherit the main window from QMainWindow and qmdiHost.
+\code
+class myWindow: public QMainWindow, public qmdiHost
+{
+...
+};
+\endcode \n
+-# Into the main window, insert a qmdiTabWidget (instead of a normal QTabWidget)
+\code
+myWindow *w = new myWindow;
+qmdiTabWidget *tab = new qmdiTabWidget(w);
+w->setCentralWidget( tab );
+\endcode \n
+-# Every widget inseted into the tab widget, must also inherit qmdiClient
+\code
+class myWidget: public QWidget, public qmdiClient
+{
+...
+};
+
+tab->insert( new myWidget );
+\endcode \n
+-# Menus and toolbars (on the main window, and on the mdi clients) must be defined 
+   using the qmdiActionGroup widget:
+\code
+QAction *fileNew = new QAction( this, "New" );
+
+menus["&File"]->addAction( fileNew );
+toolbars["File"]->addAction( fileNew );
+\endcode \n
+-# After the menu and toolbar allocations (usually at the constructor of the main
+window), don't forget to call updateGUI:
+\code
+myWindow::myWindow( QWidget *parent ):QMainWindow(parent)
+{
+	// some initializations
+	...
+
+	// generate some QActions
+	...
+
+	updateGUI( this );
+}
+\endcode
+
+There are some full examples available, please read the code on these examples to get a 
+full examples.
+
+Go to the \ref index "Main page"
+ */

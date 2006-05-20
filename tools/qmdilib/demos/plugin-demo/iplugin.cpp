@@ -44,12 +44,35 @@ void	IPlugin::setData()
 {
 }
 
-void	IPlugin::loadConfig( QSettings &settings )
+void	IPlugin::loadConfig( const QSettings &settings )
 {
 }
 
-void	IPlugin::SaveConfig( QSettings &settings )
+void	IPlugin::SaveConfig( const QSettings &settings )
 {
+}
+
+QStringList	IPlugin::myExtensions()
+{
+	QStringList s;
+
+	// no available extensions by default
+	return s;
+}
+
+int 	IPlugin::canOpenFile( const QString fileName )
+{
+	// can't open no file
+	return -1;
+}
+
+bool	IPlugin::openFile( QString fileName, int x, int y, int z )
+{
+	// hacks to avoid warnings
+	x = y = z = fileName.length();
+	
+	// refuse to open any file
+	return false;
 }
 
 bool 	IPlugin::isEnabled()

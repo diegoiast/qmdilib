@@ -11,6 +11,7 @@
 //
 #include <QStandardItemModel>
 #include <QMainWindow>
+#include <QFileDialog>
 
 #include "qmdihost.h"
 #include "qmdiserver.h"
@@ -46,13 +47,15 @@ PluginManager::PluginManager( qmdiHost *host, qmdiServer *server )
 
 	dlg.addPage( w, QIcon("images/config.png") );
 
-	/*
 	mainOpen = new QAction( "New Multi Open", this );
 	menus["&File"]->addAction( mainOpen );
 	connect( mainOpen, SIGNAL(triggered()), this, SLOT(on_mainOpen_clicked()));
 	if (mdiHost)
 		mdiHost->mergeClient( this );
-	*/
+
+/*	// testing..
+	extensAvailable << "Images (*.png *.xpm *.jpg)";
+	extensAvailable << "C/C++ sources (*.c *.cpp *.h)";*/
 }
 
 PluginManager::~PluginManager()
@@ -197,7 +200,62 @@ void PluginManager::on_aboutPlugin_clicked()
 
 void PluginManager::on_mainOpen_clicked()
 {
-	qDebug( "ping" );
+	static QString workingDir = "";
+	QString extens, e;
+	QStringList extensAvailable;
+	IPlugin *p;
+	
+	foreach( p, plugins )
+	{
+		if (!p->enabled)
+			continue;
+		extensAvailable << p->myExtensions();
+	}
+	
+	int j = extensAvailable.size();	
+	for (int i = 0; i < j; ++i)
+	{
+		extens += extensAvailable.at(i);
+		if (i<j-1)
+			extens += ";;";
+	}
+
+
+	QStringList s = QFileDialog::getOpenFileNames(
+		NULL,
+		tr("Choose a file"),
+		workingDir,
+		extens
+	);
+
+	if (s.isEmpty())
+		return;
+
+	// for each selected file, try to open it
+	foreach( e, s )
+	{
+		IPlugin *bestPlugin = NULL;
+		
+		// who can open this file...?
+		foreach( p, plugins )
+		{
+			if (!p->enabled)
+				continue;
+			
+			if (!bestPlugin)
+				bestPlugin = p;
+			else
+			{
+				// is this plugin better then the selected?
+				if (p->canOpenFile(e) > bestPlugin->canOpenFile(e))
+					bestPlugin = p;
+			}
+		}
+
+		// if found, ask it to open the file
+		if (bestPlugin)
+			bestPlugin->openFile( e );
+	}
 }
 
 void PluginManager::on_apply_dialog()

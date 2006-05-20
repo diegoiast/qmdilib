@@ -13,10 +13,16 @@
 
 /**
  * \class qmdiClient
- * \brief interface for menus and toolbars
+ * \brief Interface for menus and toolbars
  *
- * If you want to use qmdilib, the new widgets which will define
- * their own menus and toolbars must be derived from this class
+ * If you want to use qmdilib, every one of your widgets must inherit
+ * qmdiClient and define their own menus using this class. Any widget
+ * which will be inserted into a qmdiServer and does not inherit qmdiClient
+ * will not show special menus and toolbars.
+ * 
+ * On the documentation of qmdilib, any widget inserted into a qmdiServer
+ * that inherits qmdiClient will be called \b mdi \b client. In the following 
+ * example the class \b newclient is a \b mdi \b client.
  * 
  * \code
  * class newclient: public QTextEdit, public qmdiClient
@@ -25,20 +31,25 @@
  * };
  * \endcode
  * 
- * You will have also to insert this mdi client into an mdi server
- * (for example qmdiTabWidget). 
- *
- * Difining menus and toolbars is easy:
+ * Defining menus and toolbars is easy:
  * 
  * \code
- * menus["&File"]->addAction( actionNew );
- * menus["&File"]->addSeparator();
- * menus["&File"]->addAction( actionQuit );
+ * newclient::newclient()
+ * {
+ * 	// some code ...
+ * 
+ *	menus["&File"]->addAction( actionNew );
+ *	menus["&File"]->addSeparator();
+ *	menus["&File"]->addAction( actionQuit );
+ * 
+ * 	toolbars["General"]->addAction( actionNew );
+ * }
  *
- * toolbars["General"]->addAction( actionNew );
  * \endcode
  * 
- * The menus and toolbars will be merged automatically for you.
+ * You will have also to insert this mdi client into an mdi server
+ * (for example qmdiTabWidget). The menus and toolbars will be merged 
+ * automatically for you every time you widget is selected on the mdi server.
  * 
  * \see qmdiActionGroupList
  * \see qmdiTabWidget

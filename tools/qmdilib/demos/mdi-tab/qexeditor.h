@@ -32,6 +32,7 @@ public slots:
 	bool fileSave();
 	bool fileSaveAs();
 	bool fileClose();
+	void helpShowHelp();
 
 private:
 	QAction *actionSave;
@@ -43,6 +44,7 @@ private:
 	QAction *actionCut;
 	QAction *actionPaste;
 	QAction *actionFind;
+	QAction *actiohAskHelp;
 
 	QString fileName;
 };

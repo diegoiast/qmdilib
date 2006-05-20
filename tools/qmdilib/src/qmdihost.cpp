@@ -10,6 +10,18 @@
 #include "qmdihost.h"
 #include "qmdiclient.h"
 
+/**
+ * \class qmdiHost 
+ * \brief The class which conatain the menus and toolbars defined by qmdiClient
+ *
+ * Every time a user selects a new widget in the mdi server (for example qmdiTabWidget), the
+ * server will try and ask the host to modify the menus. The interface in which the QTabWidget
+ * and QMainWindow talk is this class.
+ * 
+ * Generally speaking, you don't have to know much of this class, only inherit it in your
+ * main windows.
+ * 
+ */
 
 qmdiHost::qmdiHost()
 {

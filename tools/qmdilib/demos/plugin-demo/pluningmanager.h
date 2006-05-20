@@ -49,9 +49,10 @@ private:
 	qmdiHost		*mdiHost;
 	qmdiServer		*mdiServer;
 	ConfigDialog		dlg;
-	Ui::plugin_list ui;
+	Ui::plugin_list		ui;
 
-// 	QAction			*mainOpen;
+	QAction			*mainOpen;
+// 	QStringList		extensAvailable;
 };
 
 #endif

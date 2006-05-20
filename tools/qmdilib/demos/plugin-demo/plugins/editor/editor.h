@@ -15,6 +15,9 @@ public:
 
 	void showAbout();
 	QWidget* getConfigDialog();
+	virtual QStringList myExtensions();
+	virtual int canOpenFile( const QString fileName );
+	virtual bool openFile( const QString fileName, int x=-1, int y=-1, int z=-1 );
 	void getData();
 	void setData();
 

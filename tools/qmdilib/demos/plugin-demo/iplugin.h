@@ -25,8 +25,12 @@ public:
 	virtual void getData();
 	virtual void setData();
 
-	virtual void loadConfig( QSettings &settings );
-	virtual void SaveConfig( QSettings &settings );
+	virtual void loadConfig( const QSettings &settings );
+	virtual void SaveConfig( const QSettings &settings );
+
+	virtual QStringList myExtensions();
+	virtual int canOpenFile( const QString fileName );
+	virtual bool openFile( const QString fileName, int x=-1, int y=-1, int z=-1 );
 
 	bool 	isEnabled();
 	QIcon	getIcon();
