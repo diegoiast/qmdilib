@@ -1,4 +1,4 @@
-#include <QString>
+	#include <QString>
 #include <QAction>
 #include <QMenuBar>
 #include <QToolBar>
@@ -51,7 +51,6 @@ qmdiActionGroup* qmdiActionGroupList::operator[]( const QString name )
 {
 	return getActionGroup( name );
 }
-
 
 /**
  * \brief get the instance of a action group
@@ -171,7 +170,8 @@ QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
 
 /**
  * \brief update a list of QToolBars from the definitions on this action group list
- * \param window the window in which the toolbars should be placed
+ * \param window the window in which the toolbars should be place
+ * \param toolbars a list o toolbars available on the main window
  * \return a list of toolbars which has been created from this action group list
  *
  * This function generates from the defintions on this class a valid list of

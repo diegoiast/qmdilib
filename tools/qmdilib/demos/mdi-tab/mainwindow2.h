@@ -2,8 +2,8 @@
 #define __MAIN_WIN_H__
 
 /**
- * \file mainwindow.h
- * \brief Definition of the main window class
+ * \file mainwindow2.h
+ * \brief Implementation of the main window class of the 2nd demo
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
  * \see MainWindow

@@ -78,6 +78,93 @@ qmdiClient::~qmdiClient()
 }
 
 /**
+ * \var qmdiClient::name
+ * \brief The name of the mdi client
+ * 
+ * This property defines the name of the mdi client. The \b name 
+ * is used by qmdiTabWidget for setting the tab name, when inserting 
+ * the widget into the tab widget.
+ */
+
+
+/**
+ * \var qmdiClient::fileName
+ * \brief The file opened by this mdi client
+ * 
+ * This property defines the file name which is opened by the mdi client.
+ * The file name is not really used inside \b qmdilib , but it's left 
+ * for usage outside of library. The \b name property should reflect
+ * this property, but it's not really needed.
+ */
+
+/**
+ * \var qmdiClient::menus
+ * \brief The list of menus defined by this mdi client
+ * 
+ * The list of menus this mdi client defines, and will be merged
+ * each time the mdi client is showed on screen. 
+ * 
+ * The syntax for defining menus is:
+ * 
+ * \code
+ * menus->addAction( actionNew );
+ * menus->addAction( actionOpen );
+ * menus->addAction( actionSave );
+ * menus->addSeparator();
+ * menus->addAction( actionQuit );
+ * \endcode
+ * 
+ * \see qmdiClient::toolbars
+ */
+
+/**
+ * \var qmdiClient::toolbars
+ * \brief The list of toolbars defined by this mdi client
+ * 
+ * The list of toolbars this mdi client defines, and will be merged
+ * each time the mdi client is showed on screen.
+ * 
+ * The syntax for defining toolbars is:
+ * 
+ * \code
+ * toolbars->addAction( actionNew );
+ * toolbars->addSeparator();
+ * toolbars->addAction( actionOpen );
+ * toolbars->addAction( actionSave );
+ * \endcode
+ * 
+ * \see qmdiClient::menus
+ */
+
+
+/**
+ * \var qmdiClient::mdiServer
+ * \brief A pointer to the mdi server in which this client is inserted.
+ * 
+ * When the mdi client is inserted into a mdi server, this property
+ * is set to point to the correponding mdi server. This property is
+ * read only, and you should not assign value ot it.
+ * 
+ * You can use this property to insert new clients into the server,
+ * from this client.
+ * 
+ * \see qmdiServer
+ */
+
+/**
+ * \var qmdiClient::myself
+ * \brief A cast of this mdi client into a QObject
+ * 
+ * This property contains a cast of this client, into a 
+ * QObject (if the instanse inherits QObject). 
+ * 
+ * This is a read only property, which is set by the mdi severs
+ * when this client is inserted into the server.
+ *
+ * \see qmdiTabWidget::tabInserted ( int index )
+ */
+
+/**
  * \brief close the mdi client
  * \return true if the widget is closed after this call
  * 

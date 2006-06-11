@@ -16,8 +16,10 @@
  * This class is used only to get messages from the qmdiClient
  * that it asks to be removed from the list.
  * 
- * Classes which derive this class, MUST implement the clientDeleted
- * function.
+ * Classes which derive this class, MUST implement the clientDeleted()
+ * function. This a rather abstract class, you are probably looking for qmdiTabWidget.
+ * 
+ * Other classes which implement this interface are planned for next versions.
  */
 
 

@@ -2,7 +2,7 @@
 #define __QEX_EDITOR_H__
 
 /**
- * \file qextexteditor.h
+ * \file qexeditor.h
  * \brief Definition of the extended text editor class
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL

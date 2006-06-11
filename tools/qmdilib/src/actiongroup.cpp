@@ -30,9 +30,21 @@
 
 
 /**
+ * \brief Construcs an mdi action group
+ * \param name the name of the action group
+ * 
  * Default constructor. Builds a new qmdiActionGroup
  * with a give name. The action group will contain no 
  * actions by default, representing an empty menu or toolbar.
+ * 
+ * If you generate a menu from this action group, the 
+ * \b name will be used as the title of the menu.
+ * 
+ * If you generate a toolbar from this action group, the 
+ * \b name will be used as title of this toolbar. 
+ * 
+ * \see updateMenu()
+ * \see updateToolBar()
  */
 qmdiActionGroup::qmdiActionGroup( QString name )
 {
@@ -54,6 +66,20 @@ qmdiActionGroup::~qmdiActionGroup()
 {
 	// TODO delete all
 }
+
+/**
+ * \var qmdiActionGroup::breakAfter
+ * \brief Defines if a break should be added after this action group list
+ * 
+ * If you set this property to \b true , and you are generating a toolbar
+ * from this action group list, when the toolbar will be displayed for the 
+ * fist time at the screen a break will be entered after this tool.
+ * 
+ * This will actually  call:
+ * \code
+ * QMainWindow::addToolBarBreak()
+ * \endcode
+ */
 
 /**
  * \brief sets an name for this action group
@@ -177,7 +203,7 @@ void qmdiActionGroup::removeAction( QAction *action )
 
 /**
  * \brief remove an action from the action group
- * \param action QAction item to be removed
+ * \param widget QWidget item to be removed
  *
  * Use this function for removing widgets from the menu or
  * toolbar reporesented by this action group.

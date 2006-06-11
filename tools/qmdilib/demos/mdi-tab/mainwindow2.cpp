@@ -14,8 +14,8 @@
 #include "helpbrowse.h"
 
 /**
- * \file mainwindow.cpp
- * \brief Implementation of the main window class
+ * \file mainwindow2.cpp
+ * \brief Implementation of the main window class of the 2nd demo
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
  * \see MainWindow

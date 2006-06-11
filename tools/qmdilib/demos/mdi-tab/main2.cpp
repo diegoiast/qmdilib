@@ -2,8 +2,8 @@
 #include "mainwindow2.h"
 
 /**
- * \file main.c
- * \brief Entry point of this demo
+ * \file main2.cpp
+ * \brief Entry point of 2nd demo
  * \author Diego Iastrubni (elcuco@kde.org)
  * License GPL
  */

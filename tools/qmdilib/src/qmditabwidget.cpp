@@ -27,6 +27,26 @@
  */
 
 /**
+ * \fn qmdiTabBar::middleMousePressed(int tabNumber, QPoint where );
+ * \brief emited when a user presses the middle mouse button [SIGNAL]
+ * \param tabNumber the number of the tab pressed
+ * \param where the location on the screen (relative) where the user clicked
+ *
+ * This is an emited signal which happens when the middle mouse
+ * on the tab bar
+ */
+
+/**
+ * \fn qmdiTabBar::rightMousePressed(int tabNumber, QPoint where );
+ * \brief emited when a user presses the right mouse button [SIGNAL]
+ * \param tabNumber the number of the tab pressed
+ * \param where the location on the screen (relative) where the user clicked
+ *
+ * This is an emited signal which happens when the right mouse
+ * on the tab bar
+ */
+
+/**
  * \brief mouse pressed event handler
  * \param event
  *
@@ -228,6 +248,22 @@ void qmdiTabWidget::tryCloseAllCliens()
 }
 
 
+/**
+ * \brief display the menu of a specific mdi client
+ * \param i the mouse button that has been pressed
+ * \param p the location of the mouse click
+ *
+ * This function is called when a user presses the left mouse
+ * button on the tab bar of the tab widget. The coordinates of the
+ * click are passed on the parameter \b p , while the
+ * mouse button which has been pressed is passed on the
+ * parameter \b p .
+ *
+ * This slot is connected to rightMousePressed signal of the qmdiTabBar
+ * at the constructor of this class.
+ * 
+ * \see qmdiTabBar
+ */
 void qmdiTabWidget::showClientMenu( int i, QPoint p )
 {
 	QAction *closeThis	= new QAction(tr("Close this window"), this);

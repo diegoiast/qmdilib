@@ -23,6 +23,59 @@
  * 
  */
 
+/**
+ * \var qmdiHost::menus
+ * \brief the default menus defined in this mdi host
+ *
+ * When you construct a window which derives this class,
+ * you cannot define the menus the way which is dictated by
+ * Qt. Instead you must follow the code guidelines provided by
+ * this library.
+ *
+ * The menus defined in this class, will be displayed by default
+ * on the mdi host. it's a wise idea to define the order of the
+ * menus on your application on the initialization of the application,
+ * since there is no way of changing the order of the menus later
+ * on.
+ *
+ * \code
+ * menus["&File"];
+ * menus["&Edit"];
+ * menus["&Help"];
+ * \endcode
+ *
+ * \see \ref small_tutor
+ * \see qmdiServer
+ * \see qmdiActionGroupList
+ */
+
+/**
+ * \var qmdiHost::toolbars
+ * \brief the default toolbars defined in this mdi host
+ *
+ * When you construct a window which derives this class,
+ * you cannot define the toolbars the way which is dictated by
+ * Qt. Instead you must follow the code guidelines provided by
+ * this library.
+ *
+ * The toolbars defined in this class, will be displayed by default
+ * on the mdi host.
+ *
+ * \see \ref small_tutor
+ * \see qmdiServer
+ * \see qmdiActionGroupList
+ */
+
+/**
+ * \var qmdiHost::toolBarList
+ * \brief internal list of available toolbars
+ *
+ * As Qt4 does not provide an interface for listing the available
+ * toolbars, the list is maintained as a separate list.
+ *
+ * You should usually not use this list directly.
+ */
+ 
 qmdiHost::qmdiHost()
 {
 	toolBarList = NULL;
@@ -32,7 +85,6 @@ qmdiHost::~qmdiHost()
 {
 	delete toolBarList;
 }
-
 
 /**
  * \brief update the toolbars and menus
@@ -64,6 +116,21 @@ void qmdiHost::updateGUI( QMainWindow *window )
 	menus.updateMenu( window->menuBar() );
 }
 
+/**
+ * \brief merge the toolbars and menus of another mdi client
+ * \param client the client to be merged
+ *
+ * This function is used to merge the toolbars and contents
+ * of the mdi client to be merged into this client. The menus
+ * and toolbars of the host will be appended to the end
+ * of the menus and toolbars of this mdi host.
+ *
+ * After a call to this function, you should manually call
+ * updateGUI
+ *
+ * \see updateGUI
+ * \see unmergeClient
+ */
 void qmdiHost::mergeClient( qmdiClient *client )
 {
 	if (client == NULL)
@@ -73,6 +140,21 @@ void qmdiHost::mergeClient( qmdiClient *client )
 	toolbars.mergeGroupList( &client->toolbars );
 }
 
+/**
+ * \brief merge the toolbars and menus of another mdi client
+ * \param client the client to be merged
+ *
+ * This function is used to unmerge the toolbars and contents
+ * of the mdi client to be unmerged into this client. The menus
+ * and toolbars of host will be updated, and all the entries
+ * defined in the client will be removed.
+ *
+ * After a call to this function, you should manually call
+ * updateGUI
+ *
+ * \see updateGUI
+ * \see mergeClient
+ */
 void qmdiHost::unmergeClient( qmdiClient *client )
 {
 	if (client == NULL)
