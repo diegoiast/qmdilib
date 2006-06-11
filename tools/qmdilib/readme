@@ -1,0 +1,19 @@
+This is qmdilib 0.0.1.
+
+This is a simple mdi library for Qt 4. The goal of this project, 
+is to provide an easy way to modifying menus and toolbars of windows 
+on demand. This can be used to present different menus and toolbars to 
+widgets inside a QTabWidget, hiding or showing a different set of menus 
+on demand or even enabling a small plugin system.
+
+The library is fully documented, and contains some demostrations. It should compile 
+flawlessly (no warnings) with a single "qmake; make" on the root directory of the 
+project. It is known to work on Windows and Linux, and there is no reason why it 
+should not work on other platforms supported by Qt4. Currently only gcc is tested, 
+but other compilers should be able to compile this library
+
+The license of this library is LGPL
+
+If you have any questions, please the the HTML manual available at the doc/html directory.
+
+- Diego Iastrubni <elcuco@kde.org>, 11-6-2006
