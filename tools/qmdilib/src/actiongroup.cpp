@@ -9,6 +9,8 @@
 #include <QAction>
 #include <QMenu>
 #include <QToolBar>
+#include <QApplication>
+#include <QMainWindow>
 
 #include "actiongroup.h"
 
@@ -364,9 +366,10 @@ QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
 	if (!toolbar)
 		toolbar = new QToolBar( name );
 
+	toolbar->setUpdatesEnabled(false);
+	toolbar->hide();
 	toolbar->clear();
-	int i = 0;
-
+	int i = 0;	
 	foreach( QObject *o, actionGroupItems )
 	{
 		QAction *a = qobject_cast<QAction*> (o);
@@ -376,12 +379,8 @@ QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
 		{
 			QWidget *w = qobject_cast<QWidget*> (o);
 			if (w)
-			{
 				toolbar->addWidget( w );
-				w->setVisible(true);
-			}
 		}
-
 		i++;
 	}
 
@@ -389,6 +388,7 @@ QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
 		toolbar->hide();
 	else
 		toolbar->show();
-	
+	toolbar->setUpdatesEnabled(true);
+
 	return toolbar;
 }

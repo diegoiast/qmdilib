@@ -53,6 +53,9 @@ qmdiServer::~qmdiServer()
  * add the widget into another location, setting an icon for this client,
  * etc.
  *
+ * Since it's defined as pure virtual, you must implement this on
+ * derived classes.
+ * 
  * \see qmdiTabWidget
  */
 #if 0

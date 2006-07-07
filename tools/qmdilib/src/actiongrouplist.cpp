@@ -1,4 +1,4 @@
-	#include <QString>
+#include <QString>
 #include <QAction>
 #include <QMenuBar>
 #include <QToolBar>
@@ -188,6 +188,9 @@ QList<QToolBar*>* qmdiActionGroupList::updateToolBar( QList<QToolBar*> *toolbars
 	if (toolbars == NULL)
 		toolbars = new QList<QToolBar*>;
 
+	if (window)
+		window->setUpdatesEnabled(false);
+	
 	foreach( qmdiActionGroup* i, actionGroups )
 	{
 		QToolBar *tb = NULL;
@@ -218,5 +221,8 @@ QList<QToolBar*>* qmdiActionGroupList::updateToolBar( QList<QToolBar*> *toolbars
 		tb = i->updateToolBar( tb );
 	}
 
+	if (window)
+		window->setUpdatesEnabled(true);
+	
 	return toolbars;
 }
