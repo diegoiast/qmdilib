@@ -29,8 +29,8 @@
  * 
  * \see qmdiClient
  */
- 
-QexHelpBrowser::QexHelpBrowser( QUrl home, QWidget *parent )
+
+QexHelpBrowser::QexHelpBrowser( QUrl home, bool singleToolbar, QWidget *parent )
 	:QTextBrowser(parent)
 {
 	zoomCombo = new QComboBox;
@@ -61,6 +61,18 @@ QexHelpBrowser::QexHelpBrowser( QUrl home, QWidget *parent )
 	actionZoomIn->setShortcut( QKeySequence("Ctrl++") );
 	actionZoomOut->setShortcut( QKeySequence("Ctrl+-") );
 
+	
+	initInterface( singleToolbar );
+	homePage = home;
+	setSource( homePage );
+}
+
+void QexHelpBrowser::initInterface( bool singleToolbar )
+{
+	QString toolbarFile = singleToolbar? "main" : "File";
+	QString toolbarEdit = singleToolbar? "main" : "Edit operations";
+	QString toolbarNavigate = singleToolbar? "main" : "Navigation";
+
 	// define the menus for this widget
 	menus["&Edit"]		->addAction( actionCopy );
 	
@@ -72,17 +84,19 @@ QexHelpBrowser::QexHelpBrowser( QUrl home, QWidget *parent )
 	menus["&Navigation"]->addAction( actionZoomOut );
 
 	// define the toolbars for this widget
-	toolbars["Edit operations"]->addAction( actionCopy );
-	toolbars["Navigation"]->addAction( actionHome );
-	toolbars["Navigation"]->addAction( actionBack );
-	toolbars["Navigation"]->addAction( actionNext );
-	toolbars["Navigation"]->addSeparator();
-	toolbars["Navigation"]->addAction( actionZoomIn );
-	toolbars["Navigation"]->addAction( actionZoomOut );
-	toolbars["Navigation"]->addWidget( zoomCombo );
+	if (singleToolbar)
+		toolbars[ toolbarFile ]->addSeparator();
+	toolbars[ toolbarEdit ]->addAction( actionCopy );
 	
-	homePage = home;
-	setSource( homePage );
+	if (singleToolbar)
+		toolbars[ toolbarNavigate ]->addSeparator();
+	toolbars[ toolbarNavigate ]->addAction( actionHome );
+	toolbars[ toolbarNavigate ]->addAction( actionBack );
+	toolbars[ toolbarNavigate ]->addAction( actionNext );
+	toolbars[ toolbarNavigate ]->addSeparator();
+	toolbars[ toolbarNavigate ]->addAction( actionZoomIn );
+	toolbars[ toolbarNavigate ]->addAction( actionZoomOut );
+	toolbars[ toolbarNavigate ]->addWidget( zoomCombo );
 }
 
 void QexHelpBrowser::goHome()

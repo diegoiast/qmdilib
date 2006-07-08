@@ -20,7 +20,8 @@ class QexHelpBrowser: public QTextBrowser, public qmdiClient
 {
 	Q_OBJECT
 public:
-	QexHelpBrowser( QUrl home, QWidget *parent=0 );
+	QexHelpBrowser( QUrl home, bool singleToolbar=false, QWidget *parent=0 );
+	void initInterface( bool singleToolbar=false );
 
 public slots:
 	void goHome();

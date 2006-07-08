@@ -30,6 +30,8 @@
  * you insert a non mdi client into a qmdiTabWidget.
  */
 
+#define SINGLE_TOOLBAR false
+
 MainWindow2::MainWindow2( QWidget *owner ):QMainWindow(owner)
 {
 	statusBar();
@@ -68,8 +70,8 @@ void MainWindow2::init_gui()
 	menus["&Help"]->addAction( actionAbout );
 
 	// toolbars
-	toolbars["File"]->addAction( actionFileNew );
-	toolbars["File"]->addAction( actionQtTopics );
+	toolbars["main"]->addAction( actionFileNew );
+	toolbars["main"]->addAction( actionQtTopics );
 
 	// show the stuff on screen
 	updateGUI( this );
@@ -107,7 +109,7 @@ void MainWindow2::about()
 
 void MainWindow2::fileNew()
 {
-	QexTextEdit *editor = new QexTextEdit;
+	QexTextEdit *editor = new QexTextEdit( NULL, SINGLE_TOOLBAR );
 	editor->hide();
 	tabWidget->addTab( editor, "MDI Editor" );
 }
@@ -127,7 +129,7 @@ void MainWindow2::fileClose()
 void MainWindow2::helpQtTopics()
 {
 	QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
-	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + helpFile) );
+	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + helpFile), SINGLE_TOOLBAR );
 	browser->hide();
 	tabWidget->addTab( browser, "Qt help" );
 }

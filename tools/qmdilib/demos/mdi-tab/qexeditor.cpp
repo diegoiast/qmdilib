@@ -34,7 +34,8 @@
  * \see qmdiClient
  */
  
-QexTextEdit::QexTextEdit( QString file, QWidget *parent):QTextEdit( parent )
+QexTextEdit::QexTextEdit( QString file, bool singleToolbar, QWidget *parent):
+	QTextEdit( parent )
 {
 	QFont font;
 	font.setFamily("Courier New");
@@ -75,6 +76,15 @@ QexTextEdit::QexTextEdit( QString file, QWidget *parent):QTextEdit( parent )
 	actionPaste->setEnabled( false );
 	actionClose->setToolTip( "Closing from the widget itself" );
 
+	initInterface( singleToolbar );
+	openFile( file );
+}
+
+void QexTextEdit::initInterface( bool singleToolbar )
+{
+	QString toolbarFile = singleToolbar? "main" : "File";
+	QString toolbarEdit = singleToolbar? "main" : "Edit operations";
+	
 	// define the menus for this widget
 	menus["&File"]		->addAction( actionSave );
 	menus["&File"]		->addAction( actionClose );
@@ -85,23 +95,26 @@ QexTextEdit::QexTextEdit( QString file, QWidget *parent):QTextEdit( parent )
 	menus["&Edit"]		->addAction( actionCut );
 	menus["&Edit"]		->addAction( actionPaste );
 	menus["&Search"]	->addAction( actionFind );
-
+	
 	// define the toolbars for this widget
-	toolbars["File"]->breakAfter = true;
-	toolbars["File"]->addAction( actionSave );
-	toolbars["File"]->addAction( actionClose );
+	if (singleToolbar)
+		toolbars[ toolbarFile ]->addSeparator();
+	
+	toolbars[ toolbarFile ]->breakAfter = true;
+	toolbars[ toolbarFile ]->addAction( actionSave );
+	toolbars[ toolbarFile ]->addAction( actionClose );
 
 	
-	toolbars["Edit operations"]->addAction( actionCopy );
-	toolbars["Edit operations"]->addAction( actionCut );
-	toolbars["Edit operations"]->addAction( actionPaste );
-	toolbars["Edit operations"]->addSeparator();
-	toolbars["Edit operations"]->addAction( actionUndo );
-	toolbars["Edit operations"]->addAction( actionRedo );
-
-	openFile( file );
+	if (singleToolbar)
+		toolbars[ toolbarEdit ]->addSeparator();
+	
+	toolbars[ toolbarEdit ]->addAction( actionCopy );
+	toolbars[ toolbarEdit ]->addAction( actionCut );
+	toolbars[ toolbarEdit ]->addAction( actionPaste );
+	toolbars[ toolbarEdit ]->addSeparator();
+	toolbars[ toolbarEdit ]->addAction( actionUndo );
+	toolbars[ toolbarEdit ]->addAction( actionRedo );
 }
-
 
 bool QexTextEdit::canCloseClient()
 {

@@ -23,7 +23,8 @@ class QexTextEdit : public QTextEdit, public qmdiClient
 {
 	Q_OBJECT
 public:
-	QexTextEdit( QString file="", QWidget *parent=0 );
+	QexTextEdit( QString file="", bool singleToolbar = false, QWidget *parent=0 );
+	void initInterface( bool singleToolbar=false );
 	bool canCloseClient();
 	bool openFile( QString newFile, QTextCodec *c=NULL  );
 	bool saveFile( QString newFile, QTextCodec *c=NULL  );
