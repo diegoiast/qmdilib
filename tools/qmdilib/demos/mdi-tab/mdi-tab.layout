@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE CodeBlocks_layout_file>
+<CodeBlocks_layout_file>
+	<File name="mainwindow2.cpp" open="1" top="1">
+		<Cursor position="3780" topLine="103"/>
+	</File>
+	<Expand folder="/Others/demos/mdi-tab"/>
+	<Expand folder="/Others/demos"/>
+	<Expand folder="/Others"/>
+</CodeBlocks_layout_file>
