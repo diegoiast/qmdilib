@@ -24,7 +24,7 @@
 /**
  * \class MainWindow2
  * \brief a window with an qmdiTabWidget
- * 
+ *
  * This example demostrates how to use qmdiTabWidget, and
  * define different qmdiClient. It also shows what happens when
  * you insert a non mdi client into a qmdiTabWidget.
@@ -46,10 +46,10 @@ void MainWindow2::init_actions()
 	actionFileNew = new QAction( QIcon(":images/new.png"), "&New...", this );
 	actionFileNew->setShortcut( QKeySequence("Ctrl+N") );
 	connect( actionFileNew, SIGNAL(triggered()), this, SLOT(fileNew()) );
-	
+
 	actionQtTopics = new QAction( QIcon(":images/qt-logo.png"), "&Qt Help", this );
 	connect( actionQtTopics, SIGNAL(triggered()), this, SLOT(helpQtTopics()) );
-	
+
 	actionAbout = new QAction( "&About", this );
 	connect( actionAbout, SIGNAL(triggered()), this, SLOT(about()) );
 }
@@ -80,12 +80,12 @@ void MainWindow2::init_gui()
         tabNewBtn->setAutoRaise( true );
         connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));
 	tabNewBtn->setIcon(QIcon(":images/addtab.png"));
-	
+
 	tabCloseBtn = new QToolButton(tabWidget);
         tabCloseBtn->setAutoRaise( true );
         connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(fileClose()));
 	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
-	
+
 	tabWidget->setCornerWidget( tabNewBtn, Qt::TopLeftCorner );
 	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
 	setCentralWidget( tabWidget );
@@ -126,8 +126,8 @@ void MainWindow2::fileClose()
 
 void MainWindow2::helpQtTopics()
 {
-        QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
-	QexHelpBrowser *browser = new QexHelpBrowser( QUrl(helpFile) );
+	QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
+	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + helpFile) );
 	browser->hide();
 	tabWidget->addTab( browser, "Qt help" );
 }
