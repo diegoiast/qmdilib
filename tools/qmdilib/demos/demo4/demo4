@@ -1,0 +1,14 @@
+#! /bin/sh
+
+APPLICATION=demo4.bin
+
+if [ ! -x $APPLICATION ]; then
+        echo "You need to first compile the application using the"
+	echo "normal \"qmake; make\" commands"
+
+	exit -1
+fi
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`
+./$APPLICATION
+

@@ -1,0 +1,49 @@
+<html>
+
+<head>
+	<title>qtmdi library - building the source code as a static library</title>
+</head>
+
+<body>
+
+<h1 style=" display: block; background-color: rgb(166,206,57); ">About this demo</h1>
+<p>
+	This application demostrates no new functionality, but shows how can you build the code into
+	a dynamic library, or set of libraries, and then linking them your application dynamically.
+	This is just an example of using the qmake build system.
+</p>
+
+<p>
+	The source code is exactly the same as in demo2, in fact, the same source files are used,
+	with the differenvce that we are linking to a DLL (win32) or *.so (Linux). For more information
+	read the qmake documentation, and see the *.pro files in this project.
+</p>
+
+<h1 style=" display: block; background-color: rgb(166,206,57); ">Static linking vs. Dynamic linking</h1>
+<p>
+    If you are not sure what is the difference between dynamic linking and static linking, the 
+    best way to describe it is: static linking is done one time when compiling the application, which means
+    the code is stored inside the binary, and dynamic linking is done each time the application is been run, 
+    by the operating system, this means the code is stored in external DLLs or *.so files on Unix/Linux.
+</p>
+
+<p>
+    If you are linking your libraries statically into the application you you are increasing the final binary file,
+    and each time you modify a single file, not only the static library needs to be generated, and the
+    binary will need to be linked once again on each single build. 
+</p>
+
+<p>
+    If you are linking your libraries dynamically, the main application will be smaller, code can be shared
+    between several applications which use the same code (library), and when you modify some small source code,
+    only one file will be compiled, the library will be regenerated, and you are ready to do. The downside
+    is that on Unix/Linux you will need to ovvereide the $LD_LIBRARY_PATH environment variables for tell the operating
+    system where to find the new libraries. On Win32, you can modify the %PATH% or put the DLLs on the same
+    directory as the main EXE. A sample shell script it provided in demo4 which shows how to do this. Please 
+    note that the application name on Unix/Linux has been modified to *.bin in the project file.
+</p>
+
+
+</body>
+
+</html>
