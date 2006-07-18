@@ -1,6 +1,7 @@
 TEMPLATE	= subdirs
 CONFIG		+= ordered
-SUBDIRS 	= demos/adv-menus/ demos/mdi-tab/ 
+SUBDIRS 	= demos/demo1/adv-menus.pro demos/demo2/mdi-tab.pro demos/demo4 demos/demo5
 
-# the plugin demo is not been build currently, as it's not really mature
-#SUBDIRS 	= demos/adv-menus/ demos/mdi-tab/ demos/plugin-demo
+# TODO
+# demo3 is not ready yet
+
