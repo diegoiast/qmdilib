@@ -1,8 +1,8 @@
 TEMPLATE = app
-TARGET += 
+TARGET = mdi-tab
 DEPENDPATH += .
 INCLUDEPATH += . ../../src/
-
+DESTDIR = ./
 MOC_DIR =  ../../tmp/
 RCC_DIR =  ../../tmp/
 UI_DIR =  ../../tmp/
