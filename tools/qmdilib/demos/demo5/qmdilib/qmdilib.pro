@@ -1,20 +1,16 @@
 TEMPLATE = lib
-TARGET=qmdi
-VERSION=0.0.2
-CONFIG +=   staticlib 
-DESTDIR=../
+TARGET = qmdi
+CONFIG += staticlib 
+VERSION = 0.0.2
 
-
+DESTDIR = ../
 MOC_DIR =  ../../../tmp/
 RCC_DIR =  ../../../tmp/
 UI_DIR =  ../../../tmp/
 OBJECTS_DIR = ../../../tmp/
-INCLUDEPATH += ../../../src .
-
-
+INCLUDEPATH += . ../../../src
 
 # Input
-
 HEADERS += ../../../src/actiongroup.h \
            ../../../src/actiongrouplist.h \
            ../../../src/qmdiclient.h \

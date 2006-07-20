@@ -14,7 +14,7 @@ INCLUDEPATH += ../../../src .
 
 # Input
 unix:LIBS += -lqmdi -L../
-win32:LIBS += ../qmdilib/sqmdi.lib
+win32:LIBS += -lqmdi0 -L../
 
 HEADERS += ../../demo2/qexeditor.h \
            ../../demo2/helpbrowse.h 
