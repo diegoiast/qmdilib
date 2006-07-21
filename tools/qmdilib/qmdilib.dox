@@ -1,5 +1,4 @@
 /**
-
 \mainpage qmdilib
 
 This is a simple mdi library for Qt 4. The goal of this project, is to provide an easy way to 
@@ -13,7 +12,14 @@ on Windows and Linux, and there is no reason why it should not work on other pla
 Currently only gcc is tested, but other compilers should be able to compile this library
 
 \section getting_started Getting started
-Click here to see read the \ref small_tutor
+Click here to see read the \ref small_tutor .
+
+You can also read some documentation about the demos on this version:
+- \ref demo1
+- \ref demo2
+- \ref demo3
+- \ref demo4
+- \ref demo5
 
 You can see the documentation for the classes of this library:
 
@@ -26,13 +32,9 @@ You can see the documentation for the classes of this library:
 The license of qmdilib is the LGPL 2.1, which can be found here
 http://www.gnu.org/licenses/lgpl.html
 
-
-
-
-
 \page small_tutor Small tutorial and introduction
 
-The libtrary conatins 3 main classes:
+This library conatins 3 main classes:
 
 -# an mdi client, a class which inherits qmdiClient
 -# an mdi server, for example qmdiServer
@@ -101,4 +103,378 @@ There are some full examples available, please read the code on these examples t
 full examples.
 
 Go to the \ref index "Main page"
+
+\page demo1 Demo1 - Advanced menus
+This first demo is a basic introduction to the concept of qmdiActionGroup, qmdiActionGroupList and qmdiClient. 
+
+Some applications have the conecpt of advanced menus: by default they only display a limited set of 
+functionality to the user, and oly after he chooses they show the full set of commands. This example shows how you 
+can modify on the fly another set of commands into your application, and do this in your applications.
+
+To do this using plain Qt classes, the way for you to do this is to disable a lot of commands. The setup is
+really hard to implement if you want to switch between several states, and implementing a state machine. With
+this library, those things can become trivial.
+
+<img src="../adv-menus-2.jpg">
+
+We start by defining the default menus used on this application, on a main window which derives QMainWindow  \b and qmdiHost .
+Note that in this example, empty menus are declared in the beginning of the application, otherwise the new menus
+would have been appended to the end of the menu bar. The empty menus will not be displayed on the main window.
+
+\code
+class MainWindow: public QMainWindow, public qmdiHost
+{
+Q_OBJECT
+	public:
+	MainWindow( QWidget *owner=NULL );
+	~MainWindow();
+private:
+	QAction *actionQuit;
+	QAction *actionShowAll;
+	QAction *actionFileNew, *actionFileSave, *actionFileSaveAs;
+	QAction *actionAbout, *actionAboutQt;
+	QAction *test1, *test2;
+	
+ 	qmdiClient *advanced;
+};
+
+MainWindow::MainWindow( QWidget *owner )
+{
+	menus["&File"]->addAction( actionFileNew );
+	menus["&File"]->addAction( actionFileSave );
+	menus["&File"]->addSeparator();
+	menus["&File"]->addAction( actionQuit );
+	menus["&Edit"];
+	menus["&Test"];
+	menus["&Settings"]->addAction( actionShowAll );
+	menus["&Help"]->addAction( actionAbout );
+	
+	// toolbars
+	toolbars["Main"]->addAction( actionShowAll );
+	
+\endcode
+
+and also the advanced menus:
+\code
+...
+	advanced = new qmdiClient;
+	advanced->menus["&File"]->addAction( actionFileSaveAs );
+	advanced->menus["&Test"]->addAction( test1 );
+	advanced->menus["&Test"]->addAction( test2 );
+	advanced->menus["&Help"]->addAction( actionAboutQt );
+	
+	// extra toolbars
+	advanced->toolbars["Main"]->addAction( actionQuit );
+	advanced->toolbars["File operations"]->addAction( test1 );
+	advanced->toolbars["File operations"]->addAction( test2 );
+	
+	updateGUI( this );
+}
+\endcode
+
+Then, all you need to do is merge or unmerge the new client, to add or remove
+menus and toolbars from the GUI:
+\code
+void MainWindow::showMenus()
+{
+	bool isChecked = actionShowAll->isChecked();
+
+	if (isChecked)
+		mergeClient( advanced );
+	else
+		unmergeClient( advanced );
+
+	// show the stuff on screen
+	updateGUI( this );
+}
+\endcode
+
+\see Next: \ref demo2 
+
+\page demo2 Demo2 - Using the new tab widget to display dynamic menus
+This second demo is an introduction to the qmdiTabWidget and using it in real life applications, which 
+load several files of the same type.
+
+The Qt libraries have some basic concept of multi document interface, but it gives you tools for doying this
+using top level windows. On modern applcations we display the documents in QTabWidget and not top level windows.
+In theroy, you just need to insert the new QWidgets into a QTabWidget, but then you start getting into problems
+when you have to synchronize the "save action" to the document currently displayed on the tab widget. The problems
+get bigger and harder when you are trying to insert different widget types into the QTabWidget, and you want each 
+one to display different menus and toolbars.
+
+Using qmdilib you just need to follow a very minimal step to have very rich and dynamic applications. You just need
+to define your own QMainWindow as we did on demo1, and instead of using QTabWidget , you need to use qmdiTabWidget.
+The widgets inserted into the tab, need also to inherit qmdiClient.
+
+<img src="../mdi-tab-2.jpg">
+
+This demo contains 3 widget types
+- A simple QTextBrowser which will display no additional menus and toolbars. 
+- A new class wich inherits QTextEdit and qmdiClient, which gives you a simple text editor with additional menus and toolbars
+- A new class wich inherits QTextBrowser and qmdiClient, which gives you a simple help browse with  additional menus and toolbars
+
+Please note that when you move from one tab to another, the menus and toolbars will change. Sometimes, even if you move
+from an editor to another editor, it will look like the toolbars did not change, but what actually happens, is that the
+menus and toolbars are re-created on each move, and the QActions on the toolbars beling to the active widget. This means
+that each QWidget inserted into the qmdiTabWidget is responsible for it's own actions.
+
+Here are the definitions of the new text editor the help viewer and the main window:
+\code
+class QexHelpBrowser: public QTextBrowser, public qmdiClient
+{
+	...
+}
+
+class QexTextEdit : public QTextEdit, public qmdiClient
+{
+	...
+}
+
+class MainWindow2: public QMainWindow, public qmdiHost
+{
+	...
+}
+
+void MainWindow2::init_gui()
+{
+	// create own menus
+	menus["&File"]->addAction( actionFileNew );
+	menus["&File"]->addSeparator();
+	menus["&File"]->addAction( actionQuit );
+	menus["&Edit"];
+	menus["&Navigation"];
+	menus["&Search"];
+	menus["&Configuration"];
+	menus["&Help"]->addAction( actionQtTopics );
+	menus["&Help"]->addAction( actionAbout );
+
+	// toolbars
+	toolbars["main"]->addAction( actionFileNew );
+	toolbars["main"]->addAction( actionQtTopics );
+
+	// show the stuff on screen
+	updateGUI( this );
+
+	// make the tab widget
+	tabWidget = new qmdiTabWidget;
+	tabNewBtn = new QToolButton(tabWidget);
+        tabNewBtn->setAutoRaise( true );
+        connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));
+	tabNewBtn->setIcon(QIcon(":images/addtab.png"));
+
+	tabCloseBtn = new QToolButton(tabWidget);
+        tabCloseBtn->setAutoRaise( true );
+        connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(fileClose()));
+	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
+
+	tabWidget->setCornerWidget( tabNewBtn, Qt::TopLeftCorner );
+	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
+	setCentralWidget( tabWidget );
+}
+\endcode
+
+\see \ref demo1 
+\see \ref small_tutor
+\see Next: \ref demo3
+
+\page demo3 Demo3 - l10n and i18n when using qmdilib
+This third demo, shows how to use the l18n classes of Qt4.
+
+TODO 
+Need to write an example for this stuff. 
+\see Next: \ref demo4
+
+\page demo4 Demo4 - Building the code as a shared library
+This fouth demo, shows how to build qdmilib into dynamic libraries, and also how to build new libraries which
+use qmdilib classses.
+
+This application uses the same code as demo2, with a single difference: all the classes of qmdilib are compiled
+into a library (libqmdi.so.0.0.2 on Unix/Linux and qmdi0.dll on Win32), and the extended text editor and help browser
+into another library (libqexedit0.so.0.0.2 on Unix/Linux and qexedit0.dll on Win32). The main binary contains only 
+the main window and the main() function. 
+
+Note that on Unix/Linux (also Mac), the application will fail to load because the loader will not be able 
+to find the libraries. To make it work, you need to override the enviroment variable LD_LIBRARY_PATH to include the
+current directory. This example also includes a shell script which does this for you.
+
+The main project on this demo is a subdirs project, which will build the qmdilib library, the qexedit library and
+finally also the main application. 
+
+This is the project file for qmdilib:
+\code
+TEMPLATE = lib
+TARGET=qmdi
+VERSION=0.0.2
+#CONFIG +=   staticlib
+DESTDIR=../
+
+MOC_DIR =  ../../../tmp/
+RCC_DIR =  ../../../tmp/
+UI_DIR =  ../../../tmp/
+OBJECTS_DIR = ../../../tmp/
+INCLUDEPATH += ../../../src .
+
+# Input
+HEADERS += ../../../src/actiongroup.h \
+           ../../../src/actiongrouplist.h \
+           ../../../src/qmdiclient.h \
+           ../../../src/qmdihost.h \
+           ../../../src/qmdiserver.h \
+           ../../../src/qmditabwidget.h
+
+SOURCES += ../../../src/actiongroup.cpp \
+           ../../../src/actiongrouplist.cpp \
+           ../../../src/qmdiclient.cpp \
+           ../../../src/qmdihost.cpp \
+           ../../../src/qmdiserver.cpp \
+           ../../../src/qmditabwidget.cpp
+\endcode
+
+This is the project file for qexedit, see how it also links the qmdi library:
+\code
+TEMPLATE = lib
+TARGET=qexedit
+VERSION=0.0.2
+DESTDIR=../
+
+MOC_DIR =  ../../../tmp/
+RCC_DIR =  ../../../tmp/
+UI_DIR =  ../../../tmp/
+OBJECTS_DIR = ../../../tmp/
+INCLUDEPATH += . ../../../src
+
+# Input
+unix:LIBS += -lqmdi -L../
+win32:LIBS += -lqmdi0 -L../
+
+HEADERS += ../../demo2/qexeditor.h \
+           ../../demo2/helpbrowse.h
+
+SOURCES += ../../demo2/qexeditor.cpp \
+           ../../demo2/helpbrowse.cpp
+\endcode
+
+This is the project file for the main application, see how it links qmdi and qexedit, note also that
+on Unix the application name is modified, and end-users shuold run the shell script wrapper instead:
+\code
+TEMPLATE = app
+unix:TARGET = demo4.bin
+win32:TARGET = demo4
+DEPENDPATH += .
+INCLUDEPATH += . ../../../src/ ../../demo2/
+DESTDIR = ../
+
+MOC_DIR =  ../../../tmp/
+RCC_DIR =  ../../../tmp/
+UI_DIR =  ../../../tmp/
+OBJECTS_DIR = ../../../tmp/
+
+# Input
+unix:LIBS += -L../ -lqmdi  -lqexedit
+win32:LIBS += -L../ -lqmdi0 -lqexedit0
+
+RESOURCES += demo4.qrc
+HEADERS += mainwindow4.h
+SOURCES += mainwindow4.cpp  main4.cpp
+\endcode
+
+\see \ref demo2
+\see \ref small_tutor
+\see Next: \ref demo5
+
+\page demo5 Demo5 - Building the code as a static library
+This fifth demo, shows how to build qdmilib into staticlibraries, and also how to build new libraries which
+use qmdilib classses and how to link those libraries into your application.
+
+This application uses the same code as demo2 and demo4, with a single difference: all the classes of qmdilib are compiled
+into a static library (libqmdi.a), and the extended text editor and help browser into another library (libqexedit.a). The final
+binary will be linked with those libraries. This demo will provide the same functionlity as demo2 and demo4, but unlike
+demo4 the binary produced will be slightly bigger because of the static linking, it should be more or less the same
+size as demo2.
+
+The main project on this demo is a subdirs project, which will build the qmdilib library, the qexedit library and
+finally also the main application. 
+
+This is the project file for qmdilib:
+\code
+TEMPLATE = lib
+TARGET = qmdi
+CONFIG += staticlib
+VERSION = 0.0.2
+
+DESTDIR = ../
+MOC_DIR =  ../../../tmp/
+RCC_DIR =  ../../../tmp/
+UI_DIR =  ../../../tmp/
+OBJECTS_DIR = ../../../tmp/
+INCLUDEPATH += . ../../../src
+
+# Input
+HEADERS += ../../../src/actiongroup.h \
+           ../../../src/actiongrouplist.h \
+           ../../../src/qmdiclient.h \
+           ../../../src/qmdihost.h \
+           ../../../src/qmdiserver.h \
+           ../../../src/qmditabwidget.h
+
+SOURCES += ../../../src/actiongroup.cpp \
+           ../../../src/actiongrouplist.cpp \
+           ../../../src/qmdiclient.cpp \
+           ../../../src/qmdihost.cpp \
+           ../../../src/qmdiserver.cpp \
+           ../../../src/qmditabwidget.cpp
+\endcode
+
+This is the project file for qexedit, see how it also links the qmdi library:
+\code
+TEMPLATE = lib
+TARGET = qexedit
+CONFIG += staticlib
+VERSION = 0.0.2
+
+DESTDIR = ../
+MOC_DIR =  ../../../tmp/
+RCC_DIR =  ../../../tmp/
+UI_DIR =  ../../../tmp/
+OBJECTS_DIR = ../../../tmp/
+INCLUDEPATH += . ../../../src
+
+# Input
+unix:LIBS += -L../ -lqmdi
+
+HEADERS += ../../demo2/qexeditor.h \
+           ../../demo2/helpbrowse.h
+
+SOURCES += ../../demo2/qexeditor.cpp \
+           ../../demo2/helpbrowse.cpp
+\endcode
+
+This is the project file for the main application, see how it links qmdi and qexedit. Unlike demo4,
+the wrapper script is not needed on Unix, and the *.a files are not needed on the release package.
+\code
+TEMPLATE = app
+TARGET = demo5
+CONFIG += static
+
+DESTDIR = ../
+MOC_DIR =  ../../../tmp/
+RCC_DIR =  ../../../tmp/
+UI_DIR =  ../../../tmp/
+OBJECTS_DIR = ../../../tmp/
+INCLUDEPATH += . ../../../src/ ../../demo2/
+
+# Input
+unix:LIBS += -L../ -lqmdi  -lqexedit
+win32:LIBS += ../libqexedit.a ../libqmdi.a
+
+RESOURCES += demo5.qrc
+HEADERS += mainwindow5.h
+SOURCES += mainwindow5.cpp  main5.cpp
+\endcode
+
+\see \ref demo2
+\see \ref demo4
+\see \ref small_tutor
+\see Back to the main page \ref index
+
  */

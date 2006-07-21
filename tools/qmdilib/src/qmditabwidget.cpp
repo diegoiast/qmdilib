@@ -91,11 +91,13 @@ void qmdiTabBar::mousePressEvent ( QMouseEvent * event )
  * This is a derived class from QTabWidget which is capable of modifing the window
  * menus and toolbars according to the widgets selected. This new tab widget,
  * will connect the lower level objecs (the qmdiClient, the widgets inserted into the tabs) to the
- * higher level object (the qmdiHost, ussually the main window).
+ * higher level object (the qmdiHost, ussually the main window). Since qmdiTabWidget inherits
+ * QTabWidget you can use it as a normal QTabWidget, and all the interfaces available on the
+ * base class are available for this new class.
  * 
  * The relations are:
  *  - qmdiHost   : main window
- *  - qmdiClient : you new widgets
+ *  - qmdiClient : your new widgets
  *  - qmdiServer : this class
  *
  * When a new widget is selected on the qmdiServer (the user changes), the old
