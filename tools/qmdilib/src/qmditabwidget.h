@@ -37,6 +37,7 @@ public:
 
 public slots:
 	void tabChanged( int i );
+	void wSpaceWindowActivated( QWidget* w );
 	void tryCloseClient( int i );
 	void tryCloseAllButClient( int i );
 	void tryCloseAllCliens();

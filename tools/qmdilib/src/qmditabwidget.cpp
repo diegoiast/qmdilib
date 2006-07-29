@@ -3,6 +3,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QMainWindow>
+#include <QWorkspace>
 
 #include "qmditabwidget.h"
 #include "qmdihost.h"
@@ -149,8 +150,15 @@ qmdiTabWidget::qmdiTabWidget( QWidget *parent, qmdiHost *host )
  * When the user changes the active tab this this slot gets called.
  * It removes the menus and toolbars of the old mdi client and 
  * installs the ones of the new client on screen.
+ *
+ * Since version 0.0.3 this widget also supports adding QWorkspace.
+ * When the widget in focus is a QWorkspace, it's childs will be 
+ * treated like normal qmdiClient if teh yprovide that interface,
+ * and when you select a new window in the QWorkspace that window's
+ * menus and toolbars will be merged into the main application.
  * 
  * \see QTabWidget::currentChanged()
+ * \see wSpaceWindowActivated(QWidget*)
  */
 void qmdiTabWidget::tabChanged( int i )
 {
@@ -166,18 +174,63 @@ void qmdiTabWidget::tabChanged( int i )
 	if (w == activeWidget)
 		return;
 
+	// thanks to Nox PasNox <pasnox@gmail.com> for this code
+	// it enables the usage of QWorspace as a self contained qmdiServer
 	if (activeWidget)
+	{
 		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
+		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
+		if ( ws )
+			foreach ( QWidget* c, ws->windowList() )
+				mdiHost->mergeClient( dynamic_cast<qmdiClient*>( c ) );
+	}
 	
 	activeWidget = w;
 	
 	if (activeWidget)
+	{
 		mdiHost->mergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
+		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
+		if ( ws )
+			foreach ( QWidget* c, ws->windowList() )
+				mdiHost->mergeClient( dynamic_cast<qmdiClient*>( c ) );
+	}
 
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
 	mdiHost->updateGUI( m );	
 }
 
+
+/**
+ * \brief callback function for notifying of a new QWorkspace child activated
+ * \param w the widget which now has the focus on the work space
+ * \since 0.0.3
+ *
+ * Since qmdilib 0.0.3 it's possible to insert a QWorkspace into 
+ * a QTabWidget and when a new child will be focused on the QWorkspace 
+ * it's menus will be merged, just like it a normal widget on the qmdiTabWidget.
+ * 
+ * This slow it automatically connected by tabInserted(int).
+ *
+ * Thanks to Nox PasNox <pasnox@gmail.com> for this code.
+ *
+ * \see tabInserted( int )
+ * \see tabChanged( int )
+ */
+void qmdiTabWidget::wSpaceWindowActivated( QWidget* w )
+{
+	QWorkspace* ws = qobject_cast<QWorkspace*>( sender() );
+	if ( !ws )
+		return;
+
+	QWidgetList l = ws->windowList();
+		foreach ( QWidget* c, l )
+		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>( c ) );
+	mdiHost->mergeClient( dynamic_cast<qmdiClient*>( w ) );
+
+	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
+	mdiHost->updateGUI( m );
+}
 
 /**
  * \brief request an mdi client to close
@@ -318,6 +371,11 @@ void qmdiTabWidget::clientDeleted( QObject *o )
 	if (activeWidget != o)
 		return;
 
+	QWorkspace* ws = qobject_cast<QWorkspace*>( activeWidget );
+        if ( ws )
+                foreach ( QWidget* c, ws->windowList() )
+                        mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(c) );
+
 	mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 	mdiHost->updateGUI( dynamic_cast<QMainWindow*>(mdiHost) );
 	activeWidget = NULL;
@@ -347,6 +405,10 @@ void qmdiTabWidget::tabInserted ( int index )
 	{
 		client->mdiServer = dynamic_cast<qmdiServer*>(this);
 		client->myself = w;
+		
+		QWorkspace* ws = qobject_cast<QWorkspace*>( w );
+		if ( ws )
+			connect( ws, SIGNAL(windowActivated(QWidget*)), this, SLOT( wSpaceWindowActivated(QWidget*)));
 	}
 
 //	if it's the only widget available, show it's number
