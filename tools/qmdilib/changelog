@@ -1,3 +1,7 @@
+0.0.3  - SOMETIME IN THE FUTURE - Diego Iastrubni <elcuco@kde.org>
+ * New feature: QWorkspace children are also checked for qmdiClient interface, 
+   feature coded by Nox PasNox <pasnox@gmail.com>
+
 0.0.2  - 11 Jul 06 - Diego Iastrubni <elcuco@kde.org>
  * many documentation updates
  * compilation problems on mingw should be fixed
