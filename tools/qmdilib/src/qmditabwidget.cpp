@@ -181,7 +181,7 @@ void qmdiTabWidget::tabChanged( int i )
 		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
 		if ( ws )
-			mdiHost->mergeClient( dynamic_cast<qmdiClient*>(ws->activeWindow()) );
+			mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(ws->activeWindow()) );
 	}
 	
 	activeWidget = w;
@@ -413,7 +413,6 @@ void qmdiTabWidget::tabInserted ( int index )
 	{
 		client->mdiServer = dynamic_cast<qmdiServer*>(this);
 		client->myself = w;
-		
 	}
 
 	QWorkspace* ws = qobject_cast<QWorkspace*>( w );
@@ -423,7 +422,10 @@ void qmdiTabWidget::tabInserted ( int index )
 //	if it's the only widget available, show it's number
 //	BUG is this supposed to be done by Qt?
 	if (count() == 1)
-		tabChanged( 0 );
+	{
+		tabChanged( 0 );	// TODO: is this needed...?
+		activeWidget = w;
+	}
 }
 
 
