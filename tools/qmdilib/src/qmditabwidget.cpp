@@ -181,8 +181,7 @@ void qmdiTabWidget::tabChanged( int i )
 		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
 		if ( ws )
-			foreach ( QWidget* c, ws->windowList() )
-				mdiHost->mergeClient( dynamic_cast<qmdiClient*>( c ) );
+			mdiHost->mergeClient( dynamic_cast<qmdiClient*>(ws->activeWindow()) );
 	}
 	
 	activeWidget = w;
@@ -192,8 +191,8 @@ void qmdiTabWidget::tabChanged( int i )
 		mdiHost->mergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
 		if ( ws )
-			foreach ( QWidget* c, ws->windowList() )
-				mdiHost->mergeClient( dynamic_cast<qmdiClient*>( c ) );
+			mdiHost->mergeClient( dynamic_cast<qmdiClient*>(ws->activeWindow()) );
+				
 	}
 
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
@@ -219,14 +218,23 @@ void qmdiTabWidget::tabChanged( int i )
  */
 void qmdiTabWidget::wSpaceWindowActivated( QWidget* w )
 {
-	QWorkspace* ws = qobject_cast<QWorkspace*>( sender() );
-	if ( !ws )
+	static qmdiClient* last = NULL;
+
+	if (mdiHost == NULL)
+		mdiHost = dynamic_cast<qmdiHost*>(parentWidget());
+		
+	if (mdiHost == NULL)
+		return;
+	
+	QWorkspace* workspace = qobject_cast<QWorkspace*>( sender() );
+	if (workspace == NULL)
 		return;
 
-	QWidgetList l = ws->windowList();
-		foreach ( QWidget* c, l )
-		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>( c ) );
-	mdiHost->mergeClient( dynamic_cast<qmdiClient*>( w ) );
+	QWidgetList l = workspace->windowList();
+	qmdiClient *client = dynamic_cast<qmdiClient*>( w );
+	mdiHost->unmergeClient( last );
+	mdiHost->mergeClient( client );
+	last = client;
 
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
 	mdiHost->updateGUI( m );
@@ -406,10 +414,11 @@ void qmdiTabWidget::tabInserted ( int index )
 		client->mdiServer = dynamic_cast<qmdiServer*>(this);
 		client->myself = w;
 		
-		QWorkspace* ws = qobject_cast<QWorkspace*>( w );
-		if ( ws )
-			connect( ws, SIGNAL(windowActivated(QWidget*)), this, SLOT( wSpaceWindowActivated(QWidget*)));
 	}
+
+	QWorkspace* ws = qobject_cast<QWorkspace*>( w );
+	if ( ws )
+		connect( ws, SIGNAL(windowActivated(QWidget*)), this, SLOT( wSpaceWindowActivated(QWidget*)));
 
 //	if it's the only widget available, show it's number
 //	BUG is this supposed to be done by Qt?
