@@ -44,6 +44,9 @@ QexTextEdit::QexTextEdit( QString file, bool singleToolbar, QWidget *parent):
 	setFont( font );
 	setAcceptRichText( false );
 	setLineWrapMode( QTextEdit::WidgetWidth );
+	setFrameStyle( QFrame::NoFrame );
+	setContentsMargins(0, 0, 0, 0);
+
 	
 	actionSave	= new QAction( QIcon(":images/save.png"), tr("&Save"), this );
 	actionClose	= new QAction( QIcon(":images/fileclose.png"), tr("&Close"), this );

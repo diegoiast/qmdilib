@@ -5,6 +5,7 @@
 #include <QTabWidget>
 #include <QTextBrowser>
 #include <QMessageBox>
+#include <QApplication>
 
 #include "mainwindow.h"
 
@@ -51,7 +52,9 @@
 MainWindow::MainWindow( QWidget *owner ):QMainWindow(owner)
 {
 	QTextBrowser *browser = new QTextBrowser;	
-	browser->setSource( QUrl(":adv-menus.html") );
+	browser->setSource( QUrl( QApplication::applicationDirPath() + "/adv-menus.html" ));
+	browser->setFrameStyle( QFrame::NoFrame );
+	browser->setContentsMargins(0, 0, 0, 0);	
 	setCentralWidget( browser );
 	statusBar();
 

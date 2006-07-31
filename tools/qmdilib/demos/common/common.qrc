@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/" >
-		<file alias="mdi-tab.html">mdi-tab.html</file>
 		<file alias="images/qt-logo.png">images/qt-logo.png</file>
 		<file alias="images/quit.png">images/quit.png</file>
 		

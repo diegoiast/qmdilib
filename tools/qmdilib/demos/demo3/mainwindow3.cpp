@@ -9,14 +9,14 @@
 #include <QUrl>
 #include <QLibraryInfo>
 #include <QApplication>
-#include <QStackedWidget>
+#include <QWorkspace>
 
-#include "mainwindow2.h"
+#include "mainwindow3.h"
 #include "qexeditor.h"
 #include "helpbrowse.h"
 
 /**
- * \file mainwindow2.cpp
+ * \file MainWindow3.cpp
  * \brief Implementation of the main window class of the 2nd demo
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
@@ -24,7 +24,7 @@
  */
 
 /**
- * \class MainWindow2
+ * \class MainWindow3
  * \brief a window with an qmdiTabWidget
  *
  * This example demostrates how to use qmdiTabWidget, and
@@ -32,16 +32,16 @@
  * you insert a non mdi client into a qmdiTabWidget.
  */
 
-#define SINGLE_TOOLBAR !false
+#define SINGLE_TOOLBAR false
 
-MainWindow2::MainWindow2( QWidget *owner ):QMainWindow(owner)
+MainWindow3::MainWindow3( QWidget *owner ):QMainWindow(owner)
 {
 	statusBar();
 	init_actions();
 	init_gui();
 }
 
-void MainWindow2::init_actions()
+void MainWindow3::init_actions()
 {
 	actionQuit = new QAction( QIcon(":images/quit.png"), "&Quit", this );
 	actionQuit->setShortcut( QKeySequence("Ctrl+Q") );
@@ -58,7 +58,7 @@ void MainWindow2::init_actions()
 	connect( actionAbout, SIGNAL(triggered()), this, SLOT(about()) );
 }
 
-void MainWindow2::init_gui()
+void MainWindow3::init_gui()
 {
 	// create own menus
 	menus["&File"]->addAction( actionFileNew );
@@ -80,6 +80,7 @@ void MainWindow2::init_gui()
 
 	// make the tab widget
 	tabWidget = new qmdiTabWidget;
+	
 	tabNewBtn = new QToolButton(tabWidget);
         tabNewBtn->setAutoRaise( true );
         connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));
@@ -92,37 +93,38 @@ void MainWindow2::init_gui()
 
 	tabWidget->setCornerWidget( tabNewBtn, Qt::TopLeftCorner );
 	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
-	setCentralWidget( tabWidget );
-        QStackedWidget *stack = qFindChild<QStackedWidget*>(this);
-	Q_ASSERT(stack);
-	stack->setContentsMargins(0, 0, 0, 0);
-	stack->setFrameStyle( QFrame::NoFrame );
-
+		
 	// feed it with a default widget, this browser is a
 	// non mdi client, and will add no new menus nor toolbars
 	QTextBrowser *browser = new QTextBrowser;
 	browser->setObjectName("welcome_tab");
-	browser->setSource( QApplication::applicationDirPath() + "/mdi-tab.html" );
+	browser->setSource( QUrl( QApplication::applicationDirPath() + "/demo3.html" ) );
         browser->setFrameStyle( QFrame::NoFrame );
-	browser->setContentsMargins(0, 0, 0, 0);
+        browser->setContentsMargins(0, 0, 0, 0);	
 	tabWidget->addTab( browser, "Welcome" );
+
+	workspace = new QWorkspace;
+	tabWidget->addTab( workspace, "Workspace" );
+
+	setCentralWidget( tabWidget );
 }
 
-void MainWindow2::about()
+void MainWindow3::about()
 {
 	QMessageBox::about(NULL, "About Program",
 		"This demo is part of the qmdi library.\nDiego Iasturbni <elcuco@kde.org> - LGPL"
 	);
 }
 
-void MainWindow2::fileNew()
+void MainWindow3::fileNew()
 {
-	QexTextEdit *editor = new QexTextEdit( NULL, SINGLE_TOOLBAR );
+	QexTextEdit *editor = new QexTextEdit( SINGLE_TOOLBAR );
 	editor->hide();
-	tabWidget->addTab( editor, "MDI Editor" );
+	workspace->addWindow( editor );
+	editor->show();
 }
 
-void MainWindow2::fileClose()
+void MainWindow3::fileClose()
 {
 	qmdiClient *c = dynamic_cast<qmdiClient*>(tabWidget->currentWidget());
 
@@ -134,10 +136,12 @@ void MainWindow2::fileClose()
 		c->closeClient();
 }
 
-void MainWindow2::helpQtTopics()
+void MainWindow3::helpQtTopics()
 {
 	QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
 	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + helpFile), SINGLE_TOOLBAR );
 	browser->hide();
-	tabWidget->addTab( browser, "Qt help" );
+//	tabWidget->addTab( browser, "Qt help" );
+	workspace->addWindow( browser );
+	browser->show();
 }

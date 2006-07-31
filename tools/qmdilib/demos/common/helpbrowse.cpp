@@ -72,6 +72,9 @@ void QexHelpBrowser::initInterface( bool singleToolbar )
 	QString toolbarFile = singleToolbar? "main" : "File";
 	QString toolbarEdit = singleToolbar? "main" : "Edit operations";
 	QString toolbarNavigate = singleToolbar? "main" : "Navigation";
+	setFrameStyle( QFrame::NoFrame );
+        setContentsMargins(0, 0, 0, 0);
+
 
 	// define the menus for this widget
 	menus["&Edit"]		->addAction( actionCopy );
