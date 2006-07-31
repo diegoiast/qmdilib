@@ -1,20 +1,20 @@
 TEMPLATE = lib
 TARGET = qexedit
 CONFIG += staticlib
-VERSION = 0.0.2
+VERSION = 0.0.3
 
-DESTDIR = ../
-MOC_DIR =  ../../../tmp/
-RCC_DIR =  ../../../tmp/
-UI_DIR =  ../../../tmp/
-OBJECTS_DIR = ../../../tmp/
-INCLUDEPATH += . ../../../src
+DESTDIR		 = ../
+MOC_DIR		 = ../../../tmp/
+RCC_DIR		 = ../../../tmp/
+UI_DIR		 = ../../../tmp/ 
+OBJECTS_DIR	 = ../../../tmp/
+INCLUDEPATH	+= . ../../../src ../../common
 
 # Input
-unix:LIBS += -L../ -lqmdi 
+LIBS += -L../ -lqmdi 
 
-HEADERS += ../../demo2/qexeditor.h \
-           ../../demo2/helpbrowse.h 
+HEADERS += ../../common/qexeditor.h \
+           ../../common/helpbrowse.h 
 
-SOURCES += ../../demo2/qexeditor.cpp \
-           ../../demo2/helpbrowse.cpp 
+SOURCES += ../../common/qexeditor.cpp \
+           ../../common/helpbrowse.cpp 

@@ -1,27 +1,27 @@
 <RCC>
     <qresource prefix="/" >
-		<file alias="images/qt-logo.png">../../demo2/images/qt-logo.png</file>
-		<file alias="images/quit.png">../../demo2/images/quit.png</file>
+		<file alias="images/qt-logo.png">../../common/images/qt-logo.png</file>
+		<file alias="images/quit.png">../../common/images/quit.png</file>
 		
-		<file alias="images/addtab.png">../../demo2/images/addtab.png</file>
-		<file alias="images/closetab.png">../../demo2/images/closetab.png</file>
-		<file alias="images/fileclose.png">../../demo2/images/fileclose.png</file>
-		<file alias="images/new.png">../../demo2/images/new.png</file>
-		<file alias="images/save.png">../../demo2/images/save.png</file>
+		<file alias="images/addtab.png">../../common/images/addtab.png</file>
+		<file alias="images/closetab.png">../../common/images/closetab.png</file>
+		<file alias="images/fileclose.png">../../common/images/fileclose.png</file>
+		<file alias="images/new.png">../../common/images/new.png</file>
+		<file alias="images/save.png">../../common/images/save.png</file>
 
-		<file alias="images/zoomin.png">../../demo2/images/zoomin.png</file>
-		<file alias="images/zoomout.png">../../demo2/images/zoomout.png</file>
+		<file alias="images/zoomin.png">../../common/images/zoomin.png</file>
+		<file alias="images/zoomout.png">../../common/images/zoomout.png</file>
 		
-		<file alias="images/undo.png">../../demo2/images/undo.png</file>
-		<file alias="images/redo.png">../../demo2/images/redo.png</file>
-		<file alias="images/copy.png">../../demo2/images/copy.png</file>
-		<file alias="images/cut.png">../../demo2/images/cut.png</file>
-		<file alias="images/paste.png">../../demo2/images/paste.png</file>
+		<file alias="images/undo.png">../../common/images/undo.png</file>
+		<file alias="images/redo.png">../../common/images/redo.png</file>
+		<file alias="images/copy.png">../../common/images/copy.png</file>
+		<file alias="images/cut.png">../../common/images/cut.png</file>
+		<file alias="images/paste.png">../../common/images/paste.png</file>
 		
-		<file alias="images/next.png">../../demo2/images/next.png</file>
-		<file alias="images/home.png">../../demo2/images/home.png</file>
-		<file alias="images/prev.png">../../demo2/images/prev.png</file>
-		<file alias="images/print.png">../../demo2/images/print.png</file>
+		<file alias="images/next.png">../../common/images/next.png</file>
+		<file alias="images/home.png">../../common/images/home.png</file>
+		<file alias="images/prev.png">../../common/images/prev.png</file>
+		<file alias="images/print.png">../../common/images/print.png</file>
   </qresource>
 </RCC>
 

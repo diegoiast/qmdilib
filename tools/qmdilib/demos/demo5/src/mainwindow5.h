@@ -2,8 +2,8 @@
 #define __MAIN_WIN_H__
 
 /**
- * \file mainwindow2.h
- * \brief Implementation of the main window class of the 2nd demo
+ * \file mainwindow5.h
+ * \brief Implementation of the main window class of the 5th demo
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
  * \see MainWindow
@@ -18,11 +18,11 @@
 class QTabWidget;
 class QToolButton;
 
-class MainWindow2: public QMainWindow, public qmdiHost
+class MainWindow5: public QMainWindow, public qmdiHost
 {
 Q_OBJECT
 public:
-	MainWindow2( QWidget *owner=NULL );
+	MainWindow5( QWidget *owner=NULL );
 
 public slots:
 	void init_actions();

@@ -10,20 +10,20 @@
 #include <QLibraryInfo>
 #include <QApplication>
 
-#include "mainwindow2.h"
+#include "mainwindow5.h"
 #include "qexeditor.h"
 #include "helpbrowse.h"
 
 /**
- * \file mainwindow2.cpp
- * \brief Implementation of the main window class of the 2nd demo
+ * \file mainwindow5.cpp
+ * \brief Implementation of the main window class of the 5th demo
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
  * \see MainWindow
  */
 
 /**
- * \class MainWindow2
+ * \class MainWindow5
  * \brief a window with an qmdiTabWidget
  *
  * This example demostrates how to use qmdiTabWidget, and
@@ -33,14 +33,14 @@
 
 #define SINGLE_TOOLBAR false
 
-MainWindow2::MainWindow2( QWidget *owner ):QMainWindow(owner)
+MainWindow5::MainWindow5( QWidget *owner ):QMainWindow(owner)
 {
 	statusBar();
 	init_actions();
 	init_gui();
 }
 
-void MainWindow2::init_actions()
+void MainWindow5::init_actions()
 {
 	actionQuit = new QAction( QIcon(":images/quit.png"), "&Quit", this );
 	actionQuit->setShortcut( QKeySequence("Ctrl+Q") );
@@ -57,7 +57,7 @@ void MainWindow2::init_actions()
 	connect( actionAbout, SIGNAL(triggered()), this, SLOT(about()) );
 }
 
-void MainWindow2::init_gui()
+void MainWindow5::init_gui()
 {
 	// create own menus
 	menus["&File"]->addAction( actionFileNew );
@@ -101,21 +101,21 @@ void MainWindow2::init_gui()
 	tabWidget->addTab( browser, "Welcome" );
 }
 
-void MainWindow2::about()
+void MainWindow5::about()
 {
 	QMessageBox::about(NULL, "About Program",
 		"This demo is part of the qmdi library.\nDiego Iasturbni <elcuco@kde.org> - LGPL"
 	);
 }
 
-void MainWindow2::fileNew()
+void MainWindow5::fileNew()
 {
 	QexTextEdit *editor = new QexTextEdit( NULL, SINGLE_TOOLBAR );
 	editor->hide();
 	tabWidget->addTab( editor, "MDI Editor" );
 }
 
-void MainWindow2::fileClose()
+void MainWindow5::fileClose()
 {
 	qmdiClient *c = dynamic_cast<qmdiClient*>(tabWidget->currentWidget());
 
@@ -127,7 +127,7 @@ void MainWindow2::fileClose()
 		c->closeClient();
 }
 
-void MainWindow2::helpQtTopics()
+void MainWindow5::helpQtTopics()
 {
 	QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
 	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + helpFile), SINGLE_TOOLBAR );

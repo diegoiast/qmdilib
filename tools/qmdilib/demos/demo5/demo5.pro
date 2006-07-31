@@ -1,4 +1,4 @@
-TEMPLATE	= subdirs
+TEMPLATE	 = subdirs
 CONFIG		+= ordered
-SUBDIRS 	= qmdilib qexedit src
+SUBDIRS 	 = qmdilib qexedit src
 

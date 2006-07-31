@@ -1,9 +1,9 @@
 #include <QApplication>
-#include "mainwindow2.h"
+#include "mainwindow4.h"
 
 /**
- * \file main2.cpp
- * \brief Entry point of 2nd demo
+ * \file main4.cpp
+ * \brief Entry point of 4th demo
  * \author Diego Iastrubni (elcuco@kde.org)
  * License GPL
  */
@@ -11,7 +11,7 @@
 int main( int argc, char *argv[] )
 {
         QApplication app( argc, argv );
-        MainWindow2 w;
+        MainWindow4 w;
         w.show();
         return app.exec();
 }

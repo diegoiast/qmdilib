@@ -2,7 +2,7 @@ TEMPLATE = app
 unix:TARGET = demo4.bin
 win32:TARGET = demo4
 DEPENDPATH += .
-INCLUDEPATH += . ../../../src/ ../../demo2/
+INCLUDEPATH += . ../../../src/ ../../common/
 DESTDIR = ../
 
 MOC_DIR =  ../../../tmp/
