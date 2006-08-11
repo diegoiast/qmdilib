@@ -1,6 +1,8 @@
 0.0.3  - SOMETIME IN THE FUTURE - Diego Iastrubni <elcuco@kde.org>
- * New feature: QWorkspace children are also checked for qmdiClient interface, 
+ * new feature: QWorkspace children are also checked for qmdiClient interface, 
    feature coded by Nox PasNox <pasnox@gmail.com>
+ * demos code refactoed, should be easier to read, and hopefully maintain
+ * removed most internal frames from all demos, the demos will look nicer
 
 0.0.2  - 11 Jul 06 - Diego Iastrubni <elcuco@kde.org>
  * many documentation updates
@@ -8,7 +10,8 @@
 
 0.0.2-pre  - 19 Jul 06 - Diego Iastrubni <elcuco@kde.org>
  * fixed many flickering issues, now it only flicker when you add QWidgets to qmdiActionGroup
- * added demos (4 and 5) which demonstrate how to build the code into dynamic and static libraries.
+ * added demos (4 and 5) which demonstrate how to build the code into dynamic and static libraries
  
 0.0.1 - 11 Jun 06 - Diego Iastrubni <elcuco@kde.org>
  * initial release
+ 
