@@ -9,17 +9,19 @@
  * \see MainWindow
  */
 
-#include <QMainWindow>
+//#include <QMainWindow>
 #include "qmdihost.h"
 #include "qmdiclient.h"
 #include "qmditabwidget.h"
+#include "qmdimainwindow.h"
 
 
 class QTabWidget;
 class QToolButton;
 class QWorkspace;
 
-class MainWindow3: public QMainWindow, public qmdiHost
+//class MainWindow3: public QMainWindow, public qmdiHost
+class MainWindow3: public qmdiMainWindow
 {
 Q_OBJECT
 public:

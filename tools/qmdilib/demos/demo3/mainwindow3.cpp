@@ -1,6 +1,6 @@
 #include <QAction>
 #include <QToolBar>
-#include <QMainWindow>
+//#include <QMainWindow>
 #include <QTextEdit>
 #include <QTabWidget>
 #include <QTextBrowser>
@@ -17,7 +17,7 @@
 
 /**
  * \file MainWindow3.cpp
- * \brief Implementation of the main window class of the 2nd demo
+ * \brief Implementation of the main window class of the 3rd demo
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
  * \see MainWindow
@@ -25,16 +25,17 @@
 
 /**
  * \class MainWindow3
- * \brief a window with an qmdiTabWidget
+ * \brief a window with an qmdiTabWidget and 
  *
  * This example demostrates how to use qmdiTabWidget, and
- * define different qmdiClient. It also shows what happens when
- * you insert a non mdi client into a qmdiTabWidget.
+ * define different qmdiClient. It shows you how can you insert 
+ * a normal QWorkspace into the mdi server. All menus and toolbars 
+ * of the worksapce will be merged, if they derive qmdiClient.
  */
 
 #define SINGLE_TOOLBAR false
 
-MainWindow3::MainWindow3( QWidget *owner ):QMainWindow(owner)
+MainWindow3::MainWindow3( QWidget *owner ):qmdiMainWindow(owner)
 {
 	statusBar();
 	init_actions();
