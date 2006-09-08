@@ -1,3 +1,5 @@
+# $Id$
+
 TEMPLATE = app
 TARGET = demo5
 CONFIG += staticlib

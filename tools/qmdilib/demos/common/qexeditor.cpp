@@ -1,11 +1,3 @@
-#include <QAction>
-#include <QString>
-#include <QTextCodec>
-#include <QTextStream>
-#include <QFile>
-#include <QMessageBox>
-#include <QFileDialog>
-
 /**
  * \file qexeditor.cpp
  * \brief Definition of the extended text editor class
@@ -15,6 +7,14 @@
  */
  
 // $Id$ 
+
+#include <QAction>
+#include <QString>
+#include <QTextCodec>
+#include <QTextStream>
+#include <QFile>
+#include <QMessageBox>
+#include <QFileDialog>
 
 #include "qexeditor.h"
 

@@ -1,5 +1,5 @@
 /**
- * \file actiongroup.cpp  $Id$ 
+ * \file actiongroup.cpp  
  * \brief Implementation of the action group class
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL

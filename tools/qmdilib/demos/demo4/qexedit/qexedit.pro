@@ -1,3 +1,5 @@
+# $Id$
+
 TEMPLATE = lib
 TARGET=qexedit
 VERSION=0.0.3

@@ -1,9 +1,3 @@
-#include <QIcon>
-#include <QAction>
-#include <QComboBox>
-
-#include "helpbrowse.h"
-
 /**
  * \file helpbrowse.cpp
  * \brief Implementation of the extended help browser class
@@ -13,6 +7,12 @@
  */
  
 // $Id$
+
+#include <QIcon>
+#include <QAction>
+#include <QComboBox>
+
+#include "helpbrowse.h"
 
 /**
  * \class QexHelpBrowser

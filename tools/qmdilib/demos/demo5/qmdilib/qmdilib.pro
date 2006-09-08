@@ -1,3 +1,5 @@
+# $Id$
+
 TEMPLATE = lib
 TARGET = qmdi
 CONFIG += staticlib 

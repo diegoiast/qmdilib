@@ -9,6 +9,8 @@
  * \see MainWindow
  */
 
+// $Id$ 
+
 #include <QMainWindow>
 #include "qmdihost.h"
 #include "qmdiclient.h"

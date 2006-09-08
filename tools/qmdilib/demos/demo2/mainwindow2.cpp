@@ -1,3 +1,13 @@
+/**
+ * \file mainwindow2.cpp
+ * \brief Implementation of the main window class of the 2nd demo
+ * \author Diego Iastrubni (elcuco@kde.org)
+ * License LGPL
+ * \see MainWindow
+ */
+
+// $Id$
+
 #include <QAction>
 #include <QToolBar>
 #include <QMainWindow>
@@ -14,14 +24,6 @@
 #include "mainwindow2.h"
 #include "qexeditor.h"
 #include "helpbrowse.h"
-
-/**
- * \file mainwindow2.cpp
- * \brief Implementation of the main window class of the 2nd demo
- * \author Diego Iastrubni (elcuco@kde.org)
- * License LGPL
- * \see MainWindow
- */
 
 /**
  * \class MainWindow2

@@ -1,6 +1,3 @@
-#include <QApplication>
-#include "mainwindow2.h"
-
 /**
  * \file main2.cpp
  * \brief Entry point of 2nd demo
@@ -8,6 +5,11 @@
  * License GPL
  */
  
+// $Id$ 
+ 
+#include <QApplication>
+#include "mainwindow2.h"
+
 int main( int argc, char *argv[] )
 {
         QApplication app( argc, argv );

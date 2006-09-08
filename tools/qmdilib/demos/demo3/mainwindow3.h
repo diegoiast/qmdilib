@@ -8,6 +8,8 @@
  * License LGPL
  * \see MainWindow
  */
+ 
+// $Id$ 
 
 //#include <QMainWindow>
 #include "qmdihost.h"

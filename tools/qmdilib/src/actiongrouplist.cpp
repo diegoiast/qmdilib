@@ -1,12 +1,3 @@
-#include <QString>
-#include <QAction>
-#include <QMenuBar>
-#include <QToolBar>
-#include <QMainWindow>
-
-#include "actiongrouplist.h"
-
-
 /**
  * \file actiongrouplist.cpp
  * \brief Implementation of the action group list class
@@ -16,6 +7,14 @@
  */
 
 // $Id$
+
+#include <QString>
+#include <QAction>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QMainWindow>
+
+#include "actiongrouplist.h"
 
 /**
  * \class qmdiActionGroupList

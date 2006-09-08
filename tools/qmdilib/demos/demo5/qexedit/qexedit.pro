@@ -1,3 +1,5 @@
+# $Id$
+
 TEMPLATE = lib
 TARGET = qexedit
 CONFIG += staticlib

@@ -1,5 +1,9 @@
 #! /bin/sh
 
+# License: LGPL
+# Author: Diego Iastrubni
+# $Id$
+
 APPLICATION=demo4.bin
 
 if [ ! -x $APPLICATION ]; then
@@ -12,5 +16,7 @@ fi
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$PWD
 
-./$APPLICATION
+# pass on command line parameters
+./$APPLICATION $@
+
 

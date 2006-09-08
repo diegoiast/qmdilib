@@ -1,3 +1,5 @@
+# $Id$
+
 include ( ../common/common.pri )
 include ( ../common/demos.pri )
 

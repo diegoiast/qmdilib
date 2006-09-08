@@ -1,3 +1,5 @@
+# $Id$
+
 INCLUDEPATH	+= ../../src/ ../common/ .
 MOC_DIR		+= ../../tmp/
 RCC_DIR		+= ../../tmp/

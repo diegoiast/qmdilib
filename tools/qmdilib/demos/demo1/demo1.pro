@@ -1,3 +1,5 @@
+# $Id$
+
 include ( ../common/common.pri )
 
 TEMPLATE = app

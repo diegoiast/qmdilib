@@ -1,6 +1,3 @@
-#include <QApplication>
-#include "mainwindow.h"
-
 /**
  * \file main.cpp
  * \brief Entry point of first demo
@@ -9,6 +6,10 @@
  */
  
 // $Id$ 
+
+#include <QApplication>
+#include "mainwindow.h"
+
  
 int main( int argc, char *argv[] )
 {

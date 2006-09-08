@@ -1,3 +1,13 @@
+/**
+ * \file qmditabwidget.cpp
+ * \brief Implementation of the qmdi tab widget
+ * \author Diego Iastrubni (elcuco@kde.org)
+ * License LGPL
+ * \see qmdiServer, QTabWidget
+ */
+ 
+// $Id$
+
 #include <QEvent>
 #include <QMouseEvent>
 #include <QAction>
@@ -9,16 +19,6 @@
 #include "qmdihost.h"
 #include "qmdiclient.h"
 
-
-/**
- * \file qmditabwidget.cpp
- * \brief Implementation of the qmdi tab widget
- * \author Diego Iastrubni (elcuco@kde.org)
- * License LGPL
- * \see qmdiServer, QTabWidget
- */
- 
-// $Id$
 
 /**
  * \class qmdiTabBar

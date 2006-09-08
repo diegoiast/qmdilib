@@ -1,3 +1,5 @@
+# $Id$
+
 TEMPLATE = lib
 TARGET=qmdi
 VERSION=0.0.3
