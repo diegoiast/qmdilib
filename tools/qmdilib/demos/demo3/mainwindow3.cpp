@@ -15,6 +15,8 @@
 #include "qexeditor.h"
 #include "helpbrowse.h"
 
+// $Id$
+
 /**
  * \file MainWindow3.cpp
  * \brief Implementation of the main window class of the 3rd demo
