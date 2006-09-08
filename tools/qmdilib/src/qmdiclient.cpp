@@ -5,6 +5,8 @@
  * License LGPL
  * \see qmdiClient
  */
+ 
+// $Id$ 
 
 #include <QObject>
 #include "qmdiclient.h"

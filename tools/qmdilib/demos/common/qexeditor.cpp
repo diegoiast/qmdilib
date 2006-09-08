@@ -13,6 +13,8 @@
  * License LGPL
  * \see MainWindow
  */
+ 
+// $Id$ 
 
 #include "qexeditor.h"
 

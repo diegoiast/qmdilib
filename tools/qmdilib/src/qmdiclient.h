@@ -8,6 +8,8 @@
  * License LGPL
  * \see qmdiClient
  */
+ 
+ // $Id$
 
 #include "actiongrouplist.h"
 

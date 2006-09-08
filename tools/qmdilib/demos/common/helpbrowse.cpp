@@ -11,6 +11,8 @@
  * License LGPL
  * \see MainWindow
  */
+ 
+// $Id$
 
 /**
  * \class QexHelpBrowser

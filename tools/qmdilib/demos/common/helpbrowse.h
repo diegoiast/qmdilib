@@ -8,6 +8,8 @@
  * License LGPL
  * \see MainWindow
  */
+ 
+// $Id$ 
 
 #include <QTextBrowser>
 #include "qmdiclient.h"

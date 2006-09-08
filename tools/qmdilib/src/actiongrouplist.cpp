@@ -15,6 +15,7 @@
  * \see qmdiActionGroupList
  */
 
+// $Id$
 
 /**
  * \class qmdiActionGroupList

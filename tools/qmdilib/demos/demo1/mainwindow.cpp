@@ -10,12 +10,14 @@
 #include "mainwindow.h"
 
 /**
- * \file mainwindow.cpp
+ * \file mainwindow.cpp 
  * \brief Implementation of the main window class
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
  * \see MainWindow
  */
+
+// $Id$
 
 /**
  * \class MainWindow

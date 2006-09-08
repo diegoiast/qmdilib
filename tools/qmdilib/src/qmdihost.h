@@ -10,6 +10,8 @@
  * License LGPL
  * \see qmdiHost
  */
+ 
+// $Id$ 
 
 class QMainWindow;
 class qmdiClient;

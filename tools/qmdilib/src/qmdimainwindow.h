@@ -1,6 +1,8 @@
 #include "qmdihost.h"
 #include <QMainWindow>
 
+// $Id$
+
 class QWidget;
 
 class qmdiMainWindow: public QMainWindow, public qmdiHost

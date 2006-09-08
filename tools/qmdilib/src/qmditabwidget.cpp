@@ -17,6 +17,8 @@
  * License LGPL
  * \see qmdiServer, QTabWidget
  */
+ 
+// $Id$
 
 /**
  * \class qmdiTabBar

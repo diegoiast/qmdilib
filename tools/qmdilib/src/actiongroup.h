@@ -9,6 +9,8 @@
  * \see qmdiActionGroup
  */
  
+// $Id$ 
+ 
 #include <QList>
 #include <QString>
 

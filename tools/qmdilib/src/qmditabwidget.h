@@ -9,6 +9,8 @@
  * \see qmdiServer, QTabWidget
  */
  
+// $Id$ 
+ 
 #include <QTabWidget>
 #include <QTabBar>
 #include "qmdiserver.h"

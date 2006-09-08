@@ -1,10 +1,12 @@
 /**
- * \file actiongroup.cpp
+ * \file actiongroup.cpp  $Id$ 
  * \brief Implementation of the action group class
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
  * \see qmdiActionGroup
  */
+ 
+// $Id$ 
 
 #include <QAction>
 #include <QMenu>

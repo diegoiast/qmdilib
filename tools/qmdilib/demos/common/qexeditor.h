@@ -9,6 +9,8 @@
  * \see MainWindow
  */
 
+// $Id$
+
 #include <QTextEdit>
 
 #include "qmdiclient.h"
