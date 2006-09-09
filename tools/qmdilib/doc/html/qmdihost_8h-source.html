@@ -10,27 +10,29 @@
 <a name="l00003"></a>00003 <span class="preprocessor"></span>
 <a name="l00004"></a>00004 <span class="preprocessor">#include "<a class="code" href="actiongrouplist_8h.html">actiongrouplist.h</a>"</span>
 <a name="l00005"></a>00005 
-<a name="l00014"></a>00014 <span class="keyword">class </span>QMainWindow;
-<a name="l00015"></a>00015 <span class="keyword">class </span><a class="code" href="classqmdiClient.html">qmdiClient</a>;
-<a name="l00016"></a>00016 
-<a name="l00017"></a><a class="code" href="classqmdiHost.html">00017</a> <span class="keyword">class </span><a class="code" href="classqmdiHost.html">qmdiHost</a>
-<a name="l00018"></a>00018 {
-<a name="l00019"></a>00019 <span class="keyword">public</span>:
-<a name="l00020"></a>00020         <a class="code" href="classqmdiHost.html">qmdiHost</a>();
-<a name="l00021"></a>00021         <span class="keyword">virtual</span> ~<a class="code" href="classqmdiHost.html">qmdiHost</a>();
-<a name="l00022"></a>00022         
-<a name="l00023"></a><a class="code" href="classqmdiHost.html#o0">00023</a>         <a class="code" href="classqmdiActionGroupList.html">qmdiActionGroupList</a> <a class="code" href="classqmdiHost.html#o0">menus</a>;
-<a name="l00024"></a><a class="code" href="classqmdiHost.html#o1">00024</a>         <a class="code" href="classqmdiActionGroupList.html">qmdiActionGroupList</a> <a class="code" href="classqmdiHost.html#o1">toolbars</a>;
-<a name="l00025"></a>00025 
-<a name="l00026"></a>00026         <span class="keywordtype">void</span> <a class="code" href="classqmdiHost.html#a2">updateGUI</a>( QMainWindow *window );
-<a name="l00027"></a>00027         <span class="keywordtype">void</span> <a class="code" href="classqmdiHost.html#a3">mergeClient</a>( <a class="code" href="classqmdiClient.html">qmdiClient</a> *client );
-<a name="l00028"></a>00028         <span class="keywordtype">void</span> <a class="code" href="classqmdiHost.html#a4">unmergeClient</a>( <a class="code" href="classqmdiClient.html">qmdiClient</a> *client );
-<a name="l00029"></a>00029         
-<a name="l00030"></a><a class="code" href="classqmdiHost.html#o2">00030</a>         QList&lt;QToolBar*&gt;* <a class="code" href="classqmdiHost.html#o2">toolBarList</a>;
-<a name="l00031"></a>00031 };
-<a name="l00032"></a>00032 
-<a name="l00033"></a>00033 <span class="preprocessor">#endif // __QMDI_CLIENT_H__</span>
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Fri Jul 21 18:51:40 2006 for qmdilib by&nbsp;
+<a name="l00014"></a>00014 <span class="comment">// $Id: qmdihost.h 94 2006-09-08 18:09:01Z elcuco $ </span>
+<a name="l00015"></a>00015 
+<a name="l00016"></a>00016 <span class="keyword">class </span>QMainWindow;
+<a name="l00017"></a>00017 <span class="keyword">class </span><a class="code" href="classqmdiClient.html">qmdiClient</a>;
+<a name="l00018"></a>00018 
+<a name="l00019"></a><a class="code" href="classqmdiHost.html">00019</a> <span class="keyword">class </span><a class="code" href="classqmdiHost.html">qmdiHost</a>
+<a name="l00020"></a>00020 {
+<a name="l00021"></a>00021 <span class="keyword">public</span>:
+<a name="l00022"></a>00022         <a class="code" href="classqmdiHost.html">qmdiHost</a>();
+<a name="l00023"></a>00023         <span class="keyword">virtual</span> ~<a class="code" href="classqmdiHost.html">qmdiHost</a>();
+<a name="l00024"></a>00024         
+<a name="l00025"></a><a class="code" href="classqmdiHost.html#o0">00025</a>         <a class="code" href="classqmdiActionGroupList.html">qmdiActionGroupList</a> <a class="code" href="classqmdiHost.html#o0">menus</a>;
+<a name="l00026"></a><a class="code" href="classqmdiHost.html#o1">00026</a>         <a class="code" href="classqmdiActionGroupList.html">qmdiActionGroupList</a> <a class="code" href="classqmdiHost.html#o1">toolbars</a>;
+<a name="l00027"></a>00027 
+<a name="l00028"></a>00028         <span class="keywordtype">void</span> <a class="code" href="classqmdiHost.html#a2">updateGUI</a>( QMainWindow *window );
+<a name="l00029"></a>00029         <span class="keywordtype">void</span> <a class="code" href="classqmdiHost.html#a3">mergeClient</a>( <a class="code" href="classqmdiClient.html">qmdiClient</a> *client );
+<a name="l00030"></a>00030         <span class="keywordtype">void</span> <a class="code" href="classqmdiHost.html#a4">unmergeClient</a>( <a class="code" href="classqmdiClient.html">qmdiClient</a> *client );
+<a name="l00031"></a>00031         
+<a name="l00032"></a><a class="code" href="classqmdiHost.html#o2">00032</a>         QList&lt;QToolBar*&gt;* <a class="code" href="classqmdiHost.html#o2">toolBarList</a>;
+<a name="l00033"></a>00033 };
+<a name="l00034"></a>00034 
+<a name="l00035"></a>00035 <span class="preprocessor">#endif // __QMDI_CLIENT_H__</span>
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Sat Sep 9 17:51:34 2006 for qmdilib by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.4 </small></address>
 </body>

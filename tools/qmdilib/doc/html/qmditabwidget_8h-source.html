@@ -8,52 +8,55 @@
 <h1>src/qmditabwidget.h</h1><a href="qmditabwidget_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="preprocessor">#ifndef __QMDI_TAB_WIDGET_H__</span>
 <a name="l00002"></a>00002 <span class="preprocessor"></span><span class="preprocessor">#define __QMDI_TAB_WIDGET_H__</span>
 <a name="l00003"></a>00003 <span class="preprocessor"></span>
-<a name="l00012"></a>00012 <span class="preprocessor">#include &lt;QTabWidget&gt;</span>
-<a name="l00013"></a>00013 <span class="preprocessor">#include &lt;QTabBar&gt;</span>
-<a name="l00014"></a>00014 <span class="preprocessor">#include "<a class="code" href="qmdiserver_8h.html">qmdiserver.h</a>"</span>
-<a name="l00015"></a>00015 
-<a name="l00016"></a>00016 <span class="keyword">class </span>QWidget;
-<a name="l00017"></a>00017 <span class="keyword">class </span>QPoint;
-<a name="l00018"></a>00018 <span class="keyword">class </span><a class="code" href="classqmdiHost.html">qmdiHost</a>;
-<a name="l00019"></a>00019 
-<a name="l00020"></a><a class="code" href="classqmdiTabBar.html">00020</a> <span class="keyword">class </span><a class="code" href="classqmdiTabBar.html">qmdiTabBar</a>: <span class="keyword">public</span> QTabBar
-<a name="l00021"></a>00021 {
-<a name="l00022"></a>00022         Q_OBJECT
-<a name="l00023"></a>00023 
-<a name="l00024"></a>00024         <span class="keyword">protected</span>:
-<a name="l00025"></a>00025                 <span class="keywordtype">void</span> <a class="code" href="classqmdiTabBar.html#b0">mousePressEvent</a> ( QMouseEvent * event );
-<a name="l00026"></a>00026                 
-<a name="l00027"></a>00027         signals:
-<a name="l00028"></a>00028                 <span class="keywordtype">void</span> <a class="code" href="classqmdiTabBar.html#l0">middleMousePressed</a>(<span class="keywordtype">int</span> tabNumber, QPoint where );
-<a name="l00029"></a>00029                 <span class="keywordtype">void</span> <a class="code" href="classqmdiTabBar.html#l1">rightMousePressed</a>(<span class="keywordtype">int</span> tabNumber, QPoint where );
-<a name="l00030"></a>00030 };
-<a name="l00031"></a>00031 
-<a name="l00032"></a><a class="code" href="classqmdiTabWidget.html">00032</a> <span class="keyword">class </span><a class="code" href="classqmdiTabWidget.html">qmdiTabWidget</a> : <span class="keyword">public</span> QTabWidget, <span class="keyword">public</span> <a class="code" href="classqmdiServer.html">qmdiServer</a>
-<a name="l00033"></a>00033 {
-<a name="l00034"></a>00034         Q_OBJECT
-<a name="l00035"></a>00035 <span class="keyword">public</span>:
-<a name="l00036"></a>00036         <a class="code" href="classqmdiTabWidget.html#a0">qmdiTabWidget</a>( QWidget *parent=NULL, <a class="code" href="classqmdiHost.html">qmdiHost</a> *host=NULL );
-<a name="l00037"></a>00037 
-<a name="l00038"></a>00038 <span class="keyword">public</span> slots:
-<a name="l00039"></a>00039         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i0">tabChanged</a>( <span class="keywordtype">int</span> i );
-<a name="l00040"></a>00040         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i1">tryCloseClient</a>( <span class="keywordtype">int</span> i );
-<a name="l00041"></a>00041         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i2">tryCloseAllButClient</a>( <span class="keywordtype">int</span> i );
-<a name="l00042"></a>00042         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i3">tryCloseAllCliens</a>();
-<a name="l00043"></a>00043         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i4">showClientMenu</a>( <span class="keywordtype">int</span> i, QPoint p );
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045 <span class="keyword">protected</span>:
-<a name="l00046"></a>00046         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#b0">clientDeleted</a>( QObject *o );
-<a name="l00047"></a>00047         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#b1">tabInserted</a> ( <span class="keywordtype">int</span> index );
-<a name="l00048"></a>00048         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#b2">tabRemoved</a> ( <span class="keywordtype">int</span> index );
-<a name="l00049"></a>00049         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#b3">addClient</a>( <a class="code" href="classqmdiClient.html">qmdiClient</a> *client );
-<a name="l00050"></a>00050         
-<a name="l00051"></a>00051 <span class="keyword">private</span>:
-<a name="l00052"></a>00052         QWidget         *activeWidget;
-<a name="l00053"></a>00053         <a class="code" href="classqmdiHost.html">qmdiHost</a>        *mdiHost;
-<a name="l00054"></a>00054 };
-<a name="l00055"></a>00055 
-<a name="l00056"></a>00056 <span class="preprocessor">#endif // __QMDI_TAB_WIDGET_H__</span>
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Fri Jul 21 18:51:40 2006 for qmdilib by&nbsp;
+<a name="l00012"></a>00012 <span class="comment">// $Id: qmditabwidget.h 94 2006-09-08 18:09:01Z elcuco $ </span>
+<a name="l00013"></a>00013  
+<a name="l00014"></a>00014 <span class="preprocessor">#include &lt;QTabWidget&gt;</span>
+<a name="l00015"></a>00015 <span class="preprocessor">#include &lt;QTabBar&gt;</span>
+<a name="l00016"></a>00016 <span class="preprocessor">#include "<a class="code" href="qmdiserver_8h.html">qmdiserver.h</a>"</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="keyword">class </span>QWidget;
+<a name="l00019"></a>00019 <span class="keyword">class </span>QPoint;
+<a name="l00020"></a>00020 <span class="keyword">class </span><a class="code" href="classqmdiHost.html">qmdiHost</a>;
+<a name="l00021"></a>00021 
+<a name="l00022"></a><a class="code" href="classqmdiTabBar.html">00022</a> <span class="keyword">class </span><a class="code" href="classqmdiTabBar.html">qmdiTabBar</a>: <span class="keyword">public</span> QTabBar
+<a name="l00023"></a>00023 {
+<a name="l00024"></a>00024         Q_OBJECT
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026         <span class="keyword">protected</span>:
+<a name="l00027"></a>00027                 <span class="keywordtype">void</span> <a class="code" href="classqmdiTabBar.html#b0">mousePressEvent</a> ( QMouseEvent * event );
+<a name="l00028"></a>00028                 
+<a name="l00029"></a>00029         signals:
+<a name="l00030"></a>00030                 <span class="keywordtype">void</span> <a class="code" href="classqmdiTabBar.html#l0">middleMousePressed</a>(<span class="keywordtype">int</span> tabNumber, QPoint where );
+<a name="l00031"></a>00031                 <span class="keywordtype">void</span> <a class="code" href="classqmdiTabBar.html#l1">rightMousePressed</a>(<span class="keywordtype">int</span> tabNumber, QPoint where );
+<a name="l00032"></a>00032 };
+<a name="l00033"></a>00033 
+<a name="l00034"></a><a class="code" href="classqmdiTabWidget.html">00034</a> <span class="keyword">class </span><a class="code" href="classqmdiTabWidget.html">qmdiTabWidget</a> : <span class="keyword">public</span> QTabWidget, <span class="keyword">public</span> <a class="code" href="classqmdiServer.html">qmdiServer</a>
+<a name="l00035"></a>00035 {
+<a name="l00036"></a>00036         Q_OBJECT
+<a name="l00037"></a>00037 <span class="keyword">public</span>:
+<a name="l00038"></a>00038         <a class="code" href="classqmdiTabWidget.html#a0">qmdiTabWidget</a>( QWidget *parent=NULL, <a class="code" href="classqmdiHost.html">qmdiHost</a> *host=NULL );
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040 <span class="keyword">public</span> slots:
+<a name="l00041"></a>00041         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i0">tabChanged</a>( <span class="keywordtype">int</span> i );
+<a name="l00042"></a>00042         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i1">wSpaceWindowActivated</a>( QWidget* w );
+<a name="l00043"></a>00043         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i2">tryCloseClient</a>( <span class="keywordtype">int</span> i );
+<a name="l00044"></a>00044         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i3">tryCloseAllButClient</a>( <span class="keywordtype">int</span> i );
+<a name="l00045"></a>00045         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i4">tryCloseAllCliens</a>();
+<a name="l00046"></a>00046         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#i5">showClientMenu</a>( <span class="keywordtype">int</span> i, QPoint p );
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048 <span class="keyword">protected</span>:
+<a name="l00049"></a>00049         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#b0">clientDeleted</a>( QObject *o );
+<a name="l00050"></a>00050         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#b1">tabInserted</a> ( <span class="keywordtype">int</span> index );
+<a name="l00051"></a>00051         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#b2">tabRemoved</a> ( <span class="keywordtype">int</span> index );
+<a name="l00052"></a>00052         <span class="keywordtype">void</span> <a class="code" href="classqmdiTabWidget.html#b3">addClient</a>( <a class="code" href="classqmdiClient.html">qmdiClient</a> *client );
+<a name="l00053"></a>00053         
+<a name="l00054"></a>00054 <span class="keyword">private</span>:
+<a name="l00055"></a>00055         QWidget         *activeWidget;
+<a name="l00056"></a>00056         <a class="code" href="classqmdiHost.html">qmdiHost</a>        *mdiHost;
+<a name="l00057"></a>00057 };
+<a name="l00058"></a>00058 
+<a name="l00059"></a>00059 <span class="preprocessor">#endif // __QMDI_TAB_WIDGET_H__</span>
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Sat Sep 9 17:51:34 2006 for qmdilib by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.4 </small></address>
 </body>

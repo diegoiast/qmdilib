@@ -19,18 +19,21 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i0">tabChanged</a> (int i)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">callback function for modifing the menu structure  <a href="#i0"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i1">tryCloseClient</a> (int i)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i1">wSpaceWindowActivated</a> (QWidget *w)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">request an mdi client to close  <a href="#i1"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i2">tryCloseAllButClient</a> (int i)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">callback function for notifying of a new QWorkspace child activated  <a href="#i1"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i2">tryCloseClient</a> (int i)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">request to close all other clients  <a href="#i2"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i3">tryCloseAllCliens</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">request an mdi client to close  <a href="#i2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i3">tryCloseAllButClient</a> (int i)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">try to close all mdi clients  <a href="#i3"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i4">showClientMenu</a> (int i, QPoint p)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">request to close all other clients  <a href="#i3"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i4">tryCloseAllCliens</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">display the menu of a specific mdi client  <a href="#i4"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">try to close all mdi clients  <a href="#i4"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#i5">showClientMenu</a> (int i, QPoint p)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">display the menu of a specific mdi client  <a href="#i5"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiTabWidget.html#a0">qmdiTabWidget</a> (QWidget *parent=NULL, <a class="el" href="classqmdiHost.html">qmdiHost</a> *host=NULL)</td></tr>
 
@@ -189,7 +192,7 @@ This function removes the menus and toolbars of the widget (if it is the active 
 Reimplemented from <a class="el" href="classqmdiServer.html#a2">qmdiServer</a>.    </td>
   </tr>
 </table>
-<a class="anchor" name="i4"></a><!-- doxytag: member="qmdiTabWidget::showClientMenu" ref="i4" args="(int i, QPoint p)" --><p>
+<a class="anchor" name="i5"></a><!-- doxytag: member="qmdiTabWidget::showClientMenu" ref="i5" args="(int i, QPoint p)" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
@@ -270,7 +273,9 @@ callback function for modifing the menu structure
   </table>
 </dl>
 When the user changes the active tab this this slot gets called. It removes the menus and toolbars of the old mdi client and installs the ones of the new client on screen.<p>
-<dl compact><dt><b>See also:</b></dt><dd>QTabWidget::currentChanged()</dd></dl>
+Since version 0.0.3 this widget also supports adding QWorkspace. When the widget in focus is a QWorkspace, it's childs will be treated like normal <a class="el" href="classqmdiClient.html">qmdiClient</a> if teh yprovide that interface, and when you select a new window in the QWorkspace that window's menus and toolbars will be merged into the main application.<p>
+<dl compact><dt><b>See also:</b></dt><dd>QTabWidget::currentChanged() <p>
+<a class="el" href="classqmdiTabWidget.html#i1">wSpaceWindowActivated(QWidget*)</a></dd></dl>
     </td>
   </tr>
 </table>
@@ -351,7 +356,7 @@ This function will be called <b>after</b> the widget has been deleted, and thus 
     </td>
   </tr>
 </table>
-<a class="anchor" name="i2"></a><!-- doxytag: member="qmdiTabWidget::tryCloseAllButClient" ref="i2" args="(int i)" --><p>
+<a class="anchor" name="i3"></a><!-- doxytag: member="qmdiTabWidget::tryCloseAllButClient" ref="i3" args="(int i)" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
@@ -384,11 +389,11 @@ request to close all other clients
   </table>
 </dl>
 Call this slot to ask all the mdi clients (but the i parameter). Each mdi client may show a dialog to ask for saving. It's not ganranteed that the action will be handled as the mdi client can abort the action. At the end, only the client number i will not be asked to close itself.<p>
-<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="classqmdiClient.html#a2">qmdiClient::closeClient()</a> <a class="el" href="classqmdiTabWidget.html#i1">tryCloseClient()</a> <a class="el" href="classqmdiTabWidget.html#i3">tryCloseAllCliens</a></dd></dl>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="classqmdiClient.html#a2">qmdiClient::closeClient()</a> <a class="el" href="classqmdiTabWidget.html#i2">tryCloseClient()</a> <a class="el" href="classqmdiTabWidget.html#i4">tryCloseAllCliens</a></dd></dl>
     </td>
   </tr>
 </table>
-<a class="anchor" name="i3"></a><!-- doxytag: member="qmdiTabWidget::tryCloseAllCliens" ref="i3" args="()" --><p>
+<a class="anchor" name="i4"></a><!-- doxytag: member="qmdiTabWidget::tryCloseAllCliens" ref="i4" args="()" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
@@ -417,7 +422,7 @@ try to close all mdi clients
 Call this slot when you want to close all the mdi clients.    </td>
   </tr>
 </table>
-<a class="anchor" name="i1"></a><!-- doxytag: member="qmdiTabWidget::tryCloseClient" ref="i1" args="(int i)" --><p>
+<a class="anchor" name="i2"></a><!-- doxytag: member="qmdiTabWidget::tryCloseClient" ref="i2" args="(int i)" --><p>
 <table class="mdTable" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
@@ -454,9 +459,50 @@ Call this slot to ask the mdi client to close itself. The mdi client may show a 
     </td>
   </tr>
 </table>
+<a class="anchor" name="i1"></a><!-- doxytag: member="qmdiTabWidget::wSpaceWindowActivated" ref="i1" args="(QWidget *w)" --><p>
+<table class="mdTable" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top">void qmdiTabWidget::wSpaceWindowActivated           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">QWidget *&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>w</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap><code> [slot]</code></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing="5" cellpadding="0" border="0">
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+callback function for notifying of a new QWorkspace child activated 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>w</em>&nbsp;</td><td>the widget which now has the focus on the work space </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Since:</b></dt><dd>0.0.3</dd></dl>
+Since qmdilib 0.0.3 it's possible to insert a QWorkspace into a QTabWidget and when a new child will be focused on the QWorkspace it's menus will be merged, just like it a normal widget on the qmdiTabWidget.<p>
+This slow it automatically connected by <a class="el" href="classqmdiTabWidget.html#b1">tabInserted(int)</a>.<p>
+Thanks to Nox PasNox &lt;<a href="mailto:pasnox@gmail.com">pasnox@gmail.com</a>&gt; for this code.<p>
+<dl compact><dt><b>See also:</b></dt><dd><a class="el" href="classqmdiTabWidget.html#b1">tabInserted( int )</a> <p>
+<a class="el" href="classqmdiTabWidget.html#i0">tabChanged( int )</a></dd></dl>
+    </td>
+  </tr>
+</table>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>src/<a class="el" href="qmditabwidget_8h-source.html">qmditabwidget.h</a><li>src/<a class="el" href="qmditabwidget_8cpp.html">qmditabwidget.cpp</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Fri Jul 21 18:51:40 2006 for qmdilib by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Sat Sep 9 17:51:34 2006 for qmdilib by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.4 </small></address>
 </body>
