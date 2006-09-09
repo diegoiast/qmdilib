@@ -42,6 +42,7 @@ private:
 	QLayout		*mainLayout;	
 	QTabBar		*tabBar;
 	QWorkspace	*workspace;
+	QWidgetList	_widgetList;
 };
  	
 

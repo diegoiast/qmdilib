@@ -70,6 +70,7 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 	widget->setAttribute( Qt::WA_DeleteOnClose );          
 	tabBar->addTab( name );		
 	widget->show();
+	_widgetList.append( widget );
 }
 
 QWidget *qmdiWorkspace::currentWidget()
@@ -136,7 +137,7 @@ void qmdiWorkspace::tabBarChanged( int index )
 
 void qmdiWorkspace::windowDeleted( QObject *o )
 {
-	int windowNumber = workspace->windowList().indexOf(dynamic_cast<QWidget*>(o));
+	int windowNumber = _widgetList.indexOf((QWidget*)(o));
 	qDebug("removed tab %d", windowNumber);
 	if (windowNumber!=-1)
 		tabBar->removeTab( windowNumber );
