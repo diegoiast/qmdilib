@@ -67,7 +67,7 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 		
 	connect( widget, SIGNAL(destroyed(QObject*)), this, SLOT(windowDeleted(QObject*)));
 	workspace->addWindow( widget );
-	widget->setAttribute( Qt::WA_DeleteOnClose );          
+	widget->setAttribute( Qt::WA_DeleteOnClose, true );          
 	tabBar->addTab( name );		
 	widget->show();
 	_widgetList.append( widget );
@@ -139,6 +139,8 @@ void qmdiWorkspace::windowDeleted( QObject *o )
 {
 	int windowNumber = _widgetList.indexOf((QWidget*)(o));
 	qDebug("removed tab %d", windowNumber);
-	if (windowNumber!=-1)
-		tabBar->removeTab( windowNumber );
+	if (windowNumber == -1)
+		return;
+	tabBar->removeTab( windowNumber );
+	_widgetList.removeAt( windowNumber );
 }
