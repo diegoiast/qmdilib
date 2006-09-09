@@ -66,9 +66,9 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 		client->mdiServer = this;
 		
 	connect( widget, SIGNAL(destroyed(QObject*)), this, SLOT(windowDeleted(QObject*)));
-	widget->setAttribute(Qt::WA_DeleteOnClose, true);
 	workspace->addWindow( widget );
-	tabBar->addTab( name );
+	widget->setAttribute( Qt::WA_DeleteOnClose );          
+	tabBar->addTab( name );		
 	widget->show();
 }
 
@@ -118,38 +118,6 @@ void qmdiWorkspace::workspaceChanged( QWidget * w )
 	if (windowNumber!=-1)
 		tabBar->setCurrentIndex( windowNumber );
 
-#if 0
-	QWidgetList windowList = workspace->windowList();
-	int windowCount = windowList.count();
-	QString s;
-	
-	//qDebug("workspace chanegd (%d)", windowCount );
-	for( int i=0; i<windowCount; i++ )		
-	{
-		//qDebug("removed tab (%d)", i );
-		tabBar->removeTab( i );
-	}
-	
-	//for (int i=0; i<windowCount; i++ )
-	foreach( QWidget *w, windowList )
-	{
-		//QWidget *w = windowList[i];
-		qmdiClient *c = dynamic_cast<qmdiClient*>(w);
-		if (c)
-		{
-			s = c->name;
-			if (s.isEmpty())
-				s = c->fileName;
-		}
-		else
-			s = w->objectName();
-
-		//qDebug( "window %d -> %s", i, qPrintable(s) );		
-		//if ((!s.isEmpty()) || (!s.isNull()))
-		//tabBar->insertTab( i, s );
-		tabBar->addTab( s );
-	}
-#endif
 	lock = false;
 }
 
@@ -168,7 +136,8 @@ void qmdiWorkspace::tabBarChanged( int index )
 
 void qmdiWorkspace::windowDeleted( QObject *o )
 {
-	int windowNumber = workspace->windowList().lastIndexOf(dynamic_cast<QWidget*>(o));
+	int windowNumber = workspace->windowList().indexOf(dynamic_cast<QWidget*>(o));
+	qDebug("removed tab %d", windowNumber);
 	if (windowNumber!=-1)
 		tabBar->removeTab( windowNumber );
 }
