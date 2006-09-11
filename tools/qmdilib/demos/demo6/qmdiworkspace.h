@@ -15,7 +15,7 @@
 //#include <QWorkSpace>
 #include "qmdiserver.h"
 
-class QLayout;
+class QGridLayout;
 class QWorkspace;
 class QTabBar;
 class qmdiHost;
@@ -39,10 +39,15 @@ public slots:
 	
 private:
 	qmdiHost	*mdiHost;
-	QLayout		*mainLayout;	
+	QGridLayout	*mainLayout;	
 	QTabBar		*tabBar;
 	QWorkspace	*workspace;
 	QWidgetList	_widgetList;
+	
+	QWidget		*cornerWidgetTopLeft;
+	QWidget		*cornerWidgetTopRight;
+	QWidget		*cornerWidgetBottomLeft;
+	QWidget		*cornerWidgetBottomRight;
 };
  	
 

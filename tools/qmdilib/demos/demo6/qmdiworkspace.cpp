@@ -28,13 +28,13 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 		
 	tabBar = new QTabBar;
 	workspace = new QWorkspace;	
-	mainLayout = new QVBoxLayout;
+	mainLayout = new QGridLayout;
 	
 	tabBar->setDrawBase( false );	
 	mainLayout->setMargin( 0 );
 	mainLayout->setSpacing( 0 );
-	mainLayout->addWidget(tabBar);
-	mainLayout->addWidget(workspace);
+	mainLayout->addWidget(tabBar   , 0, 1 );
+	mainLayout->addWidget(workspace, 1, 1 );
 	
 	setLayout( mainLayout );
 	connect( workspace, SIGNAL(windowActivated(QWidget*)), this, SLOT(workspaceChanged(QWidget*)));
@@ -83,13 +83,46 @@ QWidget *qmdiWorkspace::currentWidget()
 
 const QWidget * qmdiWorkspace::cornerWidget ( Qt::Corner corner  )
 {
+	switch(corner)
+	{
+		case Qt::TopLeftCorner:
+			return cornerWidgetTopLeft;
+			break;
+		case Qt::TopRightCorner:
+			return cornerWidgetTopRight;
+			break;
+		case Qt::BottomLeftCorner: 
+			return cornerWidgetBottomLeft;
+			break;
+		case Qt::BottomRightCorner:
+			return cornerWidgetBottomRight;
+			break;
+	}
 	return NULL;
 }
 
 void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 {
-	widget->setParent( tabBar );
-	//tabBar->
+	//widget->setParent( tabBar );
+	switch(corner)
+	{
+		case Qt::TopLeftCorner:
+			cornerWidgetTopLeft = widget;
+			mainLayout->addWidget(tabBar, 0, -1  );
+			break;
+		case Qt::TopRightCorner:
+			cornerWidgetTopRight = widget;
+			mainLayout->addWidget(tabBar, 10, -1 );
+			break;
+		case Qt::BottomLeftCorner: 
+			cornerWidgetBottomLeft = widget;
+			mainLayout->addWidget(tabBar, 2, 0 );
+			break;
+		case Qt::BottomRightCorner:
+			cornerWidgetBottomRight = widget;
+			mainLayout->addWidget(tabBar, 2, 2 );
+			break;
+	}
 }
 
 void qmdiWorkspace::workspaceChanged( QWidget * w )
