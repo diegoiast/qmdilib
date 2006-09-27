@@ -84,21 +84,18 @@ void MainWindow6::init_gui()
 	// make the tab widget
 	//tabWidget = new qmdiTabWidget;
 	tabWidget = new qmdiWorkspace( this, this );
-	tabNewBtn = new QToolButton;
+	tabNewBtn = new QToolButton( tabWidget );
         tabNewBtn->setAutoRaise( true );
         connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));
 	tabNewBtn->setIcon(QIcon(":images/addtab.png"));
 
-	tabCloseBtn = new QToolButton;
+	tabCloseBtn = new QToolButton( tabWidget );
         tabCloseBtn->setAutoRaise( true );
         connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(fileClose()));
 	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
 
-
-	tabNewBtn->setParent( tabWidget );
-	tabCloseBtn->setParent( tabWidget );
 	tabWidget->setCornerWidget( tabNewBtn, Qt::TopLeftCorner );
-	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
+	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner );
         //QStackedWidget *stack = qFindChild<QStackedWidget*>(this);
 	//Q_ASSERT(stack);
 	//stack->setContentsMargins(0, 0, 0, 0);
@@ -132,7 +129,6 @@ void MainWindow6::fileNew()
 void MainWindow6::fileClose()
 {
 	qmdiClient *c = dynamic_cast<qmdiClient*>(tabWidget->currentWidget());
-
 	if (c == NULL)
 		// if it's not an mdi client, safe to kill it
 		delete tabWidget->currentWidget();

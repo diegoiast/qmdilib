@@ -13,10 +13,12 @@
 #include <QWorkspace>
 #include <QVBoxLayout>
 #include <QMainWindow>
+#include <QMenu>
 
 #include "qmdiclient.h"
 #include "qmdihost.h"
 #include "qmdiworkspace.h"
+#include "qmditabbar.h"
 
 qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	: QWidget( parent )
@@ -25,16 +27,27 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 		mdiHost = dynamic_cast<qmdiHost*>(parent);
 	else
 		mdiHost = host;
+
+	cornerWidget1 = NULL;
+	cornerWidget2 = NULL;
+	activeWidget  = NULL;
 		
-	tabBar = new QTabBar;
-	workspace = new QWorkspace;	
-	mainLayout = new QGridLayout;
+	tabBar = new qmdiTabBar;
+	connect( tabBar, SIGNAL(middleMousePressed(int,QPoint)), this, SLOT(tryCloseClient(int)));
+	connect( tabBar, SIGNAL(rightMousePressed(int,QPoint)), this, SLOT(showClientMenu(int,QPoint)));
 	
-	tabBar->setDrawBase( false );	
-	mainLayout->setMargin( 0 );
-	mainLayout->setSpacing( 0 );
-	mainLayout->addWidget(tabBar   , 0, 1 );
-	mainLayout->addWidget(workspace, 1, 1 );
+	workspace = new QWorkspace;	
+	mainLayout = new QVBoxLayout;
+	headerLayout = new QHBoxLayout;
+	headerLayout->setMargin(0);
+	headerLayout->setSpacing(0);
+	mainLayout->setMargin(0);
+	mainLayout->setSpacing(0);
+	
+	tabBar->setDrawBase( false );
+	headerLayout->addWidget( tabBar );
+	mainLayout->addItem(headerLayout);
+	mainLayout->addWidget(workspace);
 	
 	setLayout( mainLayout );
 	connect( workspace, SIGNAL(windowActivated(QWidget*)), this, SLOT(workspaceChanged(QWidget*)));
@@ -63,14 +76,18 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 
 	qmdiClient *client = dynamic_cast<qmdiClient*>(widget);
 	if (client)
+	{
 		client->mdiServer = this;
+		client->myself    = widget;
+	}
 		
-	connect( widget, SIGNAL(destroyed(QObject*)), this, SLOT(windowDeleted(QObject*)));
+	widget->setParent( workspace );
 	workspace->addWindow( widget );
 	widget->setAttribute( Qt::WA_DeleteOnClose, true );          
 	tabBar->addTab( name );		
 	widget->show();
 	_widgetList.append( widget );
+	connect( widget, SIGNAL(destroyed(QObject*)), this, SLOT(windowDeleted(QObject*)));
 }
 
 QWidget *qmdiWorkspace::currentWidget()
@@ -86,17 +103,13 @@ const QWidget * qmdiWorkspace::cornerWidget ( Qt::Corner corner  )
 	switch(corner)
 	{
 		case Qt::TopLeftCorner:
-			return cornerWidgetTopLeft;
-			break;
+			return cornerWidget1;
 		case Qt::TopRightCorner:
-			return cornerWidgetTopRight;
-			break;
+			return cornerWidget2;
 		case Qt::BottomLeftCorner: 
-			return cornerWidgetBottomLeft;
-			break;
+			return cornerWidget1;
 		case Qt::BottomRightCorner:
-			return cornerWidgetBottomRight;
-			break;
+			return cornerWidget2;
 	}
 	return NULL;
 }
@@ -107,34 +120,66 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 	switch(corner)
 	{
 		case Qt::TopLeftCorner:
-			cornerWidgetTopLeft = widget;
-			mainLayout->addWidget(tabBar, 0, -1  );
+			cornerWidget1 = widget;
 			break;
 		case Qt::TopRightCorner:
-			cornerWidgetTopRight = widget;
-			mainLayout->addWidget(tabBar, 10, -1 );
+			cornerWidget2 = widget;
 			break;
+// TODO only tabs on the top is fully supported
 		case Qt::BottomLeftCorner: 
-			cornerWidgetBottomLeft = widget;
-			mainLayout->addWidget(tabBar, 2, 0 );
+			cornerWidget1 = widget;
 			break;
 		case Qt::BottomRightCorner:
-			cornerWidgetBottomRight = widget;
-			mainLayout->addWidget(tabBar, 2, 2 );
+			cornerWidget2  = widget;
 			break;
 	}
+	
+	// now lets  remove header layout
+	// and reconstruct it, and finally add it back to the main layout
+	// TODO: is there a smarter way of doing this?
+	mainLayout->removeItem( headerLayout );
+	mainLayout->removeWidget( workspace );
+	
+	delete headerLayout;
+	headerLayout = new QHBoxLayout;
+	headerLayout->setMargin(0);
+	headerLayout->setSpacing(0);
+	
+	if (cornerWidget1) 
+		headerLayout->addWidget(cornerWidget1);
+	headerLayout->addWidget(tabBar);
+	if (cornerWidget2) 
+		headerLayout->addWidget(cornerWidget2);
+	
+	mainLayout->addItem(headerLayout);
+	mainLayout->addWidget(workspace);
+}
+
+QWidget* qmdiWorkspace::widget( int i )
+{
+	if (!workspace)
+		return NULL;
+		
+	return workspace->windowList().at( i );
+}
+
+int qmdiWorkspace::count()
+{
+	if (!workspace)
+		return 0;
+	
+	return workspace->windowList().count();
 }
 
 void qmdiWorkspace::workspaceChanged( QWidget * w )
 {
-	static QWidget *activeWidget = NULL;
-	static bool lock = false;
-	
-	if (lock)
+	if (!mdiHost)
 		return;
-	lock = true;
+		
 	if (activeWidget)
 		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
+
+	//qDebug("%s %d %p", __FILE__, __LINE__, activeWidget );
 	
 	activeWidget = w;
 
@@ -143,16 +188,16 @@ void qmdiWorkspace::workspaceChanged( QWidget * w )
 
 	// try to update the mdi host
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
+
 	mdiHost->updateGUI( m );
 	
+	qDebug("%s %d %p", __FILE__, __LINE__, activeWidget );
 	// update the tab bar
 	if (!workspace)
 		return;
 	int windowNumber = workspace->windowList().indexOf(w);
 	if (windowNumber!=-1)
 		tabBar->setCurrentIndex( windowNumber );
-
-	lock = false;
 }
 
 void qmdiWorkspace::tabBarChanged( int index )
@@ -171,9 +216,132 @@ void qmdiWorkspace::tabBarChanged( int index )
 void qmdiWorkspace::windowDeleted( QObject *o )
 {
 	int windowNumber = _widgetList.indexOf((QWidget*)(o));
-	qDebug("removed tab %d", windowNumber);
+
 	if (windowNumber == -1)
 		return;
+		
 	tabBar->removeTab( windowNumber );
 	_widgetList.removeAt( windowNumber );
+	
+	if (o == activeWidget)
+		activeWidget = NULL;
+}
+
+/**
+ * \brief request an mdi client to close
+ * \param i the number of the client (tab) to be closed
+ *
+ * Call this slot to ask the mdi client to close itself.
+ * The mdi client may show a dialog to ask for saving. It's not
+ * ganranteed that the action will be handled as the mdi client
+ * can abort the action.
+ *
+ * \see qmdiClient::closeClient()
+ */
+void qmdiWorkspace::tryCloseClient( int i )
+{
+	qmdiClient *client = dynamic_cast<qmdiClient*>(widget(i));
+	if (!client)
+		return;
+
+	client->closeClient();
+}
+
+
+/**
+ * \brief request to close all other clients
+ * \param i the number of the client to keep open
+ *
+ * Call this slot to ask all the mdi clients (but the widget found at
+ * index \b i in the tab widget, passed as a parameter).
+ * Each mdi client may show a dialog to ask for saving. It's not
+ * guaranteed that the action will be handled as the mdi client
+ * can abort the action. At the end, only the client number i will
+ * not be asked to close itself.
+ *
+ * If some widget on the mdi server does not derive (implements) 
+ * the qmdiClient interface, the widget will not be closed.
+ *
+ * \see qmdiClient::closeClient() tryCloseClient() tryCloseAllCliens
+ */
+void qmdiWorkspace::tryCloseAllButClient( int i )
+{
+	int c = count();
+	QWidget *w = widget(i);
+
+	for( int j=0; j<c; j++ )
+	{
+		QWidget *w2 = widget(j);
+		if (w == w2)
+			continue;
+		
+		qmdiClient *client = dynamic_cast<qmdiClient*>(w2);
+		if (!client)
+			continue;
+
+		client->closeClient();
+	}
+}
+
+
+/**
+ * \brief try to close all mdi clients
+ *
+ * Call this slot when you want to close all the mdi clients.
+ */
+void qmdiWorkspace::tryCloseAllCliens()
+{
+	int c = count();
+
+	for( int i=0; i<c; i++ )
+	{
+		qmdiClient *client = dynamic_cast<qmdiClient*>(widget(i));
+		if (!client)
+			continue;
+
+		client->closeClient();
+	}	
+}
+
+
+/**
+ * \brief display the menu of a specific mdi client
+ * \param i the mouse button that has been pressed
+ * \param p the location of the mouse click
+ *
+ * This function is called when a user presses the left mouse
+ * button on the tab bar of the tab widget. The coordinates of the
+ * click are passed on the parameter \b p , while the
+ * mouse button which has been pressed is passed on the
+ * parameter \b p .
+ *
+ * This slot is connected to rightMousePressed signal of the qmdiTabBar
+ * at the constructor of this class.
+ * 
+ * \see qmdiTabBar
+ */
+void qmdiWorkspace::showClientMenu( int i, QPoint p )
+{
+	QAction *closeThis	= new QAction(tr("Close this window"), this);
+	QAction *closeOthers	= new QAction(tr("Close other windows"), this);
+	QAction *closeAll	= new QAction(tr("Close all windows"), this);
+	QMenu *menu = new QMenu( tr("Local actions") );
+	menu->addAction( closeThis );
+	menu->addAction( closeOthers );
+	menu->addAction( closeAll );
+
+	QAction *q = menu->exec( this->mapToGlobal(p) );
+
+	if ( q == closeThis)
+	{
+		tryCloseClient( i );
+	}
+	else if  (q == closeOthers)
+	{
+		tryCloseAllButClient( i );
+	}
+	else if (q == closeAll )
+	{
+		tryCloseAllCliens();
+	}
 }

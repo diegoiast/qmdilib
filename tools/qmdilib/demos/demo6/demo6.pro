@@ -10,7 +10,8 @@ HEADERS =   mainwindow6.h \
   ../../src/qmditabwidget.h \
   ../../src/qmdimainwindow.h \
   ../common/helpbrowse.h \
-  ../common/qexeditor.h
+  ../common/qexeditor.h \
+  ../../src/qmditabbar.h
 SOURCES =   mainwindow6.cpp \
   main6.cpp \
   qmdiworkspace.cpp \
@@ -21,7 +22,8 @@ SOURCES =   mainwindow6.cpp \
   ../../src/qmdiserver.cpp \
   ../../src/qmditabwidget.cpp \
   ../common/helpbrowse.cpp \
-  ../common/qexeditor.cpp
+  ../common/qexeditor.cpp \
+  ../../src/qmditabbar.cpp
 INCLUDEPATH =   ../../src/ \
   ../common/ \
   .

@@ -31,23 +31,29 @@ public:
 	QWidget *currentWidget();
 	const QWidget * cornerWidget ( Qt::Corner corner = Qt::TopRightCorner );
 	void setCornerWidget ( QWidget * widget, Qt::Corner corner = Qt::TopRightCorner );
+	QWidget* widget( int i );
+	int count();
 	
 public slots:	
 	void workspaceChanged( QWidget * w );
 	void tabBarChanged( int index );
 	void windowDeleted( QObject *o );
+	void tryCloseClient( int i );
+	void tryCloseAllButClient( int i );
+	void tryCloseAllCliens();
+	void showClientMenu( int i, QPoint p );
 	
 private:
 	qmdiHost	*mdiHost;
-	QGridLayout	*mainLayout;	
+	QLayout		*mainLayout;	
+	QLayout		*headerLayout;	
 	QTabBar		*tabBar;
 	QWorkspace	*workspace;
 	QWidgetList	_widgetList;
 	
-	QWidget		*cornerWidgetTopLeft;
-	QWidget		*cornerWidgetTopRight;
-	QWidget		*cornerWidgetBottomLeft;
-	QWidget		*cornerWidgetBottomRight;
+	QWidget		*cornerWidget1;
+	QWidget		*cornerWidget2;
+	QWidget		*activeWidget;
 };
  	
 

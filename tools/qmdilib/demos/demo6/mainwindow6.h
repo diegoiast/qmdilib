@@ -22,7 +22,7 @@ class QToolButton;
 
 class MainWindow6: public QMainWindow, public qmdiHost
 {
-Q_OBJECT
+	Q_OBJECT
 public:
 	MainWindow6( QWidget *owner=NULL );
 
