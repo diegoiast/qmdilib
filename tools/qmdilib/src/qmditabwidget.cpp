@@ -267,24 +267,30 @@ void qmdiTabWidget::tryCloseClient( int i )
  * \brief request to close all other clients
  * \param i the number of the client to keep open
  *
- * Call this slot to ask all the mdi clients (but the i parameter).
+ * Call this slot to ask all the mdi clients (but the widget found at
+ * index \b i in the tab widget, passed as a parameter).
  * Each mdi client may show a dialog to ask for saving. It's not
  * ganranteed that the action will be handled as the mdi client
  * can abort the action. At the end, only the client number i will
  * not be asked to close itself.
+ *
+ * If some widget on the mdi server does not derive (implements) 
+ * the qmdiClient interface, the widget will not be closed.
  *
  * \see qmdiClient::closeClient() tryCloseClient() tryCloseAllCliens
  */
 void qmdiTabWidget::tryCloseAllButClient( int i )
 {
 	int c = count();
+	QWidget *w = widget(i);
 
 	for( int j=0; j<c; j++ )
 	{
-		if (j == i)
+		QWidget *w2 = widget(j);
+		if (w == w2)
 			continue;
 		
-		qmdiClient *client = dynamic_cast<qmdiClient*>(widget(j));
+		qmdiClient *client = dynamic_cast<qmdiClient*>(w2);
 		if (!client)
 			continue;
 
