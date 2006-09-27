@@ -197,7 +197,9 @@ bool qmdiClient::closeClient()
 	{
 		if (myself != NULL)
 		{
+			qDebug("%s %d calling deleteLater()", __FILE__, __LINE__ );
 			myself->deleteLater();
+			qDebug("%s %d called, deleteLater().......", __FILE__, __LINE__ );
 			return true;
 		}
 		else

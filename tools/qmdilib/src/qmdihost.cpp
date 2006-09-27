@@ -161,6 +161,7 @@ void qmdiHost::mergeClient( qmdiClient *client )
  */
 void qmdiHost::unmergeClient( qmdiClient *client )
 {
+	//qDebug("%s %d", __FILE__, __LINE__ );
 	if (client == NULL)
 		return;
 		

@@ -18,18 +18,7 @@
 class QWidget;
 class QPoint;
 class qmdiHost;
-
-class qmdiTabBar: public QTabBar
-{
-	Q_OBJECT
-
-	protected:
-		void mousePressEvent ( QMouseEvent * event );
-		
-	signals:
-		void middleMousePressed(int tabNumber, QPoint where );
-		void rightMousePressed(int tabNumber, QPoint where );
-};
+class qmdiTabBar;
 
 class qmdiTabWidget : public QTabWidget, public qmdiServer
 {

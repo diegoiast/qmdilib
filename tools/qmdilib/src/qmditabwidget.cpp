@@ -18,74 +18,7 @@
 #include "qmditabwidget.h"
 #include "qmdihost.h"
 #include "qmdiclient.h"
-
-
-/**
- * \class qmdiTabBar
- * \brief Helper class for qmdiTabWidget
- * 
- * This class is a new tab bar, which emits some new signals
- * on mouse clicks. This helps some operations on the tab widget,
- * like recognizing right clicks and middle clicks.
- */
-
-/**
- * \fn qmdiTabBar::middleMousePressed(int tabNumber, QPoint where );
- * \brief emited when a user presses the middle mouse button [SIGNAL]
- * \param tabNumber the number of the tab pressed
- * \param where the location on the screen (relative) where the user clicked
- *
- * This is an emited signal which happens when the middle mouse
- * on the tab bar
- */
-
-/**
- * \fn qmdiTabBar::rightMousePressed(int tabNumber, QPoint where );
- * \brief emited when a user presses the right mouse button [SIGNAL]
- * \param tabNumber the number of the tab pressed
- * \param where the location on the screen (relative) where the user clicked
- *
- * This is an emited signal which happens when the right mouse
- * on the tab bar
- */
-
-/**
- * \brief mouse pressed event handler
- * \param event
- *
- * This is an overloaded function, which will emit a signal
- * with the tab number which was pressed. There are 2 signals
- * emited: middleMousePressed(int) and rightMousePressed(int)
- */
-void qmdiTabBar::mousePressEvent ( QMouseEvent * event )
-{
-	if (event->button() == Qt::MidButton)
-	{
-		int tabCount = count();
-		for( int i=0; i<tabCount; i++ )
-		{
-			if (tabRect(i).contains(event->pos()))
-			{
-				emit middleMousePressed(i, event->pos());
-				break;
-			}
-		}
-	}
-	else if (event->button() == Qt::RightButton)
-	{
-		int tabCount = count();
-		for( int i=0; i<tabCount; i++ )
-		{
-			if (tabRect(i).contains(event->pos()))
-			{
-				emit rightMousePressed(i, event->pos());
-				break;
-			}
-		}
-	}
-
-	QTabBar::mousePressEvent(event);
-}
+#include "qmditabbar.h"
 
 /**
  * \class qmdiTabWidget
@@ -270,7 +203,7 @@ void qmdiTabWidget::tryCloseClient( int i )
  * Call this slot to ask all the mdi clients (but the widget found at
  * index \b i in the tab widget, passed as a parameter).
  * Each mdi client may show a dialog to ask for saving. It's not
- * ganranteed that the action will be handled as the mdi client
+ * guaranteed that the action will be handled as the mdi client
  * can abort the action. At the end, only the client number i will
  * not be asked to close itself.
  *
