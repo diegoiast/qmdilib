@@ -9,6 +9,7 @@
 // $Id$ 
 
 #include <QObject>
+#include <QWidget>
 #include "qmdiclient.h"
 #include "qmdiserver.h"
 
@@ -197,9 +198,12 @@ bool qmdiClient::closeClient()
 	{
 		if (myself != NULL)
 		{
-			qDebug("%s %d calling deleteLater()", __FILE__, __LINE__ );
+			// this fixes a crahs on qmdiWorkspace
+			QWidget *w = qobject_cast<QWidget*>(myself);
+			if (w)
+				w->hide();
+			
 			myself->deleteLater();
-			qDebug("%s %d called, deleteLater().......", __FILE__, __LINE__ );
 			return true;
 		}
 		else
