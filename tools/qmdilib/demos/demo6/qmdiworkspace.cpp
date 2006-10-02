@@ -1,9 +1,9 @@
 /**
  * \file qmdiworkspace.cpp
- * \brief implementation of qmdiWorkSpace
+ * \brief implementation of the qmdi WorkSpace
  * \author Diego Iastrubni <elcuco@kde.org>
  * Licence LGPL
- * \see qmdiWorkSpace
+ * \see qmdiWorkspace
  */
  
 // $Id$
@@ -20,6 +20,47 @@
 #include "qmdiworkspace.h"
 #include "qmditabbar.h"
 
+/**
+ * \class qmdiWorkspace
+ * \brief An advanced work space widget, which is capable of changing menus and toolbars on the fly
+ * 
+ * This class is a new mdi server, based on top of QWorkspace. It is built
+ * with a similar API to qmdiTabWidget and QTabWidget. Since the API is similar
+ * this means you can switch applications from QTabWidget to qmdiWorkspace in
+ * very small modifications to your code.
+ *
+ * This class is also a valid qmdiServer, which means it will dynamically
+ * modify the main window menus and toolbars when a new child is selected.
+ * 
+ * The relations are:
+ *  - qmdiHost   : main window
+ *  - qmdiClient : your new widgets
+ *  - qmdiServer : this class
+ *
+ * When a new widget is selected on the qmdiServer (the user changes), the old
+ * widget is removed from the qmdiHost, and only then the new mdi client is added
+ * to the qmdiHost.
+ *
+ * To use this class properly, insert it into a QMainWindow which also derives qmdiHost,
+ * and insert into it QWidgets which also derive qmdiClient.
+ *
+ * \see qmdiTabBar
+ */
+
+
+/**
+ * \brief default constructor
+ * \param parent the parent of this widget
+ * \param host the mdi host to connect to
+ *
+ * This is the default constructor of qmdiWorkspace.
+ * If no host is passed, the parent widget will be queried for the qmdiHost
+ * interface. This means that the easiest way to work with this
+ * class is to insert it into a qmdiHost derived QMainWindow.
+ *
+ * The constructor also creates the tab bar, to make this widget
+ * look like a QTabWidget
+ */
 qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	: QWidget( parent )
 {
@@ -59,6 +100,12 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	//
 //}
 
+/**
+ * \brief add a new mdiclient to the workspace
+ * \param client the client to be added to the workspace
+ *
+ * Add a mdi 
+ */
 void qmdiWorkspace::addClient( qmdiClient *client )
 {
 	QWidget *w = dynamic_cast<QWidget*>(client);
@@ -83,7 +130,7 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 		
 	widget->setParent( workspace );
 	workspace->addWindow( widget );
-	widget->setAttribute( Qt::WA_DeleteOnClose, true );          
+	widget->setAttribute( Qt::WA_DeleteOnClose, true );
 	tabBar->addTab( name );		
 	widget->show();
 	_widgetList.append( widget );
@@ -175,6 +222,9 @@ void qmdiWorkspace::workspaceChanged( QWidget * w )
 {
 	if (!mdiHost)
 		return;
+	
+	if (!workspace)
+		return;
 		
 	if (activeWidget)
 		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
@@ -191,10 +241,7 @@ void qmdiWorkspace::workspaceChanged( QWidget * w )
 
 	mdiHost->updateGUI( m );
 	
-	qDebug("%s %d %p", __FILE__, __LINE__, activeWidget );
 	// update the tab bar
-	if (!workspace)
-		return;
 	int windowNumber = workspace->windowList().indexOf(w);
 	if (windowNumber!=-1)
 		tabBar->setCurrentIndex( windowNumber );
@@ -241,6 +288,9 @@ void qmdiWorkspace::windowDeleted( QObject *o )
 void qmdiWorkspace::tryCloseClient( int i )
 {
 	qmdiClient *client = dynamic_cast<qmdiClient*>(widget(i));
+
+	// try to close only mdi clients
+	// TODO should be close also non mdi clients...?
 	if (!client)
 		return;
 

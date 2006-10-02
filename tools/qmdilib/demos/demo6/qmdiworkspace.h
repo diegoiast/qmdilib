@@ -3,7 +3,7 @@
 
 /**
  * \file qmdiworkspace.cpp
- * \brief definition of qmdiWorkSpace
+ * \brief definition of the qmdi WorkSpace
  * \author Iastrubni <elcuco@kde.org>
  * Licence LGPL
  * \see qmdiWorkSpace
