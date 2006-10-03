@@ -9,7 +9,6 @@
 // $Id$ 
 
 #include <QObject>
-#include <QWidget>
 #include "qmdiclient.h"
 #include "qmdiserver.h"
 
@@ -199,10 +198,9 @@ bool qmdiClient::closeClient()
 		if (myself != NULL)
 		{
 			// this fixes a crahs on qmdiWorkspace
-			QWidget *w = qobject_cast<QWidget*>(myself);
-			if (w)
-				w->hide();
-			
+			if ((mdiServer != NULL) && (myself != NULL))
+				mdiServer->clientDeleted( myself );
+		
 			myself->deleteLater();
 			return true;
 		}
