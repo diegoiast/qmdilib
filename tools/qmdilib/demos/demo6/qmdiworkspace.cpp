@@ -104,7 +104,10 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
  * \brief add a new mdiclient to the workspace
  * \param client the client to be added to the workspace
  *
- * Add a mdi 
+ * Adds a mdi client to the mdi server. Internally calls
+ * addTab()
+ *
+ * \see addTab
  */
 void qmdiWorkspace::addClient( qmdiClient *client )
 {
@@ -116,6 +119,19 @@ void qmdiWorkspace::addClient( qmdiClient *client )
 	addTab( w, client->name );
 }
 
+/**
+ * \brief add a new mdiclient to the workspace
+ * \param client the client to be added to the workspace
+ *
+ * This function does the job of adding an mdi client to the mdi
+ * server. It will do the job behind the scene of setting up
+ * the mdi client, and reparenting it as needed.
+ *
+ * Since this class is API compatible to QTabWidget,
+ * is takes the same arguments.
+ *
+ * \see QTabWidget::addTab( QWidget*, QString )
+ */
 void qmdiWorkspace::addTab( QWidget *widget, QString name )
 {
 	if (!workspace)
@@ -131,12 +147,23 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 	widget->setParent( workspace );
 	workspace->addWindow( widget );
 	widget->setAttribute( Qt::WA_DeleteOnClose, true );
-	tabBar->addTab( name );		
+	tabBar->addTab( name );
 	widget->show();
 	_widgetList.append( widget );
 	connect( widget, SIGNAL(destroyed(QObject*)), this, SLOT(windowDeleted(QObject*)));
 }
 
+/**
+ * \brief returns the current widget
+ * \return the currently selected widget
+ *
+ * This function will return the widget which is currently
+ * active on the QWorkspace used internally, and the tab
+ * which is currently selected.
+ * 
+ * \see QWorkspace::activeWindow()
+ * \see QTabWidget::currentWidget()
+ */
 QWidget *qmdiWorkspace::currentWidget()
 {
 	if (workspace)
@@ -145,6 +172,16 @@ QWidget *qmdiWorkspace::currentWidget()
 		return NULL;
 }
 
+/**
+ * \brief return the widget found in a corner
+ * \param corner corner to be queried
+ * \return the widget found in a specific corner
+ *
+ * This function return the corner widget for the
+ * desired corner.
+ * 
+ * \see QTabWidget::cornerWidget( Qt::Corner )
+ */
 const QWidget * qmdiWorkspace::cornerWidget ( Qt::Corner corner  )
 {
 	switch(corner)
@@ -161,9 +198,22 @@ const QWidget * qmdiWorkspace::cornerWidget ( Qt::Corner corner  )
 	return NULL;
 }
 
+/**
+ * \brief set the widget at a corner of the widget
+ * \param widget the widget to be stored
+ * \param corner the corner in which the widget should be stored
+ *
+ * Set the widget to be put on onf of the corners of this widget.
+ * Usually used to put "close" or "new" buttons on the right or left
+ * of the widget.
+ *
+ * \see QTabWidget::setCornerWidget( QWidget *, Qt:Corner )
+ */
 void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 {
-	//widget->setParent( tabBar );
+	// should it be done...?
+	// widget->setParent( tabBar );
+	
 	switch(corner)
 	{
 		case Qt::TopLeftCorner:
@@ -202,6 +252,16 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 	mainLayout->addWidget(workspace);
 }
 
+/**
+ * \brief return a widget by number
+ * \param i the number of the widget to search
+ * \return the widget with the specified index
+ *
+ * This function returns the widget number \b i
+ * in the QWorkspace used internally.
+ *
+ * \see QWorkspace::windowList()
+ */
 QWidget* qmdiWorkspace::widget( int i )
 {
 	if (!workspace)
@@ -210,6 +270,13 @@ QWidget* qmdiWorkspace::widget( int i )
 	return workspace->windowList().at( i );
 }
 
+/**
+ * \brief return the number of widgets available on the workspace
+ *
+ * Returns the number of widgets (or windows) aviable. The number
+ * should be the same as the number of tabs seen on screen.
+ *
+ */
 int qmdiWorkspace::count()
 {
 	if (!workspace)
@@ -218,6 +285,15 @@ int qmdiWorkspace::count()
 	return workspace->windowList().count();
 }
 
+/**
+ * \brief called when the active window in the workspace is changed [SLOT]
+ *
+ * This slot is called when a new window is selected on the workspace.
+ * This slot will also selecte the new tab on the tab header as well as
+ * merge the mdi client menus and toolbars.
+ *
+ * This slot is connected at the constructor.
+ */
 void qmdiWorkspace::workspaceChanged( QWidget * w )
 {
 	if (!mdiHost)
@@ -225,12 +301,13 @@ void qmdiWorkspace::workspaceChanged( QWidget * w )
 	
 	if (!workspace)
 		return;
-		
+
+	if (activeWidget == w)
+		return;
+	
 	if (activeWidget)
 		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 
-	//qDebug("%s %d %p", __FILE__, __LINE__, activeWidget );
-	
 	activeWidget = w;
 
 	if (activeWidget)
@@ -247,6 +324,19 @@ void qmdiWorkspace::workspaceChanged( QWidget * w )
 		tabBar->setCurrentIndex( windowNumber );
 }
 
+/**
+ * \brief called when the a new tab bar changed [SLOT]
+ *
+ * This slot is called when the user selects a new tab on the
+ * tab header. It will select the corresponding window/widget
+ * in the workspace. This function will call will workspaceChanged()
+ * to ensure that the corresponding menus and toolbars are
+ * merged in.
+ *
+ * This slot is connected at the constructor.
+ * 
+ * \see workspaceChanged( QWidget* )
+ */
 void qmdiWorkspace::tabBarChanged( int index )
 {
 	if (!workspace)
@@ -260,6 +350,15 @@ void qmdiWorkspace::tabBarChanged( int index )
 	workspaceChanged( newWindow );
 }
 
+/**
+ * \brief called when a window is closed [SLOT]
+ *
+ * This slot is called when a window is closed on the workspace.
+ * 
+ * This slot is connected when a window is added to the
+ * workspace.
+ *
+ */
 void qmdiWorkspace::windowDeleted( QObject *o )
 {
 	int windowNumber = _widgetList.indexOf((QWidget*)(o));
@@ -333,7 +432,6 @@ void qmdiWorkspace::tryCloseAllButClient( int i )
 	}
 }
 
-
 /**
  * \brief try to close all mdi clients
  *
@@ -352,7 +450,6 @@ void qmdiWorkspace::tryCloseAllCliens()
 		client->closeClient();
 	}	
 }
-
 
 /**
  * \brief display the menu of a specific mdi client
