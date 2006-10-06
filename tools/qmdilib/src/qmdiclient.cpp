@@ -9,6 +9,7 @@
 // $Id$ 
 
 #include <QObject>
+#include <QWidget>
 #include "qmdiclient.h"
 #include "qmdiserver.h"
 

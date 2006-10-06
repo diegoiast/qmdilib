@@ -116,11 +116,13 @@ void qmdiWorkspace::addClient( qmdiClient *client )
 
 /**
  * \brief add a new mdiclient to the workspace
- * \param client the client to be added to the workspace
+ * \param widget the widget to be added to the workspace
+ * \param name the name to be assosiated with this widget
  *
  * This function does the job of adding an mdi client to the mdi
  * server. It will do the job behind the scene of setting up
- * the mdi client, and reparenting it as needed.
+ * the mdi client, and reparenting it as needed. The name is
+ * generally the name you will see on the tabbar.
  *
  * Since this class is API compatible to QTabWidget,
  * is takes the same arguments.
@@ -279,6 +281,7 @@ int qmdiWorkspace::count()
 
 /**
  * \brief called when the active window in the workspace is changed [SLOT]
+ * \param w the new window which has been focused
  *
  * This slot is called when a new window is selected on the workspace.
  * This slot will also selecte the new tab on the tab header as well as
@@ -286,7 +289,7 @@ int qmdiWorkspace::count()
  *
  * This slot is connected at the constructor.
  */
-void qmdiWorkspace::workspaceChanged( QWidget * w )
+void qmdiWorkspace::workspaceChanged( QWidget* w )
 {
 	if (!mdiHost)
 		return;
@@ -318,6 +321,7 @@ void qmdiWorkspace::workspaceChanged( QWidget * w )
 
 /**
  * \brief called when the a new tab bar changed [SLOT]
+ * \param index the index of the client which was focused
  *
  * This slot is called when the user selects a new tab on the
  * tab header. It will select the corresponding window/widget
@@ -344,6 +348,7 @@ void qmdiWorkspace::tabBarChanged( int index )
 
 /**
  * \brief called when a window is closed [SLOT]
+ * \param o the window which has been deleted from the workspace
  *
  * This slot is called when a window is closed on the workspace.
  * 

@@ -2,7 +2,7 @@
 #define __QMDI_WORKSPACE__
 
 /**
- * \file qmdiworkspace.cpp
+ * \file qmdiworkspace.h
  * \brief definition of the qmdi WorkSpace
  * \author Iastrubni <elcuco@kde.org>
  * Licence LGPL
