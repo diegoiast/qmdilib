@@ -14,13 +14,16 @@
 #include "actiongroup.h"
 
 class qmdiClient;
+class qmdiHost;
 
 class qmdiServer
 {
 public:
 	virtual ~qmdiServer();
 	virtual void addClient( qmdiClient *client ) = 0;
-	virtual void clientDeleted( QObject *o );
+	virtual void deleteClient( qmdiClient* );
+protected:
+	qmdiHost *mdiHost;
 };
 
 #endif // __QMDI_SERVER_H__

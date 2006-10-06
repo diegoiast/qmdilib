@@ -15,7 +15,6 @@
 
 class QString;
 class qmdiServer;
-class QObject;
 
 class qmdiClient
 {
@@ -32,7 +31,6 @@ public:
 	qmdiActionGroupList toolbars;
 
 	qmdiServer *mdiServer;
-	QObject *myself;
 };
 
 #endif // __QMDI_CLIENT_H__

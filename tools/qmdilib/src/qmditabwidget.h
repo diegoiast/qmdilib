@@ -35,14 +35,13 @@ public slots:
 	void showClientMenu( int i, QPoint p );
 
 protected:
-	void clientDeleted( QObject *o );
+	void deleteClient( qmdiClient* client );
 	void tabInserted ( int index );
 	void tabRemoved ( int index );
 	void addClient( qmdiClient *client );
 	
 private:
 	QWidget		*activeWidget;
-	qmdiHost	*mdiHost;
 };
 
 #endif // __QMDI_TAB_WIDGET_H__

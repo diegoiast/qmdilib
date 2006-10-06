@@ -296,7 +296,7 @@ void qmdiTabWidget::showClientMenu( int i, QPoint p )
 
 /**
  * \brief callback to get alarm of deleted object
- * \param o the deleted object
+ * \param client the client to delete
  * 
  * As requested by qmdiServer this function implements the needed
  * interface. When an object is deleted, eighter by QTabWidget::removeTab(int), or 
@@ -309,23 +309,23 @@ void qmdiTabWidget::showClientMenu( int i, QPoint p )
  * 
  * \see qmdiServer::clientDeleted( QObject * )
  */
-void qmdiTabWidget::clientDeleted( QObject *o )
+void qmdiTabWidget::deleteClient( qmdiClient* client )
 {
-	if (o == NULL)
+	if (client == NULL)
 		return;
 		
 	if (mdiHost == NULL)
 		return;
-		
-	if (activeWidget != o)
+	
+	if (dynamic_cast<qmdiClient*>(activeWidget) != client)
 		return;
-
+	
 	QWorkspace* ws = qobject_cast<QWorkspace*>( activeWidget );
-        if ( ws )
-                foreach ( QWidget* c, ws->windowList() )
-                        mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(c) );
-
-	mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
+	if ( ws )
+		foreach ( QWidget* c, ws->windowList() )
+			mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(c) );
+	
+	mdiHost->unmergeClient( client );
 	mdiHost->updateGUI( dynamic_cast<QMainWindow*>(mdiHost) );
 	activeWidget = NULL;
 }
@@ -336,7 +336,7 @@ void qmdiTabWidget::clientDeleted( QObject *o )
  *
  * This function will be called when the a new tab is inserted
  * into the tab widget. This sets the mdiServer property of the qmdiClient
- * to \b this, which is needed to call clientDeleted(), and the myself property.
+ * to \b this, which is needed to call deleteClient().
  * 
  * If this is the only widget on the tab widget it generates a call to tabChanged()
  * to update the menus and toolbars. If there are more then 1 widget 
@@ -351,10 +351,7 @@ void qmdiTabWidget::tabInserted ( int index )
 	qmdiClient *client = dynamic_cast<qmdiClient*>(w);
 
 	if (client != NULL)
-	{
 		client->mdiServer = dynamic_cast<qmdiServer*>(this);
-		client->myself = w;
-	}
 
 	QWorkspace* ws = qobject_cast<QWorkspace*>( w );
 	if ( ws )
@@ -368,7 +365,6 @@ void qmdiTabWidget::tabInserted ( int index )
 		activeWidget = w;
 	}
 }
-
 
 /**
  * \brief callback for getting informred of removed mdi client

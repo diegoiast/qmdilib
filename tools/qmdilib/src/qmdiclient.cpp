@@ -64,19 +64,10 @@ qmdiClient::qmdiClient()
 
 qmdiClient::~qmdiClient()
 {
-	if ((mdiServer != NULL) && (myself != NULL))
-	{
-		mdiServer->clientDeleted( myself );
-
-//		this code is way cooler, but does not work.
-//		the dynamic_cast always returns NULL
-//		this is the reason for duplicating "this" with "myself"
-//		qmdiClient *i = this;
-//		mdiServer->clientDeleted( dynamic_cast<QObject*>(i) );
-	}
+	if (mdiServer != NULL)
+		mdiServer->deleteClient( this );
 
 	mdiServer = NULL;
-	myself    = NULL;
 }
 
 /**
@@ -154,19 +145,6 @@ qmdiClient::~qmdiClient()
  */
 
 /**
- * \var qmdiClient::myself
- * \brief A cast of this mdi client into a QObject
- * 
- * This property contains a cast of this client, into a 
- * QObject (if the instanse inherits QObject). 
- * 
- * This is a read only property, which is set by the mdi severs
- * when this client is inserted into the server.
- *
- * \see qmdiTabWidget::tabInserted ( int index )
- */
-
-/**
  * \brief close the mdi client
  * \return true if the widget is closed after this call
  * 
@@ -188,6 +166,8 @@ qmdiClient::~qmdiClient()
  * If your derived class does not derive QObject, you will need to overide this
  * function as well.
  *
+ * TODO update documentation
+ *
  * \see canCloseClient()
  * \see QObject::deleteLater()
  */
@@ -195,17 +175,17 @@ bool qmdiClient::closeClient()
 {
 	if (canCloseClient())
 	{
-		if (myself != NULL)
+		QObject *o = dynamic_cast<QObject*>(this);
+
+		if (o)
 		{
-			// this fixes a crahs on qmdiWorkspace
-			if ((mdiServer != NULL) && (myself != NULL))
-				mdiServer->clientDeleted( myself );
-		
-			myself->deleteLater();
-			return true;
+			QWidget *w = qobject_cast<QWidget*>(o);
+			
+			if (w)
+				w->hide();
+			o->deleteLater();
 		}
-		else
-			return false;
+		return true;
 	}
 	else
 		return false;

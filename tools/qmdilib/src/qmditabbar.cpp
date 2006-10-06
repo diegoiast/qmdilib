@@ -1,9 +1,9 @@
 /**
- * \file MainWindow6.cpp
- * \brief Implementation of the main window class of the 2nd demo
+ * \file qmditabbar.cpp
+ * \brief Implementation of the qmdi tab bar widget
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
- * \see MainWindow
+ * \see qmdiTabWidget, qmdiTabWidget, QTabWidget
  */
 
 // $Id$

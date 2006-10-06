@@ -39,7 +39,6 @@ qmdiServer::~qmdiServer()
 {
 }
 
-
 /**
  * \fn qmdiServer::addClient( qmdiClient *client  )
  * \brief insert a new client to the server
@@ -60,15 +59,12 @@ qmdiServer::~qmdiServer()
  * 
  * \see qmdiTabWidget
  */
-#if 0
-void qmdiServer::addClient( qmdiClient *client  )
-{
-}
-#endif
+// pure virtual method
+// void qmdiServer::addClient( qmdiClient *client );
 
 /**
  * \brief callback to get alarm of deleted object
- * \param o the deleted object
+ * 
  *
  * This function gets called on the destructor of qmdiClient,
  * to announce that the object is about to be deleted. This
@@ -82,8 +78,8 @@ void qmdiServer::addClient( qmdiClient *client  )
  * Why not using the signal QObject::destroyed( QObject * obj = 0 ) ?
  *  - Because that signal is non blocking, and you will get yourself in
  *    race conditions: this function might be called after the object itself
- *    has been delete.
- *    
+ *    has been deleted.
+ *
  * This means that the qmdiClient needs to know the mdi server (usually a qmdiTabWidget)
  * and ask to be removed before it gets destructed.
  * 
@@ -94,10 +90,8 @@ void qmdiServer::addClient( qmdiClient *client  )
  *    to ignore those events. I prefear that the dummy functions be implemented 
  *    by the library, and not the end clients.
  */
-void qmdiServer::clientDeleted( QObject *o )
+void qmdiServer::deleteClient( qmdiClient* )
 {
 	// stub function
 	// If not added, the function had to be pure virtual
-
-	o = NULL;
 }
