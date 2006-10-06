@@ -82,8 +82,8 @@ void MainWindow6::init_gui()
 	updateGUI( this );
 
 	// make the tab widget
-	//tabWidget = new qmdiTabWidget;
-	tabWidget = new qmdiWorkspace( this, this );
+	tabWidget = new qmdiTabWidget;
+// 	tabWidget = new qmdiWorkspace( this, this );
 	tabNewBtn = new QToolButton( tabWidget );
         tabNewBtn->setAutoRaise( true );
         connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));

@@ -95,11 +95,6 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	connect( tabBar, SIGNAL(currentChanged(int)), this, SLOT(tabBarChanged(int)));
 }
 
-//qmdiWorkspace::~qmdiWorkspace()
-//{
-	//
-//}
-
 /**
  * \brief add a new mdiclient to the workspace
  * \param client the client to be added to the workspace
@@ -139,10 +134,7 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 
 	qmdiClient *client = dynamic_cast<qmdiClient*>(widget);
 	if (client)
-	{
 		client->mdiServer = this;
-		client->myself    = widget;
-	}
 		
 	widget->setParent( workspace );
 	workspace->addWindow( widget );

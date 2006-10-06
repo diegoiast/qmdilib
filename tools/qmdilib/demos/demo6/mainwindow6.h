@@ -39,8 +39,8 @@ private:
 	QAction *actionFileNew;
 	QAction *actionQtTopics;
 	QAction *actionAbout;
-	//qmdiTabWidget  *tabWidget;
-	qmdiWorkspace  *tabWidget;
+	qmdiTabWidget  *tabWidget;
+// 	qmdiWorkspace  *tabWidget;
 
 	QToolButton *tabCloseBtn;
 	QToolButton *tabNewBtn;

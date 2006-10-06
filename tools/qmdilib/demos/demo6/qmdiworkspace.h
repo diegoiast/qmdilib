@@ -25,7 +25,6 @@ class qmdiWorkspace : public QWidget, public qmdiServer
 	Q_OBJECT
 public:	
 	qmdiWorkspace( QWidget *parent, qmdiHost *host=NULL );
-	//~qmdiWorkspace();
 	void addClient( qmdiClient *client );
 	void addTab( QWidget *widget, QString name ); 
 	QWidget *currentWidget();
@@ -44,8 +43,7 @@ public slots:
 	void showClientMenu( int i, QPoint p );
 	
 private:
-	qmdiHost	*mdiHost;
-	QLayout		*mainLayout;	
+	QLayout		*mainLayout;
 	QLayout		*headerLayout;	
 	QTabBar		*tabBar;
 	QWorkspace	*workspace;
