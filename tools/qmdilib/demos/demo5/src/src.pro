@@ -2,7 +2,7 @@
 
 TEMPLATE = app
 TARGET = demo5
-CONFIG += staticlib
+#CONFIG += staticlib
 
 DESTDIR 	 = ../
 MOC_DIR 	 = ../../../tmp/

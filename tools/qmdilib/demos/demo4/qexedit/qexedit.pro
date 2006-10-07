@@ -16,7 +16,7 @@ INCLUDEPATH += ../../../src ../../common .
 
 # Input
 #unix:LIBS += -lqmdi -L../
-#win32:LIBS += -lqmdi0 -L../
+win32:LIBS += -lqmdi0 -L../
 
 HEADERS += ../../common/qexeditor.h \
            ../../common/helpbrowse.h 

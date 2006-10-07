@@ -55,7 +55,7 @@
 MainWindow::MainWindow( QWidget *owner ):QMainWindow(owner)
 {
 	QTextBrowser *browser = new QTextBrowser;	
-	browser->setSource( QUrl( QApplication::applicationDirPath() + "/adv-menus.html" ));
+	browser->setSource( QUrl( "file:/" + QApplication::applicationDirPath() + "/adv-menus.html" ));
 	browser->setFrameStyle( QFrame::NoFrame );
 	browser->setContentsMargins(0, 0, 0, 0);	
 	setCentralWidget( browser );

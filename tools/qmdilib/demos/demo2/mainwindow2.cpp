@@ -105,8 +105,8 @@ void MainWindow2::init_gui()
 	// non mdi client, and will add no new menus nor toolbars
 	QTextBrowser *browser = new QTextBrowser;
 	browser->setObjectName("welcome_tab");
-	browser->setSource( QApplication::applicationDirPath() + "/mdi-tab.html" );
-        browser->setFrameStyle( QFrame::NoFrame );
+	browser->setSource( "file:/" + QApplication::applicationDirPath() + "/mdi-tab.html" );
+	browser->setFrameStyle( QFrame::NoFrame );
 	browser->setContentsMargins(0, 0, 0, 0);
 	tabWidget->addTab( browser, "Welcome" );
 }

@@ -123,5 +123,6 @@ void QexHelpBrowser::on_documentCombo_currentIndexChanged( int index )
 	if (l != -1)
 		mainDir = mainDir.left( l );
 
-	setSource( mainDir + '/' + documentCombo->itemData(index).toString() );
+	QUrl u( "file:/" + mainDir + '/' + documentCombo->itemData(index).toString() );
+	setSource( u );
 }

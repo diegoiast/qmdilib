@@ -3,6 +3,7 @@
 include ( ../common/common.pri )
 include ( ../common/demos.pri )
 
+DESTDIR  = ./
 TEMPLATE = app
 TARGET   = demo2
 HEADERS += mainwindow2.h 
