@@ -24,7 +24,7 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">merge another action group list  <a href="#a3"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiActionGroupList.html#a4">unmergeGroupList</a> (<a class="el" href="classqmdiActionGroupList.html">qmdiActionGroupList</a> *group)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">unmerge an action group list  <a href="#a4"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">un-merge an action group list  <a href="#a4"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">QMenuBar *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classqmdiActionGroupList.html#a5">updateMenu</a> (QMenuBar *menubar)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">update a QMenuBar from the definitions on this action group list  <a href="#a5"></a><br></td></tr>
@@ -35,7 +35,7 @@
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 abstraction layer for QMenuBar and a list of toolbars 
 <p>
-This class defines a QMenuBar and the list of toolbars available on a tipical application. Each submenu or toolbar is defined by one <a class="el" href="classqmdiActionGroup.html">qmdiActionGroup</a>.<p>
+This class defines a QMenuBar and the list of toolbars available on a typical application. Each sub-menu or toolbar is defined by one <a class="el" href="classqmdiActionGroup.html">qmdiActionGroup</a>.<p>
 This class has also the ability to merge other qmdiActionGroupList (this enables widgets to add their partial menus to the menus supplied by the main application).
 <p>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
@@ -99,9 +99,9 @@ get the instance of a action group
     <tr><td valign="top"></td><td valign="top"><em>name</em>&nbsp;</td><td>the action group name you want to get </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd>an instace to an action group</dd></dl>
-This function returns an instace to a action group. Action groups are abstractions of QMenu and QToolBar.<p>
-If the action group requested is not available, a new instace will be created.<p>
+<dl compact><dt><b>Returns:</b></dt><dd>an instance of an action group</dd></dl>
+This function returns an instance of a action group. Action groups are abstractions of QMenu and QToolBar.<p>
+If the action group requested is not available, a new instance will be created.<p>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="classqmdiActionGroupList.html#a5">updateMenu()</a> <p>
 <a class="el" href="classqmdiActionGroupList.html#a6">updateToolBar()</a></dd></dl>
     </td>
@@ -181,7 +181,7 @@ overloaded operator for getting the instance of a action group
     <tr><td valign="top"></td><td valign="top"><em>name</em>&nbsp;</td><td>the action group name you want to get </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd>an instace to an action group</dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>an instance of an action group</dd></dl>
 This is just an overloaded function which calls <a class="el" href="classqmdiActionGroupList.html#a2">getActionGroup()</a>.<p>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="classqmdiActionGroupList.html#a2">getActionGroup()</a></dd></dl>
     </td>
@@ -212,15 +212,15 @@ This is just an overloaded function which calls <a class="el" href="classqmdiAct
     <td>
 
 <p>
-unmerge an action group list 
+un-merge an action group list 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>group</em>&nbsp;</td><td>the old group to remove from this action group list</td></tr>
   </table>
 </dl>
-This function removes external definitions from this action group list. If at the end of the unmerge, some action groups are empty, <b>they</b> <b>will</b> <b>not</b> <b>be</b> <b>removed</b> <b>from</b> <b>this</b> <b>class</b>. Since the generation of menus (using <a class="el" href="classqmdiActionGroupList.html#a5">updateMenu()</a> ) does not include empty menus, this is totally accepatable.<p>
-Note that just unmerging an action group list will not totally reflect the GUI, and you might also need to update the real widget which this action group list represents.<p>
+This function removes external definitions from this action group list. If at the end of the un-merge some action groups are empty, <b>they</b> <b>will</b> <b>not</b> <b>be</b> <b>removed</b> <b>from</b> <b>this</b> <b>class</b>. Since the generation of menus (using <a class="el" href="classqmdiActionGroupList.html#a5">updateMenu()</a> ) does not include empty menus, this is totally acceptable<p>
+Note that just un-merging an action group list will not totally reflect the GUI, and you might also need to update the real widget which this action group list represents.<p>
 <dl compact><dt><b>See also:</b></dt><dd><a class="el" href="classqmdiActionGroupList.html#a3">mergeGroupList</a> <p>
 <a class="el" href="classqmdiActionGroupList.html#a5">updateMenu</a> <p>
 <a class="el" href="classqmdiActionGroupList.html#a6">updateToolBar</a></dd></dl>
@@ -259,7 +259,7 @@ update a QMenuBar from the definitions on this action group list
     <tr><td valign="top"></td><td valign="top"><em>menubar</em>&nbsp;</td><td>a QMenuBar to be updated </td></tr>
   </table>
 </dl>
-<dl compact><dt><b>Returns:</b></dt><dd>the updated menubar (same instace which was passed)</dd></dl>
+<dl compact><dt><b>Returns:</b></dt><dd>the updated menubar (same instance which was passed)</dd></dl>
 This function generates from the definitions on this class a valid QMenuBar which will be showed on a QMainWindow.<p>
 If <code>menubar</code> is NULL, a new QMenuBar will be allocated for you, and will be returned.<p>
 You cannot generate items into a QMenuBar "by hand" and then "add" the definitions on this class.    </td>
@@ -308,14 +308,14 @@ update a list of QToolBars from the definitions on this action group list
   </table>
 </dl>
 <dl compact><dt><b>Returns:</b></dt><dd>a list of toolbars which has been created from this action group list</dd></dl>
-This function generates from the defintions on this class a valid list of QToolBar which will be showed on the <code>window</code> .<p>
+This function generates from the definitions on this class a valid list of QToolBar which will be showed on the <code>window</code> .<p>
 If the <code>toolbars</code> array will be NULL, a new one will be allocated for you.<p>
-While you can add toolbars "manually" to your main window, it's not recomended, because new actions will not get merged into your toolbar. Instead you might get 2 toolbars with a similar name.    </td>
+While you can add toolbars "manually" to your main window, it's not recommended because new actions will not get merged into your toolbar. Instead you might get 2 toolbars with a similar name.    </td>
   </tr>
 </table>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>src/<a class="el" href="actiongrouplist_8h-source.html">actiongrouplist.h</a><li>src/<a class="el" href="actiongrouplist_8cpp.html">actiongrouplist.cpp</a></ul>
-<hr size="1"><address style="align: right;"><small>Generated on Sat Sep 9 17:51:34 2006 for qmdilib by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Sat Oct 7 18:00:34 2006 for qmdilib by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.4.4 </small></address>
 </body>
