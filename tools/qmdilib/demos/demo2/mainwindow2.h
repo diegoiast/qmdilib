@@ -9,13 +9,24 @@
  * \see MainWindow
  */
 
+// $Id$
+
 #include <QMainWindow>
 #include "qmdihost.h"
 #include "qmdiclient.h"
-#include "qmditabwidget.h"
 
+// do you want to use qmdiTabWidget or qmdiWorkspace ...?
+#if 1
+#	define TAB_CONTROL qmdiTabWidget
+#else
+#	define TAB_CONTROL qmdiWorkspace
+#endif
 
-class QTabWidget;
+// do you want the actions to be put in a single toolbar
+// or several toolbars...?
+#define SINGLE_TOOLBAR !false
+
+class TAB_CONTROL;
 class QToolButton;
 
 class MainWindow2: public QMainWindow, public qmdiHost
@@ -37,7 +48,8 @@ private:
 	QAction *actionFileNew;
 	QAction *actionQtTopics;
 	QAction *actionAbout;
-	QTabWidget *tabWidget;
+	//QTabWidget *tabWidget;
+	TAB_CONTROL *tabWidget;
 
 	QToolButton *tabCloseBtn;
 	QToolButton *tabNewBtn;

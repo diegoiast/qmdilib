@@ -27,7 +27,7 @@ public:
 
 public slots:
 	void goHome();
-	void on_zoomCombo_currentIndexChanged( int index );
+	void on_documentCombo_currentIndexChanged( int index );
 
 private:
 	QAction *actionBack;
@@ -39,7 +39,7 @@ private:
 	QAction *actionCopy;
 	QAction *actionFind;
 
-	QComboBox *zoomCombo;
+	QComboBox *documentCombo;
 	QUrl homePage;
 };
 

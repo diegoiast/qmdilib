@@ -21,6 +21,8 @@
 #include <QApplication>
 #include <QStackedWidget>
 
+#include "qmditabwidget.h"
+#include "qmdiworkspace.h"
 #include "mainwindow2.h"
 #include "qexeditor.h"
 #include "helpbrowse.h"
@@ -33,8 +35,6 @@
  * define different qmdiClient. It also shows what happens when
  * you insert a non mdi client into a qmdiTabWidget.
  */
-
-#define SINGLE_TOOLBAR !false
 
 MainWindow2::MainWindow2( QWidget *owner ):QMainWindow(owner)
 {
@@ -82,7 +82,11 @@ void MainWindow2::init_gui()
 	updateGUI( this );
 
 	// make the tab widget
-	tabWidget = new qmdiTabWidget;
+	
+	// TODO
+	// if you do not pass this as the parent,
+	// qmdiWorkspace will not work properly
+	tabWidget = new TAB_CONTROL(this); 
 	tabNewBtn = new QToolButton(tabWidget);
         tabNewBtn->setAutoRaise( true );
         connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));
@@ -96,10 +100,6 @@ void MainWindow2::init_gui()
 	tabWidget->setCornerWidget( tabNewBtn, Qt::TopLeftCorner );
 	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
 	setCentralWidget( tabWidget );
-        QStackedWidget *stack = qFindChild<QStackedWidget*>(this);
-	Q_ASSERT(stack);
-	stack->setContentsMargins(0, 0, 0, 0);
-	stack->setFrameStyle( QFrame::NoFrame );
 
 	// feed it with a default widget, this browser is a
 	// non mdi client, and will add no new menus nor toolbars

@@ -35,9 +35,12 @@
 QexHelpBrowser::QexHelpBrowser( QUrl home, bool singleToolbar, QWidget *parent )
 	:QTextBrowser(parent)
 {
-	zoomCombo = new QComboBox;
-	zoomCombo->addItem( tr("Smaller text"), -5 );
-	zoomCombo->addItem( tr("Bigger text"), 5 );
+	documentCombo = new QComboBox;
+	documentCombo->addItem( tr("Qt reference documentation"), "index.html" );
+	documentCombo->addItem( tr("Qt Assistant manual"),"assistant-manual.html" );
+	documentCombo->addItem( tr("Qt Designer manual"), "designer-manual.html" );
+	documentCombo->addItem( tr("Qt Linguist manual"), "linguist-manual.html" );
+	documentCombo->addItem( tr("qmake manual"), "qmake-manual.html" );
 	
 	actionBack	= new QAction( QIcon(":images/prev.png"), tr("&Back"), this );
 	actionNext	= new QAction( QIcon(":images/next.png"), tr("&Next"), this );
@@ -54,7 +57,7 @@ QexHelpBrowser::QexHelpBrowser( QUrl home, bool singleToolbar, QWidget *parent )
 	connect( actionHome, SIGNAL(triggered()), this, SLOT(goHome()));
 	connect( actionZoomIn, SIGNAL(triggered()), this, SLOT(zoomIn()));
 	connect( actionZoomOut, SIGNAL(triggered()), this, SLOT(zoomOut()));
-	connect( zoomCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(on_zoomCombo_currentIndexChanged(int)));
+	connect( documentCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(on_documentCombo_currentIndexChanged(int)));
 
 	actionCopy->setEnabled(false);
 	actionNext->setShortcut( QKeySequence("Alt+Right") );
@@ -101,7 +104,7 @@ void QexHelpBrowser::initInterface( bool singleToolbar )
 	toolbars[ toolbarNavigate ]->addSeparator();
 	toolbars[ toolbarNavigate ]->addAction( actionZoomIn );
 	toolbars[ toolbarNavigate ]->addAction( actionZoomOut );
-	toolbars[ toolbarNavigate ]->addWidget( zoomCombo );
+	toolbars[ toolbarNavigate ]->addWidget( documentCombo );
 }
 
 void QexHelpBrowser::goHome()
@@ -109,8 +112,16 @@ void QexHelpBrowser::goHome()
 	setSource( homePage );
 }
 
-void QexHelpBrowser::on_zoomCombo_currentIndexChanged( int index )
+void QexHelpBrowser::on_documentCombo_currentIndexChanged( int index )
 {
-	zoomIn( 0 );
-	zoomIn( zoomCombo->itemData(index).toInt() );
+	QString mainDir = homePage.path();
+	int l = mainDir.lastIndexOf('/');
+	
+	if (l == -1)
+		l = mainDir.lastIndexOf('\\');
+	
+	if (l != -1)
+		mainDir = mainDir.left( l );
+
+	setSource( mainDir + '/' + documentCombo->itemData(index).toString() );
 }
