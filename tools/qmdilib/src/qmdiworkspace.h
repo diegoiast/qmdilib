@@ -4,9 +4,9 @@
 /**
  * \file qmdiworkspace.h
  * \brief definition of the qmdi Workspace
- * \author Iastrubni <elcuco@kde.org>
- * Licence LGPL
- * \see qmdiWorkSpace
+ * \author Iastrubni (elcuco@kde.org)
+ * License LGPL
+ * \see qmdiServer
  */
  
 // $Id$

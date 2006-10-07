@@ -1,9 +1,9 @@
 /**
  * \file qmdiworkspace.cpp
  * \brief implementation of the qmdi Workspace
- * \author Diego Iastrubni <elcuco@kde.org>
- * Licence LGPL
- * \see qmdiWorkspace
+ * \author Diego Iastrubni (elcuco@kde.org)
+ * License LGPL
+ * \see qmdiServer
  */
  
 // $Id$
@@ -23,8 +23,9 @@
 /**
  * \class qmdiWorkspace
  * \brief An advanced work space-widget, which is capable of changing menus and toolbars on the fly
+ * \since 0.0.3
  * 
- * This class is a new mdi server, based on top of QWorkspace. It is built
+ * This class is a new MDI server, based on top of QWorkspace. It is built
  * with a similar API to qmdiTabWidget and QTabWidget. Since the API is similar
  * this means you can switch applications from QTabWidget to qmdiWorkspace in
  * very small modifications to your code.
@@ -38,7 +39,7 @@
  *  - qmdiServer : this class
  *
  * When a new widget is selected on the qmdiServer (the user changes), the old
- * widget is removed from the qmdiHost, and only then the new mdi client is added
+ * widget is removed from the qmdiHost, and only then the new MDI client is added
  * to the qmdiHost.
  *
  * To use this class properly, insert it into a QMainWindow which also derives qmdiHost,
@@ -51,7 +52,7 @@
 /**
  * \brief default constructor
  * \param parent the parent of this widget
- * \param host the mdi host to connect to
+ * \param host the MDI host to connect to
  *
  * This is the default constructor of qmdiWorkspace.
  * If no host is passed, the parent widget will be queried for the qmdiHost
@@ -96,10 +97,10 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 }
 
 /**
- * \brief add a new mdiclient to the workspace
+ * \brief add a new MDI client to the workspace
  * \param client the client to be added to the workspace
  *
- * Adds a mdi client to the mdi server. Internally calls
+ * Adds a MDI client to the MDI server. Internally calls
  * addTab()
  *
  * \see addTab
@@ -115,13 +116,13 @@ void qmdiWorkspace::addClient( qmdiClient *client )
 }
 
 /**
- * \brief add a new mdiclient to the workspace
+ * \brief add a new MDI client to the workspace
  * \param widget the widget to be added to the workspace
- * \param name the name to be assosiated with this widget
+ * \param name the name to be associated with this widget
  *
- * This function does the job of adding an mdi client to the mdi
+ * This function does the job of adding an MDI client to the MDI
  * server. It will do the job behind the scene of setting up
- * the mdi client, and reparenting it as needed. The name is
+ * the MDI client, and re-parenting it as needed. The name is
  * generally the name you will see on the tabbar.
  *
  * Since this class is API compatible to QTabWidget,
@@ -197,7 +198,7 @@ const QWidget * qmdiWorkspace::cornerWidget ( Qt::Corner corner  )
  * \param widget the widget to be stored
  * \param corner the corner in which the widget should be stored
  *
- * Set the widget to be put on onf of the corners of this widget.
+ * Set the widget to be put on one of the corners of this widget.
  * Usually used to put "close" or "new" buttons on the right or left
  * of the widget.
  *
@@ -267,7 +268,7 @@ QWidget* qmdiWorkspace::widget( int i )
 /**
  * \brief return the number of widgets available on the workspace
  *
- * Returns the number of widgets (or windows) aviable. The number
+ * Returns the number of widgets (or windows) available. The number
  * should be the same as the number of tabs seen on screen.
  *
  */
@@ -284,8 +285,8 @@ int qmdiWorkspace::count()
  * \param w the new window which has been focused
  *
  * This slot is called when a new window is selected on the workspace.
- * This slot will also selecte the new tab on the tab header as well as
- * merge the mdi client menus and toolbars.
+ * This slot will also select the new tab on the tab header as well as
+ * merge the MDI client menus and toolbars.
  *
  * This slot is connected at the constructor.
  */
@@ -308,7 +309,7 @@ void qmdiWorkspace::workspaceChanged( QWidget* w )
 	if (activeWidget)
 		mdiHost->mergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 
-	// try to update the mdi host
+	// try to update the MDI host
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
 
 	mdiHost->updateGUI( m );
@@ -376,7 +377,7 @@ void qmdiWorkspace::windowDeleted( QObject *o )
  *
  * Call this slot to ask the mdi client to close itself.
  * The mdi client may show a dialog to ask for saving. It's not
- * ganranteed that the action will be handled as the mdi client
+ * guaranteed that the action will be handled as the mdi client
  * can abort the action.
  *
  * \see qmdiClient::closeClient()

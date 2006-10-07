@@ -246,6 +246,7 @@ void qmdiActionGroup::removeWidget( QWidget *widget )
 
 /**
  * \brief set the location for menus and toolbar merges
+ * \since 0.0.3
  *
  * By default, an action group gets merged to the end of
  * the parent action group. Using this function, you can define a new

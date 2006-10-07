@@ -65,6 +65,7 @@ void MainWindow6::init_gui()
 {
 	// create own menus
 	menus["&File"]->addAction( actionFileNew );
+	menus["&File"]->setMergePoint();
 	menus["&File"]->addSeparator();
 	menus["&File"]->addAction( actionQuit );
 	menus["&Edit"];
