@@ -24,6 +24,15 @@
  */
 
 /**
+ * \var qmdiServer::mdiHost
+ * \brief a pointer to the MDI host
+ * 
+ * This is a pointer to the MDI host in which the server
+ * is registered. It should not be assigned any value, and should
+ * be threated as read only.
+ */
+ 
+/**
  * Empty destructor. Destroys the object.
  * 
  * Since this class needs to be dynamic_casted by the derived classes,

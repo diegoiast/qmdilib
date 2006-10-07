@@ -20,6 +20,7 @@ You can also read some documentation about the demos on this version:
 - \ref demo3
 - \ref demo4
 - \ref demo5
+- \ref demo6
 
 You can see the documentation for the classes of this library:
 
@@ -221,6 +222,11 @@ from an editor to another editor, it will look like the toolbars did not change,
 menus and toolbars are re-created on each move, and the QActions on the toolbars belong to the active widget. This means
 that each QWidget inserted into the qmdiTabWidget is responsible for it's own actions.
 
+This demo has also some other compile time options. You can compile the demo to use instead 
+of one toolbar (the default), different toolbars per mdi client. You can also use qmdiWorkspace
+instead of qmdiTabWidget. The definitions are in the header of the main window. Plase feel free 
+to play with them.
+ 
 Here are the definitions of the new text editor the help viewer and the main window:
 \code
 class QexHelpBrowser: public QTextBrowser, public qmdiClient
@@ -280,11 +286,17 @@ void MainWindow2::init_gui()
 \see \ref small_tutor
 \see Next: \ref demo3
 
-\page demo3 Demo3 - l10n and i18n when using qmdilib
-This third demo, shows how to use the l18n classes of Qt4.
+\page demo3 Demo3 - Usage of QWorkspace inside qmdiTabWidget
 
-TODO 
-Need to write an example for this stuff. 
+Since Version 0.0.3 you can add into a qmdiTabWidget a normal QWorkspace. 
+If you add to the workspace any widget which also derives qmdiClient, and then
+each time a new window is selected on the workspace, it's menus are merged in
+and out from the main window.
+
+<img src="../qworkspace-demo2.jpg">
+
+This feature has been written originally by Nox PasNox (pasnox@gmail.com).
+
 \see Next: \ref demo4
 
 \page demo4 Demo4 - Building the code as a shared library
@@ -478,6 +490,13 @@ SOURCES += mainwindow5.cpp  main5.cpp
 \see \ref demo2
 \see \ref demo4
 \see \ref small_tutor
+\see Next: \ref demo6
+
+\page demo6 Demo6 - l10n and i18n when using qmdilib
+This six demo, shows how to use the l18n classes of Qt4.
+
+TODO
+Need to write an example for this stuff.
 \see Back to the main page \ref index
 
  */
