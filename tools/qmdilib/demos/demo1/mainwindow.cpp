@@ -101,6 +101,7 @@ void MainWindow::init_gui()
 	// create own menus
 	menus["&File"]->addAction( actionFileNew );
 	menus["&File"]->addAction( actionFileSave );
+	menus["&File"]->setMergePoint();
 	menus["&File"]->addSeparator();
 	menus["&File"]->addAction( actionQuit );
 	menus["&Edit"];
