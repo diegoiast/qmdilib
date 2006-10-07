@@ -1,6 +1,6 @@
 $Id$
 
-0.0.3  - SOMETIME IN THE FUTURE - Diego Iastrubni <elcuco@kde.org>
+0.0.3  - 7 Oct 2006 - Diego Iastrubni <elcuco@kde.org>
  * new feature: QWorkspace children are also checked for qmdiClient interface,
    feature coded by Nox PasNox <pasnox@gmail.com>
  * new feature: merge point for qmdiActionGroup
