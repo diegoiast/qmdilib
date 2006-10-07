@@ -1,6 +1,6 @@
 /**
  * \file qmdiworkspace.cpp
- * \brief implementation of the qmdi WorkSpace
+ * \brief implementation of the qmdi Workspace
  * \author Diego Iastrubni <elcuco@kde.org>
  * Licence LGPL
  * \see qmdiWorkspace
@@ -22,7 +22,7 @@
 
 /**
  * \class qmdiWorkspace
- * \brief An advanced work space widget, which is capable of changing menus and toolbars on the fly
+ * \brief An advanced work space-widget, which is capable of changing menus and toolbars on the fly
  * 
  * This class is a new mdi server, based on top of QWorkspace. It is built
  * with a similar API to qmdiTabWidget and QTabWidget. Since the API is similar
@@ -392,7 +392,6 @@ void qmdiWorkspace::tryCloseClient( int i )
 
 	client->closeClient();
 }
-
 
 /**
  * \brief request to close all other clients

@@ -23,21 +23,21 @@
 
 /**
  * \fn qmdiTabBar::middleMousePressed(int tabNumber, QPoint where );
- * \brief emited when a user presses the middle mouse button [SIGNAL]
+ * \brief emitted when a user presses the middle mouse button [SIGNAL]
  * \param tabNumber the number of the tab pressed
  * \param where the location on the screen (relative) where the user clicked
  *
- * This is an emited signal which happens when the middle mouse
+ * This is an emitted signal which happens when the middle mouse
  * on the tab bar
  */
 
 /**
  * \fn qmdiTabBar::rightMousePressed(int tabNumber, QPoint where );
- * \brief emited when a user presses the right mouse button [SIGNAL]
+ * \brief emitted when a user presses the right mouse button [SIGNAL]
  * \param tabNumber the number of the tab pressed
  * \param where the location on the screen (relative) where the user clicked
  *
- * This is an emited signal which happens when the right mouse
+ * This is an emitted signal which happens when the right mouse
  * on the tab bar
  */
 
@@ -47,7 +47,7 @@
  *
  * This is an overloaded function, which will emit a signal
  * with the tab number which was pressed. There are 2 signals
- * emited: middleMousePressed(int) and rightMousePressed(int)
+ * emitted: middleMousePressed(int) and rightMousePressed(int)
  */
 void qmdiTabBar::mousePressEvent ( QMouseEvent * event )
 {

@@ -3,7 +3,7 @@
 
 /**
  * \file qmdiworkspace.h
- * \brief definition of the qmdi WorkSpace
+ * \brief definition of the qmdi Workspace
  * \author Iastrubni <elcuco@kde.org>
  * Licence LGPL
  * \see qmdiWorkSpace
@@ -12,7 +12,6 @@
 // $Id$
 
 #include <QWidget>
-//#include <QWorkSpace>
 #include "qmdiserver.h"
 
 class QGridLayout;
@@ -53,6 +52,5 @@ private:
 	QWidget		*cornerWidget2;
 	QWidget		*activeWidget;
 };
- 	
 
 #endif // __QMDI_WORKSPACE__

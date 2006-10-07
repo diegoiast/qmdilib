@@ -21,8 +21,8 @@
  * \brief abstraction layer for QMenuBar and a list of toolbars
  *
  * This class defines a QMenuBar and the list of toolbars available on
- * a tipical application. Each submenu or toolbar is defined by one 
- * qmdiActionGroup. 
+ * a typical application. Each sub-menu or toolbar is defined by one
+ * qmdiActionGroup.
  * 
  * This class has also the ability to merge other qmdiActionGroupList (this enables
  * widgets to add their partial menus to the menus supplied by the main application).
@@ -41,7 +41,7 @@ qmdiActionGroupList::qmdiActionGroupList()
 /**
  * \brief overloaded operator for getting the instance of a action group
  * \param name the action group name you want to get
- * \return an instace to an action group
+ * \return an instance of an action group
  * 
  * This is just an overloaded function which calls getActionGroup().
  * 
@@ -55,12 +55,12 @@ qmdiActionGroup* qmdiActionGroupList::operator[]( const QString name )
 /**
  * \brief get the instance of a action group
  * \param name the action group name you want to get
- * \return an instace to an action group
+ * \return an instance of an action group
  * 
- * This function returns an instace to a action group. Action groups
+ * This function returns an instance of a action group. Action groups
  * are abstractions of QMenu and QToolBar.
  * 
- * If the action group requested is not available, a new instace will be
+ * If the action group requested is not available, a new instance will be
  * created.
  * 
  * \see updateMenu()
@@ -81,7 +81,6 @@ qmdiActionGroup* qmdiActionGroupList::getActionGroup( const QString name )
 	actionGroups.append( item );
 	return item;
 }
-
 
 /**
  * \brief merge another action group list
@@ -108,17 +107,16 @@ void qmdiActionGroupList::mergeGroupList( qmdiActionGroupList *group )
 	}
 }
 
-
 /**
- * \brief unmerge an action group list
+ * \brief un-merge an action group list
  * \param group the old group to remove from this action group list
  * 
  * This function removes external definitions from this action group list.
- * If at the end of the unmerge, some action groups are empty, \b they \b will
+ * If at the end of the un-merge some action groups are empty, \b they \b will
  * \b not \b be \b removed \b from \b this \b class. Since the generation of menus
- * (using updateMenu() ) does not include empty menus, this is totally accepatable.
+ * (using updateMenu() ) does not include empty menus, this is totally acceptable
  * 
- * Note that just unmerging an action group list will not totally reflect the GUI,
+ * Note that just un-merging an action group list will not totally reflect the GUI,
  * and you might also need to update the real widget which this action group list represents.
  * 
  * \see mergeGroupList
@@ -134,11 +132,10 @@ void qmdiActionGroupList::unmergeGroupList( qmdiActionGroupList *group )
 	}
 }
 
-
 /**
  * \brief update a QMenuBar from the definitions on this action group list
  * \param menubar a QMenuBar to be updated
- * \return the updated menubar (same instace which was passed)
+ * \return the updated menubar (same instance which was passed)
  * 
  * This function generates from the definitions on this class a valid
  * QMenuBar which will be showed on a QMainWindow. 
@@ -167,19 +164,18 @@ QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
 	return menubar;
 }
 
-
 /**
  * \brief update a list of QToolBars from the definitions on this action group list
  * \param window the window in which the toolbars should be place
  * \param toolbars a list o toolbars available on the main window
  * \return a list of toolbars which has been created from this action group list
  *
- * This function generates from the defintions on this class a valid list of
+ * This function generates from the definitions on this class a valid list of
  * QToolBar which will be showed on the \c window .
  * 
  * If the \c toolbars array will be NULL, a new one will be allocated for you.
  * 
- * While you can add toolbars "manually" to your main window, it's not recomended,
+ * While you can add toolbars "manually" to your main window, it's not recommended
  * because new actions will not get merged into your toolbar. Instead you might get 
  * 2 toolbars with a similar name.
  */

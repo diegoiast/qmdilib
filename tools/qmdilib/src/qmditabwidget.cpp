@@ -44,7 +44,6 @@
  * and insert into it QWidgets which also derive qmdiClient.
  */
 
-
 /**
  * \brief default constructor
  * \param parent the parent widget and the qmdiHost
@@ -76,7 +75,6 @@ qmdiTabWidget::qmdiTabWidget( QWidget *parent, qmdiHost *host )
 	connect( b, SIGNAL(rightMousePressed(int,QPoint)), this, SLOT(showClientMenu(int,QPoint)));
 	setTabBar( b );
 }
-
 
 /**
  * \brief callback function for modifing the menu structure
@@ -133,7 +131,6 @@ void qmdiTabWidget::tabChanged( int i )
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
 	mdiHost->updateGUI( m );	
 }
-
 
 /**
  * \brief callback function for notifying of a new QWorkspace child activated
@@ -195,7 +192,6 @@ void qmdiTabWidget::tryCloseClient( int i )
 	client->closeClient();
 }
 
-
 /**
  * \brief request to close all other clients
  * \param i the number of the client to keep open
@@ -231,7 +227,6 @@ void qmdiTabWidget::tryCloseAllButClient( int i )
 	}
 }
 
-
 /**
  * \brief try to close all mdi clients
  *
@@ -250,7 +245,6 @@ void qmdiTabWidget::tryCloseAllCliens()
 		client->closeClient();
 	}	
 }
-
 
 /**
  * \brief display the menu of a specific mdi client

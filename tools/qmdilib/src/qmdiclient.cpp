@@ -5,14 +5,13 @@
  * License LGPL
  * \see qmdiClient
  */
- 
+
 // $Id$ 
 
 #include <QObject>
 #include <QWidget>
 #include "qmdiclient.h"
 #include "qmdiserver.h"
-
 
 /**
  * \class qmdiClient
@@ -24,8 +23,8 @@
  * will not show special menus and toolbars.
  * 
  * On the documentation of qmdilib, any widget inserted into a qmdiServer
- * that inherits qmdiClient will be called \b mdi \b client. In the following 
- * example the class \b newclient is a \b mdi \b client.
+ * that inherits qmdiClient will be called \b MDI \b client. In the following
+ * example the class \b newclient is a \b MDI \b client.
  * 
  * \code
  * class newclient: public QTextEdit, public qmdiClient
@@ -50,9 +49,9 @@
  *
  * \endcode
  * 
- * You will have also to insert this mdi client into an mdi server
+ * You will have also to insert this MDI client into an MDI server
  * (for example qmdiTabWidget). The menus and toolbars will be merged 
- * automatically for you every time you widget is selected on the mdi server.
+ * automatically for you every time you widget is selected on the qmdiServer.
  * 
  * \see qmdiActionGroupList
  * \see qmdiTabWidget
@@ -73,9 +72,9 @@ qmdiClient::~qmdiClient()
 
 /**
  * \var qmdiClient::name
- * \brief The name of the mdi client
+ * \brief The name of the MDI client
  * 
- * This property defines the name of the mdi client. The \b name 
+ * This property defines the name of the MDI client. The \b name
  * is used by qmdiTabWidget for setting the tab name, when inserting 
  * the widget into the tab widget.
  */
@@ -83,9 +82,9 @@ qmdiClient::~qmdiClient()
 
 /**
  * \var qmdiClient::fileName
- * \brief The file opened by this mdi client
+ * \brief The file opened by this MDI client
  * 
- * This property defines the file name which is opened by the mdi client.
+ * This property defines the file name which is opened by the MDI client.
  * The file name is not really used inside \b qmdilib , but it's left 
  * for usage outside of library. The \b name property should reflect
  * this property, but it's not really needed.
@@ -93,10 +92,10 @@ qmdiClient::~qmdiClient()
 
 /**
  * \var qmdiClient::menus
- * \brief The list of menus defined by this mdi client
+ * \brief The list of menus defined by this MDI client
  * 
- * The list of menus this mdi client defines, and will be merged
- * each time the mdi client is showed on screen. 
+ * The list of menus this MDI client defines, and will be merged
+ * each time the MDI client is showed on screen.
  * 
  * The syntax for defining menus is:
  * 
@@ -113,10 +112,10 @@ qmdiClient::~qmdiClient()
 
 /**
  * \var qmdiClient::toolbars
- * \brief The list of toolbars defined by this mdi client
+ * \brief The list of toolbars defined by this MDI client
  * 
- * The list of toolbars this mdi client defines, and will be merged
- * each time the mdi client is showed on screen.
+ * The list of toolbars this MDI client defines, and will be merged
+ * each time the MDI client is showed on screen.
  * 
  * The syntax for defining toolbars is:
  * 
@@ -130,14 +129,13 @@ qmdiClient::~qmdiClient()
  * \see qmdiClient::menus
  */
 
-
 /**
  * \var qmdiClient::mdiServer
- * \brief A pointer to the mdi server in which this client is inserted.
+ * \brief A pointer to the MDI server in which this client is inserted.
  * 
- * When the mdi client is inserted into a mdi server, this property
- * is set to point to the correponding mdi server. This property is
- * read only, and you should not assign value ot it.
+ * When the MDI client is inserted into a MDI server, this property
+ * is set to point to the corresponding MDI server. This property is
+ * read only, and you should not assign value to it.
  * 
  * You can use this property to insert new clients into the server,
  * from this client.
@@ -146,17 +144,17 @@ qmdiClient::~qmdiClient()
  */
 
 /**
- * \brief close the mdi client
+ * \brief close the MDI client
  * \return true if the widget is closed after this call
  * 
- * If you want to delete mdi clients from your mdi server, sometimes
+ * If you want to delete MDI clients from your MDI server, sometimes
  * just deleting this client is not the smart move. For example if the
  * client contains an user editable document, the user should be asked
  * to save his changes, and maybe even abort.
  *
  * By default this function does:
- *  - calls canCloseClient to find out if it's ok to closeClient()
- *  - if the function returns true, it will try to cast the mdi client to a
+ *  - calls canCloseClient to find out if it's OK to closeClient()
+ *  - if the function returns true, it will try to cast the MDI client to a
  *    QObject, calls deleteLater() and returns true and the object 
  *    will be deleted afterwards.
  *  - if cast failed or canCloseClient() returned false, a negative value
@@ -193,11 +191,11 @@ bool qmdiClient::closeClient()
 }
 
 /**
- * \brief check if the mdi client is valid for closing
- * \return true is it is ok to destruct the mdi client
+ * \brief check if the MDI client is valid for closing
+ * \return true is it is OK to destruct the MDI client
  *
- * This function should return true if the mdi client is safe for
- * removal from the mdi client. Clients are valid for removal usually
+ * This function should return true if the MDI client is safe for
+ * removal from the MDI client. Clients are valid for removal usually
  * if no changes have been made, or the user accepted to save then.
  *
  * You can define your own logic by re-implementing this function

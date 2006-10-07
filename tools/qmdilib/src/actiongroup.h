@@ -29,12 +29,13 @@ public:
 
 	void		setName( QString name );
 	QString		getName();	
-	void		addAction( QAction *action );
-	void		addWidget( QWidget *widget );
-	void		addSeparator();
+	void		addAction( QAction *action, int location=-1 );
+	void		addWidget( QWidget *widget, int location=-1 );
+	void		addSeparator( int location=-1 );
 	bool		containsAction( QAction *action );
 	void		removeAction( QAction *action );
 	void		removeWidget( QWidget *widget );
+	void		setMergePoint();
 
 	void		mergeGroup( qmdiActionGroup *group );
 	void		unmergeGroup( qmdiActionGroup *group );
@@ -48,6 +49,7 @@ private:
 	QList<QObject*> actionGroupItems;
 
 	int breakCount;
+	int mergeLocation;
 };
 
 #endif //__ACTION_GROUP__

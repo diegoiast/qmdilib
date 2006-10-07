@@ -1,6 +1,6 @@
 /**
  * \file qmdihost.cpp
- * \brief Implemetation of the qmdi host class
+ * \brief Implementation of the qmdi host class
  * \author Diego Iastrubni (elcuco@kde.org)
  * License LGPL
  * \see qmdiHost
@@ -14,20 +14,19 @@
 
 /**
  * \class qmdiHost 
- * \brief The class which conatain the menus and toolbars defined by qmdiClient
+ * \brief The class which contain the menus and toolbars defined by qmdiClient
  *
- * Every time a user selects a new widget in the mdi server (for example qmdiTabWidget), the
+ * Every time a user selects a new widget in the MDI server (for example qmdiTabWidget), the
  * server will try and ask the host to modify the menus. The interface in which the QTabWidget
  * and QMainWindow talk is this class.
  * 
  * Generally speaking, you don't have to know much of this class, only inherit it in your
  * main windows.
- * 
  */
 
 /**
  * \var qmdiHost::menus
- * \brief the default menus defined in this mdi host
+ * \brief the default menus defined in this MDI host
  *
  * When you construct a window which derives this class,
  * you cannot define the menus the way which is dictated by
@@ -35,7 +34,7 @@
  * this library.
  *
  * The menus defined in this class, will be displayed by default
- * on the mdi host. it's a wise idea to define the order of the
+ * on the MDI host. it's a wise idea to define the order of the
  * menus on your application on the initialization of the application,
  * since there is no way of changing the order of the menus later
  * on.
@@ -53,7 +52,7 @@
 
 /**
  * \var qmdiHost::toolbars
- * \brief the default toolbars defined in this mdi host
+ * \brief the default toolbars defined in this MDI host
  *
  * When you construct a window which derives this class,
  * you cannot define the toolbars the way which is dictated by
@@ -61,7 +60,7 @@
  * this library.
  *
  * The toolbars defined in this class, will be displayed by default
- * on the mdi host.
+ * on the MDI host.
  *
  * \see \ref small_tutor
  * \see qmdiServer
@@ -121,13 +120,13 @@ void qmdiHost::updateGUI( QMainWindow *window )
 }
 
 /**
- * \brief merge the toolbars and menus of another mdi client
+ * \brief merge the toolbars and menus of another MDI client
  * \param client the client to be merged
  *
  * This function is used to merge the toolbars and contents
- * of the mdi client to be merged into this client. The menus
+ * of the MDI client to be merged into this client. The menus
  * and toolbars of the host will be appended to the end
- * of the menus and toolbars of this mdi host.
+ * of the menus and toolbars of this MDI host.
  *
  * After a call to this function, you should manually call
  * updateGUI
@@ -145,11 +144,11 @@ void qmdiHost::mergeClient( qmdiClient *client )
 }
 
 /**
- * \brief merge the toolbars and menus of another mdi client
+ * \brief merge the toolbars and menus of another MDI client
  * \param client the client to be merged
  *
- * This function is used to unmerge the toolbars and contents
- * of the mdi client to be unmerged into this client. The menus
+ * This function is used to un-merge the toolbars and contents
+ * of the MDI client to be un-merged into this client. The menus
  * and toolbars of host will be updated, and all the entries
  * defined in the client will be removed.
  *
@@ -161,11 +160,9 @@ void qmdiHost::mergeClient( qmdiClient *client )
  */
 void qmdiHost::unmergeClient( qmdiClient *client )
 {
-	//qDebug("%s %d", __FILE__, __LINE__ );
 	if (client == NULL)
 		return;
 		
 	menus.unmergeGroupList( &client->menus );
 	toolbars.unmergeGroupList( &client->toolbars );
 }
-
