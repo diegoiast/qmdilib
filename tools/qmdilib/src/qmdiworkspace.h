@@ -23,7 +23,8 @@ class qmdiWorkspace : public QWidget, public qmdiServer
 {
 	Q_OBJECT
 public:	
-	qmdiWorkspace( QWidget *parent, qmdiHost *host=NULL );
+	qmdiWorkspace( QWidget *parent=NULL, qmdiHost *host=NULL );
+	
 	void addClient( qmdiClient *client );
 	void addTab( QWidget *widget, QString name ); 
 	QWidget *currentWidget();
