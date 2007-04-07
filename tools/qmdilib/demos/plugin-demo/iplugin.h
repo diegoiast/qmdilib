@@ -8,6 +8,7 @@
 class QWidget;
 class QSettings;
 class QAction;
+class QActionGroup;
 class QIcon;
 
 QAction* new_action( QIcon icon, QString name, QObject *obj, QString shortcut, QString status_tip, const char *slot );
@@ -28,6 +29,7 @@ public:
 	virtual void loadConfig( const QSettings &settings );
 	virtual void SaveConfig( const QSettings &settings );
 
+	virtual QActionGroup* newFileActions();
 	virtual QStringList myExtensions();
 	virtual int canOpenFile( const QString fileName );
 	virtual bool openFile( const QString fileName, int x=-1, int y=-1, int z=-1 );

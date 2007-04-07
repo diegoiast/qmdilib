@@ -344,11 +344,11 @@ void qmdiTabWidget::tabInserted ( int index )
 	QWidget *w = widget( index );
 	qmdiClient *client = dynamic_cast<qmdiClient*>(w);
 
-	if (client != NULL)
-		client->mdiServer = dynamic_cast<qmdiServer*>(this);
+	if (client)
+		client->mdiServer = this;
 
 	QWorkspace* ws = qobject_cast<QWorkspace*>( w );
-	if ( ws )
+	if (ws)
 		connect( ws, SIGNAL(windowActivated(QWidget*)), this, SLOT( wSpaceWindowActivated(QWidget*)));
 
 //	if it's the only widget available, show it's number

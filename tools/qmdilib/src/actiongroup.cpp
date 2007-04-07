@@ -129,6 +129,7 @@ QString qmdiActionGroup::getName()
  * once they are in the group.
  * 
  * \see addSeparator
+ * \see addMenu
  * \see containsAction
  * \see removeAction
  * \see setMergePoint
@@ -169,6 +170,33 @@ void qmdiActionGroup::addWidget( QWidget *widget, int location )
 		actionGroupItems.insert( location, widget );
 	else
 		actionGroupItems << widget;
+}
+
+/**
+ * \brief adds a subnmenu to the menu or toolbar
+ * \param menu item to be added to the action group
+ * \param location  where to add the new widget
+ * \since 0.0.4
+ * 
+ * If you want to add sub menus to some menu bars, you should 
+ * use this function.
+ * 
+ * The menu is added to the end of the list if location is -1,
+ * otherwise the location specifies where the menu is added.
+ *
+ * If you are are generating a toolbar, this menu is ignored.
+ * 
+ * \see updateToolBar
+ * \see updateMenu
+ * \see addWidget
+ * \see setMergePoint
+ */
+void qmdiActionGroup::addMenu( QMenu *menu, int location )
+{
+	if (location != -1)
+		actionGroupItems.insert( location, menu );
+	else
+		actionGroupItems << menu;
 }
 
 /**
@@ -222,9 +250,30 @@ void qmdiActionGroup::removeAction( QAction *action )
 		actionGroupItems.removeAt( i );
 }
 
+/**
+ * \brief remove a menu from the action group
+ * \param menu menu item to be removed
+ *
+ * Use this function for removing sub-menus from the menu represented 
+ * by this action group.
+ *
+ * \see addAction
+ * \see removeAction
+ * \see addWidget
+ * \see addMenu
+ * \see updateMenu
+ * \see updateToolBar
+ */
+void qmdiActionGroup::removeMenu( QMenu *menu )
+{
+	int i =	actionGroupItems.indexOf( menu );
+
+	if ( i != -1 )
+		actionGroupItems.removeAt( i );
+}
 
 /**
- * \brief remove an action from the action group
+ * \brief remove a widget from the action group
  * \param widget QWidget item to be removed
  *
  * Use this function for removing widgets from the menu or
@@ -282,6 +331,7 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 	foreach( QObject *o, group->actionGroupItems )
 	{
 		QAction *a = qobject_cast<QAction*> (o);
+		
 		if (a)
 		{
 			if (mergeLocation != -1)
@@ -298,19 +348,22 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 					addWidget( w, mergeLocation + i );
 				else
 					addWidget( w );
-				w->setVisible(true);
+				
+				// don't display menus, as they are displayed on demand
+				// when selected in the QMainMenu
+				if (!w->inherits("QMenu"))
+					w->setVisible(true);
 			}
 			else
 				qDebug("%s %d : erorr - wrong QObject type added to action group", __FILE__, __LINE__ );
 		}
-
+		
 		i ++;
 	}
 
 	if (breakCount>0)
 		breakAfter = true;
 }
-
 
 /**
  * \brief un-merges another action group actions into this action group
@@ -387,11 +440,14 @@ QMenu*	 qmdiActionGroup::updateMenu( QMenu *menu )
 		QAction *a = qobject_cast<QAction*> (o);
 		if (a)
 			menu->addAction( a );
+		
+		QMenu *m = qobject_cast<QMenu*> (o);
+		if (m)
+			menu->addMenu( m );
 	}
 
 	return menu;
 }
-
 
 /**
  * \brief generates an updated toolbar from the items on the group list
@@ -427,7 +483,11 @@ QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
 		{
 			QWidget *w = qobject_cast<QWidget*> (o);
 			if (w)
-				toolbar->addWidget( w );
+			{
+				// don't even try to add menus to toolbars, this just does not work
+				if (! w->inherits("QMenu"))
+					toolbar->addWidget( w );
+			}
 		}
 		i++;
 	}

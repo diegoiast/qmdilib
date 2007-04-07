@@ -31,9 +31,11 @@ public:
 	QString		getName();	
 	void		addAction( QAction *action, int location=-1 );
 	void		addWidget( QWidget *widget, int location=-1 );
+	void		addMenu( QMenu *menu, int location=-1 );
 	void		addSeparator( int location=-1 );
 	bool		containsAction( QAction *action );
 	void		removeAction( QAction *action );
+	void		removeMenu( QMenu *menu );
 	void		removeWidget( QWidget *widget );
 	void		setMergePoint();
 

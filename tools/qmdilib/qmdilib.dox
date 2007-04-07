@@ -304,8 +304,8 @@ This fourth demo, shows how to build qdmilib into dynamic libraries, and also ho
 use qmdilib classes.
 
 This application uses the same code as demo2, with a single difference: all the classes of qmdilib are compiled
-into a library (libqmdi.so.0.0.2 on Unix/Linux and qmdi0.dll on Win32), and the extended text editor and help browser
-into another library (libqexedit0.so.0.0.2 on Unix/Linux and qexedit0.dll on Win32). The main binary contains only 
+into a library (libqmdi.so.0.0.4 on Unix/Linux and qmdi0.dll on Win32), and the extended text editor and help browser
+into another library (libqexedit0.so.0.0.4 on Unix/Linux and qexedit0.dll on Win32). The main binary contains only 
 the main window and the main() function. 
 
 Note that on Unix/Linux (also Mac), the application will fail to load because the loader will not be able 
@@ -319,8 +319,7 @@ This is the project file for qmdilib:
 \code
 TEMPLATE = lib
 TARGET=qmdi
-VERSION=0.0.2
-#CONFIG +=   staticlib
+VERSION=0.0.4
 DESTDIR=../
 
 MOC_DIR =  ../../../tmp/
@@ -349,7 +348,7 @@ This is the project file for qexedit, see how it also links the qmdi library:
 \code
 TEMPLATE = lib
 TARGET=qexedit
-VERSION=0.0.2
+VERSION=0.0.4
 DESTDIR=../
 
 MOC_DIR =  ../../../tmp/
@@ -415,7 +414,7 @@ This is the project file for qmdilib:
 TEMPLATE = lib
 TARGET = qmdi
 CONFIG += staticlib
-VERSION = 0.0.2
+VERSION = 0.0.4
 
 DESTDIR = ../
 MOC_DIR =  ../../../tmp/
@@ -445,7 +444,7 @@ This is the project file for qexedit, see how it also links the qmdi library:
 TEMPLATE = lib
 TARGET = qexedit
 CONFIG += staticlib
-VERSION = 0.0.2
+VERSION = 0.0.4
 
 DESTDIR = ../
 MOC_DIR =  ../../../tmp/

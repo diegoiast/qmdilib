@@ -62,7 +62,7 @@ void HelpPlugin::showQtHelp()
 {
 	QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
 	
-	QexHelpBrowser *browser = new QexHelpBrowser( QUrl(helpFile) );
+	QexHelpBrowser *browser = new QexHelpBrowser( QUrl(helpFile), true );
 	browser->hide();
 	browser->name = "Qt help";
 	browser->setObjectName( browser->name );

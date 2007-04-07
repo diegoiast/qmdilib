@@ -1,5 +1,5 @@
-#ifndef __MAINWINDOW3_H__
-#define __MAINWINDOW3_H__
+#ifndef __MAINWINDOW6_H__
+#define __MAINWINDOW6_H__
 
 #include <QMainWindow>
 #include "qmdihost.h"
@@ -8,22 +8,24 @@ class QAction;
 class QTabWidget;
 class PluginManager;
 
-class MainWindow3: public QMainWindow, public qmdiHost
+class MainWindow6: public QMainWindow, public qmdiHost
 {
 	Q_OBJECT
 public:
-	MainWindow3( QWidget *owner = NULL);
-	~MainWindow3();
+	MainWindow6( QWidget *owner = NULL);
+	~MainWindow6();
 
 public slots:
 	void initGUI();
 	void closeClient();
+	void on_actionQuit_triggered();
 	
 private:
 	QTabWidget	*tabWidget;
 	QAction		*actionConfig;
+	QAction		*actionQuit;
 
 	PluginManager	*pluginManager;
 };
 
-#endif // __MAINWINDOW3_H__
+#endif // __MAINWINDOW6_H__

@@ -12,8 +12,7 @@
 
 EditorPlugin::EditorPlugin()
 {
-	actionNew	= new_action( QIcon(":images/filenew.png"), tr("&New"), this, tr("Ctrl+N"), tr("Create a new file"), SLOT(fileNew()) );
-	actionOpen	= new_action( QIcon(":images/fileopen.png"), tr("&Open"), this, tr("Ctrl+O"), tr("Load a file"), SLOT(fileOpen()) );
+	actionNew	= new_action( QIcon(":images/filenew.png"), tr("&New text file"), this, tr("Ctrl+N"), tr("Create a new file"), SLOT(fileNew()) );
 
 	name = tr("Text editor plugin");
 	author = tr("Diego Iastrubni <elcuco@kde.org>");
@@ -22,11 +21,8 @@ EditorPlugin::EditorPlugin()
 	autoEnabled = true;
 	alwaysEnabled = false;
 
-	menus["&File"]->addAction( actionNew );
-	menus["&File"]->addAction( actionOpen );
-
-// 	toolbars["File"]->addAction( actionNew );
-// 	toolbars["File"]->addAction( actionOpen );
+	_newFileActions = new QActionGroup(this);
+	_newFileActions->addAction( actionNew );
 	
 	configUI = new QWidget;
 	ui.setupUi( configUI );
@@ -41,7 +37,6 @@ EditorPlugin::EditorPlugin()
 EditorPlugin::~EditorPlugin()
 {
 	delete actionNew;
-	delete actionOpen;
 }
 
 void EditorPlugin::showAbout()
@@ -54,12 +49,17 @@ QWidget* EditorPlugin::getConfigDialog()
 	return configUI;
 }
 
+QActionGroup* EditorPlugin::newFileActions()
+{
+	return _newFileActions;
+}
+
 QStringList EditorPlugin::myExtensions()
 {
 	QStringList s;
-	s << tr("Sources"	,"EditorPlugin::fileOpen: open source files")	+ " (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc)";
-	s << tr("Headers",	 "EditorPlugin::fileOpen: open header files")	+ " (*.h *.hpp *.hxx *.inc)";
-	s << tr("Qt project", "EditorPlugin::fileOpen: open *.pro")		+ " (*.pro *.pri)";
+	s << tr("Sources"	, "EditorPlugin::fileOpen: open source files")	+ " (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc)";
+	s << tr("Headers"	, "EditorPlugin::fileOpen: open header files")	+ " (*.h *.hpp *.hxx *.inc)";
+	s << tr("Qt project"	, "EditorPlugin::fileOpen: open *.pro")		+ " (*.pro *.pri)";
 // 	s << tr("All files",  "EditorPlugin::fileOpen: open any file")	+ " (*.*)";
 
 	return s;
@@ -98,12 +98,34 @@ int EditorPlugin::canOpenFile( const QString fileName )
 	return -1;
 }
 
+/**
+ * \brief open a file
+ * \param x the row to move the cursor to
+ * \param y the line to move the cursor to
+ * \param z unused, ignored
+ * \return true if the file was opened, and the cursor reached the specified location
+ * 
+ * This function is used to open a file. The \b x and \b y parameters
+ * can be used to specify the row/column to move the cursor to. If those
+ * parameters have the value -1 the cursor will move to the "0" position
+ * of that coordinate.
+ * 
+ * If the file was not open, the function will return false.
+ * If the cursor position could not be reached (out of bounds for example)
+ * the function will return false. 
+ * On all other cases, return true to represent that the action was completed
+ * without any problems.
+ * 
+ */
 bool EditorPlugin::openFile( const QString fileName, int x, int y, int z )
 {
 	QexTextEdit *editor = new QexTextEdit( fileName, dynamic_cast<QMainWindow*>(mdiServer) );
 	editor->hide();
 	mdiServer->addClient( editor );
 
+	// TODO
+	// 1) move the cursor as specified in the parameters
+	// 2) return false if the was was not open for some reason
 	return true;
 }
 
@@ -115,36 +137,10 @@ void EditorPlugin::fileNew()
 		return;
 	}
 
-	QexTextEdit *editor = new QexTextEdit;
+	QexTextEdit *editor = new QexTextEdit("", true);
 	editor->hide();
 	editor->name = tr("No name");
 	editor->setObjectName( editor->name );
 	mdiServer->addClient( editor );
 }
 
-void EditorPlugin::fileOpen()
-{
-	if (!mdiServer)
-	{
-		qDebug("%s - warning no mdiServer defined", __FUNCTION__ );
-		return;
-	}
-
-	QString s = QFileDialog::getOpenFileName(
-		NULL,
-	tr("Choose a file"),
-		"",
-		tr("Sources"	,"EditorPlugin::fileOpen: open source files")	+ " (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc);;" +
-		tr("Headers",	 "EditorPlugin::fileOpen: open header files")	+ " (*.h *.hpp *.hxx *.inc);;"+
-		tr("Qt project", "EditorPlugin::fileOpen: open *.pro")		+ " (*.pro *.pri);;"+
-		tr("All files",  "EditorPlugin::fileOpen: open any file")	+ " (*.*)"
-	);
-
-	if (s.isEmpty())
-		return;
-
-	
-	QexTextEdit *editor = new QexTextEdit( s, dynamic_cast<QMainWindow*>(mdiServer) );
-	editor->hide();
-	mdiServer->addClient( editor );
-}

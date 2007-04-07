@@ -29,7 +29,7 @@ public:
 	QString fileName;
 	qmdiActionGroupList menus;
 	qmdiActionGroupList toolbars;
-
+// protected:
 	qmdiServer *mdiServer;
 };
 

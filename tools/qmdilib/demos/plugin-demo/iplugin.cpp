@@ -1,4 +1,5 @@
 #include <QAction>
+#include <QActionGroup>
 #include <QIcon>
 
 #include "iplugin.h"
@@ -50,6 +51,12 @@ void	IPlugin::loadConfig( const QSettings &settings )
 
 void	IPlugin::SaveConfig( const QSettings &settings )
 {
+}
+
+QActionGroup*	IPlugin::newFileActions()
+{
+	// by default plugins cannot create any files
+	return NULL;
 }
 
 QStringList	IPlugin::myExtensions()

@@ -1,10 +1,13 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="1" >
+ <DocsAndViews NumberOfDocuments="2" >
   <Doc0 NumberOfViews="1" URL="file:///home/elcuco/src/svn/qtedit4/tools/qmdilib/Doxyfile" >
    <View0 line="407" Type="Source" />
   </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/elcuco/src/svn/qtedit4/tools/qmdilib/demos/plugin-demo/plugins/help/help.cpp" >
+   <View0 line="12" Type="Source" />
+  </Doc1>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

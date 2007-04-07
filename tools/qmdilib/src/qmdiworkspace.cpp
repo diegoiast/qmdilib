@@ -217,7 +217,7 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 		case Qt::TopRightCorner:
 			cornerWidget2 = widget;
 			break;
-// TODO only tabs on the top is fully supported
+// TODO only tabs on the top is fully supported, add support for other styles
 		case Qt::BottomLeftCorner: 
 			cornerWidget1 = widget;
 			break;
@@ -226,25 +226,29 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 			break;
 	}
 	
-	// now lets  remove header layout
-	// and reconstruct it, and finally add it back to the main layout
+	// to modify the corner widgets, the best I found is:
+	//  * remove header layout
+	//  * reconstruct a new one
+	//  * and finally add the new layout back to the main layout
 	// TODO: is there a smarter way of doing this?
+	setUpdatesEnabled(false);
 	mainLayout->removeItem( headerLayout );
 	mainLayout->removeWidget( workspace );
 	
 	delete headerLayout;
-	headerLayout = new QHBoxLayout;
+	headerLayout = new QHBoxLayout(this);
 	headerLayout->setMargin(0);
 	headerLayout->setSpacing(0);
 	
-	if (cornerWidget1) 
+	if (cornerWidget1)
 		headerLayout->addWidget(cornerWidget1);
 	headerLayout->addWidget(tabBar);
-	if (cornerWidget2) 
+	if (cornerWidget2)
 		headerLayout->addWidget(cornerWidget2);
 	
 	mainLayout->addItem(headerLayout);
 	mainLayout->addWidget(workspace);
+	setUpdatesEnabled(true);
 }
 
 /**
@@ -312,7 +316,8 @@ void qmdiWorkspace::workspaceChanged( QWidget* w )
 	// try to update the MDI host
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
 
-	mdiHost->updateGUI( m );
+	if (mdiHost)
+		mdiHost->updateGUI( m );
 	
 	// update the tab bar
 	int windowNumber = workspace->windowList().indexOf(w);
@@ -337,11 +342,12 @@ void qmdiWorkspace::workspaceChanged( QWidget* w )
 void qmdiWorkspace::tabBarChanged( int index )
 {
 	if (!workspace)
-			return;
+		return;
 	
 	QWidget *newWindow = workspace->windowList()[index];
 	if (!newWindow)
 		return;
+	
 	newWindow->show();
 	workspace->setActiveWindow ( newWindow );
 	workspaceChanged( newWindow );
@@ -445,7 +451,7 @@ void qmdiWorkspace::tryCloseAllCliens()
 			continue;
 
 		client->closeClient();
-	}	
+	}
 }
 
 /**
@@ -466,6 +472,7 @@ void qmdiWorkspace::tryCloseAllCliens()
  */
 void qmdiWorkspace::showClientMenu( int i, QPoint p )
 {
+	// TODO actions should be configurable. How about using a qmdiActionGroupsList for the menu...?
 	QAction *closeThis	= new QAction(tr("Close this window"), this);
 	QAction *closeOthers	= new QAction(tr("Close other windows"), this);
 	QAction *closeAll	= new QAction(tr("Close all windows"), this);
@@ -477,15 +484,9 @@ void qmdiWorkspace::showClientMenu( int i, QPoint p )
 	QAction *q = menu->exec( this->mapToGlobal(p) );
 
 	if ( q == closeThis)
-	{
 		tryCloseClient( i );
-	}
 	else if  (q == closeOthers)
-	{
 		tryCloseAllButClient( i );
-	}
 	else if (q == closeAll )
-	{
 		tryCloseAllCliens();
-	}
 }

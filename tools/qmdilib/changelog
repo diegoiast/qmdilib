@@ -1,5 +1,10 @@
 $Id$
 
+0.0.4 - SOMEDAY
+ * Documentation re-created using doxygen 1.4.7
+ * qmdiClient: qmdiServer is now a public member
+ * qmdiActionGroup: added support for submenus
+		
 0.0.3  - 7 Oct 2006 - Diego Iastrubni <elcuco@kde.org>
  * new feature: QWorkspace children are also checked for qmdiClient interface,
    feature coded by Nox PasNox <pasnox@gmail.com>

@@ -48,7 +48,6 @@ private:
 	QAction *actionFileNew;
 	QAction *actionQtTopics;
 	QAction *actionAbout;
-	//QTabWidget *tabWidget;
 	TAB_CONTROL *tabWidget;
 
 	QToolButton *tabCloseBtn;

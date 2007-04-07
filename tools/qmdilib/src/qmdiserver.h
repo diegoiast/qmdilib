@@ -22,7 +22,7 @@ public:
 	virtual ~qmdiServer();
 	virtual void addClient( qmdiClient *client ) = 0;
 	virtual void deleteClient( qmdiClient* );
-protected:
+// protected:
 	qmdiHost *mdiHost;
 };
 

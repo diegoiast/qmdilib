@@ -86,7 +86,7 @@ void MainWindow2::init_gui()
 	// TODO
 	// if you do not pass this as the parent,
 	// qmdiWorkspace will not work properly
-	tabWidget = new TAB_CONTROL(this); 
+	tabWidget = new TAB_CONTROL(this);
 	tabNewBtn = new QToolButton(tabWidget);
         tabNewBtn->setAutoRaise( true );
         connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));

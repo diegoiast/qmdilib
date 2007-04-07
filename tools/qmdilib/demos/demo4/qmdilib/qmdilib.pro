@@ -2,8 +2,7 @@
 
 TEMPLATE = lib
 TARGET=qmdi
-VERSION=0.0.3
-#CONFIG +=   staticlib 
+VERSION=0.0.4
 DESTDIR=../
 
 

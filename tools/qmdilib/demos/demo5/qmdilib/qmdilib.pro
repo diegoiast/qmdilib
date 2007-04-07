@@ -3,7 +3,7 @@
 TEMPLATE = lib
 TARGET = qmdi
 CONFIG += staticlib 
-VERSION = 0.0.3
+VERSION = 0.0.4
 
 DESTDIR		 = ../
 MOC_DIR		 = ../../../tmp/
