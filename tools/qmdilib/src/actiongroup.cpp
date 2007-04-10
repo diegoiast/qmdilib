@@ -13,6 +13,7 @@
 #include <QToolBar>
 #include <QApplication>
 #include <QMainWindow>
+#include <QActionGroup>
 
 #include "actiongroup.h"
 
@@ -146,6 +147,24 @@ void qmdiActionGroup::addAction( QAction *action, int location )
 }
 
 /**
+ * \brief add new actions to the action group
+ * \param action items to be added to the action group
+ * \param location where to add the new actiongroup
+ * 
+ * Overloaded function for convience.
+ * 
+ * \see addAction
+ */
+void qmdiActionGroup::addActions( QActionGroup *actions, int location )
+{
+	foreach( QAction *a, actions->actions() )
+	{
+		addAction( a, location );
+		location++;
+	}
+}
+
+/**
  * \brief add a new widget to the action group
  * \param widget item to be added to the action group
  * \param location where to add the new widget
@@ -248,6 +267,24 @@ void qmdiActionGroup::removeAction( QAction *action )
 
 	if ( i != -1 )
 		actionGroupItems.removeAt( i );
+}
+
+/**
+ * \brief remove a actions from the action group
+ * \param actions items to be removed
+ * 
+ * Use this function for removing items from the menu or 
+ * toolbar represented by this action group.
+ * 
+ * \see removeAction
+ * \see addAction
+ */
+void qmdiActionGroup::removeActions( QActionGroup *actions )
+{
+	foreach( QAction *a, actions->actions() )
+	{
+		removeAction( a );
+	}
 }
 
 /**
