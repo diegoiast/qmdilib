@@ -13,6 +13,8 @@
 // plugins
 #include "plugins/editor/editor.h"
 #include "plugins/help/help.h"
+#include "plugins/richtext/richtext_plg.h"
+#include "plugins/richtext/richtext.h"
 
 
 MainWindow6::MainWindow6(QWidget *owner):
@@ -40,12 +42,13 @@ void MainWindow6::initGUI()
 	menus[tr("Se&ttings")]->addAction( actionConfig );
 	menus[tr("&Help")];
 
-	toolbars["Settings"]->addAction(actionConfig);
+	toolbars["Main"]->addAction(actionConfig);
 	
 	tabWidget = new qmdiTabWidget(this);
 	pluginManager = new PluginManager( this, dynamic_cast<qmdiServer*>(tabWidget) );
 	pluginManager->addPlugin( new HelpPlugin );
 	pluginManager->addPlugin( new EditorPlugin );
+	pluginManager->addPlugin( new RichTextPlugin );
 	updateGUI( this );
 	
 	
@@ -63,12 +66,17 @@ void MainWindow6::initGUI()
 
 void MainWindow6::closeClient()
 {
-	qmdiClient *client = dynamic_cast<qmdiClient*>( tabWidget->currentWidget());
+	qmdiClient *client = dynamic_cast<qmdiClient*>( tabWidget->currentWidget() );
 
-	if (client == NULL)
+	if (client == NULL){
+// 		qDebug( "not mdi client  %s", qPrintable(tabWidget->currentWidget()->objectName()) );
+		qDebug( "not mdi client  %s", qPrintable(tabWidget->currentWidget()->objectName()) );
 		tabWidget->currentWidget()->deleteLater();
-
-	client->closeClient();
+	}
+	else {
+		qDebug( "this is an mdi client  %s", qPrintable(client->name) );
+		client->closeClient();
+	}
 }
 
 void MainWindow6::on_actionQuit_triggered()

@@ -420,5 +420,7 @@ void qmdiTabWidget::addClient( qmdiClient *client )
 	if (w == NULL)
 		return;
 	
-	addTab( w, client->name );
+	int i = addTab( w, client->name );
+	w->setFocus();
+	setCurrentIndex( i );
 }

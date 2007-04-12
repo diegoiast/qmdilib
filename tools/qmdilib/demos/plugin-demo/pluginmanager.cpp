@@ -131,6 +131,8 @@ void PluginManager::on_actionOpen_triggered()
 		IPlugin *bestPlugin = NULL;
 		
 		// who can open this file...?
+		int j = 0;
+		int k = 0;
 		foreach( p, plugins )
 		{
 			if (!p->enabled)
@@ -141,8 +143,13 @@ void PluginManager::on_actionOpen_triggered()
 			else
 			{
 				// is this plugin better then the selected?
-				if (p->canOpenFile(e) > bestPlugin->canOpenFile(e))
+				int j = p->canOpenFile(e);
+				
+				if (j > k)
+				{
 					bestPlugin = p;
+					k = bestPlugin->canOpenFile(e);
+				}
 			}
 		}
 

@@ -88,14 +88,29 @@ void EditorPlugin::setData()
 int EditorPlugin::canOpenFile( const QString fileName )
 {
 	QUrl u(fileName);
+	
+	if ( (u.scheme().toLower() != "file") && (!u.scheme().isEmpty()) )
+		return -1;
 
-	if (u.scheme().isEmpty())
+	else if (fileName.endsWith(".c", Qt::CaseInsensitive))
 		return 1;
-
-	if (u.scheme().toLower() == "file")
+	else if (fileName.endsWith(".cpp", Qt::CaseInsensitive))
 		return 1;
-
-	return -1;
+	else if (fileName.endsWith(".cxx", Qt::CaseInsensitive))
+		return 1;
+	else if (fileName.endsWith(".h", Qt::CaseInsensitive))
+		return 1;
+	else if (fileName.endsWith(".hpp", Qt::CaseInsensitive))
+		return 1;
+	else if (fileName.endsWith(".hxx", Qt::CaseInsensitive))
+		return 1;
+	else if (fileName.endsWith(".inc", Qt::CaseInsensitive))
+		return 1;
+	else if (fileName.endsWith(".pro", Qt::CaseInsensitive))
+		return 1;
+	else if (fileName.endsWith(".pri", Qt::CaseInsensitive))
+		return 1;
+	else return -1;
 }
 
 /**
@@ -119,7 +134,7 @@ int EditorPlugin::canOpenFile( const QString fileName )
  */
 bool EditorPlugin::openFile( const QString fileName, int x, int y, int z )
 {
-	QexTextEdit *editor = new QexTextEdit( fileName, dynamic_cast<QMainWindow*>(mdiServer) );
+	QexTextEdit *editor = new QexTextEdit( fileName, true, dynamic_cast<QMainWindow*>(mdiServer) );
 	editor->hide();
 	mdiServer->addClient( editor );
 
