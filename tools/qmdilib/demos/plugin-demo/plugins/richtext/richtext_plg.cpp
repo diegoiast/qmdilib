@@ -76,11 +76,11 @@ int RichTextPlugin::canOpenFile( const QString fileName )
 		return -1;
 
 	if (fileName.endsWith(".html", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".htm", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".xhtml", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else return -1;
 }
 

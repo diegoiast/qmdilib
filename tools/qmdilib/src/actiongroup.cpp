@@ -60,7 +60,6 @@ qmdiActionGroup::qmdiActionGroup( QString name )
 	mergeLocation = -1;
 }
 
-
 qmdiActionGroup::qmdiActionGroup()
 {
 }
@@ -148,8 +147,9 @@ void qmdiActionGroup::addAction( QAction *action, int location )
 
 /**
  * \brief add new actions to the action group
- * \param action items to be added to the action group
+ * \param actions items to be added to the action group
  * \param location where to add the new actiongroup
+ * \since 0.0.4
  * 
  * Overloaded function for convience.
  * 
@@ -157,8 +157,11 @@ void qmdiActionGroup::addAction( QAction *action, int location )
  */
 void qmdiActionGroup::addActions( QActionGroup *actions, int location )
 {
+	if (location == -1)
+		location = actionGroupItems.count();
 	foreach( QAction *a, actions->actions() )
 	{
+// 		qDebug( "adding action: %s at location: %i", qPrintable(a->text()), location );
 		addAction( a, location );
 		location++;
 	}
@@ -192,7 +195,7 @@ void qmdiActionGroup::addWidget( QWidget *widget, int location )
 }
 
 /**
- * \brief adds a subnmenu to the menu or toolbar
+ * \brief adds a submenu to the menu or toolbar
  * \param menu item to be added to the action group
  * \param location  where to add the new widget
  * \since 0.0.4
@@ -272,6 +275,7 @@ void qmdiActionGroup::removeAction( QAction *action )
 /**
  * \brief remove a actions from the action group
  * \param actions items to be removed
+ * \since 0.0.4
  * 
  * Use this function for removing items from the menu or 
  * toolbar represented by this action group.

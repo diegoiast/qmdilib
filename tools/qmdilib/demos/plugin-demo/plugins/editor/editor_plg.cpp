@@ -6,7 +6,7 @@
 
 #include "iplugin.h"
 #include "qmdiserver.h"
-#include "editor.h"
+#include "editor_plg.h"
 #include "qexeditor.h"
 
 
@@ -60,7 +60,7 @@ QStringList EditorPlugin::myExtensions()
 	s << tr("Sources"	, "EditorPlugin::fileOpen: open source files")	+ " (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc)";
 	s << tr("Headers"	, "EditorPlugin::fileOpen: open header files")	+ " (*.h *.hpp *.hxx *.inc)";
 	s << tr("Qt project"	, "EditorPlugin::fileOpen: open *.pro")		+ " (*.pro *.pri)";
-// 	s << tr("All files",  "EditorPlugin::fileOpen: open any file")	+ " (*.*)";
+	s << tr("All files",  "EditorPlugin::fileOpen: open any file")	+ " (*.*)";
 
 	return s;
 }
@@ -93,24 +93,24 @@ int EditorPlugin::canOpenFile( const QString fileName )
 		return -1;
 
 	else if (fileName.endsWith(".c", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".cpp", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".cxx", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".h", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".hpp", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".hxx", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".inc", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".pro", Qt::CaseInsensitive))
-		return 1;
+		return 5;
 	else if (fileName.endsWith(".pri", Qt::CaseInsensitive))
-		return 1;
-	else return -1;
+		return 5;
+	else return 1;
 }
 
 /**

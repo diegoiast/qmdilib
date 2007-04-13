@@ -7,17 +7,18 @@
 QexRichTextBrowser::QexRichTextBrowser( QString fileName, QWidget *parent )
 	: RichText( parent, fileName )
 {
-        toolbars["Design"]->addAction( actionBold );
-	toolbars["Design"]->addAction( actionItalic );
-	toolbars["Design"]->addAction( actionUnderline );
-	toolbars["Design"]->addSeparator();
-	toolbars["Design"]->addActions( alignGroup );
-	toolbars["Design"]->addSeparator();
-	toolbars["Design"]->addActions( listGroup );
-	toolbars["Design"]->addSeparator();
-	toolbars["Design"]->addAction( actionTextColor );
-	toolbars["Design"]->addWidget( (QWidget*)fontComboBox );
-	toolbars["Design"]->addWidget( (QWidget*)comboSize );
+	toolbars["main"]->addSeparator();
+	toolbars["main"]->addAction( actionBold );
+	toolbars["main"]->addAction( actionItalic );
+	toolbars["main"]->addAction( actionUnderline );
+	toolbars["main"]->addSeparator();
+	toolbars["main"]->addActions( alignGroup );
+	toolbars["main"]->addSeparator();
+	toolbars["main"]->addActions( listGroup );
+	toolbars["main"]->addSeparator();
+	toolbars["main"]->addAction( actionTextColor );
+	toolbars["main"]->addWidget( (QWidget*)fontComboBox );
+	toolbars["main"]->addWidget( (QWidget*)comboSize );
 	
 	actionAlignCenter	->setIcon( QIcon(":/images/textcenter.png") );
 	actionBold		->setIcon( QIcon(":/images/textbold.png") );
@@ -51,4 +52,3 @@ bool QexRichTextBrowser::canCloseClient()
         // shut up GCC warnings
 	return true;
 }
-

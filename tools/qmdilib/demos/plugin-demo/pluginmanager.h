@@ -12,31 +12,43 @@
 // $Id$
 
 #include <QObject>
-#include "qmdiclient.h"
+#include <QMainWindow>
+#include "qmdihost.h"
 
 class QPopupMenu;
 class qmdiHost;
-class qmdiServer;
+class qmdiTabWidget;
 class IPlugin;
 
-class PluginManager: public QObject, public qmdiClient
+class PluginManager: public QMainWindow, public qmdiHost
 {
 	Q_OBJECT
 	
 public:
-	PluginManager( qmdiHost *host, qmdiServer *server );
+	PluginManager();
 	virtual ~PluginManager();
 
 public slots:
+	void updateGUI2();
+	
 	void addPlugin( IPlugin *newplugin );
 	void removePlugin( IPlugin *oldplugin );
 	
+	void closeClient();
 	void on_actionOpen_triggered();
+	void on_actionQuit_triggered();
 
 private:
+	void initGUI();
+	
 	QList<IPlugin*>		plugins;
 	QAction			*actionOpen;
 	QMenu			*newFilePopup;
+	
+	qmdiTabWidget	*tabWidget;
+	QAction		*actionConfig;
+	QAction		*actionQuit;
+	
 };
 
 #endif

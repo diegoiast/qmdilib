@@ -96,10 +96,11 @@ void RichText::initWidget( QString fileName, QTextEdit *e )
 	connect(actionTextColor, SIGNAL(triggered()), this, SLOT(textColor()));
 	
 	fontComboBox = new QFontComboBox;
+	fontComboBox->setObjectName("Choose font family");
 	
 	comboSize = new QComboBox;
 	QFontDatabase db;
-	comboSize->setObjectName("comboSize");
+	comboSize->setObjectName("Choose font size");
 	comboSize->setEditable(true);
 	foreach(int size, db.standardSizes())
 		comboSize->addItem(QString::number(size));

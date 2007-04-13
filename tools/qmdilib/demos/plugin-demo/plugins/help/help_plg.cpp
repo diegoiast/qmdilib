@@ -9,7 +9,7 @@
 
 #include "iplugin.h"
 #include "qmdiserver.h"
-#include "help.h"
+#include "help_plg.h"
 #include "helpbrowse.h"
 
 
@@ -19,8 +19,6 @@ HelpPlugin::HelpPlugin()
 	actionAbout	= new_action( QIcon(), tr("&About"), this, "", tr("XXXXX"), SLOT(showAboutApp()) );
 	actionAboutQt	= new_action( QIcon(), tr("&About Qt"), this, "", tr("XXXXX"), SLOT(showAboutQt()) );
 	actionShowQtHelp= new_action( QIcon(), tr("&Qt help"), this, "F1", tr("XXXXX"), SLOT(showQtHelp()) );
-
-// 	actionAbout->setShortcut( "F1" );
 
 	name = "Help plugin";
 	author = "Diego Iastrubni <elcuco@kde.org>";
@@ -77,7 +75,7 @@ void HelpPlugin::on_browser_sourceChanged ( const QUrl & src )
 		return;
 
 	if ((src.scheme() == "file") || (src.scheme().isEmpty()))
-		    return;
+		return;
 	
 	if (!QProcess::startDetached( externalBrowser, QStringList(src.toString()) ))
 	{

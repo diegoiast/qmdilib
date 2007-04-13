@@ -14,9 +14,13 @@
 #include <QAction>
 #include <QMenu>
 #include <QActionGroup>
+#include <QTabWidget>
+#include <QToolButton>
+#include <QStatusBar>
 
 #include "qmdihost.h"
 #include "qmdiserver.h"
+#include "qmditabwidget.h"
 #include "iplugin.h"
 #include "pluginmanager.h"
 #include "pluginmodel.h"
@@ -28,26 +32,26 @@
  */
 
 
-PluginManager::PluginManager( qmdiHost *host, qmdiServer *server )
+PluginManager::PluginManager()
 {
-	mdiServer = server;
-	server->mdiHost = host;
+	newFilePopup	= new QMenu  ( tr("New..."), NULL );
+	actionOpen	= new QAction( tr("Open..."), NULL  );
+	actionQuit	= new QAction( tr("Ex&it"), this );
+	actionConfig	= new QAction( tr("&Config"), this );
 	
-	newFilePopup	= new QMenu( tr("New..."), NULL );
-	actionOpen	= new QAction( tr("Open... (plugin)"), NULL  );
-	
+// 	connect( actionConfig, SIGNAL(triggered()), pluginManager, SLOT(configurePlugins()));
 	connect( actionOpen, SIGNAL(triggered()), this, SLOT(on_actionOpen_triggered()));
-// 	newFilePopup->addAction( actionNew );
-	
-	menus["&File"]->addMenu( newFilePopup );
-// 	menus["&File"]->addAction( actionNew );
-	menus["&File"]->addAction( actionOpen );
-	if (server->mdiHost)
-		server->mdiHost->mergeClient( this );
+	connect( actionQuit, SIGNAL(triggered()), this, SLOT(on_actionQuit_triggered()));
+	initGUI();
 }
 
 PluginManager::~PluginManager()
 {
+}
+
+void PluginManager::updateGUI2()
+{
+	updateGUI( this );
 }
 
 void PluginManager::addPlugin( IPlugin *newplugin )
@@ -56,38 +60,79 @@ void PluginManager::addPlugin( IPlugin *newplugin )
 	
 	if (!newplugin)
 		return;
-
-	newplugin->mdiServer = mdiServer;
+	
+	newplugin->mdiServer = tabWidget;
 	if (newplugin->alwaysEnabled)
 		newplugin->autoEnabled = true;
 	
 	if (newplugin->autoEnabled)
 	{
 		newplugin->enabled = true;
-		mdiServer->mdiHost->mergeClient( newplugin );
+		mergeClient( newplugin );
 	}
 	
 	// lets see how much "new" actions we have
 	IPlugin *p;
 	QAction *a;
-// 	QActionGroup *ag = new QActionGroup
+	QActionGroup *ag;
 	
 	foreach( p, plugins )
 	{
 		if (!p->enabled)
 			continue;
-		QActionGroup *ag =  p->newFileActions();
-		if (ag)
-			foreach( a, ag->actions() )
-			{
-				newFilePopup->addAction( a );
-			}
+		
+		ag =  p->newFileActions();
+		if (!ag)
+			continue;
+			
+		foreach( a, ag->actions() )
+		{
+			newFilePopup->addAction( a );
+		}
 	}
 	
 }
 
 void PluginManager::removePlugin( IPlugin *oldplugin )
 {
+}
+
+void PluginManager::initGUI()
+{
+	menus[tr("&File")]->addMenu( newFilePopup );
+	menus[tr("&File")]->addAction( actionOpen );
+	menus[tr("&File")]->addSeparator();
+	menus[tr("&File")]->setMergePoint();
+	menus[tr("&File")]->addSeparator();
+	menus[tr("&File")]->addAction(actionQuit);
+	menus[tr("&Edit")];
+	menus[tr("&Search")];
+	menus[tr("&Navigation")];
+	menus[tr("Se&ttings")]->addAction( actionConfig );
+	menus[tr("&Help")];
+
+	toolbars[tr("main")]->addAction(actionOpen);
+	toolbars[tr("main")]->addAction(actionConfig);
+	
+	tabWidget = new qmdiTabWidget(this);
+	updateGUI2();
+	
+	QToolButton *tabCloseBtn = new QToolButton(tabWidget);
+	tabCloseBtn->setAutoRaise( true );
+	connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(closeClient()));
+	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
+	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
+	setCentralWidget( tabWidget );	
+	statusBar()->showMessage("Welcome - feel free to configure the GUI to your needs",5000);
+}
+
+void PluginManager::closeClient()
+{
+	qmdiClient *client = dynamic_cast<qmdiClient*>( tabWidget->currentWidget() );
+	if (client == NULL)
+		tabWidget->currentWidget()->deleteLater();
+	else
+		client->closeClient();
 }
 
 void PluginManager::on_actionOpen_triggered()
@@ -143,7 +188,7 @@ void PluginManager::on_actionOpen_triggered()
 			else
 			{
 				// is this plugin better then the selected?
-				int j = p->canOpenFile(e);
+				j = p->canOpenFile(e);
 				
 				if (j > k)
 				{
@@ -156,5 +201,10 @@ void PluginManager::on_actionOpen_triggered()
 		// if found, ask it to open the file
 		if (bestPlugin)
 			bestPlugin->openFile( e );
-	}
+	} /* foreach( e, s ) */
+}
+
+void PluginManager::on_actionQuit_triggered()
+{
+	this->close();
 }
