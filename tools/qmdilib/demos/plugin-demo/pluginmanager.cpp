@@ -28,7 +28,7 @@
 /**
  * \brief A class which manages a list of plugins and merges their menus and toolbars to the main application
  * \author Diego Iastrubni (elcuco@kde.org)
- * 
+ *
  */
 
 
@@ -38,7 +38,7 @@ PluginManager::PluginManager()
 	actionOpen	= new QAction( tr("Open..."), NULL  );
 	actionQuit	= new QAction( tr("Ex&it"), this );
 	actionConfig	= new QAction( tr("&Config"), this );
-	
+
 // 	connect( actionConfig, SIGNAL(triggered()), pluginManager, SLOT(configurePlugins()));
 	connect( actionOpen, SIGNAL(triggered()), this, SLOT(on_actionOpen_triggered()));
 	connect( actionQuit, SIGNAL(triggered()), this, SLOT(on_actionQuit_triggered()));
@@ -57,40 +57,40 @@ void PluginManager::updateGUI2()
 void PluginManager::addPlugin( IPlugin *newplugin )
 {
 	plugins << newplugin;
-	
+
 	if (!newplugin)
 		return;
-	
+
 	newplugin->mdiServer = tabWidget;
 	if (newplugin->alwaysEnabled)
 		newplugin->autoEnabled = true;
-	
+
 	if (newplugin->autoEnabled)
 	{
 		newplugin->enabled = true;
 		mergeClient( newplugin );
 	}
-	
+
 	// lets see how much "new" actions we have
 	IPlugin *p;
 	QAction *a;
 	QActionGroup *ag;
-	
+
 	foreach( p, plugins )
 	{
 		if (!p->enabled)
 			continue;
-		
+
 		ag =  p->newFileActions();
 		if (!ag)
 			continue;
-			
+
 		foreach( a, ag->actions() )
 		{
 			newFilePopup->addAction( a );
 		}
 	}
-	
+
 }
 
 void PluginManager::removePlugin( IPlugin *oldplugin )
@@ -113,16 +113,16 @@ void PluginManager::initGUI()
 
 	toolbars[tr("main")]->addAction(actionOpen);
 	toolbars[tr("main")]->addAction(actionConfig);
-	
+
 	tabWidget = new qmdiTabWidget(this);
 	updateGUI2();
-	
+
 	QToolButton *tabCloseBtn = new QToolButton(tabWidget);
 	tabCloseBtn->setAutoRaise( true );
 	connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(closeClient()));
 	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
 	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
-	setCentralWidget( tabWidget );	
+	setCentralWidget( tabWidget );
 	statusBar()->showMessage("Welcome - feel free to configure the GUI to your needs",5000);
 }
 
@@ -141,8 +141,8 @@ void PluginManager::on_actionOpen_triggered()
 	QString extens, e;
 	QStringList extensAvailable;
 	IPlugin *p;
-	
-	// get list of available extensions to open 
+
+	// get list of available extensions to open
 	// from each plugin
 	foreach( p, plugins )
 	{
@@ -150,7 +150,7 @@ void PluginManager::on_actionOpen_triggered()
 			continue;
 		extensAvailable << p->myExtensions();
 	}
-	
+
 	int j = extensAvailable.size();
 	for (int i = 0; i < j; ++i)
 	{
@@ -174,33 +174,33 @@ void PluginManager::on_actionOpen_triggered()
 	foreach( e, s )
 	{
 		IPlugin *bestPlugin = NULL;
-		
+
 		// who can open this file...?
-		int j = 0;
-		int k = 0;
+		int j = -1;
+		int k = -1;
 		foreach( p, plugins )
 		{
 			if (!p->enabled)
 				continue;
-			
-			if (!bestPlugin)
-				bestPlugin = p;
-			else
+
+			// is this plugin better then the selected?
+			j = p->canOpenFile(e);
+
+			if (j > k)
 			{
-				// is this plugin better then the selected?
-				j = p->canOpenFile(e);
-				
-				if (j > k)
-				{
-					bestPlugin = p;
-					k = bestPlugin->canOpenFile(e);
-				}
+				bestPlugin = p;
+				k = bestPlugin->canOpenFile(e);
 			}
 		}
 
 		// if found, ask it to open the file
 		if (bestPlugin)
 			bestPlugin->openFile( e );
+		/*
+		else
+			no plugin can handle this file,
+			this should not happen, and usually means a bug
+		*/
 	} /* foreach( e, s ) */
 }
 

@@ -24,7 +24,7 @@ RichTextPlugin::RichTextPlugin()
 
 	_newFileActions = new QActionGroup(this);
 	_newFileActions->addAction( actionNew );
-	
+
 	makeBackups	= false;
 	showLineNumbers	= true;
 	makeCurrentLine	= true;
@@ -72,9 +72,14 @@ int RichTextPlugin::canOpenFile( const QString fileName )
 {
 	QUrl u(fileName);
 
+/*
+	this code fails on win32
+	for example: c:\windows
+	scheme = "c:\"
+
 	if ( (u.scheme().toLower() != "file") && (!u.scheme().isEmpty()) )
 		return -1;
-
+*/
 	if (fileName.endsWith(".html", Qt::CaseInsensitive))
 		return 5;
 	else if (fileName.endsWith(".htm", Qt::CaseInsensitive))
@@ -97,18 +102,18 @@ bool RichTextPlugin::canCloseClient()
  * \param y the line to move the cursor to
  * \param z unused, ignored
  * \return true if the file was opened, and the cursor reached the specified location
- * 
+ *
  * This function is used to open a file. The \b x and \b y parameters
  * can be used to specify the row/column to move the cursor to. If those
  * parameters have the value -1 the cursor will move to the "0" position
  * of that coordinate.
- * 
+ *
  * If the file was not open, the function will return false.
  * If the cursor position could not be reached (out of bounds for example)
- * the function will return false. 
+ * the function will return false.
  * On all other cases, return true to represent that the action was completed
  * without any problems.
- * 
+ *
  */
 bool RichTextPlugin::openFile( const QString fileName, int x, int y, int z )
 {

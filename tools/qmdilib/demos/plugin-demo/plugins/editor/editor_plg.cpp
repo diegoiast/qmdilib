@@ -9,7 +9,6 @@
 #include "editor_plg.h"
 #include "qexeditor.h"
 
-
 EditorPlugin::EditorPlugin()
 {
 	actionNew	= new_action( QIcon(":images/filenew.png"), tr("&New text file"), this, tr("Ctrl+N"), tr("Create a new file"), SLOT(fileNew()) );
@@ -23,7 +22,7 @@ EditorPlugin::EditorPlugin()
 
 	_newFileActions = new QActionGroup(this);
 	_newFileActions->addAction( actionNew );
-	
+
 	configUI = new QWidget;
 	ui.setupUi( configUI );
 
@@ -88,11 +87,15 @@ void EditorPlugin::setData()
 int EditorPlugin::canOpenFile( const QString fileName )
 {
 	QUrl u(fileName);
-	
-	if ( (u.scheme().toLower() != "file") && (!u.scheme().isEmpty()) )
-		return -1;
 
-	else if (fileName.endsWith(".c", Qt::CaseInsensitive))
+	/*
+	this code fails on win32
+	for example: c:\windows
+	scheme = "c:\"
+	if ( (u.scheme().toLower() != "file") && (!u.scheme().isEmpty()) )
+		return -2;
+
+	else */if (fileName.endsWith(".c", Qt::CaseInsensitive))
 		return 5;
 	else if (fileName.endsWith(".cpp", Qt::CaseInsensitive))
 		return 5;
@@ -119,24 +122,26 @@ int EditorPlugin::canOpenFile( const QString fileName )
  * \param y the line to move the cursor to
  * \param z unused, ignored
  * \return true if the file was opened, and the cursor reached the specified location
- * 
+ *
  * This function is used to open a file. The \b x and \b y parameters
  * can be used to specify the row/column to move the cursor to. If those
  * parameters have the value -1 the cursor will move to the "0" position
  * of that coordinate.
- * 
+ *
  * If the file was not open, the function will return false.
  * If the cursor position could not be reached (out of bounds for example)
- * the function will return false. 
+ * the function will return false.
  * On all other cases, return true to represent that the action was completed
  * without any problems.
- * 
+ *
  */
 bool EditorPlugin::openFile( const QString fileName, int x, int y, int z )
 {
 	QexTextEdit *editor = new QexTextEdit( fileName, true, dynamic_cast<QMainWindow*>(mdiServer) );
 	editor->hide();
 	mdiServer->addClient( editor );
+
+
 
 	// TODO
 	// 1) move the cursor as specified in the parameters

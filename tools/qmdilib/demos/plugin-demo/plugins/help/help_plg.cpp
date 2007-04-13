@@ -59,13 +59,13 @@ void HelpPlugin::showAboutQt()
 void HelpPlugin::showQtHelp()
 {
 	QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
-	
-	QexHelpBrowser *browser = new QexHelpBrowser( QUrl(helpFile), true );
+
+	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + helpFile), true );
 	browser->hide();
 	browser->name = "Qt help";
 	browser->setObjectName( browser->name );
 	connect( browser, SIGNAL(sourceChanged(QUrl)), this, SLOT(on_browser_sourceChanged(QUrl)));
-	
+
 	mdiServer->addClient( browser );
 }
 
@@ -76,13 +76,13 @@ void HelpPlugin::on_browser_sourceChanged ( const QUrl & src )
 
 	if ((src.scheme() == "file") || (src.scheme().isEmpty()))
 		return;
-	
+
 	if (!QProcess::startDetached( externalBrowser, QStringList(src.toString()) ))
 	{
 		QWidget *w = dynamic_cast<QWidget*>(mdiServer);
 		if (w == NULL)
 			return;
-			
+
 		QMainWindow *ww = dynamic_cast<QMainWindow*>(w->window());
 		if (ww)
 			ww->statusBar()->showMessage("Error: could not start external browser", 5000);
