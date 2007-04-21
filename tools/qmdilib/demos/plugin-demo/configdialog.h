@@ -3,34 +3,39 @@
 
 #include <QDialog>
 #include <QIcon>
+#include "ui_plugin_list.h"
 
 class QIcon;
 class QLabel;
 class QListWidget;
 class QListWidgetItem;
 class QStackedWidget;
+class QListView;
+
+class PluginManager;
+class PluginModel;
 
 class ConfigDialog : public QDialog
 {
 	Q_OBJECT
 
-	friend class PluginManager;
-
 public:
-	ConfigDialog();
+	ConfigDialog( QWidget *owner=NULL  );
 	~ConfigDialog();
+	void setManager( PluginManager *manager );
 
 public slots:
-	void changePage(QListWidgetItem *current, QListWidgetItem *previous);
-	void addPage( QWidget *w, QIcon i );
-	void removePage( QWidget *w );
 	void applyChanges();
 
 private:
-	QListWidget	*contentsWidget;
+	PluginManager	*pluginManager;
+	PluginModel	*pluginModel;
+	
+	QListView	*contentsWidget;
 	QStackedWidget	*pagesWidget;
 	QPushButton	*applyButton;
 	QPushButton	*closeButton;
+	Ui::plugin_list plugin_list_ui;
 // 	QLabel		*currentPageLabel;
 };
 

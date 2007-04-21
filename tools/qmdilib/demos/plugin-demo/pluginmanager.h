@@ -19,9 +19,12 @@ class QPopupMenu;
 class qmdiHost;
 class qmdiTabWidget;
 class IPlugin;
+class ConfigDialog;
+// class PluginModel;
 
 class PluginManager: public QMainWindow, public qmdiHost
 {
+// 	friend class PluginModel;
 	Q_OBJECT
 	
 public:
@@ -29,26 +32,26 @@ public:
 	virtual ~PluginManager();
 
 public slots:
-	void updateGUI2();
-	
 	void addPlugin( IPlugin *newplugin );
 	void removePlugin( IPlugin *oldplugin );
 	
 	void closeClient();
 	void on_actionOpen_triggered();
+	void on_actionConfigure_triggered();
 	void on_actionQuit_triggered();
 
 private:
 	void initGUI();
-	
+	public:	
 	QList<IPlugin*>		plugins;
-	QAction			*actionOpen;
-	QMenu			*newFilePopup;
 	
 	qmdiTabWidget	*tabWidget;
+	QAction		*actionOpen;
 	QAction		*actionConfig;
 	QAction		*actionQuit;
+	QMenu		*newFilePopup;
 	
+	ConfigDialog	*configDialog;
 };
 
 #endif

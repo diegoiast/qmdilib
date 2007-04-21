@@ -23,7 +23,7 @@
 #include "qmditabwidget.h"
 #include "iplugin.h"
 #include "pluginmanager.h"
-#include "pluginmodel.h"
+#include "configdialog.h"
 
 /**
  * \brief A class which manages a list of plugins and merges their menus and toolbars to the main application
@@ -39,19 +39,16 @@ PluginManager::PluginManager()
 	actionQuit	= new QAction( tr("Ex&it"), this );
 	actionConfig	= new QAction( tr("&Config"), this );
 
-// 	connect( actionConfig, SIGNAL(triggered()), pluginManager, SLOT(configurePlugins()));
+	connect( actionConfig, SIGNAL(triggered()), this, SLOT(on_actionConfigure_triggered()));
 	connect( actionOpen, SIGNAL(triggered()), this, SLOT(on_actionOpen_triggered()));
 	connect( actionQuit, SIGNAL(triggered()), this, SLOT(on_actionQuit_triggered()));
 	initGUI();
+	
+	configDialog = NULL;
 }
 
 PluginManager::~PluginManager()
 {
-}
-
-void PluginManager::updateGUI2()
-{
-	updateGUI( this );
 }
 
 void PluginManager::addPlugin( IPlugin *newplugin )
@@ -108,14 +105,15 @@ void PluginManager::initGUI()
 	menus[tr("&Edit")];
 	menus[tr("&Search")];
 	menus[tr("&Navigation")];
-	menus[tr("Se&ttings")]->addAction( actionConfig );
+	menus[tr("&Settings")]->addAction( actionConfig );
 	menus[tr("&Help")];
+	
 
 	toolbars[tr("main")]->addAction(actionOpen);
 	toolbars[tr("main")]->addAction(actionConfig);
 
 	tabWidget = new qmdiTabWidget(this);
-	updateGUI2();
+	updateGUI();
 
 	QToolButton *tabCloseBtn = new QToolButton(tabWidget);
 	tabCloseBtn->setAutoRaise( true );
@@ -207,4 +205,17 @@ void PluginManager::on_actionOpen_triggered()
 void PluginManager::on_actionQuit_triggered()
 {
 	this->close();
+}
+
+void PluginManager::on_actionConfigure_triggered()
+{
+	if (!configDialog)
+	{
+// 		qDebug("PluginManager::on_actionConfigure_triggered - manager = %p", this);
+		configDialog = new ConfigDialog( this );
+		configDialog->setManager( this );
+	}
+
+	configDialog->show();
+	configDialog->setFocus();
 }

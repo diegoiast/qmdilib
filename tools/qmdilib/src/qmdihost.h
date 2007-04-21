@@ -25,7 +25,7 @@ public:
 	qmdiActionGroupList menus;
 	qmdiActionGroupList toolbars;
 
-	void updateGUI( QMainWindow *window );
+	void updateGUI( QMainWindow *window = NULL );
 	void mergeClient( qmdiClient *client );
 	void unmergeClient( qmdiClient *client );
 	

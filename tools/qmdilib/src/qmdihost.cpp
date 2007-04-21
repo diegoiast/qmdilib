@@ -103,10 +103,17 @@ qmdiHost::~qmdiHost()
  * you more freedom, as you do not have to derive the main window 
  * also from qmdiHost, and the host can be a separate object.
  * 
+ * Since version 0.0.4, the \b window parameter is optional. This method
+ * will try and see it \b this is a QMainWindow, and then update itself.
+ * 
  * \see qmdiActionGroupList
  */
 void qmdiHost::updateGUI( QMainWindow *window )
 {
+	// if passed NULL, lets try another sanity check
+	if (window == NULL)
+		window = dynamic_cast<QMainWindow*>(this);
+
 	if (window == NULL)
 	{
 		qDebug("%s - warning, no QMainWindow specified", __FUNCTION__ );

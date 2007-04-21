@@ -3,11 +3,13 @@
 include ( ../common/common.pri )
 include ( ../common/demos.pri )
 
+CONFIG += debug
 DESTDIR  = ./
 TEMPLATE = app
 TARGET   = plugin-demo
-HEADERS += 		pluginmanager.h		iplugin.h	plugins/richtext/richtext.h	plugins/richtext/richtext_browser.h
-SOURCES += main6.cpp	pluginmanager.cpp	iplugin.cpp	plugins/richtext/richtext.cpp	plugins/richtext/richtext_browser.cpp
+FORMS    = plugin_list.ui
+HEADERS += pluginmanager.h	pluginmodel.h	iplugin.h	configdialog.h		plugins/richtext/richtext.h	plugins/richtext/richtext_browser.h
+SOURCES += pluginmanager.cpp	pluginmodel.cpp	iplugin.cpp	configdialog.cpp	plugins/richtext/richtext.cpp	plugins/richtext/richtext_browser.cpp main6.cpp
 RESOURCES += richtext.qrc
 
 # plugins

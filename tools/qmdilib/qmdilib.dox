@@ -36,6 +36,8 @@ The library can be described using this class diagram:
 The license of qmdilib is the LGPL 2.1, which can be found here
 http://www.gnu.org/licenses/lgpl.html
 
+You can see the changelog of this library in the \ref changelog
+		
 \page small_tutor Small tutorial and introduction
 
 This library contains 3 main classes:
@@ -50,7 +52,7 @@ The MDI clients are any widget you define, these are the widgets
 inserted into the MDI server.
 
 When a new client is selected on the MDI server (for example a users selects
-a new tab), the MDI server (qmdiTabWidget) will try and merge the menus and
+a new tab), the MDI server (qmdiTabWidget or qmdiWorkspace) will try and merge the menus and
 toolbars in the MDI client (the widget inside the tab widget) into the MDI host
 (the main window). The MDI server will also un-merge the last MDI client from the
 MDI host. It also does a few other things behind the scenes, but you don't have
@@ -497,5 +499,37 @@ This six demo, shows how to use the l18n classes of Qt4.
 TODO
 Need to write an example for this stuff.
 \see Back to the main page \ref index
+
+\page changelog ChangeLog
+
+\section v_0_0_4 0.0.4 - SOMEDAY - Diego Iastrubni <elcuco@kde.org>
+ - Documentation re-created using doxygen 1.4.7
+ - qmdiClient: qmdiServer is now a public member
+ - qmdiActionGroup: added support for adding QActionGroup
+ - qmdiActionGroup: added support for submenus
+ - qmdiHost: updateGUI can has been updated, see documentation
+
+\section v_0_0_3 0.0.3  - 7 Oct 2006 - Diego Iastrubni <elcuco@kde.org>
+ - new feature: QWorkspace children are also checked for qmdiClient interface,
+feature coded by Nox PasNox <pasnox@gmail.com>
+ - new feature: merge point for qmdiActionGroup
+ - new class: qmdiWorkspace, a qmdiServer based on QWorkspace
+ - core refactoring: qmdiClient does not contain QObject *self any more
+ - code refactoring: qmdiServer now contains a pointer to the host (was in qmdiTabWidget)
+ - code refactoring: demos should be easier to read, and hopefully maintain
+ - removed most internal frames from all widgets in demos, the demos will look nicer
+ - all the documentation has been spell checked
+
+\section v_0_0_2 0.0.2  - 11 Jul 06 - Diego Iastrubni <elcuco@kde.org>
+ - many documentation updates
+ - compilation problems on mingw should be fixed
+
+\section v_0_0_2-pre 0.0.2-pre  - 19 Jul 06 - Diego Iastrubni <elcuco@kde.org>
+ - fixed many flickering issues, now it only flicker when you add QWidgets to qmdiActionGroup
+ - added demos (4 and 5) which demonstrate how to build the code into dynamic and static libraries
+
+\section v_0_0_1 0.0.1 - 11 Jun 06 - Diego Iastrubni <elcuco@kde.org>
+ - initial release
+ 
 
  */

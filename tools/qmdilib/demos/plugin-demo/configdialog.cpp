@@ -1,67 +1,74 @@
 #include <QtGui>
 #include <QIcon>
 #include <QLabel>
+#include <QListView>
 
 #include "configdialog.h"
+#include "pluginmanager.h"
+#include "pluginmodel.h"
 
-ConfigDialog::ConfigDialog()
+ConfigDialog::ConfigDialog( QWidget *owner ):
+	QDialog(owner)
 {
 	setSizeGripEnabled(true);
 	
-	contentsWidget = new QListWidget;
+	pluginManager = NULL;
+	
+	
+	contentsWidget = new QListView;
 	contentsWidget->setViewMode(QListView::IconMode);
 	contentsWidget->setIconSize(QSize(96, 84));
 	contentsWidget->setMovement(QListView::Static);
-	contentsWidget->setMaximumWidth(128);
+ 	contentsWidget->setMaximumWidth(128);
 	contentsWidget->setSpacing( 0 );
 	contentsWidget->setModelColumn( 0 );
+// 	contentsWidget->setSizePolicy( )
 	contentsWidget->setFlow( QListView::TopToBottom );
 	
+	
 	pagesWidget = new QStackedWidget(this);
-	applyButton = new QPushButton(tr("&Apply"));
-	closeButton = new QPushButton(tr("&Close"));
+	applyButton = new QPushButton(tr("&Apply"), this);
+	closeButton = new QPushButton(tr("&Close"), this);
 
-	QHBoxLayout *mainLayout		= new QHBoxLayout(this);
-	QVBoxLayout *vLayout		= new QVBoxLayout;
-	QHBoxLayout *buttonsLayout	= new QHBoxLayout;
+	QHBoxLayout	*mainLayout	= new QHBoxLayout(this);
+	QVBoxLayout	*vLayout	= new QVBoxLayout;
+	QHBoxLayout	*buttonsLayout	= new QHBoxLayout;
+	QFrame		*line1		= new QFrame;
+	QWidget		*w		= new QWidget;
+	
+	plugin_list_ui.setupUi( w );
+	pagesWidget->addWidget( w );
 
+	mainLayout->setObjectName("mainLayout");
 	vLayout->setObjectName("vLayout");
 	buttonsLayout->setObjectName("buttonsLayout");
-	mainLayout->setObjectName("mainLayout");
-	
-// 	QFrame *line1 = new QFrame;
-	QFrame *line2 = new QFrame;
-// 	currentPageLabel = new QLabel;
-	
-// 	line1->setFrameShape(QFrame::HLine);
-	line2->setFrameShape(QFrame::HLine);
+	line1->setObjectName("line1");
+	line1->setFrameShape(QFrame::HLine);
 	
 	buttonsLayout->addStretch(1);
 	buttonsLayout->addWidget(applyButton);
 	buttonsLayout->addWidget(closeButton);
 
-// 	vLayout->addWidget( currentPageLabel );
-// 	vLayout->addWidget( line1 );
 	vLayout->addWidget( pagesWidget );
-	vLayout->addWidget( line2 );
+	vLayout->addWidget( line1 );
 	vLayout->addLayout( buttonsLayout );
-	
+
 	mainLayout->addWidget(contentsWidget);
 	mainLayout->addLayout(vLayout);
 	setLayout(mainLayout);
 	
 	connect(applyButton, SIGNAL(clicked()), this, SLOT(applyChanges()));
 	connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
-	connect(contentsWidget,
+/*	connect(contentsWidget,
 		SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
-		this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
+		this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));*/
 	
 	setWindowTitle(tr("Config Dialog"));
 }
 
 ConfigDialog::~ConfigDialog()
 {
-	contentsWidget->clear();
+// 	contentsWidget->clear();
 
 	// objects are not deleted by the GUI, but the plugins
 	// without this code, glibc will complain about deleting the same 
@@ -70,41 +77,14 @@ ConfigDialog::~ConfigDialog()
 		pagesWidget->removeWidget( pagesWidget->currentWidget() );
 }
 
-void ConfigDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)
+void ConfigDialog::setManager( PluginManager *manager )
 {
-	if (!current)
-        	current = previous;
-
-	int newRow = contentsWidget->row(current);
-	pagesWidget->setCurrentIndex( newRow );
-// 	QListWidgetItem *w = contentsWidget->item(newRow);
-// 	currentPageLabel->setText( w->text() );
+// 	qDebug("ConfigDialog::setManager - manager = %p", manager );
+	pluginManager = manager;
+	pluginModel = new PluginModel( pluginManager );
+	plugin_list_ui.listWidget->setModel( pluginModel );
+// 	contentsWidget->setModel( pluginModel );
 }
-
-void ConfigDialog::addPage( QWidget *w, QIcon i )
-{
-	QListWidgetItem *item = new QListWidgetItem;
-	item->setIcon( i );
-	item->setText( w->objectName() );
-	item->setTextAlignment( Qt::AlignHCenter );
-	item->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
-	
-	// QListWidget
-	contentsWidget->insertItem( contentsWidget->count(), item );
-
-	//QStackedWidget
-	pagesWidget->addWidget( w );
-}
-
-void ConfigDialog::removePage( QWidget *w )
-{
-	int k = pagesWidget->indexOf ( w );
-	contentsWidget->takeItem( k );
-	
-	//QStackedWidget 
-	pagesWidget->removeWidget( w );
-}
-
 
 void ConfigDialog::applyChanges()
 {

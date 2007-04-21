@@ -1,7 +1,5 @@
 <ui version="4.0" >
  <author>Diego Iastrubni &lt;elcuco@kde.org></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>plugin_list</class>
  <widget class="QWidget" name="plugin_list" >
   <property name="geometry" >
@@ -17,7 +15,7 @@
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="spacing" >
     <number>6</number>
@@ -114,7 +112,8 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="0" margin="0" />
+ <includes/>
  <resources/>
  <connections/>
 </ui>

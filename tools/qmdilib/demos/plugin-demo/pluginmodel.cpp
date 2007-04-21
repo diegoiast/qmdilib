@@ -1,62 +1,55 @@
-#include <QModelIndex>
-
-#include "iplugin.h"
 #include "pluginmodel.h"
+#include "pluginmanager.h"
+#include "iplugin.h"
 
-PluginModel::PluginModel( QList<IPlugin*>* p, QObject *parent )
-// 	: QAbstractItemModel( parent )
-	: QStandardItemModel( parent )
+PluginModel::PluginModel( PluginManager *manager, QObject *parent )
+	:QAbstractItemModel(parent)
 {
-	plugins = p;
-}
-/*
-QModelIndex PluginModel::index ( int row, int column, const QModelIndex &parent ) const
-{
+ 	pluginManager = manager;
+// 	qDebug("PluginModel::PluginModel manager = %p", pluginManager);
 }
 
-QModelIndex PluginModel::parent ( const QModelIndex &index ) const
+PluginModel::~PluginModel()
 {
+// 	pluginManager = NULL;
 }
 
-int PluginModel::rowCount ( const QModelIndex &parent ) const
+QModelIndex PluginModel::index( int row, int col, const QModelIndex &parent ) const
 {
-	return plugins.count();
+	return createIndex( row, col, NULL );
 }
 
-int PluginModel::columnCount ( const QModelIndex &parent ) const
+QModelIndex PluginModel::parent( const QModelIndex &child ) const
 {
-	return 2;
+	return QModelIndex();
 }
-*/
 
-
-QVariant PluginModel::data ( const QModelIndex &index, int role ) const
+int PluginModel::rowCount( const QModelIndex &parent ) const
 {
-#if 0	
-	IPlugin *plugin = NULL;
-
-	if (plugins)
-		plugin = (*plugins)[index.row()];
+	if (pluginManager == NULL)
+		return 0;
 	else
-		plugin = NULL;
+		return pluginManager->plugins.count();
 	
-	
-	if (plugin)
-	{
-		qDebug( "getting data for row: %d, column: %d [%s]", index.row(), index.column(), qPrintable(plugin->getName()) );
-		return QVariant(plugin->getName());
-	}
-	else
-	{
-		qDebug( "getting data for row: %d, column: %d", index.row(), index.column() );
-		return "no name";
-	}
-#else
-	return QStandardItemModel::data(index,role);
-#endif
+	// shut up gcc warnings
+	parent.row();
 }
 
-Qt::ItemFlags PluginModel::flags ( const QModelIndex & index ) const
+int PluginModel::columnCount( const QModelIndex &parent ) const
 {
-	return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+	return 1;
+}
+
+QVariant PluginModel::data( const QModelIndex &index, int roles ) const
+{	
+	if (!index.isValid())
+		return QVariant();
+
+	if (index.row() >= pluginManager->plugins.count())
+		return QVariant();
+
+	if (roles == Qt::DisplayRole)
+		return pluginManager->plugins[index.row()]->getName();
+	else
+		return QVariant();
 }

@@ -4,6 +4,8 @@ $Id$
  * Documentation re-created using doxygen 1.4.7
  * qmdiClient: qmdiServer is now a public member
  * qmdiActionGroup: added support for submenus
+ * qmdiActionGroup: added support for adding QActionGroup
+ * qmdiHost: updateGUI can has been updated, see documentation
 		
 0.0.3  - 7 Oct 2006 - Diego Iastrubni <elcuco@kde.org>
  * new feature: QWorkspace children are also checked for qmdiClient interface,

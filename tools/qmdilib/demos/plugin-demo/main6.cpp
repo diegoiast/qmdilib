@@ -21,7 +21,7 @@ int main( int argc, char *argv[] )
 	pluginManager.addPlugin( new HelpPlugin );
 	pluginManager.addPlugin( new EditorPlugin );
 	pluginManager.addPlugin( new RichTextPlugin );
-	pluginManager.updateGUI2();
+	pluginManager.updateGUI();
 	
 	pluginManager.show();
 	return app.exec();
