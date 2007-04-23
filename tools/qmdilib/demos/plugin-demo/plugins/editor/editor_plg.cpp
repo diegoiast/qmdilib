@@ -56,10 +56,10 @@ QActionGroup* EditorPlugin::newFileActions()
 QStringList EditorPlugin::myExtensions()
 {
 	QStringList s;
-	s << tr("Sources"	, "EditorPlugin::fileOpen: open source files")	+ " (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc)";
-	s << tr("Headers"	, "EditorPlugin::fileOpen: open header files")	+ " (*.h *.hpp *.hxx *.inc)";
-	s << tr("Qt project"	, "EditorPlugin::fileOpen: open *.pro")		+ " (*.pro *.pri)";
-	s << tr("All files",  "EditorPlugin::fileOpen: open any file")	+ " (*.*)";
+	s << tr("Sources"	, "EditorPlugin::myExtensions")	+ " (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc)";
+	s << tr("Headers"	, "EditorPlugin::myExtensions")	+ " (*.h *.hpp *.hxx *.inc)";
+	s << tr("Qt project"	, "EditorPlugin::myExtensions")	+ " (*.pro *.pri)";
+	s << tr("All files"	, "EditorPlugin::myExtensions")	+ " (*.*)";
 
 	return s;
 }
@@ -140,8 +140,6 @@ bool EditorPlugin::openFile( const QString fileName, int x, int y, int z )
 	QexTextEdit *editor = new QexTextEdit( fileName, true, dynamic_cast<QMainWindow*>(mdiServer) );
 	editor->hide();
 	mdiServer->addClient( editor );
-
-
 
 	// TODO
 	// 1) move the cursor as specified in the parameters

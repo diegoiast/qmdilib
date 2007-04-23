@@ -87,6 +87,16 @@ bool 	IPlugin::isEnabled()
 	return enabled;
 }
 
+void	IPlugin::setEnabled( bool b )
+{
+	b = enabled;
+}
+
+bool 	IPlugin::canDisable()
+{
+	return	!alwaysEnabled;
+}
+
 QIcon	IPlugin::getIcon()
 {
 	return QIcon("images/config.png");

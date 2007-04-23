@@ -6,22 +6,27 @@ PluginModel::PluginModel( PluginManager *manager, QObject *parent )
 	:QAbstractItemModel(parent)
 {
  	pluginManager = manager;
-// 	qDebug("PluginModel::PluginModel manager = %p", pluginManager);
 }
 
 PluginModel::~PluginModel()
 {
-// 	pluginManager = NULL;
+	pluginManager = NULL;
 }
 
 QModelIndex PluginModel::index( int row, int col, const QModelIndex &parent ) const
 {
-	return createIndex( row, col, NULL );
+	return createIndex( row, col, 0 );
+	
+	// shut up gcc warnings
+	parent.data();
 }
 
 QModelIndex PluginModel::parent( const QModelIndex &child ) const
 {
 	return QModelIndex();
+
+	// shut up gcc warnings
+	child.data();
 }
 
 int PluginModel::rowCount( const QModelIndex &parent ) const
@@ -38,6 +43,9 @@ int PluginModel::rowCount( const QModelIndex &parent ) const
 int PluginModel::columnCount( const QModelIndex &parent ) const
 {
 	return 1;
+
+	// shut up gcc warnings
+	parent.data();
 }
 
 QVariant PluginModel::data( const QModelIndex &index, int roles ) const

@@ -108,7 +108,6 @@ void PluginManager::initGUI()
 	menus[tr("&Settings")]->addAction( actionConfig );
 	menus[tr("&Help")];
 	
-
 	toolbars[tr("main")]->addAction(actionOpen);
 	toolbars[tr("main")]->addAction(actionConfig);
 
@@ -211,9 +210,9 @@ void PluginManager::on_actionConfigure_triggered()
 {
 	if (!configDialog)
 	{
-// 		qDebug("PluginManager::on_actionConfigure_triggered - manager = %p", this);
 		configDialog = new ConfigDialog( this );
 		configDialog->setManager( this );
+// 		configDialog->adjustSize();
 	}
 
 	configDialog->show();

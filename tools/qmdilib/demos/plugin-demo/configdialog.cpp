@@ -2,90 +2,135 @@
 #include <QIcon>
 #include <QLabel>
 #include <QListView>
+#include <QDialogButtonBox>
 
 #include "configdialog.h"
 #include "pluginmanager.h"
 #include "pluginmodel.h"
+#include "iplugin.h"
 
 ConfigDialog::ConfigDialog( QWidget *owner ):
 	QDialog(owner)
 {
-	setSizeGripEnabled(true);
 	
 	pluginManager = NULL;
+	pluginModel = NULL;
 	
-	
-	contentsWidget = new QListView;
-	contentsWidget->setViewMode(QListView::IconMode);
-	contentsWidget->setIconSize(QSize(96, 84));
-	contentsWidget->setMovement(QListView::Static);
- 	contentsWidget->setMaximumWidth(128);
-	contentsWidget->setSpacing( 0 );
-	contentsWidget->setModelColumn( 0 );
-// 	contentsWidget->setSizePolicy( )
-	contentsWidget->setFlow( QListView::TopToBottom );
-	
-	
-	pagesWidget = new QStackedWidget(this);
-	applyButton = new QPushButton(tr("&Apply"), this);
-	closeButton = new QPushButton(tr("&Close"), this);
-
-	QHBoxLayout	*mainLayout	= new QHBoxLayout(this);
-	QVBoxLayout	*vLayout	= new QVBoxLayout;
-	QHBoxLayout	*buttonsLayout	= new QHBoxLayout;
-	QFrame		*line1		= new QFrame;
-	QWidget		*w		= new QWidget;
-	
-	plugin_list_ui.setupUi( w );
-	pagesWidget->addWidget( w );
-
-	mainLayout->setObjectName("mainLayout");
-	vLayout->setObjectName("vLayout");
-	buttonsLayout->setObjectName("buttonsLayout");
-	line1->setObjectName("line1");
-	line1->setFrameShape(QFrame::HLine);
-	
-	buttonsLayout->addStretch(1);
-	buttonsLayout->addWidget(applyButton);
-	buttonsLayout->addWidget(closeButton);
-
-	vLayout->addWidget( pagesWidget );
-	vLayout->addWidget( line1 );
-	vLayout->addLayout( buttonsLayout );
-
-	mainLayout->addWidget(contentsWidget);
-	mainLayout->addLayout(vLayout);
-	setLayout(mainLayout);
-	
-	connect(applyButton, SIGNAL(clicked()), this, SLOT(applyChanges()));
-	connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
-/*	connect(contentsWidget,
-		SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
-		this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));*/
-	
-	setWindowTitle(tr("Config Dialog"));
+	pluginListUi.setupUi( this );
 }
 
 ConfigDialog::~ConfigDialog()
 {
-// 	contentsWidget->clear();
-
-	// objects are not deleted by the GUI, but the plugins
-	// without this code, glibc will complain about deleting the same 
-	// object twise: the dangling pointer problem
-	for( int i=pagesWidget->count(); i!=0; i--)
-		pagesWidget->removeWidget( pagesWidget->currentWidget() );
+	pluginManager = NULL;
+	delete pluginModel;
 }
 
 void ConfigDialog::setManager( PluginManager *manager )
 {
-// 	qDebug("ConfigDialog::setManager - manager = %p", manager );
+	QModelIndex i;
 	pluginManager = manager;
 	pluginModel = new PluginModel( pluginManager );
-	plugin_list_ui.listWidget->setModel( pluginModel );
-// 	contentsWidget->setModel( pluginModel );
+	pluginListUi.pluginList->setModel( pluginModel );
+	
+	i = pluginModel->index( 0, 0, QModelIndex() );
+	pluginListUi.pluginList->setCurrentIndex( i );
+	updateInfo( 0 );
 }
 
-void ConfigDialog::applyChanges()
+void ConfigDialog::on_aboutPlugin_clicked( bool )
 {
+	int pluginNumber = pluginListUi.pluginList->currentIndex().row();
+	IPlugin *p = pluginManager->plugins[pluginNumber];
+	
+	hide();
+	p->showAbout();
+	show();
+}
+
+void ConfigDialog::on_configurePlugin_clicked( bool )
+{
+	int pluginNumber = pluginListUi.pluginList->currentIndex().row();
+	IPlugin *p = pluginManager->plugins[pluginNumber];
+	QWidget *w =  p->getConfigDialog();
+			
+	if (!w)
+		return;
+
+	hide();
+	p->setData();
+	if (execDialog( w ))
+		p->getData();
+	show();
+}
+
+void ConfigDialog::on_pluginList_activated ( const QModelIndex & index )
+{
+	updateInfo( index.row() );
+}
+
+void ConfigDialog::on_pluginList_clicked ( const QModelIndex & index )
+{
+	updateInfo( index.row() );
+}
+
+void ConfigDialog::on_pluginEnabled_toggled( bool enabled )
+{
+	int pluginNumber = pluginListUi.pluginList->currentIndex().row();
+	IPlugin *p = pluginManager->plugins[pluginNumber];
+	
+	p->setEnabled( enabled );
+	if (enabled)
+		pluginManager->mergeClient( p );
+	else
+		pluginManager->unmergeClient( p );
+}
+
+void ConfigDialog::updateInfo( int pluginNumber )
+{
+	IPlugin *p = pluginManager->plugins[pluginNumber];
+	QWidget *w =  p->getConfigDialog();
+	
+	pluginListUi.pluginName->setText( p->getName() );
+	pluginListUi.pluginName->setCursorPosition( 0 );
+	
+	pluginListUi.pluginAuthor->setText( p->getAuthor() );
+	pluginListUi.pluginAuthor->setCursorPosition( 0 );
+	
+	pluginListUi.pluginVersion->setText( p->getsVersion() );
+	pluginListUi.pluginVersion->setCursorPosition( 0 );
+	
+	pluginListUi.pluginEnabled->blockSignals( true );
+	pluginListUi.pluginEnabled->setChecked( p->isEnabled() );
+	pluginListUi.pluginEnabled->setEnabled( p->canDisable() );
+	pluginListUi.pluginEnabled->blockSignals( false );
+	
+	pluginListUi.configurePlugin->setEnabled( w != NULL );
+}
+
+bool ConfigDialog::execDialog( QWidget *w )
+{
+	QDialog *d = new QDialog( this );
+	QVBoxLayout *l = new QVBoxLayout(d);
+	QDialogButtonBox *b = new QDialogButtonBox(d);
+	bool status;
+	
+	b->addButton( QDialogButtonBox::Ok );
+	b->addButton( QDialogButtonBox::Cancel );
+	l->addWidget( w );
+	l->addWidget( b );
+	d->connect( b, SIGNAL(accepted()), d, SLOT(accept()));
+	d->connect( b, SIGNAL(rejected()), d, SLOT(reject()));
+	d->setLayout( l );
+	d->setWindowTitle( "Plugin Configuration" );
+	d->setSizeGripEnabled( true );
+	status = d->exec();
+	
+	// don't destroy the plugin's widget
+	l->removeWidget( w );
+	w->setParent( NULL );
+	
+	// .. but do delete the temp dialog...
+	delete d;
+	
+	return status;
 }

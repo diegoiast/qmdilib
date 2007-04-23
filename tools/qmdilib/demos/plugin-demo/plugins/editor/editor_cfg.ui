@@ -1,7 +1,5 @@
 <ui version="4.0" >
  <author>Diego Iastrubni &lt;elcuco@kde.org></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>EditorCfgUI</class>
  <widget class="QWidget" name="EditorCfgUI" >
   <property name="geometry" >
@@ -17,10 +15,10 @@
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="spacing" >
-    <number>6</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget" >
@@ -168,7 +166,6 @@
   </layout>
  </widget>
  <layoutdefault spacing="0" margin="0" />
- <pixmapfunction></pixmapfunction>
  <resources/>
  <connections/>
 </ui>

@@ -43,7 +43,7 @@ public slots:
 private:
 	void initGUI();
 	public:	
-	QList<IPlugin*>		plugins;
+	QList<IPlugin*>	plugins;
 	
 	qmdiTabWidget	*tabWidget;
 	QAction		*actionOpen;

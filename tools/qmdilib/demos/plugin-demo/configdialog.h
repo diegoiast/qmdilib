@@ -25,18 +25,20 @@ public:
 	void setManager( PluginManager *manager );
 
 public slots:
-	void applyChanges();
+	void on_aboutPlugin_clicked( bool );
+	void on_configurePlugin_clicked( bool );
+	void on_pluginList_activated ( const QModelIndex & index );
+	void on_pluginList_clicked ( const QModelIndex & index );
+	void on_pluginEnabled_toggled( bool enabled );
 
 private:
+	void updateInfo( int pluginNumber );
+	bool execDialog( QWidget *w );
+	
 	PluginManager	*pluginManager;
 	PluginModel	*pluginModel;
 	
-	QListView	*contentsWidget;
-	QStackedWidget	*pagesWidget;
-	QPushButton	*applyButton;
-	QPushButton	*closeButton;
-	Ui::plugin_list plugin_list_ui;
-// 	QLabel		*currentPageLabel;
+	Ui::PluginList	pluginListUi;
 };
 
 #endif
