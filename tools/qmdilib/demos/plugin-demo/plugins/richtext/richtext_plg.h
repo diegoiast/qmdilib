@@ -1,6 +1,16 @@
 #ifndef __RICHTEXT_PLUGIN_H__
 #define __RICHTEXT_PLUGIN_H__
 
+/**
+ * \file richtext_plg.h
+ * \brief Definition of the RichTextPlugin class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see RichTextPlugin
+ */
+
+// $Id: pluginmanager.h 146 2007-04-23 22:45:01Z elcuco $
+
 #include "iplugin.h"
 #include "ui_editor_cfg.h"
 

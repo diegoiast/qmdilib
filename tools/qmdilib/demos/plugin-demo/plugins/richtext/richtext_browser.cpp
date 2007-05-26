@@ -1,3 +1,13 @@
+/**
+ * \file richtext_browser.cpp
+ * \brief Implementation of the QexRichTextBrowser class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see EditorPlugin
+ */
+
+// $Id: pluginmanager.h 146 2007-04-23 22:45:01Z elcuco $
+
 #include <QIcon>
 #include <QAction>
 #include <QMessageBox>

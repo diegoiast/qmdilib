@@ -1,5 +1,15 @@
-#ifndef QSETTINGSMODEL_H
-#define QSETTINGSMODEL_H
+#ifndef __PLUGINMODEL_H__
+#define __PLUGINMODEL_H__
+
+/**
+ * \file pluginmodel.h
+ * \brief Definition of the PluginModel class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see PluginModel
+ */
+
+// $Id$
 
 #include <QAbstractItemModel>
 
@@ -19,8 +29,8 @@ public:
 	int columnCount( const QModelIndex &parent = QModelIndex() ) const;
 	QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const;
 	
-// private:
+private:
 	PluginManager *pluginManager;
 };
  
-#endif // #ifndef QSETTINGSMODEL_H
+#endif // #ifndef __PLUGINMODEL_H__

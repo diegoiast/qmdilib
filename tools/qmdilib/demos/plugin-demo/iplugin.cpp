@@ -1,10 +1,28 @@
+/**
+ * \file iplugin.cpp
+ * \brief Implementation of the IPlugin interface
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see IPlugin
+ */
+
+// $Id$
+
 #include <QAction>
 #include <QActionGroup>
 #include <QIcon>
 
 #include "iplugin.h"
 
-// #define tr
+/**
+ * \class IPlugin
+ * \brief an abstract interface for describing Plugins
+ * 
+ * 
+ * 
+ * 
+ */
+
 QAction* new_action( QIcon icon, QString name, QObject *obj, QString shortcut, QString status_tip, const char*slot )
 {
 	QAction * a = new QAction( icon, name, obj );
@@ -14,7 +32,6 @@ QAction* new_action( QIcon icon, QString name, QObject *obj, QString shortcut, Q
 
 	return a;
 }
-
 
 IPlugin::IPlugin()
 {

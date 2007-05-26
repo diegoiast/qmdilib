@@ -1,10 +1,20 @@
 #ifndef __IPLUGIN_H__
 #define __IPLUGIN_H__
 
+/**
+ * \file iplugin.h
+ * \brief Declaration of the IPlugin interface
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see IPlugin
+ */
+
+// $Id$
+
 #include <QObject>
-#include <QString>
 #include "qmdiclient.h"
 
+class QString;
 class QWidget;
 class QSettings;
 class QAction;

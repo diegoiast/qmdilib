@@ -1,3 +1,13 @@
+/**
+ * \file configdialog.cpp
+ * \brief Implementation of the configuration dialog class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see ConfigDialog
+ */
+
+// $Id$
+
 #include <QtGui>
 #include <QIcon>
 #include <QLabel>
@@ -9,6 +19,27 @@
 #include "pluginmodel.h"
 #include "iplugin.h"
 
+/**
+ * \class ConfigDialog
+ * \brief The dialog used to configure the availale plugins in the PluginManager
+ * 
+ * This dialog lets you control the available plugins. Listing them, enabling/disabling
+ * and configuring each one of them.
+ * 
+ * The dialog displayes the list on a QListView which represents the plugins available
+ * in the PluginManager, using the model-view-controller design pattern (PluginModel).
+ * 
+ * \see PluginModel
+ * \see PluginManager
+ */
+
+
+/**
+ * \brief default constructor for the ConfigDialog
+ * \param owner the owner of the dialog
+ * 
+ * 
+ */
 ConfigDialog::ConfigDialog( QWidget *owner ):
 	QDialog(owner)
 {

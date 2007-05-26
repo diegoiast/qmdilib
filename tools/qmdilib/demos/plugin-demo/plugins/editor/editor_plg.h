@@ -1,6 +1,16 @@
 #ifndef __EDITOR_PLUGIN_H__
 #define __EDITOR_PLUGIN_H__
 
+/**
+ * \file editorplugin.h
+ * \brief Definition of the EditorPlugin class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see EditorPlugin
+ */
+
+// $Id$
+
 #include "iplugin.h"
 #include "ui_editor_cfg.h"
 

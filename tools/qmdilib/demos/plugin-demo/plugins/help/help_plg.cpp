@@ -1,6 +1,17 @@
+/**
+ * \file help_plg.cpp
+ * \brief Implementation of the HelpPlugin class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see HelpPlugin
+ */
+
+// $Id$
+
 #include <QAction>
 #include <QProcess>
 #include <QApplication>
+#include <QFile>
 #include <QUrl>
 #include <QLibraryInfo>
 #include <QMessageBox>
@@ -59,14 +70,7 @@ void HelpPlugin::showAboutQt()
 void HelpPlugin::showQtHelp()
 {
 	QString helpFile = QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
-
-	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + helpFile), true );
-	browser->hide();
-	browser->name = "Qt help";
-	browser->setObjectName( browser->name );
-	connect( browser, SIGNAL(sourceChanged(QUrl)), this, SLOT(on_browser_sourceChanged(QUrl)));
-
-	mdiServer->addClient( browser );
+	loadHTML( helpFile );
 }
 
 void HelpPlugin::on_browser_sourceChanged ( const QUrl & src )
@@ -87,4 +91,43 @@ void HelpPlugin::on_browser_sourceChanged ( const QUrl & src )
 		if (ww)
 			ww->statusBar()->showMessage("Error: could not start external browser", 5000);
 	}
+}
+
+int HelpPlugin::canOpenFile( const QString fileName )
+{
+	QUrl u(fileName);
+
+	if (u.scheme().toLower() != "help")
+		return -1;
+
+	// now, lets assume this is a class name
+	QString className = u.path().toLower();
+	if (QFile::exists( QLibraryInfo::location(QLibraryInfo::DocumentationPath) + 
+		   QLatin1String("/html/") + className + QLatin1String(".html") ))
+		return 1;
+	else	
+		return -1;
+}
+
+bool HelpPlugin::openFile( const QString fileName, int x, int y, int z )
+{
+	QUrl u(fileName);
+
+	if (canOpenFile(fileName) == 1)
+		return loadHTML( fileName, x, y, z );
+	else
+		return false;
+}
+
+bool HelpPlugin::loadHTML( QString fileName, int x, int y, int z  )
+{
+	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + fileName), true );
+	browser->hide();
+	browser->name = "Qt help";
+	browser->setObjectName( browser->name );
+	connect( browser, SIGNAL(sourceChanged(QUrl)), this, SLOT(on_browser_sourceChanged(QUrl)));
+
+	mdiServer->addClient( browser );
+	
+	return true;
 }

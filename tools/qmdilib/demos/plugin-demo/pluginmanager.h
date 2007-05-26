@@ -11,7 +11,6 @@
 
 // $Id$
 
-#include <QObject>
 #include <QMainWindow>
 #include "qmdihost.h"
 
@@ -20,11 +19,9 @@ class qmdiHost;
 class qmdiTabWidget;
 class IPlugin;
 class ConfigDialog;
-// class PluginModel;
 
 class PluginManager: public QMainWindow, public qmdiHost
 {
-// 	friend class PluginModel;
 	Q_OBJECT
 	
 public:

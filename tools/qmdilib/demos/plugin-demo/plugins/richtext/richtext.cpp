@@ -1,4 +1,12 @@
-#include "richtext.h"
+/**
+ * \file richtext.cpp
+ * \brief Implementation of the RichText class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see RichText
+ */
+
+// $Id: pluginmanager.h 146 2007-04-23 22:45:01Z elcuco $
 
 #include <QApplication>
 #include <QLayout>
@@ -16,6 +24,8 @@
 #include <QPixmap>
 #include <QFontComboBox>
 #include <QComboBox>
+
+#include "richtext.h"
 
 RichText::RichText( QWidget *parent, QString fileName ):
 	QWidget(parent)

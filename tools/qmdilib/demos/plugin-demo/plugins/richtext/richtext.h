@@ -1,6 +1,17 @@
 #ifndef __RICH_TEXT_H__
 #define __RICH_TEXT_H__
 
+/**
+ * \file richtext.h
+ * \brief Definition of the RichText class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see QexRichTextBrowser
+ * \see RichText
+ */
+
+// $Id: pluginmanager.h 146 2007-04-23 22:45:01Z elcuco $
+
 #include <QWidget>
 #include <QTextListFormat>
 

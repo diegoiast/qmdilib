@@ -1,6 +1,16 @@
 #ifndef CONFIGDIALOG_H
 #define CONFIGDIALOG_H
 
+/**
+ * \file configdialog.h
+ * \brief Declaration of the configuration dialog class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see ConfigDialog
+ */
+
+// $Id$
+
 #include <QDialog>
 #include <QIcon>
 #include "ui_plugin_list.h"
@@ -24,7 +34,7 @@ public:
 	~ConfigDialog();
 	void setManager( PluginManager *manager );
 
-public slots:
+private slots:
 	void on_aboutPlugin_clicked( bool );
 	void on_configurePlugin_clicked( bool );
 	void on_pluginList_activated ( const QModelIndex & index );

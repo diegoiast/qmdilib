@@ -1,3 +1,13 @@
+/**
+ * \file iplugin.cpp
+ * \brief Implementation of the PluginModel class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see PluginModel
+ */
+
+// $Id$
+
 #include "pluginmodel.h"
 #include "pluginmanager.h"
 #include "iplugin.h"

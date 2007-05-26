@@ -1,3 +1,13 @@
+/**
+ * \file editor_plg.cpp
+ * \brief Implementation of the EditorPlugin class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see EditorPlugin
+ */
+
+// $Id$
+
 #include <QAction>
 #include <QUrl>
 #include <QMessageBox>
@@ -161,4 +171,3 @@ void EditorPlugin::fileNew()
 	editor->setObjectName( editor->name );
 	mdiServer->addClient( editor );
 }
-

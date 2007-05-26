@@ -1,3 +1,13 @@
+/**
+ * \file richtext_plg.cpp
+ * \brief Implementation of the RichTextPlugin class
+ * \author Diego Iastrubni (elcuco@kde.org)
+ *  License LGPL
+ * \see RichTextPlugin
+ */
+
+// $Id: pluginmanager.h 146 2007-04-23 22:45:01Z elcuco $
+
 #include <QAction>
 #include <QUrl>
 #include <QMessageBox>
@@ -6,21 +16,28 @@
 
 #include "iplugin.h"
 #include "qmdiserver.h"
-// #include "richtext.h"
 #include "richtext_plg.h"
 #include "richtext_browser.h"
+
+/**
+ * \class RichTextPlugin
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 
 
 RichTextPlugin::RichTextPlugin()
 {
 	actionNew	= new_action( QIcon(":images/filenew.png"), tr("&New HTML file"), this, tr("Ctrl+N"), tr("Create a new file"), SLOT(fileNew()) );
-
-	name = tr("Rich text editor plugin");
-	author = tr("Diego Iastrubni <elcuco@kde.org>");
-	iVersion = 0;
-	sVersion = "0.0.1";
-	autoEnabled = true;
-	alwaysEnabled = false;
+	name		= tr("Rich text editor plugin");
+	author		= tr("Diego Iastrubni <elcuco@kde.org>");
+	iVersion	= 0;
+	sVersion	= "0.0.1";
+	autoEnabled	= true;
+	alwaysEnabled	= false;
 
 	_newFileActions = new QActionGroup(this);
 	_newFileActions->addAction( actionNew );
