@@ -36,8 +36,13 @@ PluginManager::PluginManager()
 {
 	newFilePopup	= new QMenu  ( tr("New..."), NULL );
 	actionOpen	= new QAction( tr("Open..."), NULL  );
+	actionClose	= new QAction( tr("Close"), NULL  );
 	actionQuit	= new QAction( tr("Ex&it"), this );
 	actionConfig	= new QAction( tr("&Config"), this );
+	
+	actionOpen->setIcon( QIcon(":/images/open.png") );
+	actionOpen->setShortcut( tr("Ctrl+O") );
+	actionClose->setShortcut( tr("Ctrl+w") );
 
 	connect( actionConfig, SIGNAL(triggered()), this, SLOT(on_actionConfigure_triggered()));
 	connect( actionOpen, SIGNAL(triggered()), this, SLOT(on_actionOpen_triggered()));
@@ -100,6 +105,7 @@ void PluginManager::initGUI()
 	menus[tr("&File")]->addAction( actionOpen );
 	menus[tr("&File")]->addSeparator();
 	menus[tr("&File")]->setMergePoint();
+	menus[tr("&File")]->addAction(actionClose);
 	menus[tr("&File")]->addSeparator();
 	menus[tr("&File")]->addAction(actionQuit);
 	menus[tr("&Edit")];
@@ -166,7 +172,7 @@ void PluginManager::on_actionOpen_triggered()
 
 	if (s.isEmpty())
 		return;
-
+#if 0
 	// for each selected file, try to open it
 	foreach( e, s )
 	{
@@ -199,6 +205,9 @@ void PluginManager::on_actionOpen_triggered()
 			this should not happen, and usually means a bug
 		*/
 	} /* foreach( e, s ) */
+#else
+	openFiles(s);
+#endif
 }
 
 void PluginManager::on_actionQuit_triggered()
@@ -217,4 +226,50 @@ void PluginManager::on_actionConfigure_triggered()
 
 	configDialog->show();
 	configDialog->setFocus();
+}
+
+bool PluginManager::openFile( QString fileName )
+{
+	// who can open this file...?
+	IPlugin *bestPlugin = NULL;
+	IPlugin *p;
+	int j = -1;
+	int k = -1;
+	
+	foreach( p, plugins )
+	{
+		if (!p->enabled)
+			continue;
+
+			// is this plugin better then the selected?
+		j = p->canOpenFile(fileName);
+
+		if (j > k)
+		{
+			bestPlugin = p;
+			k = j; //bestPlugin->canOpenFile(fileName);
+		}
+	}
+
+	// if found, ask it to open the file
+	if (bestPlugin)
+		return bestPlugin->openFile( fileName );
+	else
+	/*
+		no plugin can handle this file,
+		this should not happen, and usually means a bug
+	*/
+		return false;
+}
+
+bool PluginManager::openFiles(QStringList fileNames )
+{
+	QString s;
+	bool b = true;
+	foreach( s, fileNames )
+	{
+		b = b && openFile( s );
+	}
+	
+	return b;
 }

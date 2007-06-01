@@ -36,6 +36,9 @@ public slots:
 	void on_actionOpen_triggered();
 	void on_actionConfigure_triggered();
 	void on_actionQuit_triggered();
+	
+	bool openFile(QString fileName );
+	bool openFiles(QStringList fileNames );
 
 private:
 	void initGUI();
@@ -45,6 +48,7 @@ private:
 	qmdiTabWidget	*tabWidget;
 	QAction		*actionOpen;
 	QAction		*actionConfig;
+	QAction		*actionClose;
 	QAction		*actionQuit;
 	QMenu		*newFilePopup;
 	
