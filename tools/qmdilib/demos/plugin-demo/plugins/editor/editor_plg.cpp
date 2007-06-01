@@ -18,6 +18,7 @@
 #include "qmdiserver.h"
 #include "editor_plg.h"
 #include "qexeditor.h"
+#include "qexeditor2.h"
 
 EditorPlugin::EditorPlugin()
 {
@@ -98,14 +99,16 @@ int EditorPlugin::canOpenFile( const QString fileName )
 {
 	QUrl u(fileName);
 
-	/*
-	this code fails on win32
+/*	this code fails on win32
 	for example: c:\windows
 	scheme = "c:\"
-	if ( (u.scheme().toLower() != "file") && (!u.scheme().isEmpty()) )
-		return -2;
+ */
+	// if the scheme is a single line, lets assume this is a windows drive
+	if (u.scheme().length() != 1)
+		if ( (u.scheme().toLower() != "file") && (!u.scheme().isEmpty()) )
+			return -2;
 
-	else */if (fileName.endsWith(".c", Qt::CaseInsensitive))
+	if (fileName.endsWith(".c", Qt::CaseInsensitive))
 		return 5;
 	else if (fileName.endsWith(".cpp", Qt::CaseInsensitive))
 		return 5;
@@ -147,7 +150,7 @@ int EditorPlugin::canOpenFile( const QString fileName )
  */
 bool EditorPlugin::openFile( const QString fileName, int x, int y, int z )
 {
-	QexTextEdit *editor = new QexTextEdit( fileName, true, dynamic_cast<QMainWindow*>(mdiServer) );
+	QexTextEdit *editor = new QexTextEdit2( fileName, true, dynamic_cast<QMainWindow*>(mdiServer) );
 	editor->hide();
 	mdiServer->addClient( editor );
 
@@ -165,7 +168,7 @@ void EditorPlugin::fileNew()
 		return;
 	}
 
-	QexTextEdit *editor = new QexTextEdit("", true);
+	QexTextEdit *editor = new QexTextEdit2("", true);
 	editor->hide();
 	editor->name = tr("No name");
 	editor->setObjectName( editor->name );
