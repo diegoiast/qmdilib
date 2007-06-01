@@ -29,7 +29,7 @@ HelpPlugin::HelpPlugin()
 {
 	actionAbout	= new_action( QIcon(), tr("&About"), this, "", tr("XXXXX"), SLOT(showAboutApp()) );
 	actionAboutQt	= new_action( QIcon(), tr("&About Qt"), this, "", tr("XXXXX"), SLOT(showAboutQt()) );
-	actionShowQtHelp= new_action( QIcon(), tr("&Qt help"), this, "F1", tr("XXXXX"), SLOT(showQtHelp()) );
+	actionShowQtHelp= new_action( QIcon(), tr("&Qt help"), this, "Ctrl+F1", tr("XXXXX"), SLOT(showQtHelp()) );
 
 	name = "Help plugin";
 	author = "Diego Iastrubni <elcuco@kde.org>";
@@ -39,6 +39,7 @@ HelpPlugin::HelpPlugin()
 	alwaysEnabled = true;
 
 	menus["&Help"]->addAction( actionShowQtHelp );
+	menus["&Help"]->setMergePoint();
 	menus["&Help"]->addSeparator();
 	menus["&Help"]->addAction( actionAbout );
 	menus["&Help"]->addAction( actionAboutQt );
@@ -112,9 +113,11 @@ int HelpPlugin::canOpenFile( const QString fileName )
 bool HelpPlugin::openFile( const QString fileName, int x, int y, int z )
 {
 	QUrl u(fileName);
+	bool b = canOpenFile(fileName) == 1;
 
-	if (canOpenFile(fileName) == 1)
-		return loadHTML( fileName, x, y, z );
+	if (b)
+		return loadHTML( QLibraryInfo::location(QLibraryInfo::DocumentationPath) +  QLatin1String("/html/") + u.path().toLower() + QLatin1String(".html"),
+			 x, y, z );
 	else
 		return false;
 }
