@@ -2,17 +2,19 @@ $Id$
 
 0.0.4 - SOMEDAY
  * Documentation re-created using doxygen 1.4.7
- * qmdiClient: qmdiServer is now a public member
- * qmdiActionGroup: added support for submenus
- * qmdiActionGroup: added support for adding QActionGroup
- * qmdiHost: updateGUI can has been updated, see documentation
-		
+ * code refactoring: qmdiClient - qmdiServer is now a public member
+ * new feature: qmdiActionGroup - added support for submenus
+ * new feature: qmdiActionGroup - added support for adding QActionGroup
+ * new feature: qmdiActionGroup - merge points are computed at run time from list of added groups
+ * code refactoring: qmdiHost - updateGUI can has been updated, see documentation
+ * new demo: plugin demo is working now, soon to be ported to the main library
+
 0.0.3  - 7 Oct 2006 - Diego Iastrubni <elcuco@kde.org>
  * new feature: QWorkspace children are also checked for qmdiClient interface,
    feature coded by Nox PasNox <pasnox@gmail.com>
  * new feature: merge point for qmdiActionGroup
  * new class: qmdiWorkspace, a qmdiServer based on QWorkspace
- * core refactoring: qmdiClient does not contain QObject *self any more
+ * code refactoring: qmdiClient does not contain QObject *self any more
  * code refactoring: qmdiServer now contains a pointer to the host (was in qmdiTabWidget)
  * code refactoring: demos should be easier to read, and hopefully maintain
  * removed most internal frames from all widgets in demos, the demos will look nicer
