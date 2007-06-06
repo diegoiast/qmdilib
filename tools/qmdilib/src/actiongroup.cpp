@@ -60,10 +60,6 @@ qmdiActionGroup::qmdiActionGroup( QString name )
 	mergeLocation = -1;
 }
 
-qmdiActionGroup::qmdiActionGroup()
-{
-}
-
 /**
  * Empty destructor. Destroys the object.
  */
@@ -161,7 +157,6 @@ void qmdiActionGroup::addActions( QActionGroup *actions, int location )
 		location = actionGroupItems.count();
 	foreach( QAction *a, actions->actions() )
 	{
-// 		qDebug( "adding action: %s at location: %i", qPrintable(a->text()), location );
 		addAction( a, location );
 		location++;
 	}
@@ -349,16 +344,53 @@ void qmdiActionGroup::setMergePoint()
 }
 
 /**
+ * \brief compute the best merging point for new action groups
+ * \since 0.0.4
+ * 
+ * This function computes the best location in which a new action group
+ * should be merged. The merge point is computed from the list of
+ * merged action groups - the last added action group will win.
+ * 
+ * If no merging point is defined, the default is to merge at the top
+ * of menu or toolbar.
+ * 
+ * TODO 
+ * 	action groups should also have merging priotities
+ * 
+ * \see mergeGroup
+ */
+int qmdiActionGroup::getMergePoint()
+{
+	int i = -1;
+	
+	foreach( qmdiActionGroup* ag, actionGroups)
+	{
+		if (ag->mergeLocation > i)
+			i = ag->mergeLocation;
+	}
+	
+	if (mergeLocation > i)
+		i = mergeLocation;
+	
+	return i;
+}
+
+/**
  * \brief merges another action group actions into this action group
  * \param group the new group to be merged
  * 
  * Use this call if you want to merge the items of another group into
  * one. The actions of the new group will be placed at the end of the
  * list of actions available on this, unless a merge location as been
- * defined.
+ * defined. 
+ * 
+ * The merge point is calculated from the list of merged action groups
+ * or the self defined action group. For more documentation see the 
+ * documentation of getMergePoint.
  * 
  * \see unmergeGroup
  * \see setMergePoint
+ * \see getMergePoint
  */
 void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 {
@@ -375,8 +407,10 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 		
 		if (a)
 		{
-			if (mergeLocation != -1)
-				addAction( a, mergeLocation + i );
+			int m = getMergePoint();
+			
+			if (m != -1)
+				addAction( a, m + i );
 			else
 				addAction( a );
 		}
@@ -385,8 +419,10 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 			QWidget *w = qobject_cast<QWidget*> (o);
 			if (w)
 			{
-				if (mergeLocation != -1)
-					addWidget( w, mergeLocation + i );
+				int m = getMergePoint();
+				
+				if (m != -1)
+					addWidget( w, m + i );
 				else
 					addWidget( w );
 				
@@ -404,6 +440,8 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 
 	if (breakCount>0)
 		breakAfter = true;
+	
+	actionGroups << group;
 }
 
 /**
@@ -441,6 +479,8 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
 
 	if (breakCount>0)
 		breakAfter = true;
+
+	actionGroups.removeAt( actionGroups.indexOf(group) );
 }
 
 /**

@@ -25,7 +25,6 @@ class qmdiActionGroup
 {
 public:
 	qmdiActionGroup( QString name );
-	qmdiActionGroup();
 	~qmdiActionGroup();
 
 	void		setName( QString name );
@@ -41,6 +40,7 @@ public:
 	void		removeMenu( QMenu *menu );
 	void		removeWidget( QWidget *widget );
 	void		setMergePoint();
+	int		getMergePoint();
 
 	void		mergeGroup( qmdiActionGroup *group );
 	void		unmergeGroup( qmdiActionGroup *group );
@@ -52,6 +52,7 @@ public:
 private:
 	QString name;
 	QList<QObject*> actionGroupItems;
+	QList<qmdiActionGroup*> actionGroups;
 
 	int breakCount;
 	int mergeLocation;
