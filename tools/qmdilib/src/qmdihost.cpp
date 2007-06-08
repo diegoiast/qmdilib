@@ -34,7 +34,7 @@
  * this library.
  *
  * The menus defined in this class, will be displayed by default
- * on the MDI host. it's a wise idea to define the order of the
+ * on the MDI host. It is a wise idea to define the order of the
  * menus on your application on the initialization of the application,
  * since there is no way of changing the order of the menus later
  * on.

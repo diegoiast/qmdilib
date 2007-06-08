@@ -71,9 +71,13 @@ qmdiTabWidget::qmdiTabWidget( QWidget *parent, qmdiHost *host )
 	connect( this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
 	QTabBar *b = new qmdiTabBar;
-	connect( b, SIGNAL(middleMousePressed(int,QPoint)), this, SLOT(tryCloseClient(int)));
-	connect( b, SIGNAL(rightMousePressed(int,QPoint)), this, SLOT(showClientMenu(int,QPoint)));
+	connect( b, SIGNAL(middleMousePressed(int,QPoint)), this, SLOT(on_middleMouse_pressed(int,QPoint)));
+	connect( b, SIGNAL(rightMousePressed(int,QPoint)) , this, SLOT(on_rightMouse_pressed(int,QPoint)));
 	setTabBar( b );
+}
+
+qmdiTabWidget::~qmdiTabWidget()
+{
 }
 
 /**
@@ -135,7 +139,6 @@ void qmdiTabWidget::tabChanged( int i )
 /**
  * \brief callback function for notifying of a new QWorkspace child activated
  * \param w the widget which now has the focus on the work space
- * \since 0.0.3
  *
  * Since qmdilib 0.0.3 it's possible to insert a QWorkspace into 
  * a QTabWidget and when a new child will be focused on the QWorkspace 
@@ -145,6 +148,7 @@ void qmdiTabWidget::tabChanged( int i )
  *
  * Thanks to Nox PasNox <pasnox@gmail.com> for this code.
  *
+ * \since 0.0.3
  * \see tabInserted( int )
  * \see tabChanged( int )
  */
@@ -173,119 +177,91 @@ void qmdiTabWidget::wSpaceWindowActivated( QWidget* w )
 }
 
 /**
- * \brief request an MDI client to close
- * \param i the number of the client (tab) to be closed
- *
- * Call this slot to ask the MDI client to close itself.
- * The MDI client may show a dialog to ask for saving. It's not
- * guaranteed that the action will be handled as the MDI client
- * can abort the action.
- *
- * \see qmdiClient::closeClient()
- */
-void qmdiTabWidget::tryCloseClient( int i )
-{
-	qmdiClient *client = dynamic_cast<qmdiClient*>(widget(i));
-	if (!client)
-		return;
-
-	client->closeClient();
-}
-
-/**
- * \brief request to close all other clients
- * \param i the number of the client to keep open
- *
- * Call this slot to ask all the MDI clients (but the widget found at
- * index \b i in the tab widget, passed as a parameter).
- * Each MDI client may show a dialog to ask for saving. It's not
- * guaranteed that the action will be handled as the MDI client
- * can abort the action. At the end, only the client number i will
- * not be asked to close itself.
- *
- * If some widget on the MDI server does not derive (implements)
- * the qmdiClient interface, the widget will not be closed.
- *
- * \see qmdiClient::closeClient() tryCloseClient() tryCloseAllCliens
- */
-void qmdiTabWidget::tryCloseAllButClient( int i )
-{
-	int c = count();
-	QWidget *w = widget(i);
-
-	for( int j=0; j<c; j++ )
-	{
-		QWidget *w2 = widget(j);
-		if (w == w2)
-			continue;
-		
-		qmdiClient *client = dynamic_cast<qmdiClient*>(w2);
-		if (!client)
-			continue;
-
-		client->closeClient();
-	}
-}
-
-/**
- * \brief try to close all MDI clients
- *
- * Call this slot when you want to close all the MDI clients.
- */
-void qmdiTabWidget::tryCloseAllCliens()
-{
-	int c = count();
-
-	for( int i=0; i<c; i++ )
-	{
-		qmdiClient *client = dynamic_cast<qmdiClient*>(widget(i));
-		if (!client)
-			continue;
-
-		client->closeClient();
-	}	
-}
-
-/**
- * \brief display the menu of a specific MDI client
- * \param i the mouse button that has been pressed
- * \param p the location of the mouse click
- *
- * This function is called when a user presses the left mouse
- * button on the tab bar of the tab widget. The coordinates of the
- * click are passed on the parameter \b p , while the
- * mouse button which has been pressed is passed on the
- * parameter \b p .
- *
- * This slot is connected to rightMousePressed signal of the qmdiTabBar
- * at the constructor of this class.
+ * \brief mouse middle button click callback
+ * \param i number of client pressed
  * 
- * \see qmdiTabBar
+ * This function is connected to the mouse middle click even
+ * on the tabbar. It will try to close the client.
+ * 
+ * \see qmdiServer::tryCloseClient
  */
-void qmdiTabWidget::showClientMenu( int i, QPoint p )
+void qmdiTabWidget::on_middleMouse_pressed( int i, QPoint  )
 {
-	QAction *closeThis	= new QAction(tr("Close this window"), this);
-	QAction *closeOthers	= new QAction(tr("Close other windows"), this);
-	QAction *closeAll	= new QAction(tr("Close all windows"), this);
-	QMenu *menu = new QMenu( tr("Local actions") );
-	menu->addAction( closeThis );
-	menu->addAction( closeOthers );
-	menu->addAction( closeAll );
+	tryCloseClient( i );
+}
 
-	QAction *q = menu->exec( this->mapToGlobal(p) );
+/**
+ * \brief mouse right button click callback
+ * \param i number of client pressed
+ * \param p coordinate of the click event
+ * 
+ * This function is connected to the mouse right click even
+ * on the tabbar. This function will display a popup menu.
+ * 
+ * \see qmdiServer::showClientMenu
+ */
+void qmdiTabWidget::on_rightMouse_pressed( int i, QPoint p )
+{
+	showClientMenu( i, p );
+}
 
-	if ( q == closeThis)
+/**
+ * \brief add a new MDI client to this tab widget
+ * \param client the new client to be added
+ *
+ * This function is demanded by qmdiServer, and is implemented
+ * as a simple call to:
+ *
+ * \code
+ * i = QTabWidget::addTab( client, client->name );
+ * QTabWidget::setCurrentIndex( i );
+ * client->setFocus();
+ * \endcode
+ * 
+ * The client must derive also QWidget, since only widgets can
+ * be inserted into QTabWidget. If the client does not derive
+ * QWidget the function returns without doing anything.
+ */
+void qmdiTabWidget::addClient( qmdiClient *client )
+{
+	QWidget *w = dynamic_cast<QWidget*>(client);
+
+	if (w == NULL)
 	{
-		tryCloseClient( i );
+		qDebug( "%s %s %d: warning trying to add a qmdiClient which does not derive QWidget", __FILE__, __FUNCTION__, __LINE__ );
+		return;
 	}
-	else if  (q == closeOthers)
-	{
-		tryCloseAllButClient( i );
-	}
-	else if (q == closeAll )
-	{
-		tryCloseAllCliens();
-	}
+	
+	int i = addTab( w, client->name );
+	w->setFocus();
+	setCurrentIndex( i );
+}
+
+/**
+ * \brief return the number of sub clients in this server
+ * \param i the number of sub widget to return
+ *
+ * Return the number of sub-widgets in this server. Please note that
+ * this function can return also non-mdi clients. 
+ *
+ * This function return the value or QTabWidget::widget(i)
+ */
+qmdiClient *qmdiTabWidget::getClient( int i )
+{
+	return dynamic_cast<qmdiClient*>( widget(i) );
+}
+
+/**
+ * \brief return the number of sub clients in this server
+ *
+ * Return the number of sub-widgets in this server. Please note that
+ * this function can return also non-mdi clients. 
+ *
+ * This function return the value or QTabWidget::count()
+ */
+int qmdiTabWidget::getClientsCount()
+{
+	return count();
 }
 
 /**
@@ -315,7 +291,7 @@ void qmdiTabWidget::deleteClient( qmdiClient* client )
 		return;
 	
 	QWorkspace* ws = qobject_cast<QWorkspace*>( activeWidget );
-	if ( ws )
+	if (ws)
 		foreach ( QWidget* c, ws->windowList() )
 			mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(c) );
 	
@@ -396,31 +372,4 @@ void qmdiTabWidget::tabRemoved ( int index )
 //	BUG is this supposed to be done by Qt?
 	if (count() == 1)
 		tabChanged( 0 );
-}
-
-/**
- * \brief add a new MDI client to this tab widget
- * \param client the new client to be added
- *
- * This function is demanded by qmdiServer, and is implemented
- * as a simple call to:
- *
- * \code
- * QTabWidget::addTab( client, client->name ).
- * \endcode
- * 
- * The client must derive also QWidget, since only widgets can
- * be inserted into QTabWidget. If the client does not derive
- * QWidget the function returns without doing anything.
- */
-void qmdiTabWidget::addClient( qmdiClient *client )
-{
-	QWidget *w = dynamic_cast<QWidget*>(client);
-
-	if (w == NULL)
-		return;
-	
-	int i = addTab( w, client->name );
-	w->setFocus();
-	setCurrentIndex( i );
 }

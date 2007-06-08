@@ -25,20 +25,24 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer
 	Q_OBJECT
 public:
 	qmdiTabWidget( QWidget *parent=NULL, qmdiHost *host=NULL );
+	~qmdiTabWidget();
 
 public slots:
 	void tabChanged( int i );
 	void wSpaceWindowActivated( QWidget* w );
-	void tryCloseClient( int i );
-	void tryCloseAllButClient( int i );
-	void tryCloseAllCliens();
-	void showClientMenu( int i, QPoint p );
+	void on_middleMouse_pressed( int, QPoint );
+	void on_rightMouse_pressed( int, QPoint );
+
+	// need to overide this functions
+public:
+	virtual void addClient( qmdiClient *client  );
+	virtual void deleteClient( qmdiClient* client );
+	virtual int getClientsCount();
+	virtual qmdiClient *getClient( int i );
 
 protected:
-	void deleteClient( qmdiClient* client );
 	void tabInserted ( int index );
 	void tabRemoved ( int index );
-	void addClient( qmdiClient *client );
 	
 private:
 	QWidget		*activeWidget;
