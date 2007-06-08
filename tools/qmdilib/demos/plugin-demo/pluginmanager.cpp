@@ -29,6 +29,15 @@
  * \brief A class which manages a list of plugins and merges their menus and toolbars to the main application
  * \author Diego Iastrubni (elcuco@kde.org)
  *
+ * The plugin managed is a mdi host which can load menus and toolbars from 
+ * a the selected mdi client mdi server, and also maintain another set of mdi
+ * clients, which have no real GUI, but their menus and toolbars are merged to the main 
+ * host.
+ * 
+ * This can be used to enable or disable functionality of the application on run 
+ * time - by enabling or disabling IPlugin objetcs.
+ * 
+ * Each plugin has defines a set 
  */
 
 
@@ -42,10 +51,12 @@ PluginManager::PluginManager()
 	
 	actionOpen->setIcon( QIcon(":/images/open.png") );
 	actionOpen->setShortcut( tr("Ctrl+O") );
+	actionClose->setIcon( QIcon(":/images/fileclose.png") );
 	actionClose->setShortcut( tr("Ctrl+w") );
 
 	connect( actionConfig, SIGNAL(triggered()), this, SLOT(on_actionConfigure_triggered()));
 	connect( actionOpen, SIGNAL(triggered()), this, SLOT(on_actionOpen_triggered()));
+	connect( actionClose, SIGNAL(triggered()), this, SLOT(on_actionClose_triggered()));
 	connect( actionQuit, SIGNAL(triggered()), this, SLOT(on_actionQuit_triggered()));
 	initGUI();
 	
@@ -145,8 +156,7 @@ void PluginManager::on_actionOpen_triggered()
 	QStringList extensAvailable;
 	IPlugin *p;
 
-	// get list of available extensions to open
-	// from each plugin
+	// get list of available extensions to open from each plugin
 	foreach( p, plugins )
 	{
 		if (!p->enabled)
@@ -162,7 +172,6 @@ void PluginManager::on_actionOpen_triggered()
 			extens += ";;";
 	}
 
-
 	QStringList s = QFileDialog::getOpenFileNames(
 		NULL,
 		tr("Choose a file"),
@@ -172,42 +181,13 @@ void PluginManager::on_actionOpen_triggered()
 
 	if (s.isEmpty())
 		return;
-#if 0
-	// for each selected file, try to open it
-	foreach( e, s )
-	{
-		IPlugin *bestPlugin = NULL;
-
-		// who can open this file...?
-		int j = -1;
-		int k = -1;
-		foreach( p, plugins )
-		{
-			if (!p->enabled)
-				continue;
-
-			// is this plugin better then the selected?
-			j = p->canOpenFile(e);
-
-			if (j > k)
-			{
-				bestPlugin = p;
-				k = bestPlugin->canOpenFile(e);
-			}
-		}
-
-		// if found, ask it to open the file
-		if (bestPlugin)
-			bestPlugin->openFile( e );
-		/*
-		else
-			no plugin can handle this file,
-			this should not happen, and usually means a bug
-		*/
-	} /* foreach( e, s ) */
-#else
+	
 	openFiles(s);
-#endif
+}
+
+void PluginManager::on_actionClose_triggered()
+{
+	tabWidget->tryCloseClient( tabWidget->currentIndex() );
 }
 
 void PluginManager::on_actionQuit_triggered()
@@ -221,7 +201,6 @@ void PluginManager::on_actionConfigure_triggered()
 	{
 		configDialog = new ConfigDialog( this );
 		configDialog->setManager( this );
-// 		configDialog->adjustSize();
 	}
 
 	configDialog->show();

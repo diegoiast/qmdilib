@@ -34,6 +34,7 @@ public slots:
 	
 	void closeClient();
 	void on_actionOpen_triggered();
+	void on_actionClose_triggered();
 	void on_actionConfigure_triggered();
 	void on_actionQuit_triggered();
 	
@@ -42,7 +43,8 @@ public slots:
 
 private:
 	void initGUI();
-	public:	
+	
+public:	
 	QList<IPlugin*>	plugins;
 	
 	qmdiTabWidget	*tabWidget;

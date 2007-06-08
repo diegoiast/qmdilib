@@ -14,6 +14,8 @@ QexTextEdit2::QexTextEdit2( QString file, bool singleToolbar, QWidget *parent )
 {
 	actionShowQtKeyword = new QAction( QIcon(":images/copy.png"), tr("&Show keywork documentation"), this );
 	actionShowQtKeyword->setShortcut( tr("F1") );
+	
+	menus["&File"]->removeAction( actionClose );
 	menus["&Help"]->addAction( actionShowQtKeyword );
 	
 	connect( actionShowQtKeyword, SIGNAL(triggered()), this, SLOT(showQtKeyword()) );

@@ -37,7 +37,7 @@ public slots:
 	bool fileClose();
 	void helpShowHelp();
 
-private:
+protected:
 	QAction *actionSave;
 	QAction *actionClose;
 
