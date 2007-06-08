@@ -15,7 +15,6 @@ HEADERS += ../../src/actiongroup.h \
            ../../src/qmdiclient.h \
            ../../src/qmdihost.h \
            ../../src/qmdiserver.h \
-           ../../src/qmditabbar.h \
            ../../src/qmditabwidget.h \
            ../../src/qmdiworkspace.h \
            ../../src/qmdimainwindow.h
@@ -24,7 +23,6 @@ SOURCES += ../../src/actiongroup.cpp \
            ../../src/actiongrouplist.cpp \
            ../../src/qmdiclient.cpp \
            ../../src/qmdihost.cpp \
-           ../../src/qmditabbar.cpp \
            ../../src/qmdiserver.cpp \
            ../../src/qmdiworkspace.cpp \
            ../../src/qmditabwidget.cpp

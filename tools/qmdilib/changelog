@@ -7,6 +7,9 @@ $Id$
  * new feature: qmdiActionGroup - added support for adding QActionGroup
  * new feature: qmdiActionGroup - merge points are computed at run time from list of added groups
  * code refactoring: qmdiHost - updateGUI can has been updated, see documentation
+ * code refactoring: qmdiServer - a lot of functions moved from qmdiTabWidget
+ * code refactoring: qmdiTabWidget contains less implementation details (see qmdiServer)
+ * code refactoring: qmdiTabBar has been removed, qmdiTabWidget uses an event filter now
  * new demo: plugin demo is working now, soon to be ported to the main library
 
 0.0.3  - 7 Oct 2006 - Diego Iastrubni <elcuco@kde.org>

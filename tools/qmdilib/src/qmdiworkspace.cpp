@@ -18,7 +18,7 @@
 #include "qmdiclient.h"
 #include "qmdihost.h"
 #include "qmdiworkspace.h"
-#include "qmditabbar.h"
+// #include "qmditabbar.h"
 
 /**
  * \class qmdiWorkspace
@@ -74,9 +74,9 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	cornerWidget2 = NULL;
 	activeWidget  = NULL;
 		
-	tabBar = new qmdiTabBar;
-	connect( tabBar, SIGNAL(middleMousePressed(int,QPoint)), this, SLOT(tryCloseClient(int)));
-	connect( tabBar, SIGNAL(rightMousePressed(int,QPoint)), this, SLOT(showClientMenu(int,QPoint)));
+	tabBar = new QTabBar;
+/*	connect( tabBar, SIGNAL(middleMousePressed(int,QPoint)), this, SLOT(tryCloseClient(int)));
+	connect( tabBar, SIGNAL(rightMousePressed(int,QPoint)), this, SLOT(showClientMenu(int,QPoint)));*/
 	
 	workspace = new QWorkspace;	
 	mainLayout = new QVBoxLayout;

@@ -18,7 +18,6 @@
 #include "qmditabwidget.h"
 #include "qmdihost.h"
 #include "qmdiclient.h"
-#include "qmditabbar.h"
 
 /**
  * \class qmdiTabWidget
@@ -67,13 +66,8 @@ qmdiTabWidget::qmdiTabWidget( QWidget *parent, qmdiHost *host )
 		mdiHost = host;
 	
 	activeWidget = NULL;
-	
 	connect( this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
-
-	QTabBar *b = new qmdiTabBar;
-	connect( b, SIGNAL(middleMousePressed(int,QPoint)), this, SLOT(on_middleMouse_pressed(int,QPoint)));
-	connect( b, SIGNAL(rightMousePressed(int,QPoint)) , this, SLOT(on_rightMouse_pressed(int,QPoint)));
-	setTabBar( b );
+	tabBar()->installEventFilter( this );
 }
 
 qmdiTabWidget::~qmdiTabWidget()
@@ -235,6 +229,72 @@ void qmdiTabWidget::addClient( qmdiClient *client )
 	int i = addTab( w, client->name );
 	w->setFocus();
 	setCurrentIndex( i );
+}
+
+/**
+ * \brief event filter for the tabbar
+ * 
+ * This function is used to catch when the user is clicking a tab.
+ * On earlier version, a new class has been used. Since version 0.0.4
+ * a proper event filter is used, which reduces the amount of code
+ * and class count in the library.
+ * 
+ * The function will call the functions:
+ *  - on_middleMouse_pressed
+ *  - on_rightMouse_pressed
+ * 
+ * Future implementations might also re-order the tabs.
+ * 
+ * For more information read the documentation of QObject::installEventFilter.
+ * 
+ * \since 0.0.4
+ */
+bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event)
+{
+	if (obj != tabBar())
+		return QObject::eventFilter(obj, event);
+	
+	if (event->type() != QEvent::MouseButtonPress)
+		return QObject::eventFilter(obj, event);
+	
+	// compute the tab number
+	QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+	QPoint position = mouseEvent->pos();
+	int c = tabBar()->count();
+	int clickedItem = -1;
+
+	for (int i=0; i<c; i++)
+	{
+		if ( tabBar()->tabRect(i).contains( position ) )
+		{
+			clickedItem = i;
+			break;
+		}
+	}
+	
+	// just in case
+	if (clickedItem == -1)
+		return QObject::eventFilter(obj, event);
+	
+	switch( mouseEvent->button() )
+	{
+		case Qt::LeftButton:
+			return QObject::eventFilter(obj, event);
+			break;
+			
+		case Qt::RightButton:
+			on_rightMouse_pressed( clickedItem, position );
+			break;
+			
+		case Qt::MidButton:
+			on_middleMouse_pressed( clickedItem, position );
+			break;
+		
+		default:
+			return QObject::eventFilter(obj, event);
+	}
+	
+	return true;
 }
 
 /**

@@ -17,8 +17,9 @@
 
 class QWidget;
 class QPoint;
+class QEvent;
+
 class qmdiHost;
-class qmdiTabBar;
 
 class qmdiTabWidget : public QTabWidget, public qmdiServer
 {
@@ -32,7 +33,8 @@ public slots:
 	void wSpaceWindowActivated( QWidget* w );
 	void on_middleMouse_pressed( int, QPoint );
 	void on_rightMouse_pressed( int, QPoint );
-
+	bool eventFilter(QObject *obj, QEvent *event);
+	
 	// need to overide this functions
 public:
 	virtual void addClient( qmdiClient *client  );
