@@ -28,7 +28,7 @@ $Id$
  * compilation problems on mingw should be fixed
 
 0.0.2-pre  - 19 Jul 06 - Diego Iastrubni <elcuco@kde.org>
- * fixed many flickering issues, now it only flicker when you add QWidgets to qmdiActionGroup
+ * fixed many flickering issues, now it only flickers when you add QWidgets to qmdiActionGroup
  * added demos (4 and 5) which demonstrate how to build the code into dynamic and static libraries
  
 0.0.1 - 11 Jun 06 - Diego Iastrubni <elcuco@kde.org>

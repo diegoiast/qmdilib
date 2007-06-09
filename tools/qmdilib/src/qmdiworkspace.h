@@ -25,22 +25,27 @@ class qmdiWorkspace : public QWidget, public qmdiServer
 public:	
 	qmdiWorkspace( QWidget *parent=NULL, qmdiHost *host=NULL );
 	
-	void addClient( qmdiClient *client );
-	void addTab( QWidget *widget, QString name ); 
-	QWidget *currentWidget();
-	const QWidget * cornerWidget ( Qt::Corner corner = Qt::TopRightCorner );
-	void setCornerWidget ( QWidget * widget, Qt::Corner corner = Qt::TopRightCorner );
-	QWidget* widget( int i );
-	int count();
+	// compability with QTabWidget
+	void			addTab( QWidget *widget, QString name ); 
+	QWidget*		currentWidget();
+	const QWidget*		cornerWidget ( Qt::Corner corner = Qt::TopRightCorner );
+	void			setCornerWidget ( QWidget * widget, Qt::Corner corner = Qt::TopRightCorner );
+	QWidget*		widget( int i );
+	int			currentIndex();
+	int			count();
+	
+	// overloaded methods
+	virtual void		addClient( qmdiClient *client );
+	virtual int		getClientsCount();
+	virtual qmdiClient	*getClient( int i );
 	
 public slots:	
+	bool eventFilter( QObject *obj, QEvent *event );
 	void workspaceChanged( QWidget * w );
 	void tabBarChanged( int index );
 	void windowDeleted( QObject *o );
-	void tryCloseClient( int i );
-	void tryCloseAllButClient( int i );
-	void tryCloseAllCliens();
-	void showClientMenu( int i, QPoint p );
+	void on_middleMouse_pressed( int, QPoint );
+	void on_rightMouse_pressed( int, QPoint );
 	
 private:
 	QLayout		*mainLayout;

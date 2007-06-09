@@ -17,6 +17,7 @@
 class QPopupMenu;
 class qmdiHost;
 class qmdiTabWidget;
+class qmdiWorkspace;
 class IPlugin;
 class ConfigDialog;
 
@@ -47,7 +48,7 @@ private:
 public:	
 	QList<IPlugin*>	plugins;
 	
-	qmdiTabWidget	*tabWidget;
+	qmdiWorkspace	*tabWidget;
 	QAction		*actionOpen;
 	QAction		*actionConfig;
 	QAction		*actionClose;

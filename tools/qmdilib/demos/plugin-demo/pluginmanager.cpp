@@ -21,6 +21,7 @@
 #include "qmdihost.h"
 #include "qmdiserver.h"
 #include "qmditabwidget.h"
+#include "qmdiworkspace.h"
 #include "iplugin.h"
 #include "pluginmanager.h"
 #include "configdialog.h"
@@ -74,7 +75,7 @@ void PluginManager::addPlugin( IPlugin *newplugin )
 	if (!newplugin)
 		return;
 
-	newplugin->mdiServer = tabWidget;
+	newplugin->mdiServer = dynamic_cast<qmdiServer*>(tabWidget);
 	if (newplugin->alwaysEnabled)
 		newplugin->autoEnabled = true;
 
@@ -128,7 +129,8 @@ void PluginManager::initGUI()
 	toolbars[tr("main")]->addAction(actionOpen);
 	toolbars[tr("main")]->addAction(actionConfig);
 
-	tabWidget = new qmdiTabWidget(this);
+//	tabWidget = new qmdiTabWidget(this);
+	tabWidget = new qmdiWorkspace(this);
 	updateGUI();
 
 	QToolButton *tabCloseBtn = new QToolButton(tabWidget);

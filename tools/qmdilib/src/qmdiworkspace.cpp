@@ -14,6 +14,8 @@
 #include <QVBoxLayout>
 #include <QMainWindow>
 #include <QMenu>
+#include <QEvent>
+#include <QMouseEvent>
 
 #include "qmdiclient.h"
 #include "qmdihost.h"
@@ -23,7 +25,6 @@
 /**
  * \class qmdiWorkspace
  * \brief An advanced work space-widget, which is capable of changing menus and toolbars on the fly
- * \since 0.0.3
  * 
  * This class is a new MDI server, based on top of QWorkspace. It is built
  * with a similar API to qmdiTabWidget and QTabWidget. Since the API is similar
@@ -45,6 +46,7 @@
  * To use this class properly, insert it into a QMainWindow which also derives qmdiHost,
  * and insert into it QWidgets which also derive qmdiClient.
  *
+ * \since 0.0.3
  * \see qmdiTabBar
  */
 
@@ -65,6 +67,8 @@
 qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	: QWidget( parent )
 {
+//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
+
 	if (host == NULL)
 		mdiHost = dynamic_cast<qmdiHost*>(parent);
 	else
@@ -74,17 +78,19 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	cornerWidget2 = NULL;
 	activeWidget  = NULL;
 		
-	tabBar = new QTabBar;
-/*	connect( tabBar, SIGNAL(middleMousePressed(int,QPoint)), this, SLOT(tryCloseClient(int)));
-	connect( tabBar, SIGNAL(rightMousePressed(int,QPoint)), this, SLOT(showClientMenu(int,QPoint)));*/
+	tabBar = new QTabBar(this);
+	tabBar->setDrawBase( false );
+	tabBar->installEventFilter( this );	
 	
 	workspace = new QWorkspace;	
 	mainLayout = new QVBoxLayout;
 	headerLayout = new QHBoxLayout;
 	headerLayout->setMargin(0);
 	headerLayout->setSpacing(0);
+	headerLayout->setObjectName("headerLayout");
 	mainLayout->setMargin(0);
 	mainLayout->setSpacing(0);
+	mainLayout->setObjectName("mainLayout");
 	
 	tabBar->setDrawBase( false );
 	headerLayout->addWidget( tabBar );
@@ -236,9 +242,10 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 	mainLayout->removeWidget( workspace );
 	
 	delete headerLayout;
-	headerLayout = new QHBoxLayout(this);
+	headerLayout = new QHBoxLayout;
 	headerLayout->setMargin(0);
 	headerLayout->setSpacing(0);
+	headerLayout->setObjectName("headerLayout"); 
 	
 	if (cornerWidget1)
 		headerLayout->addWidget(cornerWidget1);
@@ -263,10 +270,31 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
  */
 QWidget* qmdiWorkspace::widget( int i )
 {
+//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
 	if (!workspace)
 		return NULL;
+
+	// one can never be safe enough
+	if (i >= workspace->windowList().count() ){
+		// no warning on first child
+		if (! ((index==0) && (workspace->windowList().isEmpty())) ) 
+			qDebug( "%s %s %d - warning: index out of range (%d)", __FILE__,  __FUNCTION__, __LINE__, i );
+		return NULL;
+	}
+		
+	if (i < 0){		
+		qDebug( "%s %s %d - warning: negative index", __FILE__,  __FUNCTION__, __LINE__ );
+		return NULL;
+	}
 		
 	return workspace->windowList().at( i );
+}
+
+int qmdiWorkspace::currentIndex()
+{
+//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
+	QWidget *w = workspace->activeWindow();
+	return workspace->windowList().indexOf(w);
 }
 
 /**
@@ -285,6 +313,101 @@ int qmdiWorkspace::count()
 }
 
 /**
+ * \brief return the number of sub clients in this server
+ * \param i the number of sub widget to return
+ *
+ * Return the number of sub-widgets in this server. Please note that
+ * this function can return also non-mdi clients. 
+ *
+ * This function return the value or QTabWidget::widget(i)
+ */
+qmdiClient* qmdiWorkspace::getClient( int i )
+{
+//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
+	return dynamic_cast<qmdiClient*>( widget(i) );
+}
+
+/**
+ * \brief return the number of sub clients in this server
+ *
+ * Return the number of sub-widgets in this server. Please note that
+ * this function can return also non-mdi clients. 
+ *
+ * This function return the value or QTabWidget::count()
+ */
+int qmdiWorkspace::getClientsCount()
+{
+//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
+	return count();
+}
+
+/**
+ * \brief event filter for the tabbar
+ * 
+ * This function is used to catch when the user is clicking a tab.
+ * On earlier version, a new class has been used. Since version 0.0.4
+ * a proper event filter is used, which reduces the amount of code
+ * and class count in the library.
+ * 
+ * The function will call the functions:
+ *  - on_middleMouse_pressed
+ *  - on_rightMouse_pressed
+ * 
+ * Future implementations might also re-order the tabs.
+ * 
+ * For more information read the documentation of QObject::installEventFilter.
+ * 
+ * \since 0.0.4
+ */
+bool qmdiWorkspace::eventFilter(QObject *obj, QEvent *event)
+{
+	if (obj != tabBar)
+		return QObject::eventFilter(obj, event);
+	
+	if (event->type() != QEvent::MouseButtonPress)
+		return QObject::eventFilter(obj, event);
+	
+	// compute the tab number
+	QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+	QPoint position = mouseEvent->pos();
+	int c = tabBar->count();
+	int clickedItem = -1;
+
+	for (int i=0; i<c; i++)
+	{
+		if ( tabBar->tabRect(i).contains( position ) )
+		{
+			clickedItem = i;
+			break;
+		}
+	}
+	
+	// just in case
+	if (clickedItem == -1)
+		return QObject::eventFilter(obj, event);
+	
+	switch( mouseEvent->button() )
+	{
+		case Qt::LeftButton:
+			return QObject::eventFilter(obj, event);
+			break;
+			
+		case Qt::RightButton:
+			on_rightMouse_pressed( clickedItem, position );
+			break;
+			
+		case Qt::MidButton:
+			on_middleMouse_pressed( clickedItem, position );
+			break;
+		
+		default:
+			return QObject::eventFilter(obj, event);
+	}
+	
+	return true;
+}
+
+/**
  * \brief called when the active window in the workspace is changed [SLOT]
  * \param w the new window which has been focused
  *
@@ -296,6 +419,8 @@ int qmdiWorkspace::count()
  */
 void qmdiWorkspace::workspaceChanged( QWidget* w )
 {
+//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
+
 	if (!mdiHost)
 		return;
 	
@@ -341,9 +466,23 @@ void qmdiWorkspace::workspaceChanged( QWidget* w )
  */
 void qmdiWorkspace::tabBarChanged( int index )
 {
+//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
 	if (!workspace)
 		return;
-	
+
+	// one can never be safe enough
+	if (index >= workspace->windowList().count() ){
+		// no warning on first childs
+		if (! ((index==0) && (workspace->windowList().isEmpty())) ) 
+			qDebug( "%s %s %d - warning: index out of range (%d)", __FILE__,  __FUNCTION__, __LINE__, index );
+		return;		
+	}
+		
+	if (index <0){		
+		qDebug( "%s %s %d - warning: negative index", __FILE__,  __FUNCTION__, __LINE__ );
+		return;
+	}
+		
 	QWidget *newWindow = workspace->windowList()[index];
 	if (!newWindow)
 		return;
@@ -378,115 +517,30 @@ void qmdiWorkspace::windowDeleted( QObject *o )
 }
 
 /**
- * \brief request an mdi client to close
- * \param i the number of the client (tab) to be closed
- *
- * Call this slot to ask the mdi client to close itself.
- * The mdi client may show a dialog to ask for saving. It's not
- * guaranteed that the action will be handled as the mdi client
- * can abort the action.
- *
- * \see qmdiClient::closeClient()
- */
-void qmdiWorkspace::tryCloseClient( int i )
-{
-	qmdiClient *client = dynamic_cast<qmdiClient*>(widget(i));
-
-	// try to close only mdi clients
-	// TODO should be close also non mdi clients...?
-	if (!client)
-		return;
-
-	client->closeClient();
-}
-
-/**
- * \brief request to close all other clients
- * \param i the number of the client to keep open
- *
- * Call this slot to ask all the mdi clients (but the widget found at
- * index \b i in the tab widget, passed as a parameter).
- * Each mdi client may show a dialog to ask for saving. It's not
- * guaranteed that the action will be handled as the mdi client
- * can abort the action. At the end, only the client number i will
- * not be asked to close itself.
- *
- * If some widget on the mdi server does not derive (implements) 
- * the qmdiClient interface, the widget will not be closed.
- *
- * \see qmdiClient::closeClient() tryCloseClient() tryCloseAllCliens
- */
-void qmdiWorkspace::tryCloseAllButClient( int i )
-{
-	int c = count();
-	QWidget *w = widget(i);
-
-	for( int j=0; j<c; j++ )
-	{
-		QWidget *w2 = widget(j);
-		if (w == w2)
-			continue;
-		
-		qmdiClient *client = dynamic_cast<qmdiClient*>(w2);
-		if (!client)
-			continue;
-
-		client->closeClient();
-	}
-}
-
-/**
- * \brief try to close all mdi clients
- *
- * Call this slot when you want to close all the mdi clients.
- */
-void qmdiWorkspace::tryCloseAllCliens()
-{
-	int c = count();
-
-	for( int i=0; i<c; i++ )
-	{
-		qmdiClient *client = dynamic_cast<qmdiClient*>(widget(i));
-		if (!client)
-			continue;
-
-		client->closeClient();
-	}
-}
-
-/**
- * \brief display the menu of a specific mdi client
- * \param i the mouse button that has been pressed
- * \param p the location of the mouse click
- *
- * This function is called when a user presses the left mouse
- * button on the tab bar of the tab widget. The coordinates of the
- * click are passed on the parameter \b p , while the
- * mouse button which has been pressed is passed on the
- * parameter \b p .
- *
- * This slot is connected to rightMousePressed signal of the qmdiTabBar
- * at the constructor of this class.
+ * \brief mouse middle button click callback
+ * \param i number of client pressed
  * 
- * \see qmdiTabBar
+ * This function is connected to the mouse middle click even
+ * on the tabbar. It will try to close the client.
+ * 
+ * \see qmdiServer::tryCloseClient
  */
-void qmdiWorkspace::showClientMenu( int i, QPoint p )
+void qmdiWorkspace::on_middleMouse_pressed( int i, QPoint  )
 {
-	// TODO actions should be configurable. How about using a qmdiActionGroupsList for the menu...?
-	QAction *closeThis	= new QAction(tr("Close this window"), this);
-	QAction *closeOthers	= new QAction(tr("Close other windows"), this);
-	QAction *closeAll	= new QAction(tr("Close all windows"), this);
-	QMenu *menu = new QMenu( tr("Local actions") );
-	menu->addAction( closeThis );
-	menu->addAction( closeOthers );
-	menu->addAction( closeAll );
+	tryCloseClient( i );
+}
 
-	QAction *q = menu->exec( this->mapToGlobal(p) );
-
-	if ( q == closeThis)
-		tryCloseClient( i );
-	else if  (q == closeOthers)
-		tryCloseAllButClient( i );
-	else if (q == closeAll )
-		tryCloseAllCliens();
+/**
+ * \brief mouse right button click callback
+ * \param i number of client pressed
+ * \param p coordinate of the click event
+ * 
+ * This function is connected to the mouse right click even
+ * on the tabbar. This function will display a popup menu.
+ * 
+ * \see qmdiServer::showClientMenu
+ */
+void qmdiWorkspace::on_rightMouse_pressed( int i, QPoint p )
+{
+	showClientMenu( i, p );
 }
