@@ -48,7 +48,7 @@ private:
 public:	
 	QList<IPlugin*>	plugins;
 	
-	qmdiWorkspace	*tabWidget;
+	qmdiTabWidget	*tabWidget;
 	QAction		*actionOpen;
 	QAction		*actionConfig;
 	QAction		*actionClose;

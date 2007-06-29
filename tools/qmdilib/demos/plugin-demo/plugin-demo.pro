@@ -3,7 +3,7 @@
 include ( ../common/common.pri )
 include ( ../common/demos.pri )
 
-CONFIG += debug
+# CONFIG += debug
 DESTDIR  = ./
 TEMPLATE = app
 TARGET   = plugin-demo

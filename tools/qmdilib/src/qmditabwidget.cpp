@@ -233,6 +233,8 @@ void qmdiTabWidget::addClient( qmdiClient *client )
 
 /**
  * \brief event filter for the tabbar
+ * \param obj the object which created the event
+ * \param event the event to be processed
  * 
  * This function is used to catch when the user is clicking a tab.
  * On earlier version, a new class has been used. Since version 0.0.4

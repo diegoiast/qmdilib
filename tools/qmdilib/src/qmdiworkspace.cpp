@@ -67,8 +67,6 @@
 qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	: QWidget( parent )
 {
-//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
-
 	if (host == NULL)
 		mdiHost = dynamic_cast<qmdiHost*>(parent);
 	else
@@ -270,14 +268,13 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
  */
 QWidget* qmdiWorkspace::widget( int i )
 {
-//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
 	if (!workspace)
 		return NULL;
 
 	// one can never be safe enough
 	if (i >= workspace->windowList().count() ){
 		// no warning on first child
-		if (! ((index==0) && (workspace->windowList().isEmpty())) ) 
+		if (! ((i==0) && (workspace->windowList().isEmpty())) )
 			qDebug( "%s %s %d - warning: index out of range (%d)", __FILE__,  __FUNCTION__, __LINE__, i );
 		return NULL;
 	}
@@ -290,9 +287,15 @@ QWidget* qmdiWorkspace::widget( int i )
 	return workspace->windowList().at( i );
 }
 
+/**
+ * \brief returns the index of the current active window
+ * \return a number representing the id of the current active window
+ *
+ * This function is made for compability with QTabWidget.
+ *
+ */
 int qmdiWorkspace::currentIndex()
 {
-//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
 	QWidget *w = workspace->activeWindow();
 	return workspace->windowList().indexOf(w);
 }
@@ -323,7 +326,6 @@ int qmdiWorkspace::count()
  */
 qmdiClient* qmdiWorkspace::getClient( int i )
 {
-//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
 	return dynamic_cast<qmdiClient*>( widget(i) );
 }
 
@@ -337,12 +339,13 @@ qmdiClient* qmdiWorkspace::getClient( int i )
  */
 int qmdiWorkspace::getClientsCount()
 {
-//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
 	return count();
 }
 
 /**
  * \brief event filter for the tabbar
+ * \param obj the object which created the event
+ * \param event the event to be processed
  * 
  * This function is used to catch when the user is clicking a tab.
  * On earlier version, a new class has been used. Since version 0.0.4
@@ -419,8 +422,6 @@ bool qmdiWorkspace::eventFilter(QObject *obj, QEvent *event)
  */
 void qmdiWorkspace::workspaceChanged( QWidget* w )
 {
-//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
-
 	if (!mdiHost)
 		return;
 	
@@ -466,7 +467,6 @@ void qmdiWorkspace::workspaceChanged( QWidget* w )
  */
 void qmdiWorkspace::tabBarChanged( int index )
 {
-//	qDebug( "%s %s %d", __FILE__,  __FUNCTION__, __LINE__ );
 	if (!workspace)
 		return;
 

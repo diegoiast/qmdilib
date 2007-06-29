@@ -1,6 +1,6 @@
 $Id$
 
-0.0.4 - SOMEDAY
+0.0.4 - 29 Jun 2007 - Diego Iastrubni <elcuco@kde.org>
  * Documentation re-created using doxygen 1.4.7
  * code refactoring: qmdiClient - qmdiServer is now a public member
  * new feature: qmdiActionGroup - added support for submenus

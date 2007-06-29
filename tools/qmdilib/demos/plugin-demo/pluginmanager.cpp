@@ -129,8 +129,7 @@ void PluginManager::initGUI()
 	toolbars[tr("main")]->addAction(actionOpen);
 	toolbars[tr("main")]->addAction(actionConfig);
 
-//	tabWidget = new qmdiTabWidget(this);
-	tabWidget = new qmdiWorkspace(this);
+	tabWidget = new qmdiTabWidget(this);
 	updateGUI();
 
 	QToolButton *tabCloseBtn = new QToolButton(tabWidget);
