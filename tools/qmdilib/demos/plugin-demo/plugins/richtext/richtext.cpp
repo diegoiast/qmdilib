@@ -447,7 +447,7 @@ bool RichText::event ( QEvent * event )
 	return false;
 }
 */
-void RichText::timerEvent ( QTimerEvent * event )
+void RichText::timerEvent ( QTimerEvent *event )
 {
-	
+	Q_UNUSED( event );
 }

@@ -12,7 +12,7 @@
 #include <QAction>
 #include <QMessageBox>
 
-#include "richtext_browser.h"
+#include "qexrichtextbrowser.h"
 
 QexRichTextBrowser::QexRichTextBrowser( QString fileName, QWidget *parent )
 	: RichText( parent, fileName )

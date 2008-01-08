@@ -133,4 +133,7 @@ bool HelpPlugin::loadHTML( QString fileName, int x, int y, int z  )
 	mdiServer->addClient( browser );
 	
 	return true;
+	Q_UNUSED( x );
+	Q_UNUSED( y );
+	Q_UNUSED( z );
 }

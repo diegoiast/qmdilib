@@ -64,10 +64,12 @@ void	IPlugin::setData()
 
 void	IPlugin::loadConfig( const QSettings &settings )
 {
+	Q_UNUSED( settings );
 }
 
 void	IPlugin::SaveConfig( const QSettings &settings )
 {
+	Q_UNUSED( settings );
 }
 
 QActionGroup*	IPlugin::newFileActions()
@@ -88,6 +90,7 @@ int 	IPlugin::canOpenFile( const QString fileName )
 {
 	// can't open no file
 	return -1;
+	Q_UNUSED( fileName );
 }
 
 bool	IPlugin::openFile( QString fileName, int x, int y, int z )

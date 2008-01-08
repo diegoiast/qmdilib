@@ -93,7 +93,7 @@ public:
 	QFontComboBox *fontComboBox;
 	QComboBox *comboSize;
 	
-private:	
+private:
 	QVBoxLayout *myLayout;
 	QTextEdit *textEdit;
 	QTextEdit *richText;

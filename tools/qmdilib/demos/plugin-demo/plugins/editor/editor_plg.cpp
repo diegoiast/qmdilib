@@ -158,6 +158,9 @@ bool EditorPlugin::openFile( const QString fileName, int x, int y, int z )
 	// 1) move the cursor as specified in the parameters
 	// 2) return false if the was was not open for some reason
 	return true;
+	Q_UNUSED( x );
+	Q_UNUSED( y );
+	Q_UNUSED( z );
 }
 
 void EditorPlugin::fileNew()

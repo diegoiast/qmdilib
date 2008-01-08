@@ -109,6 +109,7 @@ void PluginManager::addPlugin( IPlugin *newplugin )
 
 void PluginManager::removePlugin( IPlugin *oldplugin )
 {
+	Q_UNUSED( oldplugin );
 }
 
 void PluginManager::initGUI()
