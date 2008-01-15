@@ -34,7 +34,6 @@ public:
 
 public slots:
 	void fileNew();
-	
 private:
 	QAction		*actionNew;
 	Ui::EditorCfgUI	ui;

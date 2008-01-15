@@ -1,5 +1,5 @@
-include ( ../common/common.pri ) \
-include ( ../common/demos.pri ) \
+include ( ../common/common.pri ) 
+include ( ../common/demos.pri ) 
 DESTDIR = ./
 TEMPLATE = app
 TARGET = plugin-demo
@@ -26,4 +26,4 @@ SOURCES += pluginmanager.cpp \
  plugins/help/help_plg.cpp \
  plugins/richtext/richtext_plg.cpp
 RESOURCES += richtext.qrc
-CONFIG += release
+CONFIG += debug_and_release

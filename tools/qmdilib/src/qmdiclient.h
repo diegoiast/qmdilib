@@ -24,12 +24,12 @@ public:
 
 	virtual bool closeClient();
 	virtual bool canCloseClient();
+	virtual QString mdiClientFileName();
 	
+// protected:
 	QString name;
-	QString fileName;
 	qmdiActionGroupList menus;
 	qmdiActionGroupList toolbars;
-// protected:
 	qmdiServer *mdiServer;
 };
 

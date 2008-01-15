@@ -426,12 +426,11 @@ void qmdiTabWidget::tabRemoved ( int index )
 		// the deletion of menus and toolbars is made by qmdiClient itself
 		mdiHost->updateGUI( dynamic_cast<QMainWindow*>(mdiHost) );
 	}
-
-	// this is done to shut up gcc warnings
-	index = 0;
 	
 //	if it's the only widget available, show it's number
 //	BUG is this supposed to be done by Qt?
 	if (count() == 1)
 		tabChanged( 0 );
+
+	Q_UNUSED( index );
 }

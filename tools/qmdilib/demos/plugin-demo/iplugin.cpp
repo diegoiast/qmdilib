@@ -17,8 +17,18 @@
 /**
  * \class IPlugin
  * \brief an abstract interface for describing Plugins
+ *
+ *
+ * Note: when defining a new plugin, it must be declared
+ * in this form, otherwise the application will crahs in
+ * random and funny places:
  * 
- * 
+ * \code
+ * class MyPlugin: public IPlugin
+ * {
+ * 	Q_OBJECT
+ * };
+ * \endcode
  * 
  * 
  */

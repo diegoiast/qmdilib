@@ -44,11 +44,19 @@
 
 PluginManager::PluginManager()
 {
-	newFilePopup	= new QMenu  ( tr("New..."), NULL );
-	actionOpen	= new QAction( tr("Open..."), NULL  );
-	actionClose	= new QAction( tr("Close"), NULL  );
+	newFilePopup	= new QMenu  ( tr("New..."), this );
+	actionOpen	= new QAction( tr("Open..."), this );
+	actionClose	= new QAction( tr("Close"), this );
 	actionQuit	= new QAction( tr("Ex&it"), this );
 	actionConfig	= new QAction( tr("&Config"), this );
+
+	actionClose->setEnabled( false );
+	
+	newFilePopup->setObjectName("PluginManager::newFilePopup");
+	actionOpen->setObjectName("PluginManager::actionOpen");
+	actionClose->setObjectName("PluginManager::actionClose");
+	actionQuit->setObjectName("PluginManager::actionQuit");
+	actionConfig->setObjectName("PluginManager::actionConfig");
 	
 	actionOpen->setIcon( QIcon(":/images/open.png") );
 	actionOpen->setShortcut( tr("Ctrl+O") );
@@ -66,6 +74,24 @@ PluginManager::PluginManager()
 
 PluginManager::~PluginManager()
 {
+}
+
+int PluginManager::tabForFileName( QString fileName )
+{
+	if (fileName.isEmpty())
+		return -1;
+		
+	for( int i=0; i<tabWidget->count(); i++ )
+	{
+		qmdiClient *c = dynamic_cast< qmdiClient *> (tabWidget->widget(i));
+		if (!c)
+			continue;
+			
+		if (c->mdiClientFileName() == fileName)
+			return i;
+	}
+
+	return -1;
 }
 
 void PluginManager::addPlugin( IPlugin *newplugin )
@@ -94,17 +120,16 @@ void PluginManager::addPlugin( IPlugin *newplugin )
 	{
 		if (!p->enabled)
 			continue;
-
+		
 		ag =  p->newFileActions();
 		if (!ag)
 			continue;
-
+		
 		foreach( a, ag->actions() )
 		{
 			newFilePopup->addAction( a );
 		}
 	}
-
 }
 
 void PluginManager::removePlugin( IPlugin *oldplugin )
@@ -139,7 +164,7 @@ void PluginManager::initGUI()
 	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
 	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
 	setCentralWidget( tabWidget );
-	statusBar()->showMessage("Welcome - feel free to configure the GUI to your needs",5000);
+	statusBar()->showMessage( tr("Welcome - feel free to configure the GUI to your needs") ,5000);
 }
 
 void PluginManager::closeClient()
@@ -190,6 +215,10 @@ void PluginManager::on_actionOpen_triggered()
 void PluginManager::on_actionClose_triggered()
 {
 	tabWidget->tryCloseClient( tabWidget->currentIndex() );
+
+	// TODO fix this to be calculated when tabs are open
+	//      or closed, do this via a signal from QTabWidget (qmdiServer?)
+	actionClose->setEnabled( tabWidget->count() != 0 );
 }
 
 void PluginManager::on_actionQuit_triggered()
@@ -221,10 +250,10 @@ bool PluginManager::openFile( QString fileName )
 	{
 		if (!p->enabled)
 			continue;
-
-			// is this plugin better then the selected?
+		
+		// is this plugin better then the selected?
 		j = p->canOpenFile(fileName);
-
+		
 		if (j > k)
 		{
 			bestPlugin = p;
@@ -232,14 +261,19 @@ bool PluginManager::openFile( QString fileName )
 		}
 	}
 
-	// if found, ask it to open the file
-	if (bestPlugin)
+	actionClose->setEnabled( true );
+	k = tabForFileName( fileName );
+	if (k != -1)
+	{	// see if it's already open
+		tabWidget->setCurrentIndex( k );
+		return true;
+	}
+	else if (bestPlugin)
+		// if not open, ask best plugin to open the file
 		return bestPlugin->openFile( fileName );
 	else
-	/*
-		no plugin can handle this file,
-		this should not happen, and usually means a bug
-	*/
+		// no plugin can handle this file,
+		// this should not happen, and usually means a bug
 		return false;
 }
 

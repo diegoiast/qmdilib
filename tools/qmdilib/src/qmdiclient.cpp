@@ -81,16 +81,6 @@ qmdiClient::~qmdiClient()
 
 
 /**
- * \var qmdiClient::fileName
- * \brief The file opened by this MDI client
- * 
- * This property defines the file name which is opened by the MDI client.
- * The file name is not really used inside \b qmdilib , but it's left 
- * for usage outside of library. The \b name property should reflect
- * this property, but it's not really needed.
- */
-
-/**
  * \var qmdiClient::menus
  * \brief The list of menus defined by this MDI client
  * 
@@ -149,7 +139,7 @@ qmdiClient::~qmdiClient()
  * 
  * If you want to delete MDI clients from your MDI server, sometimes
  * just deleting this client is not the smart move. For example if the
- * client contains an user editable document, the user should be asked
+ * client contains some user editable document, the user should be asked
  * to save his changes, and maybe even abort.
  *
  * By default this function does:
@@ -175,7 +165,6 @@ bool qmdiClient::closeClient()
 	if (canCloseClient())
 	{
 		QObject *o = dynamic_cast<QObject*>(this);
-
 		if (o)
 		{
 			QWidget *w = qobject_cast<QWidget*>(o);
@@ -199,11 +188,31 @@ bool qmdiClient::closeClient()
  * if no changes have been made, or the user accepted to save then.
  *
  * You can define your own logic by re-implementing this function
- * in your derived classes.
+ * in your derived classes. In rare cases, closeClient() should be 
+ * re-implemented as well.
  * 
  * \see closeClient()
  */
 bool qmdiClient::canCloseClient()
 {
 	return true;
+}
+
+/**
+ * \brief The file opened by this MDI client
+ * 
+ * This function returns the file name which is opened by the MDI client.
+ * The file name is not really used inside \b qmdilib , but it's left 
+ * for usage outside of library. The \b name property should reflect
+ * this property, but it's not really needed.
+ * 
+ * By default this function returns an empty string, but you should
+ * re-implement in derived functions if you want to properly work 
+ * with mdi clients.
+ * 
+ * \since 0.0.5
+ */
+QString qmdiClient::mdiClientFileName()
+{
+	return QString();
 }

@@ -1,5 +1,9 @@
 $Id$
 
+0.0.5 - SOMEDAY - Diego Iastrubni <diegoiast@gmail.com>
+ * code refactoring: qmdiClient does not maintain a filename, instead it's using
+   a virtual method: qmdiClient::mdiClientFileName()
+
 0.0.4 - 29 Jun 2007 - Diego Iastrubni <elcuco@kde.org>
  * Documentation re-created using doxygen 1.4.7
  * code refactoring: qmdiClient - qmdiServer is now a public member

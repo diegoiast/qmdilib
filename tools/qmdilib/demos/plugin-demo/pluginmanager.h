@@ -17,7 +17,6 @@
 class QPopupMenu;
 class qmdiHost;
 class qmdiTabWidget;
-class qmdiWorkspace;
 class IPlugin;
 class ConfigDialog;
 
@@ -28,6 +27,7 @@ class PluginManager: public QMainWindow, public qmdiHost
 public:
 	PluginManager();
 	virtual ~PluginManager();
+	int tabForFileName( QString fileName );
 
 public slots:
 	void addPlugin( IPlugin *newplugin );
@@ -41,6 +41,7 @@ public slots:
 	
 	bool openFile(QString fileName );
 	bool openFiles(QStringList fileNames );
+
 
 private:
 	void initGUI();
