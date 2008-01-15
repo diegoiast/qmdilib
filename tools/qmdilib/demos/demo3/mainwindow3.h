@@ -4,7 +4,7 @@
 /**
  * \file mainwindow2.h
  * \brief Implementation of the main window class of the 2nd demo
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  * License LGPL
  * \see MainWindow
  */

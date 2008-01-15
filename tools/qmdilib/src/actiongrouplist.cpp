@@ -1,7 +1,7 @@
 /**
  * \file actiongrouplist.cpp
  * \brief Implementation of the action group list class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  * License LGPL
  * \see qmdiActionGroupList
  */

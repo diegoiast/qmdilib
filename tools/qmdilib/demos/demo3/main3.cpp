@@ -1,7 +1,7 @@
 /**
  * \file main2.cpp
  * \brief Entry point of 2nd demo
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  * License GPL
  */
 

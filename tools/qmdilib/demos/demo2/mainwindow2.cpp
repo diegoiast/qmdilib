@@ -1,7 +1,7 @@
 /**
  * \file mainwindow2.cpp
  * \brief Implementation of the main window class of the 2nd demo
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  * License LGPL
  * \see MainWindow
  */
@@ -114,7 +114,7 @@ void MainWindow2::init_gui()
 void MainWindow2::about()
 {
 	QMessageBox::about(NULL, "About Program",
-		"This demo is part of the qmdi library.\nDiego Iasturbni <elcuco@kde.org> - LGPL"
+		"This demo is part of the qmdi library.\nDiego Iasturbni <diegoiast@gmail.com> - LGPL"
 	);
 }
 

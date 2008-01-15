@@ -4,7 +4,7 @@
 /**
  * \file qmdiworkspace.h
  * \brief definition of the qmdi Workspace
- * \author Iastrubni (elcuco@kde.org)
+ * \author Iastrubni (diegoiast@gmail.com)
  * License LGPL
  * \see qmdiServer
  */

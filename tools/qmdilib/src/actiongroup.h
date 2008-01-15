@@ -4,7 +4,7 @@
 /**
  * \file actiongroup.h
  * \brief Definition of the action group class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  * License LGPL
  * \see qmdiActionGroup
  */
