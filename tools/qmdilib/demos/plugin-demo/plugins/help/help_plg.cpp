@@ -31,7 +31,7 @@ HelpPlugin::HelpPlugin()
 	actionAboutQt	= new_action( QIcon(), tr("&About Qt"), this, "", tr("XXXXX"), SLOT(showAboutQt()) );
 	actionShowQtHelp= new_action( QIcon(), tr("&Qt help"), this, "Ctrl+F1", tr("XXXXX"), SLOT(showQtHelp()) );
 
-	name = "Help plugin";
+	setMDIclientName( tr("Help plugin") );
 	author = "Diego Iastrubni <elcuco@kde.org>";
 	iVersion = 0;
 	sVersion = "0.0.1";
@@ -126,8 +126,8 @@ bool HelpPlugin::loadHTML( QString fileName, int x, int y, int z  )
 {
 	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + fileName), true );
 	browser->hide();
-	browser->name = "Qt help";
-	browser->setObjectName( browser->name );
+	browser->setMDIclientName( tr("Qt help"));;
+	browser->setObjectName( browser->getMDIclientName() );
 	connect( browser, SIGNAL(sourceChanged(QUrl)), this, SLOT(on_browser_sourceChanged(QUrl)));
 
 	mdiServer->addClient( browser );

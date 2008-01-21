@@ -27,7 +27,7 @@ public:
 	virtual bool canCloseClient();
 	virtual QString mdiClientFileName();
 	
-	QString getMDIClientName();
+	QString getMDIclientName();
 	void setMDIclientName( QString newName );
 	qmdiServer* getMDIServer();
 	void setMDIServer( qmdiServer* newServer );

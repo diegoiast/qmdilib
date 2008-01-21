@@ -31,8 +31,8 @@
 
 RichTextPlugin::RichTextPlugin()
 {
+	setMDIclientName( tr("Rich text editor plugin") );
 	actionNew	= new_action( QIcon(":images/filenew.png"), tr("&New HTML file"), this, tr("Ctrl+N"), tr("Create a new file"), SLOT(fileNew()) );
-	name		= tr("Rich text editor plugin");
 	author		= tr("Diego Iastrubni <elcuco@kde.org>");
 	iVersion	= 0;
 	sVersion	= "0.0.1";
@@ -135,7 +135,7 @@ bool RichTextPlugin::canCloseClient()
 bool RichTextPlugin::openFile( const QString fileName, int x, int y, int z )
 {
 	QexRichTextBrowser *editor = new QexRichTextBrowser( fileName, dynamic_cast<QMainWindow*>(mdiServer) );
-	editor->name = "RichText";
+//	editor-setMDIclientName( tr("RichText") );
 	editor->hide();
 	mdiServer->addClient( editor );
 
@@ -158,7 +158,7 @@ void RichTextPlugin::fileNew()
 
 	QexRichTextBrowser *editor = new QexRichTextBrowser("", dynamic_cast<QMainWindow*>(mdiServer) );
 	editor->hide();
-	editor->name = tr("No name");
-	editor->setObjectName( editor->name );
+	editor->setMDIclientName( tr("No name") );
+	editor->setObjectName( editor->getMDIclientName() );
 	mdiServer->addClient( editor );
 }

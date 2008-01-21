@@ -116,7 +116,7 @@ void qmdiWorkspace::addClient( qmdiClient *client )
 	if (w == NULL)
 		return;		
 	
-	addTab( w, client->getMDIClientName() );
+	addTab( w, client->getMDIclientName() );
 }
 
 /**

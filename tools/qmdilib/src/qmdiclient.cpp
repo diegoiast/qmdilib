@@ -240,7 +240,7 @@ QString qmdiClient::mdiClientFileName()
  * \see name
  * \see setMDIclientName
  */
-QString qmdiClient::getMDIClientName()
+QString qmdiClient::getMDIclientName()
 {
 	return name;
 }
@@ -252,7 +252,7 @@ QString qmdiClient::getMDIClientName()
  *
  * \since 0.0.5
  * \see name
- * \see getMDIClientName
+ * \see getMDIclientName
  */
 void qmdiClient::setMDIclientName( QString newName )
 {
