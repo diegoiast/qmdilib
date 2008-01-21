@@ -17,6 +17,7 @@
 #include <QTabWidget>
 #include <QToolButton>
 #include <QStatusBar>
+#include <QApplication>
 
 #include "qmdihost.h"
 #include "qmdiserver.h"
@@ -284,6 +285,7 @@ bool PluginManager::openFiles(QStringList fileNames )
 	foreach( s, fileNames )
 	{
 		b = b && openFile( s );
+		QApplication::processEvents();
 	}
 	
 	return b;

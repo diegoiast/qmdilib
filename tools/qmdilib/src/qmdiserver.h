@@ -26,7 +26,7 @@ public:
 	virtual void		addClient( qmdiClient *client ) = 0;
 	virtual void		deleteClient( qmdiClient* );		// see documentation of this method!
 	virtual int		getClientsCount() = 0;
-	virtual qmdiClient	*getClient( int i ) = 0;
+	virtual qmdiClient*	getClient( int i ) = 0;
 	
 	void tryCloseClient( int i );
 	void tryCloseAllButClient( int i );
@@ -34,7 +34,7 @@ public:
 	void showClientMenu( int i, QPoint p );
 	
 // protected:
-	qmdiHost *mdiHost;
+	qmdiHost* mdiHost;
 };
 
 #endif // __QMDI_SERVER_H__

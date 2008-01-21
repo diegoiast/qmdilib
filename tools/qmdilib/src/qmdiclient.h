@@ -15,22 +15,31 @@
 
 class QString;
 class qmdiServer;
+class qmdiHost;
 
 class qmdiClient
 {
 public:
-	qmdiClient();
+	qmdiClient( QString newName="" );
 	virtual ~qmdiClient();
 
 	virtual bool closeClient();
 	virtual bool canCloseClient();
 	virtual QString mdiClientFileName();
 	
-// protected:
-	QString name;
-	qmdiActionGroupList menus;
-	qmdiActionGroupList toolbars;
-	qmdiServer *mdiServer;
+	QString getMDIClientName();
+	void setMDIclientName( QString newName );
+	qmdiServer* getMDIServer();
+	void setMDIServer( qmdiServer* newServer );
+	
+protected:
+	QString			name;
+	qmdiActionGroupList	menus;
+	qmdiActionGroupList	toolbars;
+	qmdiServer*		mdiServer;
+
+friend class qmdiHost;
+
 };
 
 #endif // __QMDI_CLIENT_H__

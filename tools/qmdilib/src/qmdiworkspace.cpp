@@ -116,7 +116,7 @@ void qmdiWorkspace::addClient( qmdiClient *client )
 	if (w == NULL)
 		return;		
 	
-	addTab( w, client->name );
+	addTab( w, client->getMDIClientName() );
 }
 
 /**
@@ -141,7 +141,7 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 
 	qmdiClient *client = dynamic_cast<qmdiClient*>(widget);
 	if (client)
-		client->mdiServer = this;
+		client->setMDIServer( this );
 		
 	widget->setParent( workspace );
 	workspace->addWindow( widget );

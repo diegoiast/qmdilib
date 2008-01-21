@@ -57,9 +57,10 @@
  * \see qmdiTabWidget
  */
 
-qmdiClient::qmdiClient()
+qmdiClient::qmdiClient( QString newName )
 {
 	mdiServer = NULL;
+	name = newName;
 }
 
 qmdiClient::~qmdiClient()
@@ -209,10 +210,86 @@ bool qmdiClient::canCloseClient()
  * By default this function returns an empty string, but you should
  * re-implement in derived functions if you want to properly work 
  * with mdi clients.
+ *
+ * The reason for the prefix of this method, is that on derived implementations
+ * (a QObject implementing this interface) there might be a method with a
+ * similar name.
  * 
  * \since 0.0.5
  */
 QString qmdiClient::mdiClientFileName()
 {
 	return QString();
+}
+
+/**
+ * \brief The name of this MDI client
+ * 
+ * This method returns the name of this MDI client. This should not
+ * be confused with the file name, as it's possible for an mdi client
+ * not to open a file (but only support some GUI items like menus or toolbars).
+ *
+ * This method should be used instead of directly reading \b name as it was in
+ * previous versions.
+ *
+ * The reason for the prefix of this method, is that on derived implementations
+ * (a QObject implementing this interface) there might be a method with a
+ * similar name.
+ * 
+ * \since 0.0.5
+ * \see name
+ * \see setMDIclientName
+ */
+QString qmdiClient::getMDIClientName()
+{
+	return name;
+}
+
+/**
+ * \brief Set the name of this MDI client
+ *
+ * Sets the name of this MDI client. 
+ *
+ * \since 0.0.5
+ * \see name
+ * \see getMDIClientName
+ */
+void qmdiClient::setMDIclientName( QString newName )
+{
+	newName = name;
+}
+
+/**
+ * \brief Get the MDI server of this MDI client
+ *
+ * This method returns the MDI server of this MDI client.
+ * 
+ * This method should ne used instead of directly reading \n mdiServer as it
+ * as on previous versions.
+ *
+ * The reason for the prefix of this method, is that on derived implementations
+ * (a QObject implementing this interface) there might be a method with a
+ * similar name.
+ * 
+ * \since 0.0.5
+ * \see mdiServer
+ * \see getMDIServer
+ */
+qmdiServer* qmdiClient::getMDIServer()
+{
+	return mdiServer;
+}
+
+/**
+ * \brief Set the MDI server of this MDI client
+ *
+ * Sets the MDI server of this MDI client.
+ *
+ * \since 0.0.5
+ * \see mdiServer
+ * \see getMDIServer
+ */
+void qmdiClient::setMDIServer( qmdiServer* newServer )
+{
+	mdiServer = newServer;
 }

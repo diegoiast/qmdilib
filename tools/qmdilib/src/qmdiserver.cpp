@@ -35,7 +35,7 @@
  * is registered. It should not be assigned any value, and should
  * be threated as read only.
  */
- 
+
 /**
  * \brief Empty constructor. Creates the object.
  * 

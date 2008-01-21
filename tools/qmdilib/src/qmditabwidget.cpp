@@ -47,7 +47,7 @@
  * \brief default constructor
  * \param parent the parent widget and the qmdiHost
  * \param host the default MDI host to modify
- * 
+ *
  * This is the default constructor for qmdiTabWidget.
  * If no host is passed, the parent widget will be queried for the qmdiHost
  * interface. This means that the easiest way to work with this
@@ -226,7 +226,7 @@ void qmdiTabWidget::addClient( qmdiClient *client )
 		return;
 	}
 	
-	int i = addTab( w, client->name );
+	int i = addTab( w, client->getMDIClientName() );
 	w->setFocus();
 	setCurrentIndex( i );
 }
@@ -383,7 +383,7 @@ void qmdiTabWidget::tabInserted ( int index )
 	qmdiClient *client = dynamic_cast<qmdiClient*>(w);
 
 	if (client)
-		client->mdiServer = this;
+		client->setMDIServer( this );
 
 	QWorkspace* ws = qobject_cast<QWorkspace*>( w );
 	if (ws)
