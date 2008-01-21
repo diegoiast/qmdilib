@@ -32,11 +32,11 @@ public:
 	qmdiServer* getMDIServer();
 	void setMDIServer( qmdiServer* newServer );
 	
-protected:
-	QString			name;
 	qmdiActionGroupList	menus;
 	qmdiActionGroupList	toolbars;
+protected:
 	qmdiServer*		mdiServer;
+	QString			name;
 
 friend class qmdiHost;
 

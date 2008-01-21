@@ -144,7 +144,7 @@ void MainWindow::showMenus()
 void MainWindow::about()
 {
 	QMessageBox::about(NULL, "About Program",
-		"This demo is part of the qmdi library.\nDiego Iasturbni <diegoiast@gmail.com> - LGPL"
+		"This demo is part of the qmdilib library.\nDiego Iasturbni <diegoiast@gmail.com> - LGPL"
 	);
 }
 
