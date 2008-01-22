@@ -22,15 +22,14 @@
 
 EditorPlugin::EditorPlugin()
 {
+	mdiClientName	= tr("Text editor plugin");
+	author		= tr("Diego Iastrubni <elcuco@kde.org>");
+	iVersion	= 0;
+	sVersion	= "0.0.1";
+	autoEnabled	= true;
+	alwaysEnabled	= false;
+
 	actionNew	= new_action( QIcon(":images/filenew.png"), tr("&New text file"), this, tr("Ctrl+N"), tr("Create a new file"), SLOT(fileNew()) );
-
-	setMDIclientName( tr("Text editor plugin") );
-	author = tr("Diego Iastrubni <elcuco@kde.org>");
-	iVersion = 0;
-	sVersion = "0.0.1";
-	autoEnabled = true;
-	alwaysEnabled = false;
-
 	_newFileActions = new QActionGroup(this);
 	_newFileActions->addAction( actionNew );
 
@@ -172,8 +171,7 @@ void EditorPlugin::fileNew()
 	}
 
 	QexTextEdit *editor = new QexTextEdit2("", true);
-	editor->hide();
-	editor->setMDIclientName( tr("No name") );
-	editor->setObjectName( editor->getMDIclientName() );
+	editor->mdiClientName = tr("No name");
+	editor->setObjectName( editor->mdiClientName );
 	mdiServer->addClient( editor );
 }

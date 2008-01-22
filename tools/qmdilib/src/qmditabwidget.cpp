@@ -226,7 +226,7 @@ void qmdiTabWidget::addClient( qmdiClient *client )
 		return;
 	}
 	
-	int i = addTab( w, client->getMDIclientName() );
+	int i = addTab( w, client->mdiClientName );
 	w->setFocus();
 	setCurrentIndex( i );
 }
@@ -383,7 +383,7 @@ void qmdiTabWidget::tabInserted ( int index )
 	qmdiClient *client = dynamic_cast<qmdiClient*>(w);
 
 	if (client)
-		client->setMDIServer( this );
+		client->mdiServer = this;
 
 	QWorkspace* ws = qobject_cast<QWorkspace*>( w );
 	if (ws)

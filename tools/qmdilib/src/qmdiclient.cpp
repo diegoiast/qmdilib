@@ -60,7 +60,7 @@
 qmdiClient::qmdiClient( QString newName )
 {
 	mdiServer = NULL;
-	name = newName;
+	mdiClientName = newName;
 }
 
 qmdiClient::~qmdiClient()
@@ -223,73 +223,39 @@ QString qmdiClient::mdiClientFileName()
 }
 
 /**
- * \brief The name of this MDI client
- * 
- * This method returns the name of this MDI client. This should not
- * be confused with the file name, as it's possible for an mdi client
- * not to open a file (but only support some GUI items like menus or toolbars).
+ * \brief Callback function to announce that the client has been merged
+ * \param host the host which created this event
  *
- * This method should be used instead of directly reading \b name as it was in
- * previous versions.
+ * This method is fired up by qmdiHost::mergeClient(),
+ * to announce that this client has been merged at the
+ * host passed as a parameter.
  *
- * The reason for the prefix of this method, is that on derived implementations
- * (a QObject implementing this interface) there might be a method with a
- * similar name.
- * 
+ * By default this function does nothing, and it's left
+ * for derived implementation to do whatever they need to do.
+ *
+ * \see qmdiHost::mergeClient()
  * \since 0.0.5
- * \see name
- * \see setMDIclientName
- */
-QString qmdiClient::getMDIclientName()
+*/
+void qmdiClient::on_client_merged( qmdiHost* host )
 {
-	return name;
+	Q_UNUSED( host );
 }
 
 /**
- * \brief Set the name of this MDI client
+ * \brief Callback function to announce that the client has been unmerged
+ * \param host the host which created this event
  *
- * Sets the name of this MDI client. 
+ * This method is fired up by qmdiHost::unmergeClient(),
+ * to announce that this client has been merged at the
+ * host passed as a parameter.
  *
+ * By default this function does nothing, and it's left
+ * for derived implementation to do whatever they need to do.
+ *
+ * \see qmdiHost::unmergeClient()
  * \since 0.0.5
- * \see name
- * \see getMDIclientName
  */
-void qmdiClient::setMDIclientName( QString newName )
+void qmdiClient::on_client_unmerged( qmdiHost* host )
 {
-	newName = name;
-}
-
-/**
- * \brief Get the MDI server of this MDI client
- *
- * This method returns the MDI server of this MDI client.
- * 
- * This method should ne used instead of directly reading \n mdiServer as it
- * as on previous versions.
- *
- * The reason for the prefix of this method, is that on derived implementations
- * (a QObject implementing this interface) there might be a method with a
- * similar name.
- * 
- * \since 0.0.5
- * \see mdiServer
- * \see getMDIServer
- */
-qmdiServer* qmdiClient::getMDIServer()
-{
-	return mdiServer;
-}
-
-/**
- * \brief Set the MDI server of this MDI client
- *
- * Sets the MDI server of this MDI client.
- *
- * \since 0.0.5
- * \see mdiServer
- * \see getMDIServer
- */
-void qmdiClient::setMDIServer( qmdiServer* newServer )
-{
-	mdiServer = newServer;
+	Q_UNUSED( host );
 }

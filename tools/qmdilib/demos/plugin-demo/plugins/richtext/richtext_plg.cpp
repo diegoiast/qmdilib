@@ -31,14 +31,14 @@
 
 RichTextPlugin::RichTextPlugin()
 {
-	setMDIclientName( tr("Rich text editor plugin") );
-	actionNew	= new_action( QIcon(":images/filenew.png"), tr("&New HTML file"), this, tr("Ctrl+N"), tr("Create a new file"), SLOT(fileNew()) );
+	mdiClientName	= tr("Rich text editor plugin");
 	author		= tr("Diego Iastrubni <elcuco@kde.org>");
 	iVersion	= 0;
 	sVersion	= "0.0.1";
 	autoEnabled	= true;
 	alwaysEnabled	= false;
 
+	actionNew	= new_action( QIcon(":images/filenew.png"), tr("&New HTML file"), this, tr("Ctrl+N"), tr("Create a new file"), SLOT(fileNew()) );
 	_newFileActions = new QActionGroup(this);
 	_newFileActions->addAction( actionNew );
 
@@ -157,8 +157,7 @@ void RichTextPlugin::fileNew()
 	}
 
 	QexRichTextBrowser *editor = new QexRichTextBrowser("", dynamic_cast<QMainWindow*>(mdiServer) );
-	editor->hide();
-	editor->setMDIclientName( tr("No name") );
-	editor->setObjectName( editor->getMDIclientName() );
+	editor->mdiClientName = tr("No name");
+	editor->setObjectName( editor->mdiClientName );
 	mdiServer->addClient( editor );
 }

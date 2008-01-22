@@ -27,16 +27,16 @@
 HelpPlugin::HelpPlugin()
 	: IPlugin()
 {
+	mdiClientName	= tr("Help plugin");
+	author		= "Diego Iastrubni <elcuco@kde.org>";
+	iVersion	= 0;
+	sVersion 	= "0.0.1";
+	autoEnabled	= true;
+	alwaysEnabled	= true;
+	
 	actionAbout	= new_action( QIcon(), tr("&About"), this, "", tr("XXXXX"), SLOT(showAboutApp()) );
 	actionAboutQt	= new_action( QIcon(), tr("&About Qt"), this, "", tr("XXXXX"), SLOT(showAboutQt()) );
 	actionShowQtHelp= new_action( QIcon(), tr("&Qt help"), this, "Ctrl+F1", tr("XXXXX"), SLOT(showQtHelp()) );
-
-	setMDIclientName( tr("Help plugin") );
-	author = "Diego Iastrubni <elcuco@kde.org>";
-	iVersion = 0;
-	sVersion = "0.0.1";
-	autoEnabled = true;
-	alwaysEnabled = true;
 
 	menus["&Help"]->addAction( actionShowQtHelp );
 	menus["&Help"]->setMergePoint();
@@ -125,9 +125,8 @@ bool HelpPlugin::openFile( const QString fileName, int x, int y, int z )
 bool HelpPlugin::loadHTML( QString fileName, int x, int y, int z  )
 {
 	QexHelpBrowser *browser = new QexHelpBrowser( QUrl("file:" + fileName), true );
-	browser->hide();
-	browser->setMDIclientName( tr("Qt help"));;
-	browser->setObjectName( browser->getMDIclientName() );
+	browser->mdiClientName = tr("Qt help");
+	browser->setObjectName( browser->mdiClientName );
 	connect( browser, SIGNAL(sourceChanged(QUrl)), this, SLOT(on_browser_sourceChanged(QUrl)));
 
 	mdiServer->addClient( browser );

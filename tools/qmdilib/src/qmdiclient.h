@@ -26,17 +26,14 @@ public:
 	virtual bool closeClient();
 	virtual bool canCloseClient();
 	virtual QString mdiClientFileName();
-	
-	QString getMDIclientName();
-	void setMDIclientName( QString newName );
-	qmdiServer* getMDIServer();
-	void setMDIServer( qmdiServer* newServer );
+
+	virtual void on_client_merged( qmdiHost* host );
+	virtual void on_client_unmerged( qmdiHost* host );
 	
 	qmdiActionGroupList	menus;
 	qmdiActionGroupList	toolbars;
-protected:
 	qmdiServer*		mdiServer;
-	QString			name;
+	QString			mdiClientName;
 
 friend class qmdiHost;
 

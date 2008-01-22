@@ -1,8 +1,9 @@
 $Id$
 
 0.0.5 - SOMEDAY - Diego Iastrubni <diegoiast@gmail.com>
- * code refactoring: qmdiClient does not maintain a filename, instead it's using
-   a virtual method: qmdiClient::mdiClientFileName()
+ * code refactoring: qmdiClient::mdiClientFileName() should be used instead of old "filename"
+ * code refactoring: qmdiClient::name has been renamed to qmdiClient::mdiClientName
+ * new feature: qmdiClient are notified of (un)merged from a host
 
 0.0.4 - 29 Jun 2007 - Diego Iastrubni <elcuco@kde.org>
  * Documentation re-created using doxygen 1.4.7

@@ -163,9 +163,8 @@ bool QexTextEdit::openFile( QString newFile, QTextCodec *c )
 		else
 			s = newFile;
 	}
-	name = s;
+	mdiClientName = s;
 	
-
 	if (newFile.isEmpty())
 		return true;
 

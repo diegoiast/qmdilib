@@ -76,12 +76,18 @@
  *
  * You should usually not use this list directly.
  */
- 
 qmdiHost::qmdiHost()
 {
 	toolBarList = NULL;
 }
 
+/**
+ * \brief Default destructor
+ *
+ * This destructor deletes \b toolBarList
+ * 
+ * \see toolBarList
+ */
 qmdiHost::~qmdiHost()
 {
 	delete toolBarList;
@@ -135,11 +141,15 @@ void qmdiHost::updateGUI( QMainWindow *window )
  * and toolbars of the host will be appended to the end
  * of the menus and toolbars of this MDI host.
  *
+ * This method will announce the client that it's been merged
+ * by calling qmdiClient::on_client_merged()
+ *
  * After a call to this function, you should manually call
- * updateGUI
+ * updateGUI.
  *
  * \see updateGUI
  * \see unmergeClient
+ * \see qmdiClient::on_client_merged()
  */
 void qmdiHost::mergeClient( qmdiClient *client )
 {
@@ -148,6 +158,7 @@ void qmdiHost::mergeClient( qmdiClient *client )
 		
 	menus.mergeGroupList( &client->menus );
 	toolbars.mergeGroupList( &client->toolbars );
+	client->on_client_merged( this );
 }
 
 /**
@@ -159,11 +170,15 @@ void qmdiHost::mergeClient( qmdiClient *client )
  * and toolbars of host will be updated, and all the entries
  * defined in the client will be removed.
  *
+ * This method will announce the client that it's been unmerged
+ * by calling qmdiClient::on_client_unmerged()
+ *
  * After a call to this function, you should manually call
- * updateGUI
+ * updateGUI.
  *
  * \see updateGUI
  * \see mergeClient
+ * \see qmdiClient::on_client_unmerged()
  */
 void qmdiHost::unmergeClient( qmdiClient *client )
 {
@@ -172,4 +187,5 @@ void qmdiHost::unmergeClient( qmdiClient *client )
 		
 	menus.unmergeGroupList( &client->menus );
 	toolbars.unmergeGroupList( &client->toolbars );
+	client->on_client_unmerged( this );
 }
