@@ -11,6 +11,7 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QIcon>
+#include <QSettings>
 
 #include "iplugin.h"
 
