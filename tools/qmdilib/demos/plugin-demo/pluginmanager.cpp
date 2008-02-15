@@ -59,9 +59,9 @@ PluginManager::PluginManager()
 	actionQuit->setObjectName("PluginManager::actionQuit");
 	actionConfig->setObjectName("PluginManager::actionConfig");
 	
-	actionOpen->setIcon( QIcon(":/images/open.png") );
+	actionOpen->setIcon( QIcon(":/trolltech/styles/commonstyle/images/diropen-32.png") );
 	actionOpen->setShortcut( tr("Ctrl+O") );
-	actionClose->setIcon( QIcon(":/images/fileclose.png") );
+	actionClose->setIcon( QIcon(":/trolltech/styles/commonstyle/images/standardbutton-cancel-32.png") );
 	actionClose->setShortcut( tr("Ctrl+w") );
 
 	connect( actionConfig, SIGNAL(triggered()), this, SLOT(on_actionConfigure_triggered()));
