@@ -38,6 +38,8 @@ public slots:
 	void on_actionClose_triggered();
 	void on_actionConfigure_triggered();
 	void on_actionQuit_triggered();
+	void on_actionPrev_triggered();
+	void on_actionNext_triggered();
 	
 	bool openFile(QString fileName );
 	bool openFiles(QStringList fileNames );
@@ -54,6 +56,8 @@ public:
 	QAction		*actionConfig;
 	QAction		*actionClose;
 	QAction		*actionQuit;
+	QAction		*actionNextTab;
+	QAction		*actionPrevTab;
 	QMenu		*newFilePopup;
 	
 	ConfigDialog	*configDialog;

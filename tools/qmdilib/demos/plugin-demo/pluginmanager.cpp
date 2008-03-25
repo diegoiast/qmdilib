@@ -1,7 +1,7 @@
 /**
  * \file pluginmanager.cpp
  * \brief Implementation of the PluginManager class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL
  * \see PluginManager
  */
@@ -29,7 +29,7 @@
 
 /**
  * \brief A class which manages a list of plugins and merges their menus and toolbars to the main application
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *
  * The plugin managed is a mdi host which can load menus and toolbars from 
  * a the selected mdi client mdi server, and also maintain another set of mdi
@@ -50,7 +50,11 @@ PluginManager::PluginManager()
 	actionClose	= new QAction( tr("Close"), this );
 	actionQuit	= new QAction( tr("Ex&it"), this );
 	actionConfig	= new QAction( tr("&Config"), this );
+	actionNextTab	= new QAction( tr("&Next tab"), this );
+	actionPrevTab	= new QAction( tr("&Previous tab"), this );
 
+	actionNextTab->setEnabled( false );
+	actionPrevTab->setEnabled( false );
 	actionClose->setEnabled( false );
 	
 	newFilePopup->setObjectName("PluginManager::newFilePopup");
@@ -58,16 +62,21 @@ PluginManager::PluginManager()
 	actionClose->setObjectName("PluginManager::actionClose");
 	actionQuit->setObjectName("PluginManager::actionQuit");
 	actionConfig->setObjectName("PluginManager::actionConfig");
+	actionNextTab->setObjectName("PluginManager::actionNextTab");
+	actionPrevTab->setObjectName("PluginManager::actionPrevTab");
 	
 	actionOpen->setIcon( QIcon(":/trolltech/styles/commonstyle/images/diropen-32.png") );
-	actionOpen->setShortcut( tr("Ctrl+O") );
+	actionOpen->setShortcut( QKeySequence("Ctrl+O") );
 	actionClose->setIcon( QIcon(":/trolltech/styles/commonstyle/images/standardbutton-cancel-32.png") );
-	actionClose->setShortcut( tr("Ctrl+w") );
+	actionClose->setShortcut( QKeySequence("Ctrl+w") );
+	
+	actionNextTab->setShortcut( QKeySequence("Alt+Right") );
+	actionPrevTab->setShortcut( QKeySequence("Alt+Left") );
 
 	connect( actionConfig, SIGNAL(triggered()), this, SLOT(on_actionConfigure_triggered()));
 	connect( actionOpen, SIGNAL(triggered()), this, SLOT(on_actionOpen_triggered()));
-	connect( actionClose, SIGNAL(triggered()), this, SLOT(on_actionClose_triggered()));
-	connect( actionQuit, SIGNAL(triggered()), this, SLOT(on_actionQuit_triggered()));
+	connect( actionNextTab, SIGNAL(triggered()), this, SLOT(on_actionNext_triggered()));
+	connect( actionPrevTab, SIGNAL(triggered()), this, SLOT(on_actionPrev_triggered()));
 	initGUI();
 	
 	configDialog = NULL;
@@ -150,7 +159,10 @@ void PluginManager::initGUI()
 	menus[tr("&Edit")];
 	menus[tr("&Search")];
 	menus[tr("&Navigation")];
-	menus[tr("&Settings")]->addAction( actionConfig );
+	menus[tr("Se&ttings")]->addAction( actionConfig );
+	menus[tr("Se&ttings")]->addSeparator();
+	menus[tr("Se&ttings")]->addAction( actionNextTab );
+	menus[tr("Se&ttings")]->addAction( actionPrevTab );
 	menus[tr("&Help")];
 	
 	toolbars[tr("main")]->addAction(actionOpen);
@@ -219,7 +231,10 @@ void PluginManager::on_actionClose_triggered()
 
 	// TODO fix this to be calculated when tabs are open
 	//      or closed, do this via a signal from QTabWidget (qmdiServer?)
-	actionClose->setEnabled( tabWidget->count() != 0 );
+	int widgetsCount = tabWidget->count();
+	actionClose->setEnabled( widgetsCount != 0 );
+	actionNextTab->setEnabled( widgetsCount > 1 );
+	actionPrevTab->setEnabled( widgetsCount > 1 );
 }
 
 void PluginManager::on_actionQuit_triggered()
@@ -237,6 +252,27 @@ void PluginManager::on_actionConfigure_triggered()
 
 	configDialog->show();
 	configDialog->setFocus();
+}
+
+void PluginManager::on_actionPrev_triggered()
+{
+	int  i = tabWidget->currentIndex();
+	if (i==0)
+		return;
+		
+	i--;
+	tabWidget->setCurrentIndex( i );
+}
+
+void PluginManager::on_actionNext_triggered()
+{
+	int  i = tabWidget->currentIndex();
+	if (i==tabWidget->count())
+		return;
+		
+	i++;
+	tabWidget->setCurrentIndex( i );
+	
 }
 
 bool PluginManager::openFile( QString fileName )
@@ -287,6 +323,11 @@ bool PluginManager::openFiles(QStringList fileNames )
 		b = b && openFile( s );
 		QApplication::processEvents();
 	}
+
+	int widgetsCount = tabWidget->count();
+	actionClose->setEnabled( widgetsCount != 0 );
+	actionNextTab->setEnabled( widgetsCount > 1 );
+	actionPrevTab->setEnabled( widgetsCount > 1 );
 	
 	return b;
 }
