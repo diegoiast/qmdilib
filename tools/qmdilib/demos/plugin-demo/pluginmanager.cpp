@@ -18,6 +18,7 @@
 #include <QToolButton>
 #include <QStatusBar>
 #include <QApplication>
+#include <QSettings>
 
 #include "qmdihost.h"
 #include "qmdiserver.h"
@@ -84,6 +85,11 @@ PluginManager::PluginManager()
 
 PluginManager::~PluginManager()
 {
+	if (settingsManager)
+	{
+		saveSettings();
+		delete settingsManager;
+	}
 }
 
 int PluginManager::tabForFileName( QString fileName )
@@ -104,13 +110,62 @@ int PluginManager::tabForFileName( QString fileName )
 	return -1;
 }
 
+void	PluginManager::setNativeSettingsManager( const QString &organization, const QString &application )
+{
+	settingsManager = new QSettings( organization, application );
+}
+
+void	PluginManager::setFileSettingsManager( const QString &fileName )
+{
+	settingsManager = new QSettings( fileName, QSettings::IniFormat );
+}
+
+void PluginManager::restoreSettings()
+{
+	if (!settingsManager)
+		return;
+}
+
+void PluginManager::saveSettings()
+{
+	if (!settingsManager)
+		return;
+	
+	// main window state
+	settingsManager->beginGroup("mainwindow");
+	settingsManager->setValue( "size", size() );
+	settingsManager->setValue( "location", pos() );
+	settingsManager->endGroup();
+	
+	// store saved files
+	settingsManager->remove("files");	// remove all old loaded files
+	settingsManager->beginGroup("files");
+	for( int i=0; i<tabWidget->count(); i++ )
+	{
+		qmdiClient *c = dynamic_cast< qmdiClient *> (tabWidget->widget(i));
+		if (!c)
+			continue;
+		settingsManager->setValue( QString("file%1").arg(i), c->mdiClientFileName() );
+	}
+	settingsManager->endGroup();
+	foreach( IPlugin *p, plugins )
+	{
+		p->saveConfig( *settingsManager );
+	}
+	
+	settingsManager->sync();
+}
+
+
 void PluginManager::addPlugin( IPlugin *newplugin )
 {
 	plugins << newplugin;
-
+	if (settingsManager)
+		newplugin->loadConfig( *settingsManager );
+	
 	if (!newplugin)
 		return;
-
+	
 	newplugin->mdiServer = dynamic_cast<qmdiServer*>(tabWidget);
 	if (newplugin->alwaysEnabled)
 		newplugin->autoEnabled = true;

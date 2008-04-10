@@ -78,7 +78,7 @@ void	IPlugin::loadConfig( const QSettings &settings )
 	Q_UNUSED( settings );
 }
 
-void	IPlugin::SaveConfig( const QSettings &settings )
+void	IPlugin::saveConfig( const QSettings &settings )
 {
 	Q_UNUSED( settings );
 }

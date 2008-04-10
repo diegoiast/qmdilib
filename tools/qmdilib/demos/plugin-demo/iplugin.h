@@ -37,7 +37,7 @@ public:
 	virtual void setData();
 
 	virtual void loadConfig( const QSettings &settings );
-	virtual void SaveConfig( const QSettings &settings );
+	virtual void saveConfig( const QSettings &settings );
 
 	virtual QActionGroup* newFileActions();
 	virtual QStringList myExtensions();

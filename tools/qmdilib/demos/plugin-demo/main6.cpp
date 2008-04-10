@@ -18,11 +18,16 @@ int main( int argc, char *argv[] )
 {
 	QApplication app( argc, argv );
 	PluginManager pluginManager;
+	//pluginManager.initSettingsManagerNative( "Diego", "PluginManager" );
+	//pluginManager.initSettingsManagerFromFile( "plugin-demo.ini" );
+	//pluginManager.setNativeSettingsManager( "Diego", "PluginManager" );
+	pluginManager.setFileSettingsManager( "plugin-demo.ini" );
 	
 	pluginManager.addPlugin( new HelpPlugin );
 	pluginManager.addPlugin( new EditorPlugin );
 	pluginManager.addPlugin( new RichTextPlugin );
 	pluginManager.updateGUI();
+	pluginManager.restoreSettings();
 	
 	pluginManager.show();
 	return app.exec();

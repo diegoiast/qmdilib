@@ -66,11 +66,11 @@ QexTextEdit::QexTextEdit( QString file, bool singleToolbar, QWidget *parent):
 	connect( this, SIGNAL(undoAvailable(bool)), actionUndo, SLOT(setEnabled(bool)) );
 	connect( this, SIGNAL(redoAvailable(bool)), actionRedo, SLOT(setEnabled(bool)) );
 	
-        connect( actionUndo, SIGNAL(triggered()), this, SLOT(undo()) );
-        connect( actionRedo, SIGNAL(triggered()), this, SLOT(redo()) );
-        connect( actionCopy, SIGNAL(triggered()), this, SLOT(copy()) );
-        connect( actionCut, SIGNAL(triggered()), this, SLOT(cut()) );
-        connect( actionPaste, SIGNAL(triggered()), this, SLOT(paste()) );
+	connect( actionUndo, SIGNAL(triggered()), this, SLOT(undo()) );
+	connect( actionRedo, SIGNAL(triggered()), this, SLOT(redo()) );
+	connect( actionCopy, SIGNAL(triggered()), this, SLOT(copy()) );
+	connect( actionCut, SIGNAL(triggered()), this, SLOT(cut()) );
+	connect( actionPaste, SIGNAL(triggered()), this, SLOT(paste()) );
 	connect( actionClose, SIGNAL(triggered()), this, SLOT(fileClose()));
 	connect( actiohAskHelp, SIGNAL(triggered()), this, SLOT(helpShowHelp()));
 
@@ -83,6 +83,38 @@ QexTextEdit::QexTextEdit( QString file, bool singleToolbar, QWidget *parent):
 
 	initInterface( singleToolbar );
 	openFile( file );
+}
+
+QexTextEdit::~QexTextEdit()
+{
+	// TODO
+}
+
+bool QexTextEdit::canCloseClient()
+{
+	if (!document()->isModified())
+		return true;
+
+	// ask for saving
+	int ret = QMessageBox::warning(this, tr("Application"),
+		tr("The document has been modified.\n"
+		"Do you want to save your changes?"),
+		QMessageBox::Yes | QMessageBox::Default,
+		QMessageBox::No,
+		QMessageBox::Cancel | QMessageBox::Escape);
+
+	if (ret == QMessageBox::Yes)
+		return fileSave();
+	else if (ret == QMessageBox::Cancel)
+		return false;
+
+	// shut up GCC warnings
+	return true;
+}
+
+QString QexTextEdit::mdiClientFileName()
+{
+	return fileName;
 }
 
 void QexTextEdit::initInterface( bool singleToolbar )
@@ -119,28 +151,6 @@ void QexTextEdit::initInterface( bool singleToolbar )
 	toolbars[ toolbarEdit ]->addSeparator();
 	toolbars[ toolbarEdit ]->addAction( actionUndo );
 	toolbars[ toolbarEdit ]->addAction( actionRedo );
-}
-
-bool QexTextEdit::canCloseClient()
-{
-	if (!document()->isModified())
-		return true;
-
-	// ask for saving
-	int ret = QMessageBox::warning(this, tr("Application"),
-		tr("The document has been modified.\n"
-		"Do you want to save your changes?"),
-		QMessageBox::Yes | QMessageBox::Default,
-		QMessageBox::No,
-		QMessageBox::Cancel | QMessageBox::Escape);
-
-	if (ret == QMessageBox::Yes)
-		return fileSave();
-	else if (ret == QMessageBox::Cancel)
-		return false;
-
-	// shut up GCC warnings
-	return true;
 }
 
 bool QexTextEdit::openFile( QString newFile, QTextCodec *c )

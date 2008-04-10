@@ -26,8 +26,12 @@ class QexTextEdit : public QTextEdit, public qmdiClient
 	Q_OBJECT
 public:
 	QexTextEdit( QString file="", bool singleToolbar = false, QWidget *parent=0 );
-	void initInterface( bool singleToolbar=false );
+	~QexTextEdit();
+	
 	bool canCloseClient();
+	QString mdiClientFileName();
+
+	void initInterface( bool singleToolbar=false );
 	bool openFile( QString newFile, QTextCodec *c=NULL  );
 	bool saveFile( QString newFile, QTextCodec *c=NULL  );
 	

@@ -15,6 +15,8 @@
 #include "qmdihost.h"
 
 class QPopupMenu;
+class QSettings;
+
 class qmdiHost;
 class qmdiTabWidget;
 class IPlugin;
@@ -28,6 +30,11 @@ public:
 	PluginManager();
 	virtual ~PluginManager();
 	int tabForFileName( QString fileName );
+	void setNativeSettingsManager( const QString &organization=QString(), const QString &application=QString() );
+	void setFileSettingsManager( const QString &fileName=QString() );
+	
+	void restoreSettings();
+	void saveSettings();
 
 public slots:
 	void addPlugin( IPlugin *newplugin );
@@ -61,6 +68,7 @@ public:
 	QMenu		*newFilePopup;
 	
 	ConfigDialog	*configDialog;
+	QSettings	*settingsManager;
 };
 
 #endif
