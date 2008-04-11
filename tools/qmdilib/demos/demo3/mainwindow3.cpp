@@ -2,8 +2,8 @@
  * \file MainWindow3.cpp
  * \brief Implementation of the main window class of the 3rd demo
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License LGPL
- * \see MainWindow
+ * License GPL 2 or 3
+ * \see MainWindow3
  */
 
 // $Id$

@@ -2,7 +2,7 @@
  * \file iplugin.cpp
  * \brief Implementation of the IPlugin interface
  * \author Diego Iastrubni (elcuco@kde.org)
- *  License LGPL
+ *  License LGPL 2 or 3
  * \see IPlugin
  */
 
@@ -73,12 +73,12 @@ void	IPlugin::setData()
 {
 }
 
-void	IPlugin::loadConfig( const QSettings &settings )
+void	IPlugin::loadConfig( QSettings &settings )
 {
 	Q_UNUSED( settings );
 }
 
-void	IPlugin::saveConfig( const QSettings &settings )
+void	IPlugin::saveConfig( QSettings &settings )
 {
 	Q_UNUSED( settings );
 }

@@ -1,8 +1,8 @@
 /**
- * \file main2.cpp
+ * \file main3.cpp
  * \brief Entry point of 2nd demo
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License GPL
+ * License GPL 2 or 3
  */
 
 // $Id$ 

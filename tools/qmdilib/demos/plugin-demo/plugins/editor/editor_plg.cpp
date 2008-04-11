@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QMainWindow>
+#include <QSettings>
 
 #include "iplugin.h"
 #include "qmdiserver.h"
@@ -22,7 +23,7 @@
 
 EditorPlugin::EditorPlugin()
 {
-	mdiClientName	= tr("Text editor plugin");
+	name		= tr("Text editor plugin");
 	author		= tr("Diego Iastrubni <elcuco@kde.org>");
 	iVersion	= 0;
 	sVersion	= "0.0.1";
@@ -92,6 +93,32 @@ void EditorPlugin::setData()
 
 	// emit a signal and notify all editors
 	// about the new settings
+}
+
+void EditorPlugin::loadConfig( QSettings &settings )
+{
+	settings.beginGroup("EditorPlugin");
+	makeBackups = settings.value( "makeBackups", makeBackups ).toBool();
+	showLineNumbers = settings.value( "showLineNumbers", showLineNumbers ).toBool();
+	makeCurrentLine = settings.value( "makeCurrentLine", makeCurrentLine ).toBool();
+	wordWrap = settings.value( "wordWrap", wordWrap ).toBool();
+	makeBackups = settings.value( "makeBackups", makeBackups ).toBool();
+	//editorFont = settings.value( "editorFont", editorFont ).;
+	endOfLine = settings.value( "endOfLine", endOfLine ).toInt();
+	settings.endGroup();
+}
+
+void EditorPlugin::saveConfig( QSettings &settings )
+{
+	settings.beginGroup("EditorPlugin");
+	settings.setValue( "makeBackups", makeBackups );
+	settings.setValue( "showLineNumbers", showLineNumbers );
+	settings.setValue( "makeCurrentLine", makeCurrentLine );
+	settings.setValue( "wordWrap", wordWrap );
+	settings.setValue( "makeBackups", makeBackups );
+	settings.setValue( "editorFont", editorFont );
+	settings.setValue( "endOfLine", endOfLine );
+	settings.endGroup();
 }
 
 int EditorPlugin::canOpenFile( const QString fileName )
@@ -166,7 +193,7 @@ void EditorPlugin::fileNew()
 {
 	if (!mdiServer)
 	{
-		qDebug("%s - warning no mdiServer defined", __FUNCTION__ );
+		qDebug("%s - %d : warning no mdiServer defined", __FUNCTION__, __LINE__ );
 		return;
 	}
 

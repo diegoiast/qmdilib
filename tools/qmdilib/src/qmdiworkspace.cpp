@@ -2,7 +2,7 @@
  * \file qmdiworkspace.cpp
  * \brief implementation of the qmdi Workspace
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License LGPL
+ * License LGPL 2 or 3
  * \see qmdiServer
  */
  

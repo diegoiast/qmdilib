@@ -2,7 +2,7 @@
  * \file iplugin.cpp
  * \brief Implementation of the PluginModel class
  * \author Diego Iastrubni (elcuco@kde.org)
- *  License LGPL
+ *  License LGPL 2 or 3
  * \see PluginModel
  */
 
@@ -27,16 +27,13 @@ QModelIndex PluginModel::index( int row, int col, const QModelIndex &parent ) co
 {
 	return createIndex( row, col, 0 );
 	
-	// shut up gcc warnings
-	parent.data();
+	Q_UNUSED( parent );
 }
 
 QModelIndex PluginModel::parent( const QModelIndex &child ) const
 {
 	return QModelIndex();
-
-	// shut up gcc warnings
-	child.data();
+	Q_UNUSED( child );
 }
 
 int PluginModel::rowCount( const QModelIndex &parent ) const
@@ -46,8 +43,7 @@ int PluginModel::rowCount( const QModelIndex &parent ) const
 	else
 		return pluginManager->plugins.count();
 	
-	// shut up gcc warnings
-	parent.row();
+	Q_UNUSED( parent );
 }
 
 int PluginModel::columnCount( const QModelIndex &parent ) const

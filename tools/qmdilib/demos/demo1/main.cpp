@@ -2,7 +2,7 @@
  * \file main.cpp
  * \brief Entry point of first demo
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License GPL
+ * License GPL 2 or 3
  */
  
 // $Id$ 

@@ -5,7 +5,7 @@
  * \file mainwindow.h
  * \brief Definition of the main window class
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License LGPL
+ * License GPL 2 or 3
  * \see MainWindow
  */
  

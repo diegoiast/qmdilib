@@ -27,7 +27,7 @@
 HelpPlugin::HelpPlugin()
 	: IPlugin()
 {
-	mdiClientName	= tr("Help plugin");
+	name		= tr("Help plugin");
 	author		= "Diego Iastrubni <elcuco@kde.org>";
 	iVersion	= 0;
 	sVersion 	= "0.0.1";

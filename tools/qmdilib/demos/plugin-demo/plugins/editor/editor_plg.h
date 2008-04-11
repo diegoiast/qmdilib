@@ -31,6 +31,8 @@ public:
 	bool		openFile( const QString fileName, int x=-1, int y=-1, int z=-1 );
 	void		getData();
 	void		setData();
+	void		loadConfig( QSettings &settings );
+	void		saveConfig( QSettings &settings );
 
 public slots:
 	void fileNew();

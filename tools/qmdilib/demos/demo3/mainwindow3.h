@@ -2,11 +2,11 @@
 #define __MAIN_WIN_H__
 
 /**
- * \file mainwindow2.h
+ * \file mainwindow3.h
  * \brief Implementation of the main window class of the 2nd demo
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License LGPL
- * \see MainWindow
+ * License GPL 2 or 3
+ * \see MainWindow3
  */
  
 // $Id$ 

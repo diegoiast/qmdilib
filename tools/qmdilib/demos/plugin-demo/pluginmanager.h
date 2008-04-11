@@ -5,7 +5,7 @@
  * \file pluginmanager.h
  * \brief Definition of the PluginManager class
  * \author Diego Iastrubni (elcuco@kde.org)
- *  License LGPL
+ *  License LGPL 2 or 3
  * \see PluginManager
  */
 
@@ -32,7 +32,6 @@ public:
 	int tabForFileName( QString fileName );
 	void setNativeSettingsManager( const QString &organization=QString(), const QString &application=QString() );
 	void setFileSettingsManager( const QString &fileName=QString() );
-	
 	void restoreSettings();
 	void saveSettings();
 
@@ -50,7 +49,6 @@ public slots:
 	
 	bool openFile(QString fileName );
 	bool openFiles(QStringList fileNames );
-
 
 private:
 	void initGUI();

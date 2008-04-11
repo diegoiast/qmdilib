@@ -5,7 +5,7 @@
  * \file actiongroup.h
  * \brief Definition of the action group class
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License LGPL
+ * License LGPL 2 or 3
  * \see qmdiActionGroup
  */
  

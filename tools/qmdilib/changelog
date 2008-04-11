@@ -1,9 +1,11 @@
 $Id$
 
 0.0.5 - SOMEDAY - Diego Iastrubni <diegoiast@gmail.com>
+ * code is released now under a dual license: (L)GPL 2 or 3
  * code refactoring: qmdiClient::mdiClientFileName() should be used instead of old "filename"
  * code refactoring: qmdiClient::name has been renamed to qmdiClient::mdiClientName
- * new feature: qmdiClient are notified of (un)merged from a host
+ * new feature: qmdiClients are notified of (un)merged from a host
+ * new feature: qmdiTabWidget will hide the tabbar if the number of tabs is less then 2 
 
 0.0.4 - 29 Jun 2007 - Diego Iastrubni <elcuco@kde.org>
  * Documentation re-created using doxygen 1.4.7

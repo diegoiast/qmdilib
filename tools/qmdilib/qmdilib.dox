@@ -33,7 +33,7 @@ The library can be described using this class diagram:
 <img src="../qmdilib_basic_view.png">
 
 \section license License of qmdilib
-The license of qmdilib is the LGPL 2.1, which can be found here
+The license of qmdilib is the LGPL 2.1 or 3, which can be found here
 http://www.gnu.org/licenses/lgpl.html
 
 You can see the changelog of this library in the \ref changelog

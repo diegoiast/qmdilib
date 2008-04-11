@@ -2,7 +2,7 @@
  * \file mainwindow2.cpp
  * \brief Implementation of the main window class of the 2nd demo
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License LGPL
+ * License GPL 2 or 3
  * \see MainWindow
  */
 

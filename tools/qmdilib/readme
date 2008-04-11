@@ -1,4 +1,4 @@
-This is qmdilib 0.0.4.
+This is qmdilib 0.0.5.
 
 This is a simple mdi library for Qt 4. The goal of this project, 
 is to provide an easy way to modifying menus and toolbars of windows 
@@ -12,7 +12,7 @@ project. It is known to work on Windows and Linux, and there is no reason why it
 should not work on other platforms supported by Qt4. Currently only gcc is tested, 
 but other compilers should be able to compile this library
 
-The license of this library is LGPL
+The license of this library is LGPL version 2 or 3 as you need.
 
 If you have any questions, please the the HTML manual available at the doc/html directory.
 
@@ -23,4 +23,4 @@ I would like to thank these people for helping me with the development of this l
  * Henry badinter <fullmetalcoder@hotmail.fr> for many suggestion in the internal interfaces
    of qmdilib and his ediuk application which uses qmdilib for many of it's internal interfaces
 
-- Diego Iastrubni <elcuco@kde.org>, 11-6-2006
+- Diego Iastrubni <elcuco@kde.org>, 11-4-2008

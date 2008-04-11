@@ -5,7 +5,7 @@
  * \file helpbrowse.h
  * \brief Definition of the extended help browser class
  * \author Diego Iastrubni (elcuco@kde.org)
- * License LGPL
+ * License LGPL 2 or 3
  * \see MainWindow
  */
  

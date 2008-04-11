@@ -5,7 +5,7 @@
  * \file qmdiworkspace.h
  * \brief definition of the qmdi Workspace
  * \author Iastrubni (diegoiast@gmail.com)
- * License LGPL
+ * License LGPL 2 or 3
  * \see qmdiServer
  */
  

@@ -5,7 +5,7 @@
  * \file iplugin.h
  * \brief Declaration of the IPlugin interface
  * \author Diego Iastrubni (elcuco@kde.org)
- *  License LGPL
+ *  License LGPL 2 or 3
  * \see IPlugin
  */
 
@@ -36,8 +36,8 @@ public:
 	virtual void getData();
 	virtual void setData();
 
-	virtual void loadConfig( const QSettings &settings );
-	virtual void saveConfig( const QSettings &settings );
+	virtual void loadConfig( QSettings &settings );
+	virtual void saveConfig( QSettings &settings );
 
 	virtual QActionGroup* newFileActions();
 	virtual QStringList myExtensions();

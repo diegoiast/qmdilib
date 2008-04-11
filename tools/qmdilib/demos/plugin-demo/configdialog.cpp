@@ -2,7 +2,7 @@
  * \file configdialog.cpp
  * \brief Implementation of the configuration dialog class
  * \author Diego Iastrubni (elcuco@kde.org)
- *  License LGPL
+ *  License LGPL 2 or 3
  * \see ConfigDialog
  */
 

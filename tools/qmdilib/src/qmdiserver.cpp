@@ -2,7 +2,7 @@
  * \file qmdiserver.cpp
  * \brief Implementation of the qmdi server class
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License LGPL
+ * License LGPL 2 or 3
  * \see qmdiServer
  */
 

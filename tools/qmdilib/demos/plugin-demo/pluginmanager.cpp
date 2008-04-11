@@ -2,7 +2,7 @@
  * \file pluginmanager.cpp
  * \brief Implementation of the PluginManager class
  * \author Diego Iastrubni (diegoiast@gmail.com)
- *  License LGPL
+ *  License LGPL 2 or 3
  * \see PluginManager
  */
 
@@ -46,7 +46,9 @@
 
 PluginManager::PluginManager()
 {
-	newFilePopup	= new QMenu  ( tr("New..."), this );
+	configDialog = NULL;
+
+	newFilePopup	= new QMenu( tr("New..."), this );
 	actionOpen	= new QAction( tr("Open..."), this );
 	actionClose	= new QAction( tr("Close"), this );
 	actionQuit	= new QAction( tr("Ex&it"), this );
@@ -76,11 +78,10 @@ PluginManager::PluginManager()
 
 	connect( actionConfig, SIGNAL(triggered()), this, SLOT(on_actionConfigure_triggered()));
 	connect( actionOpen, SIGNAL(triggered()), this, SLOT(on_actionOpen_triggered()));
+	connect( actionClose, SIGNAL(triggered()), this, SLOT(on_actionClose_triggered()));
 	connect( actionNextTab, SIGNAL(triggered()), this, SLOT(on_actionNext_triggered()));
 	connect( actionPrevTab, SIGNAL(triggered()), this, SLOT(on_actionPrev_triggered()));
 	initGUI();
-	
-	configDialog = NULL;
 }
 
 PluginManager::~PluginManager()
@@ -124,6 +125,41 @@ void PluginManager::restoreSettings()
 {
 	if (!settingsManager)
 		return;
+	
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	QApplication::processEvents();
+	
+	// restore window location
+	settingsManager->beginGroup("mainwindow");
+	if (settingsManager->contains("location"))
+		move( settingsManager->value("location").toPoint() );
+	if (settingsManager->contains("size"))
+		resize( settingsManager->value("size").toSize() );
+	settingsManager->endGroup();
+	
+	show();
+	statusBar()->showMessage( tr("Loading files...") ,5000);
+	QApplication::restoreOverrideCursor();
+	QApplication::processEvents();
+
+	// restore opened files
+	settingsManager->beginGroup("files");
+	foreach( QString s, settingsManager->childKeys() )
+	{
+		if (!s.startsWith("file"))
+			continue;
+		QString fileName = settingsManager->value(s).toString();
+		statusBar()->showMessage( tr("Loading file %1").arg(fileName) ,5000);
+		QApplication::processEvents();
+		openFile(fileName); 
+	}
+	
+	// re-select the current tab
+	QString s = settingsManager->value( "current").toString();
+	if (!s.isEmpty())
+		openFile( s );
+	statusBar()->clearMessage();
+	settingsManager->endGroup();
 }
 
 void PluginManager::saveSettings()
@@ -135,19 +171,31 @@ void PluginManager::saveSettings()
 	settingsManager->beginGroup("mainwindow");
 	settingsManager->setValue( "size", size() );
 	settingsManager->setValue( "location", pos() );
+	settingsManager->setValue( "maximized", isMaximized() );
+	settingsManager->setValue( "state", saveGeometry() );
 	settingsManager->endGroup();
 	
 	// store saved files
-	settingsManager->remove("files");	// remove all old loaded files
-	settingsManager->beginGroup("files");
-	for( int i=0; i<tabWidget->count(); i++ )
+	settingsManager->remove("files");	// remove all old loaded files	
+	if (tabWidget->count()!=0)
 	{
-		qmdiClient *c = dynamic_cast< qmdiClient *> (tabWidget->widget(i));
-		if (!c)
-			continue;
-		settingsManager->setValue( QString("file%1").arg(i), c->mdiClientFileName() );
+		qmdiClient *c = NULL;
+		settingsManager->beginGroup("files");
+		for ( int i=0; i<tabWidget->count(); i++ )
+		{
+			c = dynamic_cast< qmdiClient *> (tabWidget->widget(i));
+			if (!c)
+				continue;
+			settingsManager->setValue( QString("file%1").arg(i), c->mdiClientFileName() );
+		}
+		
+		c = dynamic_cast< qmdiClient *> (tabWidget->currentWidget());
+		if (c)
+			settingsManager->setValue( "current", c->mdiClientFileName() );
 	}
 	settingsManager->endGroup();
+	
+	// let each ones of the plugins save it's state
 	foreach( IPlugin *p, plugins )
 	{
 		p->saveConfig( *settingsManager );
@@ -155,7 +203,6 @@ void PluginManager::saveSettings()
 	
 	settingsManager->sync();
 }
-
 
 void PluginManager::addPlugin( IPlugin *newplugin )
 {
@@ -232,7 +279,6 @@ void PluginManager::initGUI()
 	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
 	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
 	setCentralWidget( tabWidget );
-	statusBar()->showMessage( tr("Welcome - feel free to configure the GUI to your needs") ,5000);
 }
 
 void PluginManager::closeClient()
@@ -283,7 +329,7 @@ void PluginManager::on_actionOpen_triggered()
 void PluginManager::on_actionClose_triggered()
 {
 	tabWidget->tryCloseClient( tabWidget->currentIndex() );
-
+	
 	// TODO fix this to be calculated when tabs are open
 	//      or closed, do this via a signal from QTabWidget (qmdiServer?)
 	int widgetsCount = tabWidget->count();
@@ -304,7 +350,7 @@ void PluginManager::on_actionConfigure_triggered()
 		configDialog = new ConfigDialog( this );
 		configDialog->setManager( this );
 	}
-
+	
 	configDialog->show();
 	configDialog->setFocus();
 }
@@ -327,7 +373,6 @@ void PluginManager::on_actionNext_triggered()
 		
 	i++;
 	tabWidget->setCurrentIndex( i );
-	
 }
 
 bool PluginManager::openFile( QString fileName )
@@ -352,7 +397,7 @@ bool PluginManager::openFile( QString fileName )
 			k = j; //bestPlugin->canOpenFile(fileName);
 		}
 	}
-
+	
 	actionClose->setEnabled( true );
 	k = tabForFileName( fileName );
 	if (k != -1)
@@ -369,7 +414,7 @@ bool PluginManager::openFile( QString fileName )
 		return false;
 }
 
-bool PluginManager::openFiles(QStringList fileNames )
+bool PluginManager::openFiles( QStringList fileNames )
 {
 	QString s;
 	bool b = true;

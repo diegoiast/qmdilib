@@ -5,7 +5,7 @@
  * \file qmdiclient.h
  * \brief Definition of the qmdi client class
  * \author Diego Iastrubni (diegoiast@gmail.com)
- * License LGPL
+ * License LGPL 2 or 3
  * \see qmdiClient
  */
  

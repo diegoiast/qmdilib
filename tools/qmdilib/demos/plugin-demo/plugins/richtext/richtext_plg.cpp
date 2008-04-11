@@ -31,7 +31,7 @@
 
 RichTextPlugin::RichTextPlugin()
 {
-	mdiClientName	= tr("Rich text editor plugin");
+	name		= tr("Rich text editor plugin");
 	author		= tr("Diego Iastrubni <elcuco@kde.org>");
 	iVersion	= 0;
 	sVersion	= "0.0.1";
