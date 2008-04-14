@@ -31,7 +31,7 @@ int main( int argc, char *argv[] )
 	// start the application
 	pluginManager.restoreSettings();
 	pluginManager.statusBar()->showMessage( QT_TR_NOOP("Welcome - feel free to configure the GUI to your needs") ,5000);
-	pluginManager.show();
+	//pluginManager.show();
 	
 	return app.exec();
 }

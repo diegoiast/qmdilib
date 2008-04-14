@@ -35,14 +35,42 @@
  * The plugin managed is a mdi host which can load menus and toolbars from 
  * a the selected mdi client mdi server, and also maintain another set of mdi
  * clients, which have no real GUI, but their menus and toolbars are merged to the main 
- * host.
- * 
- * This can be used to enable or disable functionality of the application on run 
+ * host. This can be used to enable or disable functionality of the application on run 
  * time - by enabling or disabling IPlugin objetcs.
  * 
- * Each plugin has defines a set 
+ * Each plugin has defines a set of menus and toolbars, and has some methods
+ * for saving and restoring it's state. The menus and toolbars will create
+ * actions visible on the main GUI which will trigger actions on the plugin.
+ * Then the plugin can ask the mdi host to add a new mdi client.
+ *
+ * Plugins have also the concept of "new files", a set of commands which create
+ * new files and an mdi client. Plugins also define the set of files which can be 
+ * opened, and can respond to requests to open a specific file.
+ *
+ * The plugin manager can also open a dialog to configure all the plugins available,
+ * and enable or disable several plugins.
+ *
+ * The plugin manager is a main window, and can save and restore it's state if a settings
+ * manager has been defined. A settings manager (and instace of QSettigns) can be set to work 
+ * on a local file (an ini file).
+ *
+ * A typical usage of this class will be:
+ * 
+ * \code
+ * QApplication app( argc, argv );
+ * PluginManager pluginManager;
+ * pluginManager.setFileSettingsManager( "settings.ini" );
+ * 
+ * // load a few plugins
+ * pluginManager.addPlugin( new ... );
+ * pluginManager.addPlugin( new ... );
+ * pluginManager.updateGUI();
+ * 
+ * // start the application
+ * pluginManager.restoreSettings();
+ * return app.exec();
+ * \endcode
  */
-
 
 PluginManager::PluginManager()
 {
@@ -107,7 +135,6 @@ int PluginManager::tabForFileName( QString fileName )
 		if (c->mdiClientFileName() == fileName)
 			return i;
 	}
-
 	return -1;
 }
 
@@ -155,9 +182,10 @@ void PluginManager::restoreSettings()
 	}
 	
 	// re-select the current tab
-	QString s = settingsManager->value( "current").toString();
-	if (!s.isEmpty())
-		openFile( s );
+	int current = settingsManager->value( "current", -1).toInt();
+	if (current!=-1)
+		tabWidget->setCurrentIndex( current );
+		
 	statusBar()->clearMessage();
 	settingsManager->endGroup();
 }
@@ -179,19 +207,26 @@ void PluginManager::saveSettings()
 	settingsManager->remove("files");	// remove all old loaded files	
 	if (tabWidget->count()!=0)
 	{
+		QString s;
 		qmdiClient *c = NULL;
 		settingsManager->beginGroup("files");
 		for ( int i=0; i<tabWidget->count(); i++ )
 		{
 			c = dynamic_cast< qmdiClient *> (tabWidget->widget(i));
-			if (!c)
-				continue;
-			settingsManager->setValue( QString("file%1").arg(i), c->mdiClientFileName() );
+			if (c)
+				s = c->mdiClientFileName();
+			else
+				s.clear();
+				
+			if (!s.isEmpty())
+				settingsManager->setValue( QString("file%1").arg(i), s );
+			else
+			{
+				settingsManager->setValue( QString("file%1").arg(i), "@" );
+			}
 		}
 		
-		c = dynamic_cast< qmdiClient *> (tabWidget->currentWidget());
-		if (c)
-			settingsManager->setValue( "current", c->mdiClientFileName() );
+		settingsManager->setValue( "current", tabWidget->currentIndex() );
 	}
 	settingsManager->endGroup();
 	
@@ -202,6 +237,14 @@ void PluginManager::saveSettings()
 	}
 	
 	settingsManager->sync();
+}
+
+void PluginManager::updateActionsStatus()
+{
+	int widgetsCount = tabWidget->count();
+	actionClose->setEnabled( widgetsCount != 0 );
+	actionNextTab->setEnabled( widgetsCount > 1 );
+	actionPrevTab->setEnabled( widgetsCount > 1 );
 }
 
 void PluginManager::addPlugin( IPlugin *newplugin )
@@ -246,7 +289,7 @@ void PluginManager::addPlugin( IPlugin *newplugin )
 
 void PluginManager::removePlugin( IPlugin *oldplugin )
 {
-	Q_UNUSED( oldplugin );
+	//Q_UNUSED( oldplugin );
 }
 
 void PluginManager::initGUI()
@@ -332,10 +375,7 @@ void PluginManager::on_actionClose_triggered()
 	
 	// TODO fix this to be calculated when tabs are open
 	//      or closed, do this via a signal from QTabWidget (qmdiServer?)
-	int widgetsCount = tabWidget->count();
-	actionClose->setEnabled( widgetsCount != 0 );
-	actionNextTab->setEnabled( widgetsCount > 1 );
-	actionPrevTab->setEnabled( widgetsCount > 1 );
+	updateActionsStatus();
 }
 
 void PluginManager::on_actionQuit_triggered()
@@ -398,7 +438,7 @@ bool PluginManager::openFile( QString fileName )
 		}
 	}
 	
-	actionClose->setEnabled( true );
+	updateActionsStatus();
 	k = tabForFileName( fileName );
 	if (k != -1)
 	{	// see if it's already open
@@ -424,10 +464,5 @@ bool PluginManager::openFiles( QStringList fileNames )
 		QApplication::processEvents();
 	}
 
-	int widgetsCount = tabWidget->count();
-	actionClose->setEnabled( widgetsCount != 0 );
-	actionNextTab->setEnabled( widgetsCount > 1 );
-	actionPrevTab->setEnabled( widgetsCount > 1 );
-	
 	return b;
 }

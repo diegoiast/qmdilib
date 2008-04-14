@@ -34,6 +34,7 @@ public:
 	void setFileSettingsManager( const QString &fileName=QString() );
 	void restoreSettings();
 	void saveSettings();
+	void updateActionsStatus();
 
 public slots:
 	void addPlugin( IPlugin *newplugin );
