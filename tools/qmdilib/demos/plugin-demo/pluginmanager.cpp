@@ -75,6 +75,7 @@
 PluginManager::PluginManager()
 {
 	configDialog = NULL;
+	settingsManager	= NULL;
 
 	newFilePopup	= new QMenu( tr("New..."), this );
 	actionOpen	= new QAction( tr("Open..."), this );
