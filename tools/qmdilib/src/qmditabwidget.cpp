@@ -143,7 +143,7 @@ void qmdiTabWidget::tabChanged( int i )
  * 
  * This slow it automatically connected by tabInserted(int).
  *
- * Thanks to Nox PasNox <pasnox@gmail.com> for this code.
+ * Thanks to Nox PasNox (pasnox@gmail.com) for this code.
  *
  * \since 0.0.3
  * \see tabInserted( int )
@@ -231,6 +231,7 @@ void qmdiTabWidget::addClient( qmdiClient *client )
 	
 	int i = addTab( w, client->mdiClientName );
 	w->setFocus();
+	setTabToolTip( i, client->mdiClientFileName() );
 	setCurrentIndex( i );
 }
 

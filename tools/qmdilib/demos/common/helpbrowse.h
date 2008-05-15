@@ -24,6 +24,7 @@ class QexHelpBrowser: public QTextBrowser, public qmdiClient
 public:
 	QexHelpBrowser( QUrl home, bool singleToolbar=false, QWidget *parent=0 );
 	void initInterface( bool singleToolbar=false );
+	QString mdiClientFileName();
 
 public slots:
 	void goHome();

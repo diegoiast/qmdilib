@@ -107,6 +107,11 @@ void QexHelpBrowser::initInterface( bool singleToolbar )
 	toolbars[ toolbarNavigate ]->addWidget( documentCombo );
 }
 
+QString QexHelpBrowser::mdiClientFileName()
+{
+	return "help://" + source().path();
+}
+
 void QexHelpBrowser::goHome()
 {
 	setSource( homePage );
