@@ -477,9 +477,9 @@ void	PluginManager::enablePlugin( IPlugin *plugin )
 		return;
 	}
 	
-	if (!oldplugin->enabled)
+	if (!plugin->enabled)
 	{
-		oldplugin->setEnabled( true );
+		plugin->setEnabled( true );
 		mergeClient( plugin );
 	}
 
@@ -518,7 +518,7 @@ void	PluginManager::disablePlugin( IPlugin *plugin )
 	if (!plugins.contains(plugin))
 	{
 		qDebug( "%s - %d: tried to disable a plugin which was not part of the plugin manager (%s)",
-			__FILE__, __LINE__, qPrintable(oldplugin->getName()));
+			__FILE__, __LINE__, qPrintable(plugin->getName()));
 		return;
 	}
 	
