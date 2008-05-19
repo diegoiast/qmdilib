@@ -505,6 +505,9 @@ Need to write an example for this stuff.
  - code is released now under a dual license: (L)GPL 2 or 3
  - code refactoring: qmdiClient::mdiClientFileName() should be used instead of old "filename"
  - code refactoring: qmdiClient::name has been renamed to qmdiClient::mdiClientName
+ - code refactoring: include files for qmdiActionGroup and qmdiActionGroupList changed from
+   actiongroup.h and actiongrouplist.h into qmdiactiongroup.h and qmdiactiongrouplist.h.
+   Transitional includes have been added, to be removed next version, please update your code.
  - new feature: qmdiClient s are notified of (un)merged from a host
  - new feature: qmdiTabWidget will hide the tabbar if the number of tabs is less then 2
 

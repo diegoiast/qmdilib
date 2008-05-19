@@ -74,6 +74,85 @@
  */
 
 /**
+ * \var PluginManager::plugins
+ * \brief the list of plugins
+ * 
+ *  todo
+ */
+
+/**
+ * \var PluginManager::tabWidget
+ * \brief the main widget of the form
+ * 
+ * todo
+ */
+
+/**
+ * \var PluginManager::actionOpen
+ * \brief the open action
+ * 
+ * todo
+ */
+
+/**
+ * \var PluginManager::actionConfig
+ * \brief the configuration action
+ * 
+ * todo
+ */
+
+/**
+ * \var PluginManager::actionClose
+ * \brief the close action
+ * 
+ * todo
+ */
+
+/**
+ * \var PluginManager::actionQuit
+ * \brief the quit action
+ * 
+ * todo
+ */
+
+/**
+ * \var PluginManager::actionNextTab
+ * \brief select the next tab action 
+ * 
+ * todo
+ */
+
+/**
+ * \var PluginManager::actionPrevTab
+ * \brief select the previous tab action 
+ * 
+ * todo
+ */
+
+/**
+ * \var PluginManager::newFilePopup
+ * \brief the "File/New" submenu
+ * 
+ * todo
+ */
+
+/**
+ * \var PluginManager::configDialog
+ * \brief the configuration dialog
+ * 
+ * todo
+ * 
+ */
+
+/**
+ * \var PluginManager::settingsManager
+ * \brief the settings manager 
+ * 
+ * todo
+ */
+
+
+/**
  * \brief default constructor
  * 
  * Builds a plugin manager. Creates the actions needed for the "File" menu, 
@@ -178,8 +257,9 @@ PluginManager::~PluginManager()
  * If the file has been found the method returns a number corresponding to the 
  * tab in which the file has been loaded.
  * 
+ * \see openFile()
  */
-int PluginManager::tabForFileName( QString fileName )
+int	PluginManager::tabForFileName( QString fileName )
 {
 	if (fileName.isEmpty())
 		return -1;
@@ -251,7 +331,7 @@ void	PluginManager::setFileSettingsManager( const QString &fileName )
  * 
  * This method does nothing if no setting manager has been defined.
  * 
- * \Note When restoring the loaded documents, it may be possible to load a 
+ * \note When restoring the loaded documents, it may be possible to load a 
  * document using a different plugin, if a "more suitable plugin" is available
  * when restoring the application state.
  * 
@@ -260,7 +340,7 @@ void	PluginManager::setFileSettingsManager( const QString &fileName )
  * \see saveSettings()
  * \see updateActionsStatus()
  */
-void PluginManager::restoreSettings()
+void	PluginManager::restoreSettings()
 {
 	if (!settingsManager)
 		return;
@@ -322,7 +402,7 @@ void PluginManager::restoreSettings()
  * \see IPlugin::saveConfig()
  * \see QSettings::sync()
  */
-void PluginManager::saveSettings()
+void	PluginManager::saveSettings()
 {
 	if (!settingsManager)
 		return;
@@ -377,7 +457,7 @@ void PluginManager::saveSettings()
  * Calling this method will update the next/prev/close commands of the main 
  * window.
  */
-void PluginManager::updateActionsStatus()
+void	PluginManager::updateActionsStatus()
 {
 	int widgetsCount = tabWidget->count();
 	actionClose->setEnabled( widgetsCount != 0 );
@@ -386,8 +466,95 @@ void PluginManager::updateActionsStatus()
 }
 
 /**
+ * \brief open a file, using the most suitable plugin
+ * \param fileName a file name, or some king of URL
+ * \param x dummy variable - see documentation of IPlugin::openFile()
+ * \param y dummy variable - see documentation of IPlugin::openFile()
+ * \param z dummy variable - see documentation of IPlugin::openFile()
+ * \return false if the loading failed from any reason
+ * 
+ * The plugin manager will try to find a plugin which is most suitable for 
+ * loading this file, by calling IPlugin::canOpenFile(). The plugin which 
+ * returns the highest score will be selected to open this file.
+ * 
+ * \note It's not necesary for \b fileName to be a real file. It is possible to
+ * ask for "loading" some "file", which can have any meaning you define in the 
+ * plugin handling this kind of "document".
+ * 
+ * The parameters \b x \b y \b z will be sent to IPlugin::openFile(). Follow
+ * the documentation for more details.
+ * 
+ * \see IPlugin::canOpenFile()
+ * \see IPlugin::openFile()
+ * \todo how does a developer know why the loading of a file failed?
+ */
+bool	PluginManager::openFile( QString fileName, int x, int y, int z )
+{
+	// who can open this file...?
+	IPlugin *bestPlugin = NULL;
+	IPlugin *p;
+	int j = -1;
+	int k = -1;
+	
+	foreach( p, plugins )
+	{
+		if (!p->enabled)
+			continue;
+		
+		// is this plugin better then the selected?
+		j = p->canOpenFile(fileName);
+		
+		if (j > k)
+		{
+			bestPlugin = p;
+			k = j; //bestPlugin->canOpenFile(fileName);
+		}
+	}
+	
+	updateActionsStatus();
+	k = tabForFileName( fileName );
+	if (k != -1)
+	{	// see if it's already open
+		tabWidget->setCurrentIndex( k );
+		return true;
+	}
+	else if (bestPlugin)
+		// if not open, ask best plugin to open the file
+		return bestPlugin->openFile( fileName, x, y, z );
+	else
+		// no plugin can handle this file,
+		// this should not happen, and usually means a bug
+		return false;
+}
+
+/**
+ * \brief open a list of files
+ * \param fileNames a list of files to load
+ * \return false if any one of the file loadings failed
+ * 
+ * Each one of the files will be opened by the most suitable plugin in the 
+ * system. The files will be opened with the default parameters (x=-1, y=-1, 
+ * z=-1).
+ * 
+ * \see openFile()
+ * \todo how does a developer know why the loading of one of the files failed?
+ */
+bool PluginManager::openFiles( QStringList fileNames )
+{
+	QString s;
+	bool b = true;
+	foreach( s, fileNames )
+	{
+		b = b && openFile( s );
+		QApplication::processEvents();
+	}
+
+	return b;
+}
+
+/**
  * \brief add a new plugin to the plugin manager system
- * \param newPlugin the plugin to add to the system
+ * \param newplugin the plugin to add to the system
  * 
  * This will add the plugin to the system. If a settings manager is available,
  * the new plugin will be asked to load it's configuration from the settings
@@ -403,9 +570,8 @@ void PluginManager::updateActionsStatus()
  * \see IPlugin::setEnabled()
  * \see IPlugin::loadConfig()
  * \see IPlugin::newFileActions);
- * 
  */
-void PluginManager::addPlugin( IPlugin *newplugin )
+void	PluginManager::addPlugin( IPlugin *newplugin )
 {
 	plugins << newplugin;
 	if (settingsManager)
@@ -427,13 +593,15 @@ void PluginManager::addPlugin( IPlugin *newplugin )
 
 /**
  * \brief remove a plugin from the plugin manager
- * \brief oldplugin the plugin to be removed from the system
+ * \param oldplugin the plugin to be removed from the system
  * 
  * When you call this method, any plugin passed to it will be removed from the
  * plugin manager and deleted (freeing it's memory).
  * 
+ * \see addPlugin
+ * \see disablePlugin
  */
-void PluginManager::removePlugin( IPlugin *oldplugin )
+void	PluginManager::removePlugin( IPlugin *oldplugin )
 {
 	if (!oldplugin)
 		return;
@@ -452,7 +620,7 @@ void PluginManager::removePlugin( IPlugin *oldplugin )
 
 /**
  * \brief enable a plugin in the system
- * \brief plugin the plugin to enable
+ * \param plugin the plugin to enable
  * 
  * This method will enable a plugin and merge it's menus and actions to the main 
  * gui, this will add all the add all the "new actions" to the "File/New" sub 
@@ -497,7 +665,7 @@ void	PluginManager::enablePlugin( IPlugin *plugin )
 
 /**
  * \brief disable a plugin in the system
- * \brief plugin the plugin to disable
+ * \param plugin the plugin to disable
  * 
  * This method will diable a plugin and unmerge it's menus and actions to the 
  * main gui, this will add all the add all the "new actions" to the "File/New" 
@@ -563,7 +731,7 @@ void	PluginManager::disablePlugin( IPlugin *plugin )
  * 
  * \todo add methods for adding/removing menus in a more sane way
  */
-void PluginManager::initGUI()
+void	PluginManager::initGUI()
 {
 	menus[tr("&File")]->addMenu( newFilePopup );
 	menus[tr("&File")]->addAction( actionOpen );
@@ -589,10 +757,10 @@ void PluginManager::initGUI()
 	
 	toolbars[tr("main")]->addAction(actionOpen);
 	toolbars[tr("main")]->addAction(actionConfig);
-
+	
 	tabWidget = new qmdiTabWidget(this);
 	updateGUI();
-
+	
 	QToolButton *tabCloseBtn = new QToolButton(tabWidget);
 	tabCloseBtn->setAutoRaise( true );
 	connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(closeClient()));
@@ -601,6 +769,13 @@ void PluginManager::initGUI()
 	setCentralWidget( tabWidget );
 }
 
+/**
+ * \brief close the current in the main tab widget
+ * 
+ * This method will close the current tab in the tab widget. If the current 
+ * widget implements qmdiClient it will call qmdiClient::closeClient() otherwise
+ * it will just delete the widget by calling QObject::deleteLater()
+ */
 void PluginManager::closeClient()
 {
 	qmdiClient *client = dynamic_cast<qmdiClient*>( tabWidget->currentWidget() );
@@ -610,58 +785,21 @@ void PluginManager::closeClient()
 		client->closeClient();
 }
 
-bool PluginManager::openFile( QString fileName )
-{
-	// who can open this file...?
-	IPlugin *bestPlugin = NULL;
-	IPlugin *p;
-	int j = -1;
-	int k = -1;
-	
-	foreach( p, plugins )
-	{
-		if (!p->enabled)
-			continue;
-		
-		// is this plugin better then the selected?
-		j = p->canOpenFile(fileName);
-		
-		if (j > k)
-		{
-			bestPlugin = p;
-			k = j; //bestPlugin->canOpenFile(fileName);
-		}
-	}
-	
-	updateActionsStatus();
-	k = tabForFileName( fileName );
-	if (k != -1)
-	{	// see if it's already open
-		tabWidget->setCurrentIndex( k );
-		return true;
-	}
-	else if (bestPlugin)
-		// if not open, ask best plugin to open the file
-		return bestPlugin->openFile( fileName );
-	else
-		// no plugin can handle this file,
-		// this should not happen, and usually means a bug
-		return false;
-}
-
-bool PluginManager::openFiles( QStringList fileNames )
-{
-	QString s;
-	bool b = true;
-	foreach( s, fileNames )
-	{
-		b = b && openFile( s );
-		QApplication::processEvents();
-	}
-
-	return b;
-}
-
+/**
+ * \brief show the open dialog and load files
+ *
+ * This slot is connected to the \b triggered signal of the actionOpen. It will
+ * display an open files dialog, and let the user choose which files to open and
+ * eventually call openFiles().
+ * 
+ * The extensions for the file dialog are computer from the list of plugins 
+ * available and enabled in the system.
+ * 
+ * This slot is auto connected.
+ * 
+ * \see IPlugin::extensAvailable()
+ * \see openFiles()
+ */
 void PluginManager::on_actionOpen_triggered()
 {
 	static QString workingDir = "";
@@ -676,7 +814,7 @@ void PluginManager::on_actionOpen_triggered()
 			continue;
 		extensAvailable << p->myExtensions();
 	}
-
+	
 	int j = extensAvailable.size();
 	for (int i = 0; i < j; ++i)
 	{
@@ -684,20 +822,32 @@ void PluginManager::on_actionOpen_triggered()
 		if (i<j-1)
 			extens += ";;";
 	}
-
+	
 	QStringList s = QFileDialog::getOpenFileNames(
 		NULL,
 		tr("Choose a file"),
 		workingDir,
 		extens
 	);
-
+	
 	if (s.isEmpty())
 		return;
 	
 	openFiles(s);
 }
 
+/**
+ * \brief close the current widget
+ * 
+ * This slot will close the current document, by calling 
+ * qmdiTabWidget::tryCloseClient()
+ * 
+ * This slot is auto connected. This slot is triggered by the actionClose found
+ * in the \b File menu.
+ * 
+ * \see qmdiTabWidget::tryCloseClient()
+ * \todo fix this to be calculated when tabs are open or closed, do this via a signal from QTabWidget (qmdiServer?)
+ */
 void PluginManager::on_actionClose_triggered()
 {
 	tabWidget->tryCloseClient( tabWidget->currentIndex() );
@@ -707,11 +857,28 @@ void PluginManager::on_actionClose_triggered()
 	updateActionsStatus();
 }
 
+/**
+ * \brief quit the application
+ * 
+ * Quits the application.
+ * 
+ * This slot is auto connected. This slot is triggered by the actionQuit
+ * found in the \b File menu.
+ */
 void PluginManager::on_actionQuit_triggered()
 {
 	this->close();
 }
 
+/**
+ * \brief configure the available plugins
+ * 
+ * This will bring up the plugin configuration dialog from which the user can 
+ * configure the available plugins.
+ * 
+ * This slot is auto connected. This slot is triggered by the actionConfigure 
+ * found in the \b Settings menu.
+ */
 void PluginManager::on_actionConfigure_triggered()
 {
 	if (!configDialog)
@@ -724,6 +891,19 @@ void PluginManager::on_actionConfigure_triggered()
 	configDialog->setFocus();
 }
 
+/**
+ * \brief select the previous (left) tab
+ * 
+ * This slot will select on the tab widget the previous (generally the left) tab
+ * and activate it. This methods does not cycle trough (meaning, when you are on
+ * the first tab, calling it will not move to the last tab)
+ * 
+ * This slot is auto connected. This slot is triggered by the actionPrevTab 
+ * found in the \b Settings menu.
+ * 
+ * \see on_actionNext_triggered()
+ * \see PluginManager::actionPrevTab
+ */
 void PluginManager::on_actionPrev_triggered()
 {
 	int  i = tabWidget->currentIndex();
@@ -734,6 +914,19 @@ void PluginManager::on_actionPrev_triggered()
 	tabWidget->setCurrentIndex( i );
 }
 
+/**
+ * \brief select the next (right) tab
+ * 
+ * This slot will select on the tab widget the next (generally the right) tab
+ * and activate it. This methods does not cycle trough (meaning, when you are on
+ * the laft tab, calling it will not move to the first tab)
+ * 
+ * This slot is auto connected. This slot is triggered by the actionNextTab 
+ * found in the \b Settings menu.
+ * 
+ * \see on_actionPrev_triggered()
+ * \see PluginManager::actionNextTab
+ */
 void PluginManager::on_actionNext_triggered()
 {
 	int  i = tabWidget->currentIndex();

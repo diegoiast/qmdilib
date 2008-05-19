@@ -35,6 +35,8 @@ public:
 	void restoreSettings();
 	void saveSettings();
 	void updateActionsStatus();
+	bool openFile(QString fileName, int x=-1, int y=-1, int z=-1 );
+	bool openFiles(QStringList fileNames );
 
 public slots:
 	void addPlugin( IPlugin *newplugin );
@@ -42,8 +44,6 @@ public slots:
 	void enablePlugin( IPlugin *plugin );
 	void disablePlugin( IPlugin *plugin );
 	
-	bool openFile(QString fileName );
-	bool openFiles(QStringList fileNames );
 	void closeClient();
 	
 	void on_actionOpen_triggered();
