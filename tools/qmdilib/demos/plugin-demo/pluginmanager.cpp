@@ -29,14 +29,19 @@
 #include "configdialog.h"
 
 /**
+ * \class PluginManager
  * \brief A class which manages a list of plugins and merges their menus and toolbars to the main application
  * \author Diego Iastrubni (diegoiast@gmail.com)
  *
- * The plugin managed is a mdi host which can load menus and toolbars from 
- * a the selected mdi client mdi server, and also maintain another set of mdi
- * clients, which have no real GUI, but their menus and toolbars are merged to the main 
- * host. This can be used to enable or disable functionality of the application on run 
- * time - by enabling or disabling IPlugin objetcs.
+ * The plugin manager is a main window, and can save and restore it's state if a
+ * settings manager has been defined. A settings manager (and instace of 
+ * QSettings) can be set to work on a local file (an ini file).
+ * 
+ * The plugin manager is a mdi host (qmdiHost) which can load menus and toolbars 
+ * from a the selected mdi client mdi server, and also maintain another set of 
+ * mdi clients, which have no real GUI, but their menus and toolbars are merged
+ * to the main host. This can be used to enable or disable functionality of the 
+ * application on run time - by enabling or disabling IPlugin objetcs.
  * 
  * Each plugin has defines a set of menus and toolbars, and has some methods
  * for saving and restoring it's state. The menus and toolbars will create
@@ -44,15 +49,11 @@
  * Then the plugin can ask the mdi host to add a new mdi client.
  *
  * Plugins have also the concept of "new files", a set of commands which create
- * new files and an mdi client. Plugins also define the set of files which can be 
- * opened, and can respond to requests to open a specific file.
+ * new files and an mdi client. Plugins also define the set of files which can 
+ * be opened, and can respond to requests to open a specific file.
  *
- * The plugin manager can also open a dialog to configure all the plugins available,
- * and enable or disable several plugins.
- *
- * The plugin manager is a main window, and can save and restore it's state if a settings
- * manager has been defined. A settings manager (and instace of QSettigns) can be set to work 
- * on a local file (an ini file).
+ * The plugin manager can also open a dialog to configure all the plugins 
+ * available, and enable or disable several plugins.
  *
  * A typical usage of this class will be:
  * 
@@ -72,6 +73,21 @@
  * \endcode
  */
 
+/**
+ * \brief default constructor
+ * 
+ * Builds a plugin manager. Creates the actions needed for the "File" menu, 
+ * the "New" sub-menu, action for loading files, moving tabs etc.
+ * 
+ * Sets the settingsManager to NULL, which means by default there is no option
+ * to restore the state of the application.
+ * 
+ * The config dialog is set to NULL - and will be created on demand.
+ * 
+ * Eventually will call initGUI() to create the main GUI.
+ * 
+ * \see initGUI()
+ */
 PluginManager::PluginManager()
 {
 	configDialog = NULL;
@@ -113,6 +129,16 @@ PluginManager::PluginManager()
 	initGUI();
 }
 
+/**
+ * \brief default destructor
+ * 
+ * Deletes the object. If a settings manager is allocated it will be deleted as
+ * well.
+ * 
+ * \see setFileSettingsManager()
+ * \see setNativeSettingsManager()
+ * \see QSettings
+ */
 PluginManager::~PluginManager()
 {
 	if (settingsManager)
@@ -120,8 +146,39 @@ PluginManager::~PluginManager()
 		saveSettings();
 		delete settingsManager;
 	}
+	
+	foreach( IPlugin *p, plugins )
+	{
+		if (plugins.removeAll( p ) == 1)
+			delete p;
+		else
+		{
+			qDebug( "%s - %d: could not remove plugin from the plugin manager (%s)",
+				__FILE__, __LINE__, qPrintable(p->getName()));
+			return;
+		}
+	}
 }
 
+/**
+ * \brief return the index of the tab in which this file is loaded
+ * \param fileName the fully qualified file name to search
+ * \return -1 if not found, otherwise the tab number
+ * 
+ * This function will query all widgets in the QTabWidget of the main window
+ * to see if they implement the qmdiClient interface. If a tab does implement 
+ * it - it will try and see if the mdiClientFileName() is the same as one passed
+ * to this method.
+ * 
+ * The method returns -1 if no mdi client is found that has loaded that file.
+ * This means that if you load that file and insert it into the tab widget 
+ * directly, and not deriving qmdiClient this method will not see you new 
+ * widget.
+ * 
+ * If the file has been found the method returns a number corresponding to the 
+ * tab in which the file has been loaded.
+ * 
+ */
 int PluginManager::tabForFileName( QString fileName )
 {
 	if (fileName.isEmpty())
@@ -139,16 +196,70 @@ int PluginManager::tabForFileName( QString fileName )
 	return -1;
 }
 
+/**
+ * \brief set a native settings manager to this plugin manaher
+ * \param organization the organization your application belongs to
+ * \param application the name of your application
+ * 
+ * This method installs a QSettings in native mode (for windows this means using
+ * the registry, and on *nix this means using an INI file) to be used to save 
+ * and restore settings. Any settings manager available before will be deleted.
+ * 
+ * The \b organization and \b application parameters are passed to the
+ * constructor of QSettings.
+ * 
+ * \see setFileSettingsManager()
+ * \see QSettings
+ */
 void	PluginManager::setNativeSettingsManager( const QString &organization, const QString &application )
 {
+	if (settingsManager)
+		delete settingsManager;
 	settingsManager = new QSettings( organization, application );
 }
 
+/**
+ * \brief set an ini based settings manager to this plugin manaher
+ * \param fileName the file to store the settings
+ * 
+ * This method installs a QSettings in IniFormat mode (which means on all 
+ * platforms an INI file will be used) to be used to save and restore settings. 
+ * Any settings manager available before will be deleted.
+ *
+ * The \b fileName is the file to use as the backend. For more information
+ * read the manual of QSettings.
+ * 
+ * \see setNativeSettingsManager()
+ * \see QSettings
+ */
 void	PluginManager::setFileSettingsManager( const QString &fileName )
 {
+	if (settingsManager)
+		delete settingsManager;
 	settingsManager = new QSettings( fileName, QSettings::IniFormat );
 }
 
+/**
+ * \brief restore the state of the application
+ * 
+ * Calling this method will restore the status of the main window 
+ * (size, position etc), and all loaded documents.
+ * 
+ * Before loading the documents the plugin manager will ask all loaded plugins 
+ * to restore their state by calling IPlugin::loadConfig(). At the end this 
+ * method will also call updateActionsStatus()
+ * 
+ * This method does nothing if no setting manager has been defined.
+ * 
+ * \Note When restoring the loaded documents, it may be possible to load a 
+ * document using a different plugin, if a "more suitable plugin" is available
+ * when restoring the application state.
+ * 
+ * \see IPlugin::loadConfig()
+ * \see IPlugin::canOpenFile()
+ * \see saveSettings()
+ * \see updateActionsStatus()
+ */
 void PluginManager::restoreSettings()
 {
 	if (!settingsManager)
@@ -189,8 +300,28 @@ void PluginManager::restoreSettings()
 		
 	statusBar()->clearMessage();
 	settingsManager->endGroup();
+	
+	updateActionsStatus();
 }
 
+/**
+ * \brief save the state of the application into the settings manager
+ * 
+ * This method stores the state of the window (size, position, etc) to the 
+ * settings manager. It will save the list of qmdiClients available on the tab
+ * widget. If in one of the tabs there is a non mdi client instead of the 
+ * filename, in that the configuration file will save "@".
+ * 
+ * This method will also call each one of the plugins and ask them to store
+ * their configuration. Each plugin will have it's own section, named with the
+ * plugin's name.
+ * 
+ * This method will also sync the settings file.
+ * 
+ * \see restoreSettings()
+ * \see IPlugin::saveConfig()
+ * \see QSettings::sync()
+ */
 void PluginManager::saveSettings()
 {
 	if (!settingsManager)
@@ -205,7 +336,7 @@ void PluginManager::saveSettings()
 	settingsManager->endGroup();
 	
 	// store saved files
-	settingsManager->remove("files");	// remove all old loaded files	
+	settingsManager->remove("files");	// remove all old loaded files
 	if (tabWidget->count()!=0)
 	{
 		QString s;
@@ -240,6 +371,12 @@ void PluginManager::saveSettings()
 	settingsManager->sync();
 }
 
+/**
+ * \brief update some actions
+ * 
+ * Calling this method will update the next/prev/close commands of the main 
+ * window.
+ */
 void PluginManager::updateActionsStatus()
 {
 	int widgetsCount = tabWidget->count();
@@ -248,6 +385,26 @@ void PluginManager::updateActionsStatus()
 	actionPrevTab->setEnabled( widgetsCount > 1 );
 }
 
+/**
+ * \brief add a new plugin to the plugin manager system
+ * \param newPlugin the plugin to add to the system
+ * 
+ * This will add the plugin to the system. If a settings manager is available,
+ * the new plugin will be asked to load it's configuration from the settings
+ * manager.
+ * 
+ * If the auto enabled flag of the new plugin is enabled the plugin will get 
+ * enabled.
+ * 
+ * Plugins added to the plugin manager are deleted by the plugin manager when it
+ * is deleted, or when the plugin is removed from the list of plugins.
+ * 
+ * \see IPlugin::autoEnabled
+ * \see IPlugin::setEnabled()
+ * \see IPlugin::loadConfig()
+ * \see IPlugin::newFileActions);
+ * 
+ */
 void PluginManager::addPlugin( IPlugin *newplugin )
 {
 	plugins << newplugin;
@@ -262,37 +419,150 @@ void PluginManager::addPlugin( IPlugin *newplugin )
 		newplugin->autoEnabled = true;
 
 	if (newplugin->autoEnabled)
-	{
 		newplugin->enabled = true;
-		mergeClient( newplugin );
-	}
 
-	// lets see how much "new" actions we have
-	IPlugin *p;
-	QAction *a;
-	QActionGroup *ag;
-
-	foreach( p, plugins )
-	{
-		if (!p->enabled)
-			continue;
-		
-		ag =  p->newFileActions();
-		if (!ag)
-			continue;
-		
-		foreach( a, ag->actions() )
-		{
-			newFilePopup->addAction( a );
-		}
-	}
+	if (newplugin->enabled)
+		enablePlugin( newplugin );
 }
 
+/**
+ * \brief remove a plugin from the plugin manager
+ * \brief oldplugin the plugin to be removed from the system
+ * 
+ * When you call this method, any plugin passed to it will be removed from the
+ * plugin manager and deleted (freeing it's memory).
+ * 
+ */
 void PluginManager::removePlugin( IPlugin *oldplugin )
 {
-	//Q_UNUSED( oldplugin );
+	if (!oldplugin)
+		return;
+	
+	disablePlugin( oldplugin );
+	
+	if (plugins.removeAll( oldplugin ) == 1)
+		delete oldplugin;
+	else
+	{
+		qDebug( "%s - %d: could not remove plugin from the plugin manager (%s)",
+			__FILE__, __LINE__ , qPrintable(oldplugin->getName()));
+		return;
+	}
 }
 
+/**
+ * \brief enable a plugin in the system
+ * \brief plugin the plugin to enable
+ * 
+ * This method will enable a plugin and merge it's menus and actions to the main 
+ * gui, this will add all the add all the "new actions" to the "File/New" sub 
+ * menu.
+ * 
+ * \note this method works only on plugins available in the system, please use
+ * PluginManager::addPlugin() before enabling a plugin.
+ * 
+ * \see addPlugin()
+ * \see disablePlugin()
+ * \see qmdiHost::mergeClient()
+ */
+void	PluginManager::enablePlugin( IPlugin *plugin )
+{
+	if (!plugin)
+		return;
+	
+	if (!plugins.contains(plugin))
+	{
+		qDebug( "%s - %d: tried to enable a plugin which was not part of the plugin manager (%s)",
+			__FILE__, __LINE__, qPrintable(plugin->getName()));
+		return;
+	}
+	
+	if (!oldplugin->enabled)
+	{
+		oldplugin->setEnabled( true );
+		mergeClient( plugin );
+	}
+
+	QAction *a;
+	QActionGroup *ag;
+	ag =  plugin->newFileActions();
+	if (!ag)
+		return;
+		
+	foreach( a, ag->actions() )
+	{
+		newFilePopup->addAction( a );
+	}
+}
+
+/**
+ * \brief disable a plugin in the system
+ * \brief plugin the plugin to disable
+ * 
+ * This method will diable a plugin and unmerge it's menus and actions to the 
+ * main gui, this will add all the add all the "new actions" to the "File/New" 
+ * sub menu.
+ * 
+ * \note this method works only on plugins available in the system, please use
+ * PluginManager::addPlugin() before enabling a plugin.
+ * 
+ * \see addPlugin()
+ * \see enablePlugin()
+ * \see qmdiHost::unmergeClient()
+ */
+void	PluginManager::disablePlugin( IPlugin *plugin )
+{
+	if (!plugin)
+		return;
+	
+	if (!plugins.contains(plugin))
+	{
+		qDebug( "%s - %d: tried to disable a plugin which was not part of the plugin manager (%s)",
+			__FILE__, __LINE__, qPrintable(oldplugin->getName()));
+		return;
+	}
+	
+	if (plugin->enabled)
+	{
+		plugin->setEnabled( false );
+		unmergeClient( plugin );
+	}
+}
+
+/**
+ * \brief initialize the mdi client GUI
+ * 
+ * This method initializes the main window's/mdi host GUI by creating
+ * pre-defined menus and the standard actions provided by this calss.
+ * 
+ * The actions available are:
+ *  - File / New (a pop up menu, see IPlugin::newFileActions )
+ *  - File / Open (see on_actionOpen_triggered() )
+ *  - File / <- this is the merge point
+ *  - File / Quit
+ *  - Settings / Configure (see on_actionConfigure_triggered() )
+ *  - Settings / Next tab (see on_actionConfigure_triggered() )
+ *  - Settings / Previous tab (see on_actionConfigure_triggered() )
+ * 
+ * The menus generated are (in this order)
+ *  - File
+ *  - Edit
+ *  - Search 
+ *  - View
+ *  - Project
+ *  - Build
+ *  - Debug
+ *  - Navigation
+ *  - Settings
+ *  - Window
+ *  - Help
+ * 
+ * Menus which do not contain any actions will not be displayed on screen. In 
+ * future versions of this library there will be an option to add and remove
+ * menus more freely.
+ * 
+ * \todo add methods for adding/removing menus in a more sane way
+ */
 void PluginManager::initGUI()
 {
 	menus[tr("&File")]->addMenu( newFilePopup );
@@ -304,11 +574,17 @@ void PluginManager::initGUI()
 	menus[tr("&File")]->addAction(actionQuit);
 	menus[tr("&Edit")];
 	menus[tr("&Search")];
+	menus[tr("&View")];
+	menus[tr("&Project")];
+	menus[tr("&Build")];
+	menus[tr("&Debug")];
 	menus[tr("&Navigation")];
+	menus[tr("&Tools")];
 	menus[tr("Se&ttings")]->addAction( actionConfig );
 	menus[tr("Se&ttings")]->addSeparator();
 	menus[tr("Se&ttings")]->addAction( actionNextTab );
 	menus[tr("Se&ttings")]->addAction( actionPrevTab );
+	menus[tr("&Window")];
 	menus[tr("&Help")];
 	
 	toolbars[tr("main")]->addAction(actionOpen);
@@ -332,6 +608,58 @@ void PluginManager::closeClient()
 		tabWidget->currentWidget()->deleteLater();
 	else
 		client->closeClient();
+}
+
+bool PluginManager::openFile( QString fileName )
+{
+	// who can open this file...?
+	IPlugin *bestPlugin = NULL;
+	IPlugin *p;
+	int j = -1;
+	int k = -1;
+	
+	foreach( p, plugins )
+	{
+		if (!p->enabled)
+			continue;
+		
+		// is this plugin better then the selected?
+		j = p->canOpenFile(fileName);
+		
+		if (j > k)
+		{
+			bestPlugin = p;
+			k = j; //bestPlugin->canOpenFile(fileName);
+		}
+	}
+	
+	updateActionsStatus();
+	k = tabForFileName( fileName );
+	if (k != -1)
+	{	// see if it's already open
+		tabWidget->setCurrentIndex( k );
+		return true;
+	}
+	else if (bestPlugin)
+		// if not open, ask best plugin to open the file
+		return bestPlugin->openFile( fileName );
+	else
+		// no plugin can handle this file,
+		// this should not happen, and usually means a bug
+		return false;
+}
+
+bool PluginManager::openFiles( QStringList fileNames )
+{
+	QString s;
+	bool b = true;
+	foreach( s, fileNames )
+	{
+		b = b && openFile( s );
+		QApplication::processEvents();
+	}
+
+	return b;
 }
 
 void PluginManager::on_actionOpen_triggered()
@@ -414,56 +742,4 @@ void PluginManager::on_actionNext_triggered()
 		
 	i++;
 	tabWidget->setCurrentIndex( i );
-}
-
-bool PluginManager::openFile( QString fileName )
-{
-	// who can open this file...?
-	IPlugin *bestPlugin = NULL;
-	IPlugin *p;
-	int j = -1;
-	int k = -1;
-	
-	foreach( p, plugins )
-	{
-		if (!p->enabled)
-			continue;
-		
-		// is this plugin better then the selected?
-		j = p->canOpenFile(fileName);
-		
-		if (j > k)
-		{
-			bestPlugin = p;
-			k = j; //bestPlugin->canOpenFile(fileName);
-		}
-	}
-	
-	updateActionsStatus();
-	k = tabForFileName( fileName );
-	if (k != -1)
-	{	// see if it's already open
-		tabWidget->setCurrentIndex( k );
-		return true;
-	}
-	else if (bestPlugin)
-		// if not open, ask best plugin to open the file
-		return bestPlugin->openFile( fileName );
-	else
-		// no plugin can handle this file,
-		// this should not happen, and usually means a bug
-		return false;
-}
-
-bool PluginManager::openFiles( QStringList fileNames )
-{
-	QString s;
-	bool b = true;
-	foreach( s, fileNames )
-	{
-		b = b && openFile( s );
-		QApplication::processEvents();
-	}
-
-	return b;
 }

@@ -57,12 +57,27 @@
  * \see qmdiTabWidget
  */
 
+/**
+ * \brief default constructor
+ * \param newName the name of the client.
+ * 
+ * Builds a new client assigning it an mdi client name of newName and assigning
+ * a NULL mdiServer.
+ */
 qmdiClient::qmdiClient( QString newName )
 {
 	mdiServer = NULL;
 	mdiClientName = newName;
 }
 
+/**
+ * \brief default destructor
+ * 
+ * Destructs the mdi client, and if an mdiServer is defined it will ask the 
+ * server to delete later this client.
+ * 
+ * It will also set the mdi server to NULL.
+ */
 qmdiClient::~qmdiClient()
 {
 	if (mdiServer != NULL)
@@ -72,10 +87,10 @@ qmdiClient::~qmdiClient()
 }
 
 /**
- * \var qmdiClient::name
+ * \var qmdiClient::mdiClientName
  * \brief The name of the MDI client
  * 
- * This property defines the name of the MDI client. The \b name
+ * This property defines the name of the MDI client. The \b mdiClientName
  * is used by qmdiTabWidget for setting the tab name, when inserting 
  * the widget into the tab widget.
  */

@@ -39,8 +39,13 @@ public:
 public slots:
 	void addPlugin( IPlugin *newplugin );
 	void removePlugin( IPlugin *oldplugin );
+	void enablePlugin( IPlugin *plugin );
+	void disablePlugin( IPlugin *plugin );
 	
+	bool openFile(QString fileName );
+	bool openFiles(QStringList fileNames );
 	void closeClient();
+	
 	void on_actionOpen_triggered();
 	void on_actionClose_triggered();
 	void on_actionConfigure_triggered();
@@ -48,9 +53,6 @@ public slots:
 	void on_actionPrev_triggered();
 	void on_actionNext_triggered();
 	
-	bool openFile(QString fileName );
-	bool openFiles(QStringList fileNames );
-
 private:
 	void initGUI();
 	

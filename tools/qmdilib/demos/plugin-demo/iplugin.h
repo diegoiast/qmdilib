@@ -45,7 +45,7 @@ public:
 	virtual bool openFile( const QString fileName, int x=-1, int y=-1, int z=-1 );
 
 	bool 	isEnabled();
-	void	setEnabled( bool b );
+	void	setEnabled( bool enable );
 	bool	canDisable();
 	QIcon	getIcon();
 	QString	getName();

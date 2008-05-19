@@ -489,7 +489,7 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
  * \return an updated menu
  *
  * Call this function to update a QMenu from these definitions.
- * If \param menu is \b NULL then a new menu will be allocated.
+ * If \b menu is \b NULL then a new menu will be allocated.
  *
  * The returned value is not unallocated by this function, and it's
  * up to the programmer to un-allocate the memory used by the created menu.
@@ -498,7 +498,7 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
  * will be handled by QMenuBar, and you don't have to bother about it.
  * 
  * If the action group contains no items, no menu will be generated, and 
- * NULL will be the returned value. If the passed \param menu is not NULL
+ * NULL will be the returned value. If the passed \b menu is not NULL
  * it will be deallocated.
  *
  * \see updateToolBar

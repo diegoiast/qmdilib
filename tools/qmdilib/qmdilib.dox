@@ -501,13 +501,24 @@ Need to write an example for this stuff.
 \see Back to the main page \ref index
 
 \page changelog ChangeLog
+\section v_0_0_5 0.0.5 - SOMEDAY - Diego Iastrubni <diegoiast@gmail.com>
+ - code is released now under a dual license: (L)GPL 2 or 3
+ - code refactoring: qmdiClient::mdiClientFileName() should be used instead of old "filename"
+ - code refactoring: qmdiClient::name has been renamed to qmdiClient::mdiClientName
+ - new feature: qmdiClient s are notified of (un)merged from a host
+ - new feature: qmdiTabWidget will hide the tabbar if the number of tabs is less then 2
 
-\section v_0_0_4 0.0.4 - SOMEDAY - Diego Iastrubni <elcuco@kde.org>
+\section v_0_0_4 0.0.4 - 29 Jun 2007 - Diego Iastrubni <elcuco@kde.org>
  - Documentation re-created using doxygen 1.4.7
- - qmdiClient: qmdiServer is now a public member
- - qmdiActionGroup: added support for adding QActionGroup
- - qmdiActionGroup: added support for submenus
- - qmdiHost: updateGUI can has been updated, see documentation
+ - code refactoring: qmdiClient - qmdiServer is now a public member
+ - new feature: qmdiActionGroup - added support for submenus
+ - new feature: qmdiActionGroup - added support for adding QActionGroup
+ - new feature: qmdiActionGroup - merge points are computed at run time from list of added groups
+ - code refactoring: qmdiHost - updateGUI can has been updated, see documentation
+ - code refactoring: qmdiServer - a lot of functions moved from qmdiTabWidget
+ - code refactoring: qmdiTabWidget contains less implementation details (see qmdiServer)
+ - code refactoring: qmdiTabBar has been removed, qmdiTabWidget uses an event filter now
+ - new demo: plugin demo is working now, soon to be ported to the main library
 
 \section v_0_0_3 0.0.3  - 7 Oct 2006 - Diego Iastrubni <elcuco@kde.org>
  - new feature: QWorkspace children are also checked for qmdiClient interface,
