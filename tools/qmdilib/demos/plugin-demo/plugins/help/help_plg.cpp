@@ -107,7 +107,7 @@ int HelpPlugin::canOpenFile( const QString fileName )
 		   QLatin1String("/html/") + className + QLatin1String(".html") ))
 		||
 		QFile::exists( className ) )
-		return 1;
+		return 10;
 	else	
 		return -1;
 }
