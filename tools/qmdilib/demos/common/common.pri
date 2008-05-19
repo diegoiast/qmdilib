@@ -10,8 +10,8 @@ OBJECTS_DIR	+= ../../tmp/
 RESOURCES += ../common/common.qrc
 
 # qmdilib
-HEADERS += ../../src/actiongroup.h \
-           ../../src/actiongrouplist.h \
+HEADERS += ../../src/qmdiactiongroup.h \
+           ../../src/qmdiactiongrouplist.h \
            ../../src/qmdiclient.h \
            ../../src/qmdihost.h \
            ../../src/qmdiserver.h \
@@ -19,8 +19,8 @@ HEADERS += ../../src/actiongroup.h \
            ../../src/qmdiworkspace.h \
            ../../src/qmdimainwindow.h
 
-SOURCES += ../../src/actiongroup.cpp \
-           ../../src/actiongrouplist.cpp \
+SOURCES += ../../src/qmdiactiongroup.cpp \
+           ../../src/qmdiactiongrouplist.cpp \
            ../../src/qmdiclient.cpp \
            ../../src/qmdihost.cpp \
            ../../src/qmdiserver.cpp \

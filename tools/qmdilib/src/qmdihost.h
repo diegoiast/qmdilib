@@ -1,7 +1,6 @@
 #ifndef __QMDI_HOST_H__
 #define __QMDI_HOST_H__
 
-#include "actiongrouplist.h"
 
 /**
  * \file qmdihost.h
@@ -12,6 +11,13 @@
  */
  
 // $Id$ 
+
+// the reason for including this file, and not declare the classes
+// is for the developer using this library - one single include
+#include "qmdiactiongroup.h"
+
+#include "qmdiactiongrouplist.h"
+
 
 class QMainWindow;
 class qmdiClient;

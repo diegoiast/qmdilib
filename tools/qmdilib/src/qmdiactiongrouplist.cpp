@@ -1,5 +1,5 @@
 /**
- * \file actiongrouplist.cpp
+ * \file qmdiactiongrouplist.cpp
  * \brief Implementation of the action group list class
  * \author Diego Iastrubni (diegoiast@gmail.com)
  * License LGPL 2 or 3
@@ -14,7 +14,8 @@
 #include <QToolBar>
 #include <QMainWindow>
 
-#include "actiongrouplist.h"
+#include "qmdiactiongroup.h"
+#include "qmdiactiongrouplist.h"
 
 /**
  * \class qmdiActionGroupList

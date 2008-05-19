@@ -1,40 +1,8 @@
-#ifndef __ACTION_GROUP_LIST_H__
-#define __ACTION_GROUP_LIST_H__
+#ifndef __ACTIONGROUPLIST_H__
+#define __ACTIONGROUPLIST_H__
 
-/**
- * \file actiongrouplist.h
- * \brief Definition of the action group list class
- * \author Diego Iastrubni (diegoiast@gmail.com)
- * License LGPL 2 or 3
- * \see qmdiActionGroupList
- */
- 
-// $Id$
+#warning "You are including an obsolete file, please include 'qmdiactiongrouplist.h'.  please read the release notes of qmdilib 0.0.5"
 
-#include <QList>
-#include "actiongroup.h"
+#include "qmdiactiongrouplist.h"
 
-class QObject;
-class QAction;
-class QString;
-class QMenuBar;
-class QMainWindow;
-
-class qmdiActionGroupList
-{
-public:
-	qmdiActionGroupList();
-	
-	qmdiActionGroup* operator[]( const QString name );
-	qmdiActionGroup* getActionGroup( const QString name );
-	void mergeGroupList( qmdiActionGroupList *group );
-	void unmergeGroupList( qmdiActionGroupList *group );
-	
-	QMenuBar*		updateMenu( QMenuBar *menubar );
-	QList<QToolBar*>*	updateToolBar( QList<QToolBar*> *toolbars, QMainWindow *window );
-	
-private:
-	QList<qmdiActionGroup*> actionGroups;
-};
-
-#endif //__ACTION_GROUP__
+#endif //  __ACTIONGROUPLIST_H__
