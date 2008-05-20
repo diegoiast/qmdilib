@@ -32,23 +32,23 @@
  * \brief a pointer to the MDI host
  * 
  * This is a pointer to the MDI host in which the server
- * is registered. It should not be assigned any value, and should
- * be threated as read only.
+ * is registered. 
+ * 
+ * \copydoc read_only_property
+ * \todo make it protected maybe?
  */
 
 /**
- * \brief Empty constructor. Creates the object.
+ * \brief default constructor, creates the object
  * 
- * Constructs the mdi Server. By default does nothing
- * 
- * 
+ * Constructs the mdi Server. By default does nothing.
  */
 qmdiServer::qmdiServer()
 {
 }
 
 /**
- * \brief Empty destructor. Destroys the object.
+ * \brief default destructor, destroys the object
  * 
  * Since this class needs to be dynamic_casted by the derived classes,
  * to assign the correct qmdiServer, this class needs to have a virtual table.
@@ -94,8 +94,9 @@ qmdiServer::~qmdiServer()
  * 
  * Why not using QTabWidget::tabRemoved ( int index ) ?
  *  - Because that function is been called after the qmdiClient 
- *    has been deleted. 
- *    
+ *    has been deleted.
+ *  - Because not all mdi servers are implemented on top of QTabWidget
+ * 
  * Why not using the signal QObject::destroyed( QObject * obj = 0 ) ?
  *  - Because that signal is non blocking, and you will get yourself in
  *    race conditions: this function might be called after the object itself
@@ -108,16 +109,16 @@ qmdiServer::~qmdiServer()
  *  - Since I found that it gives you warnings, about calling a pure virtual
  *    function, lame excuse, which I would like to get rid of :)
  *  - For some reason when an mdi client wants to contact it's qmdiServer, 
- *    it reaches this NULL function insted of the overriden one (like qmdiTabWidget::deleteClient)
- *    this makes the application die, since it's calling a pure virtual function.
- *    Definetly a bug, but this a nice workaround.
+ *    it reaches this NULL function insted of the overriden one (like 
+ *    qmdiTabWidget::deleteClient) this makes the application die, since it's 
+ *    calling a pure virtual function. Definetly a bug, but this a nice 
+ *    workaround.
  *  - On some rare implementations the MDI server implemented, would like
  *    to ignore those events. I prefer that the dummy functions be implemented
  *    by the library, and not the end clients.
  * 
- * Even tough this is not a  pure virtual, you must implement this on
+ * \note Even tough this is not a  pure virtual, you must implement this on
  * derived classes.
- * 
  */
 void qmdiServer::deleteClient( qmdiClient* )
 {
@@ -201,7 +202,9 @@ void qmdiServer::tryCloseClient( int i )
  * down to this abstract interface at version 0.0.4.
  * 
  * \since 0.0.4
- * \see qmdiClient::closeClient() tryCloseClient() tryCloseAllCliens
+ * \see qmdiClient::closeClient() 
+ * \see tryCloseClient() 
+ * \see tryCloseAllCliens
  */
 void qmdiServer::tryCloseAllButClient( int i )
 {

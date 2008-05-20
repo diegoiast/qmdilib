@@ -1,5 +1,5 @@
-#ifndef __ACTION_GROUP_LIST_H__
-#define __ACTION_GROUP_LIST_H__
+#ifndef __QMDI_ACTION_GROUP_LIST_H__
+#define __QMDI_ACTION_GROUP_LIST_H__
 
 /**
  * \file qmdiactiongrouplist.h
@@ -29,7 +29,7 @@ public:
 	qmdiActionGroupList();
 	
 	qmdiActionGroup* operator[]( const QString name );
-	qmdiActionGroup* getActionGroup( const QString name );
+	qmdiActionGroup* getActionGroup( const QString &name );
 	void mergeGroupList( qmdiActionGroupList *group );
 	void unmergeGroupList( qmdiActionGroupList *group );
 	
@@ -40,4 +40,4 @@ private:
 	QList<qmdiActionGroup*> actionGroups;
 };
 
-#endif //__ACTION_GROUP__
+#endif //__QMDI_ACTION_GROUP_LIST_H__

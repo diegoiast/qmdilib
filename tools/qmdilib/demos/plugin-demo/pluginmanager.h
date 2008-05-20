@@ -21,11 +21,14 @@ class qmdiHost;
 class qmdiTabWidget;
 class IPlugin;
 class ConfigDialog;
+class PluginModel;
 
 class PluginManager: public QMainWindow, public qmdiHost
 {
 	Q_OBJECT
-	
+	friend class PluginModel;
+	friend class ConfigDialog;
+
 public:
 	PluginManager();
 	virtual ~PluginManager();
@@ -43,7 +46,6 @@ public slots:
 	void removePlugin( IPlugin *oldplugin );
 	void enablePlugin( IPlugin *plugin );
 	void disablePlugin( IPlugin *plugin );
-	
 	void closeClient();
 	
 	void on_actionOpen_triggered();
@@ -54,22 +56,20 @@ public slots:
 	void on_actionNext_triggered();
 	
 private:
-	void initGUI();
-	
-public:	
+	void initGUI();	
 	QList<IPlugin*>	plugins;
-	
 	qmdiTabWidget	*tabWidget;
-	QAction		*actionOpen;
-	QAction		*actionConfig;
-	QAction		*actionClose;
-	QAction		*actionQuit;
-	QAction		*actionNextTab;
-	QAction		*actionPrevTab;
-	QMenu		*newFilePopup;
-	
 	ConfigDialog	*configDialog;
 	QSettings	*settingsManager;
+	
+public:	
+	QMenu		*newFilePopup;
+	QAction		*actionOpen;
+	QAction		*actionClose;
+	QAction		*actionQuit;
+	QAction		*actionConfig;
+	QAction		*actionNextTab;
+	QAction		*actionPrevTab;
 };
 
 #endif

@@ -77,78 +77,100 @@
  * \var PluginManager::plugins
  * \brief the list of plugins
  * 
- *  todo
+ * This is the list of plugins available on the system. It contains all plugins,
+ * even ones disabled. When a plugin is added, it's appended to this list.
  */
 
 /**
  * \var PluginManager::tabWidget
  * \brief the main widget of the form
  * 
- * todo
- */
-
-/**
- * \var PluginManager::actionOpen
- * \brief the open action
+ * The plugin manager is built arround a QMainWindow, which it's main widget is
+ * this tab widget. This serves also as the qmdiServer.
  * 
- * todo
- */
-
-/**
- * \var PluginManager::actionConfig
- * \brief the configuration action
- * 
- * todo
- */
-
-/**
- * \var PluginManager::actionClose
- * \brief the close action
- * 
- * todo
- */
-
-/**
- * \var PluginManager::actionQuit
- * \brief the quit action
- * 
- * todo
- */
-
-/**
- * \var PluginManager::actionNextTab
- * \brief select the next tab action 
- * 
- * todo
- */
-
-/**
- * \var PluginManager::actionPrevTab
- * \brief select the previous tab action 
- * 
- * todo
+ * \see qmdiServer
  */
 
 /**
  * \var PluginManager::newFilePopup
  * \brief the "File/New" submenu
  * 
- * todo
+ * This is the popup menu seen by the user when on the \b File menu.
+ * 
+ * \see newFileActions()
+ */
+
+
+/**
+ * \var PluginManager::actionOpen
+ * \brief the open action
+ * 
+ * This action is the one added to the \b File menu, as the \b Open... command.
+ * 
+ * \see on_actionOpen_triggered()
+ */
+
+/**
+ * \var PluginManager::actionClose
+ * \brief the close action
+ * 
+ * This action is the one added to the \b File menu, as the \b Close command.
+ * 
+ * \see on_actionClose_triggered()
+ */
+
+/**
+ * \var PluginManager::actionQuit
+ * \brief the quit action
+ * 
+ * This action is the one added to the \b File meun, as the quit command.
+ * 
+ * \see on_actionQuit_triggered()
+ */
+
+/**
+ * \var PluginManager::actionConfig
+ * \brief the configuration action
+ * 
+ * This action is the one added to the \b Settings menu, as the \b Configure 
+ * command.
+ * 
+ * \see on_actionConfigure_triggered()
+ */
+
+
+/**
+ * \var PluginManager::actionNextTab
+ * \brief select the next tab action 
+ * 
+ * This action is the one added to the \b Settings menu, as the \b Next \b Tab
+ * command.
+ * 
+ * \see on_actionNext_triggered()
+ */
+
+/**
+ * \var PluginManager::actionPrevTab
+ * \brief select the previous tab action 
+ * 
+ * This action is the one added to the \b Settings menu, as the \b Previous 
+ * \b Tab command.
+ * 
+ * \see on_actionPrev_triggered()
  */
 
 /**
  * \var PluginManager::configDialog
  * \brief the configuration dialog
  * 
- * todo
- * 
+ * An instace to the configuration dialog.
  */
 
 /**
  * \var PluginManager::settingsManager
  * \brief the settings manager 
  * 
- * todo
+ * A simple pointer to a QSettings variable.
  */
 
 
@@ -645,7 +667,7 @@ void	PluginManager::enablePlugin( IPlugin *plugin )
 		return;
 	}
 	
-	if (!plugin->enabled)
+	if (plugin->enabled)
 	{
 		plugin->setEnabled( true );
 		mergeClient( plugin );
@@ -673,6 +695,8 @@ void	PluginManager::enablePlugin( IPlugin *plugin )
  * 
  * \note this method works only on plugins available in the system, please use
  * PluginManager::addPlugin() before enabling a plugin.
+ * 
+ * \todo remove new actions
  * 
  * \see addPlugin()
  * \see enablePlugin()

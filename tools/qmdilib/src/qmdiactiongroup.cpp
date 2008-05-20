@@ -30,7 +30,76 @@
  * pop-up menu on a QMenuBar, or setting the toolbar name.
  *
  * \see qmdiActionGroupList
- * \see getName
+ * \see getName()
+ */
+
+/**
+ * \var qmdiActionGroup::name
+ * \brief the name of the group
+ * 
+ * The name of the group, as passed to the constructor. This should not be 
+ * changed, since it also defined the text to be seen on the menu of toolbar 
+ * created by this class.
+ * 
+ * \internal
+ * 
+ * \see getName()
+ * \see setName()
+ */
+
+/**
+ * \var qmdiActionGroup::breakAfter
+ * \brief defined if after mergeing, a break should be put
+ * 
+ * This property defines if after merging this group there should be a break.
+ * This is used by qmdiActionGroupList::updateToolBar()
+ * 
+ * \copydoc read_only_after_constructor
+ * 
+ * \see qmdiActionGroupList::updateToolBar()
+ */
+
+/**
+ * \var qmdiActionGroup::actionGroupItems
+ * \brief sub items in this list
+ * 
+ * A list of \b QAction or \b QWidget which shuold be displayed on the toolbars
+ * or menus created by this list. Items can be put into this list by addding 
+ * them directly (using addAction() or addWidget() ) or by merging in another
+ * action group.
+ * 
+ * \internal
+ * \see mergeGroup()
+ * \see addAction()
+ * \see addWidget()
+ */
+
+/**
+ * \var qmdiActionGroup::actionGroups
+ * \brief other groups available in this group
+ * 
+ * List of merged in groups.
+ * 
+ * \internal
+ * \see mergeGroup()
+ */
+
+/**
+ * \var qmdiActionGroup::breakCount
+ * \brief
+ * 
+ * \todo document this variable
+ * \internal
+ */
+
+/**
+ * \var qmdiActionGroup::mergeLocation
+ * \brief the location where to merge in new sub groups
+ * 
+ * This defined the location in which to merge in actions of merged in groups.
+ * 
+ * \internal
+ * \see mergeGroup()
  */
 
 
@@ -46,10 +115,12 @@
  * \b name will be used as the title of the menu.
  * 
  * If you generate a toolbar from this action group, the 
- * \b name will be used as title of this toolbar. 
+ * \b name will be used as title of this toolbar.
  * 
  * \see updateMenu()
  * \see updateToolBar()
+ * 
+ * \todo How about localization? maybe we need to differentiate between name and title?
  */
 qmdiActionGroup::qmdiActionGroup( QString name )
 {
@@ -65,7 +136,7 @@ qmdiActionGroup::qmdiActionGroup( QString name )
  */
 qmdiActionGroup::~qmdiActionGroup()
 {
-	// TODO delete all
+	// TODO should we delete all ?
 }
 
 /**
@@ -80,21 +151,28 @@ qmdiActionGroup::~qmdiActionGroup()
  * \code
  * QMainWindow::addToolBarBreak()
  * \endcode
+ * 
+ * \copydoc read_only_after_constructor
  */
 
 /**
  * \brief sets an name for this action group
- * \param name the new name for the action group
+ * \param newName the new name for the action group
  * 
  * Sets the name for the action group. The name will be used
  * for describing the toolbar or menu item, and thus is very
  * important to set it correctly.
  * 
+ * This will not modify the menu or toolbar text - please call the correct
+ * update method to do that.
+ * 
  * \see getName
+ * \see updateMenu()
+ * \see updateToolBar()
  */
-void qmdiActionGroup::setName( QString name )
+void qmdiActionGroup::setName( const QString &newName )
 {
-	this->name = name;
+	this->name = newName;
 }
 
 /**
@@ -119,16 +197,17 @@ QString qmdiActionGroup::getName()
  * item to the toolbar or menu represented by the action
  * group.
  * 
- * The action is added to the end of the list, if the location
- * parameter is -1, otherwise the location specifies where the
- * actions are added. There is no way to reorder the actions
- * once they are in the group.
+ * The action is added to the end of the list, if the location  parameter is -1 
+ * or the mergepoint, otherwise the location specifies where the actions are 
+ * added.
  * 
- * \see addSeparator
- * \see addMenu
- * \see containsAction
- * \see removeAction
- * \see setMergePoint
+ * There is no way to reorder the actions once they are in the group.
+ * 
+ * \see addSeparator()
+ * \see addMenu()
+ * \see containsAction()
+ * \see removeAction()
+ * \see setMergePoint()
  */
 void qmdiActionGroup::addAction( QAction *action, int location )
 {
@@ -293,12 +372,11 @@ void qmdiActionGroup::removeActions( QActionGroup *actions )
  * Use this function for removing sub-menus from the menu represented 
  * by this action group.
  *
- * \see addAction
  * \see removeAction
+ * \see addAction
  * \see addWidget
  * \see addMenu
  * \see updateMenu
- * \see updateToolBar
  */
 void qmdiActionGroup::removeMenu( QMenu *menu )
 {
@@ -354,9 +432,7 @@ void qmdiActionGroup::setMergePoint()
  * If no merging point is defined, the default is to merge at the top
  * of menu or toolbar.
  * 
- * TODO 
- * 	action groups should also have merging priotities
- * 
+ * \todo action groups should also have merging priorities
  * \see mergeGroup
  */
 int qmdiActionGroup::getMergePoint()
@@ -513,7 +589,8 @@ QMenu*	 qmdiActionGroup::updateMenu( QMenu *menu )
 	
 	if (!menu)
 		menu = new QMenu( name );
-
+	else
+		menu->setTitle( name );
 	menu->clear();
 	
 	foreach( QObject *o, actionGroupItems )
@@ -550,6 +627,8 @@ QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
 {
 	if (!toolbar)
 		toolbar = new QToolBar( name );
+	else
+		toolbar->setWindowTitle( name );
 
 	toolbar->setUpdatesEnabled(false);
 	toolbar->hide();

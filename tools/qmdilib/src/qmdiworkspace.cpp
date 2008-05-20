@@ -26,9 +26,9 @@
  * \class qmdiWorkspace
  * \brief An advanced work space-widget, which is capable of changing menus and toolbars on the fly
  * 
- * This class is a new MDI server, based on top of QWorkspace. It is built
+ * This class is aother MDI server, based on top of QWorkspace. It is built
  * with a similar API to qmdiTabWidget and QTabWidget. Since the API is similar
- * this means you can switch applications from QTabWidget to qmdiWorkspace in
+ * this means you can switch applications from QTabWidget to qmdiWorkspace with
  * very small modifications to your code.
  *
  * This class is also a valid qmdiServer, which means it will dynamically
@@ -40,17 +40,57 @@
  *  - qmdiServer : this class
  *
  * When a new widget is selected on the qmdiServer (the user changes), the old
- * widget is removed from the qmdiHost, and only then the new MDI client is added
- * to the qmdiHost.
+ * widget is removed from the qmdiHost, and only then the new MDI client is 
+ * added to the qmdiHost.
  *
- * To use this class properly, insert it into a QMainWindow which also derives qmdiHost,
- * and insert into it QWidgets which also derive qmdiClient.
+ * To use this class properly, insert it into a QMainWindow which also derives 
+ * qmdiHost, and insert into it QWidgets which also derive qmdiClient.
  *
  * \since 0.0.3
- * \see qmdiTabBar
+ */
+
+/**
+ * \var qmdiWorkspace::mainLayout
+ * 
+ */
+
+/**
+ * \var qmdiWorkspace::headerLayout
+ * 
+ */
+
+/**
+ * \var qmdiWorkspace::tabBar
+ * 
+ */
+
+/**
+ * \var qmdiWorkspace::workspace
+ * 
+ */
+
+/**
+ * \var qmdiWorkspace::_widgetList
+ * 
  */
 
 
+/**
+ * \var qmdiWorkspace::cornerWidget1
+ * 
+ */
+
+/**
+ * \var qmdiWorkspace::cornerWidget2
+ * 
+ */
+
+/**
+ * \var qmdiWorkspace::activeWidget
+ * 
+ */
+
+	
 /**
  * \brief default constructor
  * \param parent the parent of this widget
@@ -97,7 +137,7 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	
 	setLayout( mainLayout );
 	connect( workspace, SIGNAL(windowActivated(QWidget*)), this, SLOT(workspaceChanged(QWidget*)));
-	connect( tabBar, SIGNAL(currentChanged(int)), this, SLOT(tabBarChanged(int)));
+	connect( tabBar, SIGNAL(currentChanged(int)), this, SLOT(on_tabBar_changed(int)));
 }
 
 /**
@@ -129,8 +169,7 @@ void qmdiWorkspace::addClient( qmdiClient *client )
  * the MDI client, and re-parenting it as needed. The name is
  * generally the name you will see on the tabbar.
  *
- * Since this class is API compatible to QTabWidget,
- * is takes the same arguments.
+ * This function is made for compability with QTabWidget.
  *
  * \see QTabWidget::addTab( QWidget*, QString )
  */
@@ -160,6 +199,8 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
  * active on the QWorkspace used internally, and the tab
  * which is currently selected.
  * 
+ * This function is made for compability with QTabWidget.
+ * 
  * \see QWorkspace::activeWindow()
  * \see QTabWidget::currentWidget()
  */
@@ -178,6 +219,8 @@ QWidget *qmdiWorkspace::currentWidget()
  *
  * This function return the corner widget for the
  * desired corner.
+ * 
+ * This function is made for compability with QTabWidget.
  * 
  * \see QTabWidget::cornerWidget( Qt::Corner )
  */
@@ -206,6 +249,8 @@ const QWidget * qmdiWorkspace::cornerWidget ( Qt::Corner corner  )
  * Usually used to put "close" or "new" buttons on the right or left
  * of the widget.
  *
+ * This function is made for compability with QTabWidget.
+ * 
  * \see QTabWidget::setCornerWidget( QWidget *, Qt:Corner )
  */
 void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
@@ -221,7 +266,7 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 		case Qt::TopRightCorner:
 			cornerWidget2 = widget;
 			break;
-// TODO only tabs on the top is fully supported, add support for other styles
+/// \todo only tabs on the top is fully supported, add support for other styles
 		case Qt::BottomLeftCorner: 
 			cornerWidget1 = widget;
 			break;
@@ -243,7 +288,7 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 	headerLayout = new QHBoxLayout;
 	headerLayout->setMargin(0);
 	headerLayout->setSpacing(0);
-	headerLayout->setObjectName("headerLayout"); 
+	headerLayout->setObjectName("headerLayout");
 	
 	if (cornerWidget1)
 		headerLayout->addWidget(cornerWidget1);
@@ -272,14 +317,15 @@ QWidget* qmdiWorkspace::widget( int i )
 		return NULL;
 
 	// one can never be safe enough
-	if (i >= workspace->windowList().count() ){
-		// no warning on first child
+	if (i >= workspace->windowList().count() )
+	{	// no warning on first child
 		if (! ((i==0) && (workspace->windowList().isEmpty())) )
 			qDebug( "%s %s %d - warning: index out of range (%d)", __FILE__,  __FUNCTION__, __LINE__, i );
 		return NULL;
 	}
 		
-	if (i < 0){		
+	if (i < 0)
+	{
 		qDebug( "%s %s %d - warning: negative index", __FILE__,  __FUNCTION__, __LINE__ );
 		return NULL;
 	}
@@ -292,7 +338,6 @@ QWidget* qmdiWorkspace::widget( int i )
  * \return a number representing the id of the current active window
  *
  * This function is made for compability with QTabWidget.
- *
  */
 int qmdiWorkspace::currentIndex()
 {
@@ -465,7 +510,7 @@ void qmdiWorkspace::workspaceChanged( QWidget* w )
  * 
  * \see workspaceChanged( QWidget* )
  */
-void qmdiWorkspace::tabBarChanged( int index )
+void qmdiWorkspace::on_tabBar_changed( int index )
 {
 	if (!workspace)
 		return;

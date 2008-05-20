@@ -1,5 +1,5 @@
-#ifndef __ACTION_GROUP_H__
-#define __ACTION_GROUP_H__
+#ifndef __QMDI_ACTION_GROUP_H__
+#define __QMDI_ACTION_GROUP_H__
 
 /**
  * \file qmdiactiongroup.h
@@ -27,7 +27,7 @@ public:
 	qmdiActionGroup( QString name );
 	~qmdiActionGroup();
 
-	void		setName( QString name );
+	void		setName( const QString &newName );
 	QString		getName();	
 	void		addAction( QAction *action, int location=-1 );
 	void		addActions( QActionGroup *actions, int location=-1 );
@@ -58,4 +58,4 @@ private:
 	int mergeLocation;
 };
 
-#endif //__ACTION_GROUP__
+#endif //__QMDI_ACTION_GROUP_H__

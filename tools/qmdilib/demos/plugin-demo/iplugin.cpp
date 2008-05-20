@@ -80,8 +80,9 @@
  * This string contains the name of the plugin. It should be 
  * a small text describing it's functionality. 
  * 
- * This field is displayed in the plugin manager's dialog and does not define any
- * special functionality.
+ * Please change this value \b only when constructing the class, and not during 
+ * it's life time. You may consider this a read only variable outside the 
+ * constructor.
  */
 
 /**
@@ -90,8 +91,12 @@
  * 
  * This string contains the name of the author (and email).
  * 
- * This field is displayed in the plugin manager's dialog and does not define any
- * special functionality.
+ * This field is displayed in the plugin manager's dialog and does not define 
+ * any special functionality. 
+ * 
+ * Please change this value \b only when constructing the class, and not during 
+ * it's life time. You may consider this a read only variable outside the 
+ * constructor.
  */
 
 /** \var IPlugin::sVersion
@@ -100,8 +105,9 @@
  * This string contains the version of this plugin, for example "4.0.1". This 
  * should match \b qmdiHost::iVersion
  * 
- * This field is displayed in the plugin manager's dialog and does not define any
- * special functionality.
+ * Please change this value \b only when constructing the class, and not during 
+ * it's life time. You may consider this a read only variable outside the 
+ * constructor.
  */
 
 /** \var IPlugin::iVersion
@@ -121,6 +127,10 @@
  * it may be used to call upgrade methods from an older version of the plugin to
  * a new one. This can be used to perform any upgrades to configuration or 
  * data-bases used by this plugin.
+ * 
+ * Please change this value \b only when constructing the class, and not during 
+ * it's life time. You may consider this a read only variable outside the 
+ * constructor.
  */
 
 /**
@@ -132,6 +142,10 @@
  * plugin.
  * 
  * By default this is set to \b false, which means the plugin can be disabled.
+ * 
+ * Please change this value \b only when constructing the class, and not during 
+ * it's life time. You may consider this a read only variable outside the 
+ * constructor.
  */
 
 /**
@@ -145,6 +159,10 @@
  * By default this is set to \b false , which means that the plugin will not
  * be enabled when the application starts, and the user needs to enable it or 
  * the main application can enable it programatically by calling setEnabled(true)
+ * 
+ * Please change this value \b only when constructing the class, and not during 
+ * it's life time. You may consider this a read only variable outside the 
+ * constructor.
  */
 
 /**
@@ -154,7 +172,10 @@
  * The enabled flag is set to true when the plugin is enabled, and it's
  * menus and toolbars are merged into the plugin manager's main window.
  * 
- * This flag should not be modified directly - instead of setEnabled()
+ * This flag should not be modified directly - instead of setEnabled().
+ * 
+ * \internal
+ * \see setEnabled
  */
 
 
@@ -222,6 +243,11 @@ void	IPlugin::showAbout()
 {
 }
 
+/**
+ * \brief get the configuration dialog of this plugin
+ * 
+ * 
+ */
 QWidget* IPlugin::getConfigDialog()
 {
 	return NULL;

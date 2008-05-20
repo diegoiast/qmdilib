@@ -29,8 +29,19 @@
  * widgets to add their partial menus to the menus supplied by the main application).
  */
 
+/**
+ * \var qmdiActionGroupList::actionGroups
+ * \brief list of merged in groups
+ * 
+ * This is the list of merged in sub-groups.
+ * 
+ * \internal
+ * \see mergeGroup()
+ */
 
 /**
+ * \brief default constructor
+ * 
  * Build an empty action group list. If you generate a menubar 
  * from this empty class, you will get a NIL menu. Generating
  * a toolbar set from this empty class will generate no toolbars.
@@ -46,6 +57,7 @@ qmdiActionGroupList::qmdiActionGroupList()
  * 
  * This is just an overloaded function which calls getActionGroup().
  * 
+ * \todo why not "const QSting&" ?
  * \see getActionGroup()
  */
 qmdiActionGroup* qmdiActionGroupList::operator[]( const QString name )
@@ -67,7 +79,7 @@ qmdiActionGroup* qmdiActionGroupList::operator[]( const QString name )
  * \see updateMenu()
  * \see updateToolBar()
  */
-qmdiActionGroup* qmdiActionGroupList::getActionGroup( const QString name )
+qmdiActionGroup* qmdiActionGroupList::getActionGroup( const QString &name )
 {
         qmdiActionGroup *item = NULL;
 
@@ -175,6 +187,8 @@ QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
  * QToolBar which will be showed on the \c window .
  * 
  * If the \c toolbars array will be NULL, a new one will be allocated for you.
+ * When merging toolbars if a break is defined, a break will be added by this 
+ * method.
  * 
  * While you can add toolbars "manually" to your main window, it's not recommended
  * because new actions will not get merged into your toolbar. Instead you might get 

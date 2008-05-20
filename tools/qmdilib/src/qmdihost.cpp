@@ -13,7 +13,7 @@
 #include "qmdiclient.h"
 
 /**
- * \class qmdiHost 
+ * \class qmdiHost
  * \brief The class which contain the menus and toolbars defined by qmdiClient
  *
  * Every time a user selects a new widget in the MDI server (for example qmdiTabWidget), the
@@ -75,6 +75,15 @@
  * toolbars, the list is maintained as a separate list.
  *
  * You should usually not use this list directly.
+ * 
+ * \internal
+ * \todo how about quering the childs of the main window? it should be possible to remove the toolBarList
+ */
+
+/**
+ * \brief default constructor
+ * 
+ * Construct a qmdiHost instance.
  */
 qmdiHost::qmdiHost()
 {

@@ -545,5 +545,13 @@ feature coded by Nox PasNox <pasnox@gmail.com>
 \section v_0_0_1 0.0.1 - 11 Jun 06 - Diego Iastrubni <elcuco@kde.org>
  - initial release
  
+\defgroup read_only_after_constructor After the constructor this is read only
+Please change this value \b only when constructing the class, and not during 
+it's life time. You may consider this a read only variable outside the 
+constructor.
+  
+\defgroup read_only_property Do not modify this variable
+This property is public for read only operations, please do not modify it 
+yourself as the value is change by qmdilib behind the scenes.
 
  */

@@ -63,8 +63,10 @@
  * 
  * Builds a new client assigning it an mdi client name of newName and assigning
  * a NULL mdiServer.
+ * 
+ * \todo how about using "const QString&"?
  */
-qmdiClient::qmdiClient( QString newName )
+qmdiClient::qmdiClient( const QString newName )
 {
 	mdiServer = NULL;
 	mdiClientName = newName;
@@ -93,6 +95,8 @@ qmdiClient::~qmdiClient()
  * This property defines the name of the MDI client. The \b mdiClientName
  * is used by qmdiTabWidget for setting the tab name, when inserting 
  * the widget into the tab widget.
+ * 
+ * \copydoc read_only_after_constructor
  */
 
 
@@ -146,6 +150,7 @@ qmdiClient::~qmdiClient()
  * You can use this property to insert new clients into the server,
  * from this client.
  * 
+ * \copydoc read_only_property
  * \see qmdiServer
  */
 
@@ -171,8 +176,7 @@ qmdiClient::~qmdiClient()
  * If your derived class does not derive QObject, you will need to overide this
  * function as well.
  *
- * TODO update documentation
- *
+ * \todo update documentation
  * \see canCloseClient()
  * \see QObject::deleteLater()
  */

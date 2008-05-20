@@ -24,7 +24,7 @@ class qmdiHost;
 class qmdiClient
 {
 public:
-	qmdiClient( QString newName="" );
+	qmdiClient( const QString newName="" );
 	virtual ~qmdiClient();
 
 	virtual bool closeClient();
