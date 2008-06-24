@@ -47,9 +47,9 @@ RichText::RichText( QWidget *parent, QString fileName, QTextEdit *e )
 
 RichText::~RichText()
 {
-	delete richText;
-	delete textEdit;
-	delete tabWidget;
+// 	delete richText;
+// 	delete textEdit;
+// 	delete tabWidget;
 }
 
 void RichText::initWidget( QString fileName, QTextEdit *e )

@@ -51,7 +51,6 @@ RichTextPlugin::RichTextPlugin()
 
 RichTextPlugin::~RichTextPlugin()
 {
-	delete actionNew;
 }
 
 void RichTextPlugin::showAbout()
