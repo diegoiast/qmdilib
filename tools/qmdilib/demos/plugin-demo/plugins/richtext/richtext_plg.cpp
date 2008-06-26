@@ -17,7 +17,7 @@
 #include "iplugin.h"
 #include "qmdiserver.h"
 #include "richtext_plg.h"
-#include "qexrichtextbrowser.h"
+#include "richtextclient.h"
 
 /**
  * \class RichTextPlugin

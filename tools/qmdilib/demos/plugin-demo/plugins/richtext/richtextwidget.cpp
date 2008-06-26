@@ -25,7 +25,7 @@
 #include <QFontComboBox>
 #include <QComboBox>
 
-#include "richtext.h"
+#include "richtextwidget.h"
 
 RichTextWidget::RichTextWidget( QWidget *parent, QString fileName ):
 	QWidget(parent)
