@@ -118,10 +118,11 @@
  * value as needed.
  * 
  * One way to encode the version supplied by qmdiHost::sVersion is
- * sVersion = "4.2.7" -> iVersion = 4*100 + 2*10 + 7*1 = 427
+ * sVersion = "4.2.7" -> iVersion = 4*100 + 2*10 + 7*1 = 427 .
  * 
  * There is no official policy that dictates how this should be done and you
- * can use any other versioning scheme (even numbering normally, version 1,2...)
+ * can use any other versioning scheme (even numbering the releases normally
+ * like: version 1,2...).
  * 
  * This filed is not used at the current implementation, but in future releases
  * it may be used to call upgrade methods from an older version of the plugin to
@@ -187,9 +188,10 @@
  * \param shortcut the shortcut to assign to this new action
  * \param status_tip the status tip to assign to this new action
  * \param slot the slot to connect to
+ * \return a new QAction object construsted from the parameters passed
  * 
  * Create a new QAction and assign to it a name, icon status bar tip and 
- * shortcut. Then connect the "triggered()" signal to the slot passed as a 
+ * shortcut. Then connect the \b triggered() signal to the slot passed as a 
  * parameter.
  */
 QAction* new_action( QIcon icon, QString name, QObject *obj, QString shortcut, QString status_tip, const char*slot )
@@ -238,6 +240,8 @@ IPlugin::~IPlugin()
  * There is no need to implement this method in derived classes - if not derived
  * when the user pressed "About" in the configuration dialog nothing will 
  * happen.
+ * 
+ * The default implementation does nothing.
  */
 void	IPlugin::showAbout()
 {
@@ -270,6 +274,8 @@ void	IPlugin::setData()
  * Derived plugins need to load any settings needed from the QSettings instance
  * passed. 
  * 
+ * The default implementation does nothing.
+ * 
  * \see IPlugin::saveConfig()
  */
 void	IPlugin::loadConfig( QSettings &settings )
@@ -286,6 +292,8 @@ void	IPlugin::loadConfig( QSettings &settings )
  * Derived plugins need to save any settings needed from to QSettings instance
  * passed. 
  * 
+ * The default implementation does nothing.
+ * 
  * \see IPlugin::loadConfig()
  */
 void	IPlugin::saveConfig( QSettings &settings )
@@ -295,6 +303,7 @@ void	IPlugin::saveConfig( QSettings &settings )
 
 /**
  * \brief define the "new actions" supported by this plugin
+ * \return the list of new actions this plugin defines
  * 
  * The plugin manager will ask this plugin which kind of "new files" it can 
  * generate. The returned list should be a QActionGroup containing QActions. 
@@ -358,12 +367,11 @@ QActionGroup*	IPlugin::newFileActions()
 
 /**
  * \brief define the list of extensions this plugin can load
+ * \return a QStringList which contains the extensions this plugin wants to 
  * 
  * When the plugin manager's main window displays the open file dialog, it will
- * ask all the loaded and enabled plugins what extensions are to display. By 
- * default returns an empty string list.
- * 
- * The plugin manager will combine all the extensions available from all enabled
+ * ask all the loaded and enabled plugins what extensions are to display. The 
+ * plugin manager will combine all the extensions available from all enabled
  * modules into a single list and then will use the list to display the open 
  * file dialog.
  * 
@@ -390,19 +398,20 @@ QActionGroup*	IPlugin::newFileActions()
  * can load a *.gif with an higher scrore - the plugin manager will choose the
  * other plugin, even tough this plugin was the "cause" for loading the file.
  * 
+ * The default implementation returns an empty string list.
+ * 
  * \see newFileActions() , canOpenFile()
  */
 QStringList	IPlugin::myExtensions()
 {
-	QStringList s;
-
 	// no available extensions by default
-	return s;
+	return QStringList();
 }
 
 /**
  * \brief return a score for loading a file
  * \param fileName the file to load
+ * \return the score this plugin gives to a file passed as a parameter
  * 
  * When the plugin manager tries to load a file, it will query all available and
  * enabled plugins for their score for loading that file. Evenutually the plugin
@@ -433,6 +442,7 @@ int 	IPlugin::canOpenFile( const QString fileName )
  * \param x dummy variable - see documentation
  * \param y dummy variable - see documentation
  * \param z dummy variable - see documentation
+ * \return true if the file has been loaded
  * 
  * This method is usually called by the plugin manager, once it calculated that
  * this plugin has the higher score for loading this file.
@@ -452,6 +462,8 @@ int 	IPlugin::canOpenFile( const QString fileName )
  * the help plugin says "yes", and then the openFile() method of the help plugin
  * selects the mdi client which contains the help and then changes its URL.
  * 
+ * \todo when the file loading fails, how can the programmer know why it failed?
+ * 
  * \see IPlugin::newFileActions()
  */
 bool	IPlugin::openFile( QString fileName, int x, int y, int z )
@@ -466,6 +478,7 @@ bool	IPlugin::openFile( QString fileName, int x, int y, int z )
 
 /**
  * \brief return the status of this plugin
+ * \return the value of enabled
  * 
  * Use this method for quering the plugin interface, and do not use 
  * IPlugin::enabled directly.
@@ -493,6 +506,7 @@ void	IPlugin::setEnabled( bool enable )
 
 /**
  * \brief returns if this plugin can be disabled
+ * \return the opposite of the internal variable alwaysEnabled
  * 
  * There are some plugins which cannot be disabled, and they are always enabled.
  * 
@@ -519,6 +533,7 @@ QIcon	IPlugin::getIcon()
 
 /**
  * \brief return the name of this plugin
+ * \return the name of this plugin
  * 
  * Use this method for quering the plugin interface, and do not use 
  * IPlugin::name directly.
@@ -532,6 +547,7 @@ QString	IPlugin::getName()
 
 /**
  * \brief return the author of this plugin
+ * \return the author name of this plugin
  * 
  * Use this method for quering the plugin interface, and do not use 
  * IPlugin::author directly.
@@ -545,6 +561,7 @@ QString IPlugin::getAuthor()
 
 /**
  * \brief return the string version of this plugin
+ * \return the string version of this plugin
  * 
  * Use this method for quering the plugin interface, and do not use 
  * IPlugin::sVersion directly.
@@ -558,6 +575,7 @@ QString IPlugin::getsVersion()
 
 /**
  * \brief return the integer version of this plugin
+ * \return the internal version of this plugin
  * 
  * Use this method for quering the plugin interface, and do not use 
  * IPlugin::iVersion directly.

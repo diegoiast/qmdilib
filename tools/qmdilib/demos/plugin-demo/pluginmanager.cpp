@@ -19,6 +19,7 @@
 #include <QStatusBar>
 #include <QApplication>
 #include <QSettings>
+#include <QRegExp>
 
 #include "qmdihost.h"
 #include "qmdiserver.h"
@@ -827,7 +828,7 @@ void PluginManager::closeClient()
 void PluginManager::on_actionOpen_triggered()
 {
 	static QString workingDir = "";
-	QString extens, e;
+	QString extens, e, allExtens;
 	QStringList extensAvailable;
 	IPlugin *p;
 
@@ -842,10 +843,30 @@ void PluginManager::on_actionOpen_triggered()
 	int j = extensAvailable.size();
 	for (int i = 0; i < j; ++i)
 	{
-		extens += extensAvailable.at(i);
+		QString s = extensAvailable.at(i);
+		extens += s;
 		if (i<j-1)
 			extens += ";;";
+		
+		QRegExp regexp("\\((.*)\\)");
+		if (!regexp.indexIn(s))
+			continue;
+		QString s1 = regexp.cap(1).simplified();
+		if (!s1.isEmpty())
+		{
+			// remove *.* from that list
+			s1.remove( "*.*" );
+// 			s1.remove( QRegExp("\\b[*.*]+\\b") );
+			s1.remove( QRegExp("\\b*\\b") );
+			allExtens += " " + s1;
+		}
 	}
+	// all supported files is the first item
+	extens = tr("All supported files") + QString(" (%1);;").arg(allExtens) + extens;
+	
+// 	TODO do we need to add "all files"?
+// 	extens = extens + ";;" + tr("All files") + " (*.*)";
+// 	qDebug("all extensions: %s", qPrintable(allExtens) );
 	
 	QStringList s = QFileDialog::getOpenFileNames(
 		NULL,

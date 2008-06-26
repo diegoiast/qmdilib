@@ -12,6 +12,12 @@
 #include "pluginmanager.h"
 #include "iplugin.h"
 
+/**
+ * \class PluginModel
+ * 
+ * 
+ * 
+ */
 PluginModel::PluginModel( PluginManager *manager, QObject *parent )
 	:QAbstractItemModel(parent)
 {
@@ -55,7 +61,7 @@ int PluginModel::columnCount( const QModelIndex &parent ) const
 }
 
 QVariant PluginModel::data( const QModelIndex &index, int roles ) const
-{	
+{
 	if (!index.isValid())
 		return QVariant();
 
