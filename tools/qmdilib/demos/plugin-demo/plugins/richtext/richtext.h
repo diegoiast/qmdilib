@@ -26,14 +26,15 @@ class QFontComboBox;
 class QComboBox;
 class QVBoxLayout;
 
-class RichText: public QWidget
+class RichTextWidget: public QWidget
 {
 	Q_OBJECT
 public:
-	RichText( QWidget *parent, QString fileName="" );
-	RichText( QWidget *parent, QTextEdit *e );
-	RichText( QWidget *parent, QString fileName, QTextEdit *e );
-	~RichText();
+	RichTextWidget( QWidget *parent, QString fileName="" );
+	RichTextWidget( QWidget *parent, QTextEdit *e );
+	RichTextWidget( QWidget *parent, QString fileName, QTextEdit *e );
+	~RichTextWidget();
+	QString getFileName();
 
 public slots:
 	void initWidget( QString fileName, QTextEdit *e );
@@ -98,6 +99,7 @@ private:
 	QTextEdit *textEdit;
 	QTextEdit *richText;
 	QTabWidget *tabWidget;
+	QString fileName;
 	
 	bool dirtyFlag;
 };

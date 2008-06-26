@@ -133,7 +133,7 @@ bool RichTextPlugin::canCloseClient()
  */
 bool RichTextPlugin::openFile( const QString fileName, int x, int y, int z )
 {
-	QexRichTextBrowser *editor = new QexRichTextBrowser( fileName, dynamic_cast<QMainWindow*>(mdiServer) );
+	RichTextClient *editor = new RichTextClient( fileName, dynamic_cast<QMainWindow*>(mdiServer) );
 //	editor-setMDIclientName( tr("RichText") );
 	editor->hide();
 	mdiServer->addClient( editor );
@@ -155,7 +155,7 @@ void RichTextPlugin::fileNew()
 		return;
 	}
 
-	QexRichTextBrowser *editor = new QexRichTextBrowser("", dynamic_cast<QMainWindow*>(mdiServer) );
+	RichTextClient *editor = new RichTextClient("", dynamic_cast<QMainWindow*>(mdiServer) );
 	editor->mdiClientName = tr("No name");
 	editor->setObjectName( editor->mdiClientName );
 	mdiServer->addClient( editor );

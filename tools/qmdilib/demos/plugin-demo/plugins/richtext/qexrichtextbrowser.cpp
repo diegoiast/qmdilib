@@ -1,6 +1,6 @@
 /**
  * \file richtext_browser.cpp
- * \brief Implementation of the QexRichTextBrowser class
+ * \brief Implementation of the RichTextClient class
  * \author Diego Iastrubni (elcuco@kde.org)
  *  License LGPL
  * \see EditorPlugin
@@ -14,8 +14,8 @@
 
 #include "qexrichtextbrowser.h"
 
-QexRichTextBrowser::QexRichTextBrowser( QString fileName, QWidget *parent )
-	: RichText( parent, fileName )
+RichTextClient::RichTextClient( QString fileName, QWidget *parent )
+	: RichTextWidget( parent, fileName )
 {
 	toolbars["main"]->addSeparator();
 	toolbars["main"]->addAction( actionBold );
@@ -40,7 +40,7 @@ QexRichTextBrowser::QexRichTextBrowser( QString fileName, QWidget *parent )
 	actionUnderline		->setIcon( QIcon(":/images/textunder.png") );
 }
 
-bool QexRichTextBrowser::canCloseClient()
+bool RichTextClient::canCloseClient()
 {
 #if 0
 	if (!editor->document()->isModified())
@@ -61,4 +61,9 @@ bool QexRichTextBrowser::canCloseClient()
 #endif
         // shut up GCC warnings
 	return true;
+}
+
+QString RichTextClient::mdiClientFileName()
+{
+	return getFileName();
 }

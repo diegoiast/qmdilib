@@ -27,47 +27,49 @@
 
 #include "richtext.h"
 
-RichText::RichText( QWidget *parent, QString fileName ):
+RichTextWidget::RichTextWidget( QWidget *parent, QString fileName ):
 	QWidget(parent)
 {
 	initWidget( fileName, NULL );
 }
 
-RichText::RichText( QWidget *parent, QTextEdit *e ):
+RichTextWidget::RichTextWidget( QWidget *parent, QTextEdit *e ):
 	QWidget(parent)
 {
 	initWidget( "", e );
 }
 
-RichText::RichText( QWidget *parent, QString fileName, QTextEdit *e )
+RichTextWidget::RichTextWidget( QWidget *parent, QString fileName, QTextEdit *e )
 	: QWidget( parent )
 {
 	initWidget( fileName, e );
 }
 
-RichText::~RichText()
+RichTextWidget::~RichTextWidget()
 {
-// 	delete richText;
-// 	delete textEdit;
-// 	delete tabWidget;
 }
 
-void RichText::initWidget( QString fileName, QTextEdit *e )
+QString RichTextWidget::getFileName()
 {
-	this->setObjectName( "RichText (container)" );
+	return fileName;
+}
+
+void RichTextWidget::initWidget( QString fileName, QTextEdit *e )
+{
+	this->setObjectName( "RichTextWidget (container)" );
 	tabWidget = new QTabWidget( this );
-	tabWidget->setObjectName( "RichText::tabWidget" );
+	tabWidget->setObjectName( "RichTextWidget::tabWidget" );
 
 	// create the basic GUI
 	richText = new QTextEdit( tabWidget );
 	richText->setAcceptRichText( true );
 	richText->setFrameStyle( QFrame::NoFrame );
-	richText->setObjectName( "RichText::richText" );
+	richText->setObjectName( "RichTextWidget::RichTextWidget" );
 	
 	textEdit = (e == NULL) ? new QTextEdit( tabWidget ): e;
 	textEdit->setAcceptRichText( false );
 	textEdit->setFrameStyle( QFrame::NoFrame );
-	textEdit->setObjectName( "RichText::textEdit" );
+	textEdit->setObjectName( "RichTextWidget::textEdit" );
 	
 	tabWidget->setTabShape( QTabWidget::Triangular );
 	tabWidget->setTabPosition( QTabWidget::South);
@@ -78,7 +80,7 @@ void RichText::initWidget( QString fileName, QTextEdit *e )
 	myLayout->addWidget( tabWidget );
 	myLayout->setMargin( 0 );
 	myLayout->setSpacing( 0 );
-	myLayout->setObjectName( "RichText::myLayout" );
+	myLayout->setObjectName( "RichTextWidget::myLayout" );
 	setLayout( myLayout );
 
 	// create the actions
@@ -150,7 +152,7 @@ void RichText::initWidget( QString fileName, QTextEdit *e )
 		loadFile( fileName );
 }
 
-void RichText::loadFile( QString fileName )
+void RichTextWidget::loadFile( QString fileName )
 {
 	QFile file(fileName);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -164,9 +166,10 @@ void RichText::loadFile( QString fileName )
 	textEdit->setPlainText( content );
 	richText->setHtml( content );
 	dirtyFlag = false;
+	this->fileName = fileName;
 }
 
-void RichText::setMSWordShortCuts()
+void RichTextWidget::setMSWordShortCuts()
 {
 	actionBold->setShortcut( QKeySequence("Ctrl+B") );
 	actionItalic->setShortcut( QKeySequence("Ctrl+I") );
@@ -178,28 +181,28 @@ void RichText::setMSWordShortCuts()
 	actionAlignJustify->setShortcut( QKeySequence() );
 }
 
-void RichText::markBold()
+void RichTextWidget::markBold()
 {
 	QTextCharFormat fmt;
 	fmt.setFontWeight( actionBold->isChecked() ? QFont::Bold : QFont::Normal );
 	mergeFormatOnWordOrSelection( fmt );
 }
 
-void RichText::markItalic()
+void RichTextWidget::markItalic()
 {
 	QTextCharFormat fmt;
 	fmt.setFontItalic( actionItalic->isChecked() );
 	mergeFormatOnWordOrSelection( fmt );
 }
 
-void RichText::markUnderline()
+void RichTextWidget::markUnderline()
 {
 	QTextCharFormat fmt;
 	fmt.setFontUnderline( actionUnderline->isChecked() );
 	mergeFormatOnWordOrSelection( fmt );
 }
 
-void RichText::setList( QTextListFormat::Style type )
+void RichTextWidget::setList( QTextListFormat::Style type )
 {
 	QTextCursor cursor = richText->textCursor();
 
@@ -226,14 +229,14 @@ void RichText::setList( QTextListFormat::Style type )
 	}
 }
 
-QTextList* RichText::getList()
+QTextList* RichTextWidget::getList()
 {
 	QTextCursor cursor = richText->textCursor();
 	
 	return cursor.currentList();
 }
 
-void RichText::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
+void RichTextWidget::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 {
 	QTextCursor cursor = richText->textCursor();
 	if (!cursor.hasSelection())
@@ -243,7 +246,7 @@ void RichText::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 }
 
 
-void RichText::cursorPositionChanged()
+void RichTextWidget::cursorPositionChanged()
 {
 	alignmentChanged( richText->alignment() );
 	
@@ -285,11 +288,11 @@ void RichText::cursorPositionChanged()
 	}
 }
 
-void RichText::on_tabWidget_currentChanged ( int index )
+void RichTextWidget::on_tabWidget_currentChanged ( int index )
 {
 	if (index == 1)
 	{
-		// moved from the richText to the textEdit
+		// moved from the RichTextWidget to the textEdit
 		if (dirtyFlag)
 		{
 			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
@@ -307,7 +310,7 @@ void RichText::on_tabWidget_currentChanged ( int index )
 	else
 	{
 		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		// moved from the textEdit to the richText
+		// moved from the textEdit to the RichTextWidget
 		richText->setHtml( textEdit->toPlainText() );
 		QApplication::restoreOverrideCursor();
 	}
@@ -324,12 +327,12 @@ void RichText::on_tabWidget_currentChanged ( int index )
 	actionTextColor->setEnabled( index == 0 );
 }
 
-void RichText::on_richText_Modified()
+void RichTextWidget::on_richText_Modified()
 {
 	dirtyFlag = true;
 }
 
-void RichText::alignmentChanged(Qt::Alignment a)
+void RichTextWidget::alignmentChanged(Qt::Alignment a)
 {
 	if (a & Qt::AlignLeft) {
 		actionAlignLeft->setChecked(true);
@@ -342,27 +345,27 @@ void RichText::alignmentChanged(Qt::Alignment a)
 	}
 }
 
-void RichText::setShowSource( bool shouldShow )
+void RichTextWidget::setShowSource( bool shouldShow )
 {
 // 	tabWidget->tabBar()->setVisible( shouldShow );
  	if (!shouldShow)
  		tabWidget->setCurrentIndex( 0 );
 }
 
-bool RichText::getShowSource()
+bool RichTextWidget::getShowSource()
 {
 	// TODO
 	return false;
 }
 
 
-void RichText::currentCharFormatChanged(const QTextCharFormat &format)
+void RichTextWidget::currentCharFormatChanged(const QTextCharFormat &format)
 {
 	fontChanged( format.font() );
 	colorChanged( format.foreground().color() );
 }
 
- void RichText::textAlign(QAction *a)
+ void RichTextWidget::textAlign(QAction *a)
 {
 	if (a == actionAlignLeft)
 		richText->setAlignment(Qt::AlignLeft);
@@ -374,7 +377,7 @@ void RichText::currentCharFormatChanged(const QTextCharFormat &format)
 		richText->setAlignment(Qt::AlignJustify);
 }
 
-void RichText::setList_(QAction *a)
+void RichTextWidget::setList_(QAction *a)
 {
 	if (a == actionListDisc)
 		setList( QTextListFormat::ListDisc); else
@@ -390,7 +393,7 @@ void RichText::setList_(QAction *a)
 		setList( QTextListFormat::ListUpperAlpha); 
 }
 
-void RichText::fontChanged(const QFont &f)
+void RichTextWidget::fontChanged(const QFont &f)
 {
 	fontComboBox->setCurrentIndex(fontComboBox->findText(QFontInfo(f).family()));
 	comboSize->setCurrentIndex(comboSize->findText(QString::number(f.pointSize())));
@@ -399,14 +402,14 @@ void RichText::fontChanged(const QFont &f)
 	actionUnderline->setChecked(f.underline());
 }
 
-void RichText::colorChanged(const QColor &c)
+void RichTextWidget::colorChanged(const QColor &c)
 {
 	QPixmap pix(16, 16);
 	pix.fill(c);
 	actionTextColor->setIcon(pix);
 }
 
-void RichText::textColor()
+void RichTextWidget::textColor()
 {
 	QColor col = QColorDialog::getColor(textEdit->textColor(), this);
 	if (!col.isValid())
@@ -418,14 +421,14 @@ void RichText::textColor()
 	colorChanged(col);
 }
 
-void RichText::textSize( QString p )
+void RichTextWidget::textSize( QString p )
 {
 	QTextCharFormat fmt;
 	fmt.setFontPointSize(p.toFloat());
 	mergeFormatOnWordOrSelection(fmt);
 }
 
-void RichText::textFamily(const QString &f)
+void RichTextWidget::textFamily(const QString &f)
 {
 	QTextCharFormat fmt;
 	fmt.setFontFamily(f);
@@ -434,7 +437,7 @@ void RichText::textFamily(const QString &f)
 
 /*virtual */
 /*
-bool RichText::event ( QEvent * event )
+bool RichTextWidget::event ( QEvent * event )
 {
 	if (event->type() == QEvent::KeyPress)
 	{
@@ -447,7 +450,7 @@ bool RichText::event ( QEvent * event )
 	return false;
 }
 */
-void RichText::timerEvent ( QTimerEvent *event )
+void RichTextWidget::timerEvent ( QTimerEvent *event )
 {
 	Q_UNUSED( event );
 }

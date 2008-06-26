@@ -14,13 +14,14 @@
 #include "qmdiclient.h"
 #include "richtext.h"
 
-class QexRichTextBrowser: public RichText, public qmdiClient
+class RichTextClient: public RichTextWidget, public qmdiClient
 {
 	Q_OBJECT
 public:
-	QexRichTextBrowser( QString fileName, QWidget *parent );
+	RichTextClient( QString fileName, QWidget *parent );
 	bool canCloseClient();
-	
+	QString mdiClientFileName();
+		
 private:
 	QTextEdit *edit;
 };
