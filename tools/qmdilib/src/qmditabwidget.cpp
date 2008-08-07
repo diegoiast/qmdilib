@@ -104,7 +104,7 @@ qmdiTabWidget::~qmdiTabWidget()
  * menus and toolbars will be merged into the main application.
  * 
  * \see QTabWidget::currentChanged()
- * \see wSpaceWindowActivated(QWidget*)
+ * \see workSpaceWindowActivated(QWidget*)
  */
 void qmdiTabWidget::tabChanged( int i )
 {
@@ -161,7 +161,7 @@ void qmdiTabWidget::tabChanged( int i )
  * \see tabInserted( int )
  * \see tabChanged( int )
  */
-void qmdiTabWidget::wSpaceWindowActivated( QWidget* w )
+void qmdiTabWidget::workSpaceWindowActivated( QWidget* w )
 {
 	static qmdiClient* last = NULL;
 
@@ -405,7 +405,7 @@ void qmdiTabWidget::tabInserted ( int index )
 
 	QWorkspace* ws = qobject_cast<QWorkspace*>( w );
 	if (ws)
-		connect( ws, SIGNAL(windowActivated(QWidget*)), this, SLOT( wSpaceWindowActivated(QWidget*)));
+		connect( ws, SIGNAL(windowActivated(QWidget*)), this, SLOT( workSpaceWindowActivated(QWidget*)));
 
 //	if it's the only widget available, show it's number
 //	BUG is this supposed to be done by Qt?

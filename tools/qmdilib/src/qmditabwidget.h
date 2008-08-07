@@ -30,7 +30,7 @@ public:
 
 public slots:
 	void tabChanged( int i );
-	void wSpaceWindowActivated( QWidget* w );
+	void workSpaceWindowActivated( QWidget* w );
 	void on_middleMouse_pressed( int, QPoint );
 	void on_rightMouse_pressed( int, QPoint );
 	bool eventFilter(QObject *obj, QEvent *event);
