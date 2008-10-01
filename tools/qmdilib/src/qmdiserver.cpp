@@ -204,7 +204,7 @@ void qmdiServer::tryCloseClient( int i )
  * \since 0.0.4
  * \see qmdiClient::closeClient() 
  * \see tryCloseClient() 
- * \see tryCloseAllCliens
+ * \see tryCloseAllClients
  */
 void qmdiServer::tryCloseAllButClient( int i )
 {
@@ -236,7 +236,7 @@ void qmdiServer::tryCloseAllButClient( int i )
  *
  * \since 0.0.4
  */
-void qmdiServer::tryCloseAllCliens()
+void qmdiServer::tryCloseAllClients()
 {
 	int c = getClientsCount();
 
@@ -295,6 +295,6 @@ void qmdiServer::showClientMenu( int i, QPoint p )
 	}
 	else if (q == closeAll )
 	{
-		tryCloseAllCliens();
+		tryCloseAllClients();
 	}
 }

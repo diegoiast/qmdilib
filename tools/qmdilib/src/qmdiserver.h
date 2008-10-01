@@ -28,7 +28,7 @@ public:
 	
 	void tryCloseClient( int i );
 	void tryCloseAllButClient( int i );
-	void tryCloseAllCliens();
+	void tryCloseAllClients();
 	void showClientMenu( int i, QPoint p );
 	
 // protected:
