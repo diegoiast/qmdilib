@@ -8,6 +8,7 @@
  
 // $Id$ 
 
+#include <QAction>
 #include <QMainWindow>
 #include "qmdihost.h"
 #include "qmdiclient.h"
@@ -168,6 +169,28 @@ void qmdiHost::mergeClient( qmdiClient *client )
 	menus.mergeGroupList( &client->menus );
 	toolbars.mergeGroupList( &client->toolbars );
 	client->on_client_merged( this );
+	
+	QWidget *w = dynamic_cast<QWidget*>(client);
+	if (!w)
+		return;	
+
+	foreach(qmdiActionGroup *g, client->menus.actionGroups)
+		foreach(QObject *o, g->actionGroupItems )
+		{
+			QAction *a = qobject_cast<QAction*>(o);
+			if (!a)
+				continue;
+			w->addAction( a );
+		}
+	
+	foreach(qmdiActionGroup *g, client->toolbars.actionGroups)
+		foreach(QObject *o, g->actionGroupItems )
+		{
+			QAction *a = qobject_cast<QAction*>(o);
+			if (!a)
+				continue;
+			w->addAction( a );
+		}
 }
 
 /**

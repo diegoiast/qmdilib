@@ -23,6 +23,7 @@ class QActionGroup;
 
 class qmdiActionGroup
 {
+friend class qmdiHost;
 public:
 	qmdiActionGroup( QString name );
 	~qmdiActionGroup();

@@ -25,6 +25,7 @@ class qmdiActionGroup;
 
 class qmdiActionGroupList
 {
+friend class qmdiHost;
 public:
 	qmdiActionGroupList();
 	
