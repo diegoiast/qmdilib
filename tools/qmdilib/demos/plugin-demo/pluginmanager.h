@@ -38,8 +38,8 @@ public:
 	void restoreSettings();
 	void saveSettings();
 	void updateActionsStatus();
-	bool openFile(QString fileName, int x=-1, int y=-1, int z=-1 );
-	bool openFiles(QStringList fileNames );
+	bool openFile( QString fileName, int x=-1, int y=-1, int z=-1 );
+	bool openFiles( QStringList fileNames );
 
 public slots:
 	void addPlugin( IPlugin *newplugin );
@@ -54,9 +54,10 @@ public slots:
 	void on_actionQuit_triggered();
 	void on_actionPrev_triggered();
 	void on_actionNext_triggered();
+	void on_actionHideGUI_triggered();
 	
-private:
-	void initGUI();	
+protected:
+	void initGUI();
 	QList<IPlugin*>	plugins;
 	qmdiTabWidget	*tabWidget;
 	ConfigDialog	*configDialog;
@@ -70,6 +71,7 @@ public:
 	QAction		*actionConfig;
 	QAction		*actionNextTab;
 	QAction		*actionPrevTab;
+	QAction		*actionHideGUI;
 };
 
 #endif

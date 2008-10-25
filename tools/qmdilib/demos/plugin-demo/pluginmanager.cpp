@@ -12,6 +12,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QAction>
+#include <QMenuBar>
 #include <QMenu>
 #include <QActionGroup>
 #include <QTabWidget>
@@ -202,18 +203,21 @@ PluginManager::PluginManager()
 	actionConfig	= new QAction( tr("&Config"), this );
 	actionNextTab	= new QAction( tr("&Next tab"), this );
 	actionPrevTab	= new QAction( tr("&Previous tab"), this );
+	actionHideGUI	= new QAction( tr("&Hide menus"), this );
 
 	actionNextTab->setEnabled( false );
 	actionPrevTab->setEnabled( false );
 	actionClose->setEnabled( false );
 	
-	newFilePopup->setObjectName("PluginManager::newFilePopup");
-	actionOpen->setObjectName("PluginManager::actionOpen");
-	actionClose->setObjectName("PluginManager::actionClose");
-	actionQuit->setObjectName("PluginManager::actionQuit");
-	actionConfig->setObjectName("PluginManager::actionConfig");
-	actionNextTab->setObjectName("PluginManager::actionNextTab");
-	actionPrevTab->setObjectName("PluginManager::actionPrevTab");
+	newFilePopup->setObjectName("newFilePopup");
+	actionOpen->setObjectName("actionOpen");
+	actionClose->setObjectName("actionClose");
+	actionQuit->setObjectName("actionQuit");
+	actionConfig->setObjectName("actionConfigure");
+	actionNextTab->setObjectName("actionNext");
+	actionPrevTab->setObjectName("actionPrev");
+	actionHideGUI->setObjectName("actionHideGUI");
+	actionHideGUI->setCheckable(true);
 	
 	actionOpen->setIcon( QIcon(":/trolltech/styles/commonstyle/images/diropen-32.png") );
 	actionOpen->setShortcut( QKeySequence("Ctrl+O") );
@@ -222,12 +226,17 @@ PluginManager::PluginManager()
 	
 	actionNextTab->setShortcut( QKeySequence("Alt+Right") );
 	actionPrevTab->setShortcut( QKeySequence("Alt+Left") );
-
-	connect( actionConfig, SIGNAL(triggered()), this, SLOT(on_actionConfigure_triggered()));
-	connect( actionOpen, SIGNAL(triggered()), this, SLOT(on_actionOpen_triggered()));
-	connect( actionClose, SIGNAL(triggered()), this, SLOT(on_actionClose_triggered()));
-	connect( actionNextTab, SIGNAL(triggered()), this, SLOT(on_actionNext_triggered()));
-	connect( actionPrevTab, SIGNAL(triggered()), this, SLOT(on_actionPrev_triggered()));
+	actionHideGUI->setShortcut( QKeySequence("Ctrl+M") );
+	
+	addAction( actionOpen );
+	addAction( actionClose );
+	addAction( actionQuit );
+	addAction( actionConfig );
+	addAction( actionNextTab );
+	addAction( actionPrevTab );
+	addAction( actionHideGUI );
+	
+	metaObject()->connectSlotsByName( this );
 	initGUI();
 }
 
@@ -373,10 +382,31 @@ void	PluginManager::restoreSettings()
 	
 	// restore window location
 	settingsManager->beginGroup("mainwindow");
-	if (settingsManager->contains("location"))
-		move( settingsManager->value("location").toPoint() );
+#if 0
+	if (settingsManager->contains("maximized"))
+		if (settingsManager->value("maximized").toBool())
+			showMaximized();
+		else
+		{
+			if (settingsManager->contains("location"))
+				move( settingsManager->value("location").toPoint() );
+			if (settingsManager->contains("size"))
+				resize( settingsManager->value("size").toSize() );
+// 			showNormal();
+		}
+	show();
+#else
+	if (settingsManager->contains("state"))
+		restoreState(settingsManager->value("state", saveState()).toByteArray());
+	if (settingsManager->contains("geometry"))
+		restoreGeometry(settingsManager->value("geometry", saveGeometry()).toByteArray());
+	if (settingsManager->value("maximized",false).toBool())
+		setWindowState(windowState() | Qt::WindowMaximized);
 	if (settingsManager->contains("size"))
-		resize( settingsManager->value("size").toSize() );
+		resize( settingsManager->value("size",size()).toSize() );
+	if (settingsManager->contains("location"))
+		move( settingsManager->value("location",pos()).toPoint() );
+#endif
 	settingsManager->endGroup();
 	
 	show();
@@ -435,7 +465,8 @@ void	PluginManager::saveSettings()
 	settingsManager->setValue( "size", size() );
 	settingsManager->setValue( "location", pos() );
 	settingsManager->setValue( "maximized", isMaximized() );
-	settingsManager->setValue( "state", saveGeometry() );
+	settingsManager->setValue( "state", saveState() );
+	settingsManager->setValue( "geometry", saveGeometry() );
 	settingsManager->endGroup();
 	
 	// store saved files
@@ -777,6 +808,7 @@ void	PluginManager::initGUI()
 	menus[tr("Se&ttings")]->addSeparator();
 	menus[tr("Se&ttings")]->addAction( actionNextTab );
 	menus[tr("Se&ttings")]->addAction( actionPrevTab );
+	menus[tr("Se&ttings")]->addAction( actionHideGUI );
 	menus[tr("&Window")];
 	menus[tr("&Help")];
 	
@@ -980,4 +1012,33 @@ void PluginManager::on_actionNext_triggered()
 		
 	i++;
 	tabWidget->setCurrentIndex( i );
+}
+
+void PluginManager::on_actionHideGUI_triggered()
+{
+	qmdiClient *currentClient = dynamic_cast< qmdiClient *> (tabWidget->currentWidget());
+	
+	// if GUI disabled, unmerge the current item, else merge it
+	// this way when enabling back you don't see some actions twice
+	if (currentClient && actionHideGUI->isChecked())
+	{
+		unmergeClient( currentClient );
+		updateGUI();
+	}
+	
+	updateMenusAndToolBars = !actionHideGUI->isChecked();	
+	setUpdatesEnabled(false);
+	menuBar()->setVisible( ! actionHideGUI->isChecked() );
+	foreach( QToolBar *b, findChildren<QToolBar*>() )
+	{
+		b->setVisible( ! actionHideGUI->isChecked() );
+	}
+	
+	if (currentClient && !actionHideGUI->isChecked())
+	{
+		mergeClient( currentClient );
+		updateGUI();
+	}
+	
+	setUpdatesEnabled(true);
 }
