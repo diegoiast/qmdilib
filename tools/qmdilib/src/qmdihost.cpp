@@ -255,6 +255,8 @@ void qmdiHost::unmergeClient( qmdiClient *client )
 
 /**
  * \brief add a list of actions to a widget
+ * \param agl the action group list to look for actions in
+ * \param w the target widget
  *
  * This method adds all the actions in the action group list provided, to the
  * widget passed on.
@@ -281,6 +283,8 @@ void qmdiHost::addActionsToWidget( qmdiActionGroupList &agl, QWidget *w )
 
 /**
  * \brief remove a list of actions from a widget
+ * \param agl the action group list to look for actions in
+ * \param w the target widget
  *
  * This method removes all the actions in the action group list provided, to the
  * widget passed on.
