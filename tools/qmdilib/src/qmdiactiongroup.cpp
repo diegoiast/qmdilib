@@ -479,6 +479,9 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 	int i = 0;
 	foreach( QObject *o, group->actionGroupItems )
 	{
+		if (actionGroupItems.contains(o))
+			continue;
+		
 		QAction *a = qobject_cast<QAction*> (o);
 		
 		if (a)
@@ -539,6 +542,9 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
 	
 	foreach( QObject *o, group->actionGroupItems )
 	{
+		if (!actionGroupItems.contains(o))
+			continue;
+			
 		QAction *a = qobject_cast<QAction*> (o);
 		if (a)
 			removeAction( a );
