@@ -537,8 +537,10 @@ feature coded by Nox PasNox <pasnox@gmail.com>
  - all the documentation has been spell checked
 
 \section v_0_0_2 0.0.2  - 11 Jul 06 - Diego Iastrubni <elcuco@kde.org>
- - many documentation updates
- - compilation problems on mingw should be fixed
+ * fixed many flickering issues, now it only flicker when you add QWidgets to qmdiActionGroup
+ * added demos (4 and 5) which demonstrate how to build the code into dynamic and static libraries.
+ * Documentation updates.
+ * Compilation problems on mingw fixed since 0.0.2-pre
 
 \section v_0_0_2-pre 0.0.2-pre  - 19 Jul 06 - Diego Iastrubni <elcuco@kde.org>
  - fixed many flickering issues, now it only flicker when you add QWidgets to qmdiActionGroup
