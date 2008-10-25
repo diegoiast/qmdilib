@@ -45,6 +45,7 @@
  */
 qmdiServer::qmdiServer()
 {
+	mdiHost = NULL;
 }
 
 /**
