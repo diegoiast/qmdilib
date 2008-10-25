@@ -36,6 +36,10 @@ public:
 	void unmergeClient( qmdiClient *client );
 	
 	QList<QToolBar*>* toolBarList;
+protected:
+	void addActionsToWidget( qmdiActionGroupList &agl, QWidget *w );
+	void removeActionsFromWidget( qmdiActionGroupList &agl, QWidget *w );
+	bool updateMenusAndToolBars;
 };
 
 #endif // __QMDI_CLIENT_H__

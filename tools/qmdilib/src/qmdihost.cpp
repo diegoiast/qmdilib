@@ -82,12 +82,27 @@
  */
 
 /**
+ * \var qmdiHost::updateMenusAndToolBars
+ * \brief lock modifications of menus and toolbars
+ * 
+ * If this variable is set to true (default) when merging the menus/toolbars 
+ * of a qmdiClient the menus and toolbars of the host are modified as well.
+ * 
+ * You can disable this if you don't want to update the menus or toolbars when
+ * changing tabs in a qmdiTabWidget for example.
+ *
+ * \since 0.0.5
+ * \see mergeClient
+ */
+
+/**
  * \brief default constructor
  * 
  * Construct a qmdiHost instance.
  */
 qmdiHost::qmdiHost()
 {
+	updateMenusAndToolBars = true;
 	toolBarList = NULL;
 }
 
@@ -136,6 +151,9 @@ void qmdiHost::updateGUI( QMainWindow *window )
 		return;
 	}
 		
+	if (!updateMenusAndToolBars)
+		return;
+		
 	window->setUpdatesEnabled(false);
 	toolBarList = toolbars.updateToolBar( toolBarList, window );
 	menus.updateMenu( window->menuBar() );
@@ -156,9 +174,18 @@ void qmdiHost::updateGUI( QMainWindow *window )
  *
  * After a call to this function, you should manually call
  * updateGUI.
+ * 
+ * Since version 0.0.5 this method also tries to cast the client to a widget,
+ * and if it's succesful, it will add all it's menus+toolbars actions to the
+ * widget. This way when changing tabs in a qmdiHost (like qmdiTabWidget) and
+ * menus are hidden, the actions are still available.
  *
+ * Since version 0.0.5 this method will update the menus and toolbars only if 
+ * updateMenusAndToolBars is true (default).
+ * 
  * \see updateGUI
  * \see unmergeClient
+ * \see updateMenusAndToolBars
  * \see qmdiClient::on_client_merged()
  */
 void qmdiHost::mergeClient( qmdiClient *client )
@@ -166,31 +193,18 @@ void qmdiHost::mergeClient( qmdiClient *client )
 	if (client == NULL)
 		return;
 		
-	menus.mergeGroupList( &client->menus );
-	toolbars.mergeGroupList( &client->toolbars );
+	if (updateMenusAndToolBars)
+	{
+		menus.mergeGroupList( &client->menus );
+		toolbars.mergeGroupList( &client->toolbars );
+	}
 	client->on_client_merged( this );
 	
 	QWidget *w = dynamic_cast<QWidget*>(client);
 	if (!w)
-		return;	
-
-	foreach(qmdiActionGroup *g, client->menus.actionGroups)
-		foreach(QObject *o, g->actionGroupItems )
-		{
-			QAction *a = qobject_cast<QAction*>(o);
-			if (!a)
-				continue;
-			w->addAction( a );
-		}
-	
-	foreach(qmdiActionGroup *g, client->toolbars.actionGroups)
-		foreach(QObject *o, g->actionGroupItems )
-		{
-			QAction *a = qobject_cast<QAction*>(o);
-			if (!a)
-				continue;
-			w->addAction( a );
-		}
+		return;
+	addActionsToWidget( client->menus, w );
+	addActionsToWidget( client->toolbars, w );
 }
 
 /**
@@ -208,8 +222,16 @@ void qmdiHost::mergeClient( qmdiClient *client )
  * After a call to this function, you should manually call
  * updateGUI.
  *
+ * Since version 0.0.5 this method also tries to cast the client to a widget,
+ * and if it's succesful, it will remove all it's menus+toolbars actions from 
+ * the widget.
+ * 
+ * Since version 0.0.5 this method will update the menus and toolbars only if 
+ * updateMenusAndToolBars is true (default).
+ * 
  * \see updateGUI
  * \see mergeClient
+ * \see updateMenusAndToolBars
  * \see qmdiClient::on_client_unmerged()
  */
 void qmdiHost::unmergeClient( qmdiClient *client )
@@ -217,7 +239,69 @@ void qmdiHost::unmergeClient( qmdiClient *client )
 	if (client == NULL)
 		return;
 		
-	menus.unmergeGroupList( &client->menus );
-	toolbars.unmergeGroupList( &client->toolbars );
+	if (updateMenusAndToolBars)
+	{
+		menus.unmergeGroupList( &client->menus );
+		toolbars.unmergeGroupList( &client->toolbars );
+	}
 	client->on_client_unmerged( this );
+
+	QWidget *w = dynamic_cast<QWidget*>(client);
+	if (!w)
+		return;
+	removeActionsFromWidget( client->menus, w );
+	removeActionsFromWidget( client->toolbars, w );
 }
+
+/**
+ * \brief add a list of actions to a widget
+ *
+ * This method adds all the actions in the action group list provided, to the
+ * widget passed on.
+ * 
+ * It's used internally by mergeClient()
+ *
+ * \see mergeClient
+ * \see QWidget::addAction
+ */
+void qmdiHost::addActionsToWidget( qmdiActionGroupList &agl, QWidget *w )
+{
+	foreach( qmdiActionGroup *g, agl.actionGroups )
+		foreach(QObject *o, g->actionGroupItems )
+		{
+			QAction *a = qobject_cast<QAction*>(o);
+			if (!a)
+				continue;
+				
+			if (w->actions().contains(a))
+				continue;
+			w->addAction( a );
+		}
+}
+
+/**
+ * \brief remove a list of actions from a widget
+ *
+ * This method removes all the actions in the action group list provided, to the
+ * widget passed on.
+ * 
+ * It's used internally by unmergeClient()
+ *
+ * \see unmergeClient
+ * \see QWidget::addAction
+ */
+void qmdiHost::removeActionsFromWidget( qmdiActionGroupList &agl, QWidget *w )
+{
+	foreach( qmdiActionGroup *g, agl.actionGroups )
+		foreach(QObject *o, g->actionGroupItems )
+		{
+			QAction *a = qobject_cast<QAction*>(o);
+			if (!a)
+				continue;
+				
+			if (!w->actions().contains(a))
+				continue;
+			w->removeAction( a );
+		}
+}
+
