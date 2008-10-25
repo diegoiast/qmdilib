@@ -544,37 +544,43 @@ void	PluginManager::updateActionsStatus()
  */
 bool	PluginManager::openFile( QString fileName, int x, int y, int z )
 {
-	// who can open this file...?
+	// see if it's already open
+	int i = tabForFileName( fileName );
+	if (i != -1)
+	{
+		tabWidget->setCurrentIndex( i );
+		return true;
+	}
+	
+	// ok, not opened. who can open this file...?
 	IPlugin *bestPlugin = NULL;
 	IPlugin *p;
-	int j = -1;
-	int k = -1;
+	int highestScore  = -1;
 	
+	// see which plugin is the most suited for openning this file
 	foreach( p, plugins )
 	{
 		if (!p->enabled)
 			continue;
 		
 		// is this plugin better then the selected?
-		j = p->canOpenFile(fileName);
+		i = p->canOpenFile(fileName);
 		
-		if (j > k)
+		if (i > highestScore)
 		{
 			bestPlugin = p;
-			k = j; //bestPlugin->canOpenFile(fileName);
+			highestScore = i; // bestPlugin->canOpenFile(fileName);
 		}
 	}
 	
-	updateActionsStatus();
-	k = tabForFileName( fileName );
-	if (k != -1)
-	{	// see if it's already open
-		tabWidget->setCurrentIndex( k );
-		return true;
+	// ask best plugin to open the file
+	if (bestPlugin)
+	{
+		bool fileOpened = bestPlugin->openFile( fileName, x, y, z );
+		if (fileOpened)
+			updateActionsStatus();
+		return fileOpened;
 	}
-	else if (bestPlugin)
-		// if not open, ask best plugin to open the file
-		return bestPlugin->openFile( fileName, x, y, z );
 	else
 		// no plugin can handle this file,
 		// this should not happen, and usually means a bug
