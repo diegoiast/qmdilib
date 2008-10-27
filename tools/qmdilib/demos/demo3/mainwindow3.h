@@ -3,7 +3,7 @@
 
 /**
  * \file mainwindow3.h
- * \brief Implementation of the main window class of the 2nd demo
+ * \brief Declaration of the main window class of the 3rd demo
  * \author Diego Iastrubni (diegoiast@gmail.com)
  * License GPL 2 or 3
  * \see MainWindow3
