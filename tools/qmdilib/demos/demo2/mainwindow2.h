@@ -16,7 +16,7 @@
 #include "qmdiclient.h"
 
 // do you want to use qmdiTabWidget or qmdiWorkspace ...?
-#if 1
+#if 0
 #	define TAB_CONTROL qmdiTabWidget
 #else
 #	define TAB_CONTROL qmdiWorkspace

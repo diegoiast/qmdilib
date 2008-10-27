@@ -278,18 +278,8 @@ bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event)
 	// compute the tab number
 	QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
 	QPoint position = mouseEvent->pos();
-	int c = tabBar()->count();
-	int clickedItem = -1;
+	int clickedItem = tabBar()->tabAt( position );
 
-	for (int i=0; i<c; i++)
-	{
-		if ( tabBar()->tabRect(i).contains( position ) )
-		{
-			clickedItem = i;
-			break;
-		}
-	}
-	
 	// just in case
 	if (clickedItem == -1)
 		return QObject::eventFilter(obj, event);
