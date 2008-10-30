@@ -406,6 +406,8 @@ void	PluginManager::restoreSettings()
 		resize( settingsManager->value("size",size()).toSize() );
 	if (settingsManager->contains("location"))
 		move( settingsManager->value("location",pos()).toPoint() );
+	if (settingsManager->contains( "hidegui" ))
+		actionHideGUI->setChecked( settingsManager->value("hidegui",false).toBool() );
 #endif
 	settingsManager->endGroup();
 	
@@ -433,7 +435,7 @@ void	PluginManager::restoreSettings()
 		
 	statusBar()->clearMessage();
 	settingsManager->endGroup();
-	
+
 	updateActionsStatus();
 }
 
@@ -467,6 +469,7 @@ void	PluginManager::saveSettings()
 	settingsManager->setValue( "maximized", isMaximized() );
 	settingsManager->setValue( "state", saveState() );
 	settingsManager->setValue( "geometry", saveGeometry() );
+	settingsManager->setValue( "hidegui", actionHideGUI->isChecked() );
 	settingsManager->endGroup();
 	
 	// store saved files
@@ -1020,7 +1023,7 @@ void PluginManager::on_actionNext_triggered()
 	tabWidget->setCurrentIndex( i );
 }
 
-void PluginManager::on_actionHideGUI_triggered()
+void PluginManager::on_actionHideGUI_changed()
 {
 	qmdiClient *currentClient = dynamic_cast< qmdiClient *> (tabWidget->currentWidget());
 	
@@ -1031,8 +1034,8 @@ void PluginManager::on_actionHideGUI_triggered()
 		unmergeClient( currentClient );
 		updateGUI();
 	}
-	
-	updateMenusAndToolBars = !actionHideGUI->isChecked();	
+
+	updateMenusAndToolBars = !actionHideGUI->isChecked();
 	setUpdatesEnabled(false);
 	menuBar()->setVisible( ! actionHideGUI->isChecked() );
 	foreach( QToolBar *b, findChildren<QToolBar*>() )

@@ -54,7 +54,7 @@ public slots:
 	void on_actionQuit_triggered();
 	void on_actionPrev_triggered();
 	void on_actionNext_triggered();
-	void on_actionHideGUI_triggered();
+	void on_actionHideGUI_changed();
 	
 protected:
 	void initGUI();
