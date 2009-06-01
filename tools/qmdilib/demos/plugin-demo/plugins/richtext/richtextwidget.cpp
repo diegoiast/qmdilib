@@ -93,6 +93,10 @@ void RichTextWidget::initWidget( QString fileName, QTextEdit *e )
 	actionAlignCenter	= new QAction( "C", alignGroup );
 	actionAlignJustify	= new QAction( "J", alignGroup );
 	actionAlignRight	= new QAction( "R", alignGroup );
+
+	directionGroup		= new QActionGroup(this);
+	actionLTR	 	= new QAction( "LTR", directionGroup );
+	actionRTL	 	= new QAction( "RTL", directionGroup );
 	
 	listGroup		= new QActionGroup(this);
 	actionListDisc		= new QAction( "*)", listGroup );
@@ -118,6 +122,9 @@ void RichTextWidget::initWidget( QString fileName, QTextEdit *e )
 		comboSize->addItem(QString::number(size));
 
 	
+	actionLTR->setCheckable( true );
+	actionRTL->setCheckable( true );
+	
 	actionBold->setCheckable( true );
 	actionItalic->setCheckable( true );
 	actionUnderline->setCheckable( true );
@@ -142,6 +149,7 @@ void RichTextWidget::initWidget( QString fileName, QTextEdit *e )
 	connect( actionItalic	, SIGNAL(triggered()), this, SLOT(markItalic()));
 	connect( actionUnderline, SIGNAL(triggered()), this, SLOT(markUnderline()));
 	connect( alignGroup	, SIGNAL(triggered(QAction *)), this, SLOT(textAlign(QAction *)));
+	connect( directionGroup	, SIGNAL(triggered(QAction *)), this, SLOT(textDirection(QAction *)));
 	connect( listGroup	, SIGNAL(triggered(QAction *)), this, SLOT(setList_(QAction *)));
 	connect( fontComboBox	, SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
 	connect( comboSize	, SIGNAL(activated(const QString &)), this, SLOT(textSize(const QString &)));
@@ -249,6 +257,7 @@ void RichTextWidget::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 void RichTextWidget::cursorPositionChanged()
 {
 	alignmentChanged( richText->alignment() );
+	directionChanged( richText->textCursor().blockFormat().layoutDirection() );
 	
 	QTextList *l = getList();
 	if (l == NULL)
@@ -345,6 +354,21 @@ void RichTextWidget::alignmentChanged(Qt::Alignment a)
 	}
 }
 
+void RichTextWidget::directionChanged(Qt::LayoutDirection d)
+{
+	if (d == Qt::RightToLeft)
+		actionRTL->setChecked(true);
+	else if (d == Qt::LeftToRight)
+		actionLTR->setChecked(true);
+	// WTF?
+	else
+	{
+		actionRTL->setChecked(false);
+		actionLTR->setChecked(false);
+	}
+	
+}
+
 void RichTextWidget::setShowSource( bool shouldShow )
 {
 // 	tabWidget->tabBar()->setVisible( shouldShow );
@@ -363,6 +387,38 @@ void RichTextWidget::currentCharFormatChanged(const QTextCharFormat &format)
 {
 	fontChanged( format.font() );
 	colorChanged( format.foreground().color() );
+}
+
+void RichTextWidget::textDirection( QAction *a )
+{
+	QTextCursor qtc = richText->textCursor();
+	QTextBlockFormat qtbf = qtc.blockFormat();
+	Qt::Alignment qta = richText->alignment();
+	
+	if (a == actionLTR)
+	{
+		qtbf.setLayoutDirection( Qt::LeftToRight );
+		qtc.setBlockFormat( qtbf );
+		
+		if (qta == Qt::AlignRight)
+			qta = Qt::AlignLeft;
+		else if (qta == Qt::AlignLeft)
+			qta = Qt::AlignRight;
+	}
+	else if (a == actionRTL)
+	{
+		qtbf.setLayoutDirection( Qt::RightToLeft );
+		qtc.setBlockFormat( qtbf );
+		
+		if (qta == Qt::AlignRight)
+			qta = Qt::AlignLeft;
+		else if (richText->alignment() == Qt::AlignLeft)
+			qta = Qt::AlignRight;
+	}
+//	else WTF?
+	
+	richText->setTextCursor( qtc );
+	richText->setAlignment( qta );
 }
 
  void RichTextWidget::textAlign(QAction *a)

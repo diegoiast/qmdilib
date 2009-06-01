@@ -23,6 +23,7 @@ RichTextClient::RichTextClient( QString fileName, QWidget *parent )
 	toolbars["main"]->addAction( actionUnderline );
 	toolbars["main"]->addSeparator();
 	toolbars["main"]->addActions( alignGroup );
+	toolbars["main"]->addActions( directionGroup );
 	toolbars["main"]->addSeparator();
 	toolbars["main"]->addActions( listGroup );
 	toolbars["main"]->addSeparator();

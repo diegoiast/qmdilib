@@ -57,9 +57,11 @@ private slots:
 	void on_tabWidget_currentChanged ( int index );
 	void on_richText_Modified();
 	void alignmentChanged(Qt::Alignment a);
+	void directionChanged(Qt::LayoutDirection d);
 	void cursorPositionChanged();
 	void currentCharFormatChanged(const QTextCharFormat &format);
 	void textAlign(QAction *a);
+	void textDirection( QAction *a);
 	void setList_(QAction *a);
 	void fontChanged(const QFont &f);
 	void colorChanged(const QColor &c);
@@ -72,6 +74,10 @@ protected:
 	void timerEvent ( QTimerEvent * event );
 	
 public:
+	QAction *actionRTL;
+	QAction *actionLTR;
+	QActionGroup *directionGroup;
+	
 	QAction *actionBold;
 	QAction *actionItalic;
 	QAction *actionUnderline;
