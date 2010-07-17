@@ -79,7 +79,7 @@ void MainWindow2::init_gui()
 	toolbars["main"]->addAction( actionQtTopics );
 
 	// show the stuff on screen
-	updateGUI( this );
+	updateGUI();
 
 	// make the tab widget
 	

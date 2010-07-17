@@ -138,7 +138,7 @@ void MainWindow::showMenus()
 		unmergeClient( advanced );
 
 	// show the stuff on screen
-	updateGUI( this );
+	updateGUI();
 }
 
 void MainWindow::about()
