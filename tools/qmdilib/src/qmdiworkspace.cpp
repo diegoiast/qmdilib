@@ -535,7 +535,7 @@ void qmdiWorkspace::on_tabBar_changed( int index )
  */
 void qmdiWorkspace::windowDeleted( QObject *o )
 {
-	int windowNumber = _widgetList.indexOf((QWidget*)(o));
+	int windowNumber = widgetList.indexOf((QWidget*)(o));
 
 	if (windowNumber == -1)
 		return;
