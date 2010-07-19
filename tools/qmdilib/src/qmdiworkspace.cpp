@@ -115,12 +115,12 @@ qmdiWorkspace::qmdiWorkspace( QWidget *parent, qmdiHost *host )
 	cornerWidget1 = NULL;
 	cornerWidget2 = NULL;
 	activeWidget  = NULL;
-		
+	
 	tabBar = new QTabBar(this);
 	tabBar->setDrawBase( false );
-	tabBar->installEventFilter( this );	
+	tabBar->installEventFilter( this );
 	
-	workspace = new QWorkspace;	
+	workspace = new QWorkspace;
 	mainLayout = new QVBoxLayout;
 	headerLayout = new QHBoxLayout;
 	headerLayout->setMargin(0);
@@ -154,7 +154,7 @@ void qmdiWorkspace::addClient( qmdiClient *client )
 	QWidget *w = dynamic_cast<QWidget*>(client);
 
 	if (w == NULL)
-		return;		
+		return;	
 	
 	addTab( w, client->mdiClientName );
 }
@@ -181,13 +181,13 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 	qmdiClient *client = dynamic_cast<qmdiClient*>(widget);
 	if (client)
 		client->mdiServer = this;
-		
+	
 	widget->setParent( workspace );
 	workspace->addWindow( widget );
 	widget->setAttribute( Qt::WA_DeleteOnClose, true );
 	tabBar->addTab( name );
 	widget->show();
-	_widgetList.append( widget );
+	widgetList.append( widget );
 	connect( widget, SIGNAL(destroyed(QObject*)), this, SLOT(windowDeleted(QObject*)));
 }
 
@@ -258,8 +258,7 @@ void qmdiWorkspace::setCornerWidget ( QWidget * widget, Qt::Corner corner  )
 	// should it be done...?
 	// widget->setParent( tabBar );
 	
-	switch(corner)
-	{
+	switch(corner) 	{
 		case Qt::TopLeftCorner:
 			cornerWidget1 = widget;
 			break;
@@ -315,21 +314,20 @@ QWidget* qmdiWorkspace::widget( int i )
 {
 	if (!workspace)
 		return NULL;
-
+	
 	// one can never be safe enough
-	if (i >= workspace->windowList().count() )
-	{	// no warning on first child
+	if (i >= workspace->windowList().count() ) {
+		// no warning on first child
 		if (! ((i==0) && (workspace->windowList().isEmpty())) )
 			qDebug( "%s %s %d - warning: index out of range (%d)", __FILE__,  __FUNCTION__, __LINE__, i );
 		return NULL;
 	}
-		
-	if (i < 0)
-	{
+	
+	if (i < 0) {
 		qDebug( "%s %s %d - warning: negative index", __FILE__,  __FUNCTION__, __LINE__ );
 		return NULL;
 	}
-		
+	
 	return workspace->windowList().at( i );
 }
 
@@ -356,7 +354,6 @@ int qmdiWorkspace::count()
 {
 	if (!workspace)
 		return 0;
-	
 	return workspace->windowList().count();
 }
 
@@ -424,8 +421,7 @@ bool qmdiWorkspace::eventFilter(QObject *obj, QEvent *event)
 	if (clickedItem == -1)
 		return QObject::eventFilter(obj, event);
 	
-	switch( mouseEvent->button() )
-	{
+	switch( mouseEvent->button() ) {
 		case Qt::LeftButton:
 			return QObject::eventFilter(obj, event);
 			break;
@@ -506,18 +502,18 @@ void qmdiWorkspace::on_tabBar_changed( int index )
 		return;
 
 	// one can never be safe enough
-	if (index >= workspace->windowList().count() ){
+	if (index >= workspace->windowList().count() ) {
 		// no warning on first childs
 		if (! ((index==0) && (workspace->windowList().isEmpty())) ) 
 			qDebug( "%s %s %d - warning: index out of range (%d)", __FILE__,  __FUNCTION__, __LINE__, index );
-		return;		
+		return;	
 	}
-		
-	if (index <0){		
+	
+	if (index <0) {
 		qDebug( "%s %s %d - warning: negative index", __FILE__,  __FUNCTION__, __LINE__ );
 		return;
 	}
-		
+	
 	QWidget *newWindow = workspace->windowList()[index];
 	if (!newWindow)
 		return;
@@ -545,7 +541,7 @@ void qmdiWorkspace::windowDeleted( QObject *o )
 		return;
 		
 	tabBar->removeTab( windowNumber );
-	_widgetList.removeAt( windowNumber );
+	widgetList.removeAt( windowNumber );
 	
 	if (o == activeWidget)
 		activeWidget = NULL;
@@ -579,3 +575,4 @@ void qmdiWorkspace::on_rightMouse_pressed( int i, QPoint p )
 {
 	showClientMenu( i, p );
 }
+

@@ -122,8 +122,7 @@ void qmdiTabWidget::tabChanged( int i )
 
 	// thanks to Nox PasNox <pasnox@gmail.com> for this code
 	// it enables the usage of QWorspace as a self contained qmdiServer
-	if (activeWidget)
-	{
+	if (activeWidget) {
 		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
 		if ( ws )
@@ -132,8 +131,7 @@ void qmdiTabWidget::tabChanged( int i )
 	
 	activeWidget = w;
 	
-	if (activeWidget)
-	{
+	if (activeWidget) {
 		mdiHost->mergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
 		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
 		if ( ws )
@@ -235,8 +233,7 @@ void qmdiTabWidget::addClient( qmdiClient *client )
 {
 	QWidget *w = dynamic_cast<QWidget*>(client);
 
-	if (w == NULL)
-	{
+	if (w == NULL) {
 		qDebug( "%s %s %d: warning trying to add a qmdiClient which does not derive QWidget", __FILE__, __FUNCTION__, __LINE__ );
 		return;
 	}
@@ -284,8 +281,7 @@ bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event)
 	if (clickedItem == -1)
 		return QObject::eventFilter(obj, event);
 	
-	switch( mouseEvent->button() )
-	{
+	switch( mouseEvent->button() ) {
 		case Qt::LeftButton:
 			return QObject::eventFilter(obj, event);
 			break;
@@ -400,8 +396,7 @@ void qmdiTabWidget::tabInserted ( int index )
 //	if it's the only widget available, show it's number
 //	BUG is this supposed to be done by Qt?
 	int c = count();
-	if (c == 1)
-	{
+	if (c == 1) {
 		tabChanged( 0 );	// TODO: is this needed...?
 		activeWidget = w;
 	}
@@ -435,8 +430,7 @@ void qmdiTabWidget::tabRemoved ( int index )
 		
 	int c = count();
 
-	if (c == 0)
-	{
+	if (c == 0) {
 		activeWidget = NULL;
 
 		// the deletion of menus and toolbars is made by qmdiClient itself

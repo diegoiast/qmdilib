@@ -145,8 +145,7 @@ void qmdiHost::updateGUI( QMainWindow *window )
 	if (window == NULL)
 		window = dynamic_cast<QMainWindow*>(this);
 
-	if (window == NULL)
-	{
+	if (window == NULL) {
 		qDebug("%s - warning, no QMainWindow specified", __FUNCTION__ );
 		return;
 	}
@@ -193,8 +192,7 @@ void qmdiHost::mergeClient( qmdiClient *client )
 	if (client == NULL)
 		return;
 		
-	if (updateMenusAndToolBars)
-	{
+	if (updateMenusAndToolBars) {
 		menus.mergeGroupList( &client->menus );
 		toolbars.mergeGroupList( &client->toolbars );
 	}
@@ -239,8 +237,7 @@ void qmdiHost::unmergeClient( qmdiClient *client )
 	if (client == NULL)
 		return;
 		
-	if (updateMenusAndToolBars)
-	{
+	if (updateMenusAndToolBars) {
 		menus.unmergeGroupList( &client->menus );
 		toolbars.unmergeGroupList( &client->toolbars );
 	}
@@ -269,8 +266,7 @@ void qmdiHost::unmergeClient( qmdiClient *client )
 void qmdiHost::addActionsToWidget( qmdiActionGroupList &agl, QWidget *w )
 {
 	foreach( qmdiActionGroup *g, agl.actionGroups )
-		foreach(QObject *o, g->actionGroupItems )
-		{
+		foreach(QObject *o, g->actionGroupItems ) {
 			QAction *a = qobject_cast<QAction*>(o);
 			if (!a)
 				continue;
@@ -297,8 +293,7 @@ void qmdiHost::addActionsToWidget( qmdiActionGroupList &agl, QWidget *w )
 void qmdiHost::removeActionsFromWidget( qmdiActionGroupList &agl, QWidget *w )
 {
 	foreach( qmdiActionGroup *g, agl.actionGroups )
-		foreach(QObject *o, g->actionGroupItems )
-		{
+		foreach(QObject *o, g->actionGroupItems ) {
 			QAction *a = qobject_cast<QAction*>(o);
 			if (!a)
 				continue;

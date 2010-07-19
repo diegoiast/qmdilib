@@ -81,10 +81,9 @@ qmdiActionGroup* qmdiActionGroupList::operator[]( const QString name )
  */
 qmdiActionGroup* qmdiActionGroupList::getActionGroup( const QString &name )
 {
-        qmdiActionGroup *item = NULL;
+	qmdiActionGroup *item = NULL;
 
-	foreach( qmdiActionGroup* i, actionGroups )
-	{
+	foreach( qmdiActionGroup* i, actionGroups ) {
 		if (i->getName() == name )
 			return i;
 	}
@@ -113,8 +112,7 @@ qmdiActionGroup* qmdiActionGroupList::getActionGroup( const QString &name )
  */
 void qmdiActionGroupList::mergeGroupList( qmdiActionGroupList *group )
 {
-	foreach( qmdiActionGroup* i, group->actionGroups )
-	{
+	foreach( qmdiActionGroup* i, group->actionGroups ) {
 		qmdiActionGroup *mine = getActionGroup( i->getName() );
 		mine->mergeGroup( i );
 	}
@@ -138,8 +136,7 @@ void qmdiActionGroupList::mergeGroupList( qmdiActionGroupList *group )
  */
 void qmdiActionGroupList::unmergeGroupList( qmdiActionGroupList *group )
 {
-	foreach( qmdiActionGroup* i, group->actionGroups )
-	{
+	foreach( qmdiActionGroup* i, group->actionGroups ) {
 		qmdiActionGroup *mine = getActionGroup( i->getName() );
 		mine->unmergeGroup( i );
 	}
@@ -166,8 +163,7 @@ QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
 	else
 		menubar = new QMenuBar( menubar );
 
-	foreach( qmdiActionGroup* i, actionGroups )
-	{
+	foreach( qmdiActionGroup* i, actionGroups ) {
 		QMenu *m = i->updateMenu();
 
 		if (m)
@@ -199,24 +195,20 @@ QList<QToolBar*>* qmdiActionGroupList::updateToolBar( QList<QToolBar*> *toolbars
 	if (toolbars == NULL)
 		toolbars = new QList<QToolBar*>;
 
-	foreach( qmdiActionGroup* i, actionGroups )
-	{
+	foreach( qmdiActionGroup* i, actionGroups ) {
 		QToolBar *tb = NULL;
 		QString  actionName = i->getName();
 		
 		// find the correct toolbar
-		foreach( QToolBar *b, *toolbars )
-		{
-			if (b->windowTitle() == actionName)
-			{
+		foreach( QToolBar *b, *toolbars ) {
+			if (b->windowTitle() == actionName) {
 				tb = b;
 				break;
 			}
 		}
 
 		// if none found, create one
-		if (tb == NULL)
-		{
+		if (tb == NULL) {
 			tb = new QToolBar( actionName, window );
 			tb->setObjectName( actionName );
 			*toolbars << tb;

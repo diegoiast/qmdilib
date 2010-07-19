@@ -477,27 +477,22 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 		breakCount = breakCount == -1 ? 1 : breakCount+1;
 
 	int i = 0;
-	foreach( QObject *o, group->actionGroupItems )
-	{
+	foreach( QObject *o, group->actionGroupItems ) {
 		if (actionGroupItems.contains(o))
 			continue;
 		
 		QAction *a = qobject_cast<QAction*> (o);
 		
-		if (a)
-		{
+		if (a) {
 			int m = getMergePoint();
 			
 			if (m != -1)
 				addAction( a, m + i );
 			else
 				addAction( a );
-		}
-		else
-		{
+		} else {
 			QWidget *w = qobject_cast<QWidget*> (o);
-			if (w)
-			{
+			if (w) {
 				int m = getMergePoint();
 				
 				if (m != -1)
@@ -509,8 +504,7 @@ void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
 				// when selected in the QMainMenu
 				if (!w->inherits("QMenu"))
 					w->setVisible(true);
-			}
-			else
+			} else
 				qDebug("%s %d : erorr - wrong QObject type added to action group", __FILE__, __LINE__ );
 		}
 		
@@ -540,19 +534,16 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
 	if ( (group->breakAfter) )
 		breakCount = breakCount >1  ? -1 : breakCount-1;
 	
-	foreach( QObject *o, group->actionGroupItems )
-	{
+	foreach( QObject *o, group->actionGroupItems ) {
 		if (!actionGroupItems.contains(o))
 			continue;
 			
 		QAction *a = qobject_cast<QAction*> (o);
 		if (a)
 			removeAction( a );
-		else
-		{
+		else {
 			QWidget *w = qobject_cast<QWidget*> (o);
-			if (w)
-			{
+			if (w) {
 				w->setVisible(false);
 				removeWidget( w );
 			}
@@ -587,8 +578,7 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
  */
 QMenu*	 qmdiActionGroup::updateMenu( QMenu *menu )
 {
-	if (actionGroupItems.isEmpty())
-	{
+	if (actionGroupItems.isEmpty()) {
 		delete menu;
 		return NULL;
 	}
@@ -599,8 +589,7 @@ QMenu*	 qmdiActionGroup::updateMenu( QMenu *menu )
 		menu->setTitle( name );
 	menu->clear();
 	
-	foreach( QObject *o, actionGroupItems )
-	{
+	foreach( QObject *o, actionGroupItems ) {
 		QAction *a = qobject_cast<QAction*> (o);
 		if (a)
 			menu->addAction( a );
@@ -640,16 +629,13 @@ QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
 	toolbar->hide();
 	toolbar->clear();
 	int i = 0;	
-	foreach( QObject *o, actionGroupItems )
-	{
+	foreach( QObject *o, actionGroupItems ) {
 		QAction *a = qobject_cast<QAction*> (o);
 		if (a)
 			toolbar->addAction( a );
-		else
-		{
+		else {
 			QWidget *w = qobject_cast<QWidget*> (o);
-			if (w)
-			{
+			if (w) {
 				// don't even try to add menus to toolbars, this just does not work
 				if (! w->inherits("QMenu"))
 					toolbar->addWidget( w );
@@ -666,3 +652,4 @@ QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
 
 	return toolbar;
 }
+

@@ -182,11 +182,9 @@ qmdiClient::~qmdiClient()
  */
 bool qmdiClient::closeClient()
 {
-	if (canCloseClient())
-	{
+	if (canCloseClient()) {
 		QObject *o = dynamic_cast<QObject*>(this);
-		if (o)
-		{
+		if (o) {
 			QWidget *w = qobject_cast<QWidget*>(o);
 			
 			if (w)
@@ -194,8 +192,7 @@ bool qmdiClient::closeClient()
 			o->deleteLater();
 		}
 		return true;
-	}
-	else
+	} else
 		return false;
 }
 

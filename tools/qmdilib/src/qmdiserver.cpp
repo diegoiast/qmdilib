@@ -212,8 +212,7 @@ void qmdiServer::tryCloseAllButClient( int i )
 	int n = getClientsCount();
 	qmdiClient *client = getClient(i);
 
-	for( int j=0; j<n; j++ )
-	{
+	for( int j=0; j<n; j++ ) {
 		qmdiClient *c = getClient(j);
 		
 		// item is not an mdi client
@@ -241,8 +240,7 @@ void qmdiServer::tryCloseAllClients()
 {
 	int c = getClientsCount();
 
-	for( int i=0; i<c; i++ )
-	{
+	for( int i=0; i<c; i++ ) {
 		qmdiClient *client = getClient(i);
 		if (!client)
 			continue;
@@ -286,16 +284,11 @@ void qmdiServer::showClientMenu( int i, QPoint p )
 		p = w->mapToGlobal(p);
 	QAction *q = menu->exec( p );
 
-	if ( q == closeThis)
-	{
+	if ( q == closeThis) {
 		tryCloseClient( i );
-	}
-	else if  (q == closeOthers)
-	{
+	} else if  (q == closeOthers) {
 		tryCloseAllButClient( i );
-	}
-	else if (q == closeAll )
-	{
+	} else if (q == closeAll ) {
 		tryCloseAllClients();
 	}
 }
