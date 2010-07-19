@@ -19,6 +19,7 @@ class QObject;
 class QAction;
 class QString;
 class QMenuBar;
+class QMenu;
 class QMainWindow;
 
 class qmdiActionGroup;
@@ -35,6 +36,8 @@ public:
 	void unmergeGroupList( qmdiActionGroupList *group );
 	
 	QMenuBar*		updateMenu( QMenuBar *menubar );
+	QMenuBar*		updateMenuBar( QMenuBar *menubar );
+	QMenu*			updatePopMenu( QMenu *popupMenu );
 	QList<QToolBar*>*	updateToolBar( QList<QToolBar*> *toolbars, QMainWindow *window );
 	
 private:

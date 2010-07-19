@@ -49,10 +49,10 @@ public slots:
 	
 private:
 	QLayout		*mainLayout;
-	QLayout		*headerLayout;	
+	QLayout		*headerLayout;
 	QTabBar		*tabBar;
 	QWorkspace	*workspace;
-	QWidgetList	_widgetList;
+	QWidgetList	widgetList;
 	
 	QWidget		*cornerWidget1;
 	QWidget		*cornerWidget2;

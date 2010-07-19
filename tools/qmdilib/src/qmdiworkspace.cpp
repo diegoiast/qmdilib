@@ -349,6 +349,8 @@ int qmdiWorkspace::currentIndex()
  * Returns the number of widgets (or windows) available. The number
  * should be the same as the number of tabs seen on screen.
  *
+ * This method is added for compatibilty with QTabWidget. Trolltech calls
+ * this static overloading.
  */
 int qmdiWorkspace::count()
 {
@@ -377,7 +379,7 @@ qmdiClient* qmdiWorkspace::getClient( int i )
  * Return the number of sub-widgets in this server. Please note that
  * this function can return also non-mdi clients. 
  *
- * This function return the value or QTabWidget::count()
+ * A wrapper for cunt()
  */
 int qmdiWorkspace::getClientsCount()
 {
@@ -412,14 +414,23 @@ bool qmdiWorkspace::eventFilter(QObject *obj, QEvent *event)
 	if (event->type() != QEvent::MouseButtonPress)
 		return QObject::eventFilter(obj, event);
 	
-	// compute the tab number
 	QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
 	QPoint position = mouseEvent->pos();
 	int clickedItem = tabBar->tabAt( position );
 	
-	// just in case
-	if (clickedItem == -1)
+	// right clicking on the empty space displays a popup menu
+	if (clickedItem == -1) {
+		if (mouseEvent->button() != Qt::RightButton)
+			return QObject::eventFilter(obj, event);
+		
+		QMenu *m = mdiHost->menus.updatePopMenu(NULL);
+		QPoint p = mapToGlobal(mouseEvent->pos());
+		
+		m->exec(p);
+		mouseEvent->accept();
+		delete m;
 		return QObject::eventFilter(obj, event);
+	}
 	
 	switch( mouseEvent->button() ) {
 		case Qt::LeftButton:

@@ -156,7 +156,7 @@ void qmdiActionGroupList::unmergeGroupList( qmdiActionGroupList *group )
  * You cannot generate items into a QMenuBar "by hand" and then "add"
  * the definitions on this class. 
  */
-QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
+QMenuBar* qmdiActionGroupList::updateMenuBar( QMenuBar *menubar )
 {
 	if (menubar)
 		menubar->clear();
@@ -171,6 +171,48 @@ QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
 	}
 
 	return menubar;
+}
+
+/**
+ * \brief Deprecated - use updateMenuBar()
+ *
+ * This method is deprecated, please use updateMenuBar() instead.
+ */
+QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
+{
+	qWarning("This qmdiActionGroupList::updateMenu() is deprecated, please use qmdiActionGroupList::updateMenuBar() instead");
+	return updateMenuBar(menubar);
+}
+
+
+/**
+ * \brief update a QMenu from the definitions on this action group list
+ * \param menubar a QMenuBar to be updated
+ * \return the updated menubar (same instance which was passed)
+ * 
+ * This function generates from the definitions on this class a valid
+ * QMenur which you can show on you widget as a context menu for example.
+ * 
+ * If \c popupMenu is NULL, a new QMenu will be allocated for you, and
+ * will be returned. This method is similar to updateMenuBar() with
+ * the difference that the actio group list is converted to a single popup menu.
+ * 
+ */
+QMenu* qmdiActionGroupList::updatePopMenu( QMenu *popupMenu )
+{
+	if (popupMenu)
+		popupMenu->clear();
+	else
+		popupMenu = new QMenu( popupMenu );
+
+	foreach( qmdiActionGroup* i, actionGroups ) {
+		QMenu *m = i->updateMenu();
+
+		if (m)
+			popupMenu->addMenu( m );
+	}
+
+	return popupMenu;
 }
 
 /**

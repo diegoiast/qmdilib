@@ -155,7 +155,7 @@ void qmdiHost::updateGUI( QMainWindow *window )
 		
 	window->setUpdatesEnabled(false);
 	toolBarList = toolbars.updateToolBar( toolBarList, window );
-	menus.updateMenu( window->menuBar() );
+	menus.updateMenuBar( window->menuBar() );
 	window->setUpdatesEnabled(true);
 }
 
