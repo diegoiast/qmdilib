@@ -2,16 +2,27 @@ $Id$
 
 0.0.5 - SOMEDAY - Diego Iastrubni <diegoiast@gmail.com>
  * code is released now under a dual license: (L)GPL 2 or 3
- * code refactoring: qmdiClient::mdiClientFileName() should be used instead of old "filename"
- * code refactoring: qmdiClient::name has been renamed to qmdiClient::mdiClientName
- * code refactoring: include files for qmdiActionGroup and qmdiActionGroupList changed from
-   "actiongroup.h" and "actiongrouplist.h" into "qmdiactiongroup.h" and qmdiactiongrouplist.h"
-   Transitional includes have been added, to be removed next version, please update your code
- * code refacroting: qmdiActionGroupList::updateMenu() is deprecated, use qmdiActionGroupList::updateMenuBar()
+ * code refactoring: qmdiClient::mdiClientFileName() should be used instead of 
+   old "filename"
+ * code refactoring: qmdiClient::name has been renamed to 
+   qmdiClient::mdiClientName
+ * code refactoring: include files for qmdiActionGroup and qmdiActionGroupList 
+   changed from "actiongroup.h" and "actiongrouplist.h" into "qmdiactiongroup.h"
+   and qmdiactiongrouplist.h" 
+   Transitional includes have been added, to be removed next version, please 
+   update your code
+ * code refactoring: qmdiActionGroupList::updateMenu() is deprecated, use 
+   qmdiActionGroupList::updateMenuBar()
+ * core refactoring: no need to pass the parnet on the constructor, instead the 
+   qmdiTabWidget and qmdiWorkspace will check for the mdi host when mdiClients
+   are added
  * new feature: qmdiClients are notified of (un)merged from a host
- * new feature: qmdiTabWidget will hide the tabbar if the number of tabs is less then 2 
- * new feature: when qmdiHost adds a qmdiClient if that client is also a widget, add it's menus+toolbars actions to the widget.
- * new feature: you can tell qmdiHost not to update it's GUI by changing qmdiHost::updateMenusAndToolBars
+ * new feature: qmdiTabWidget will hide the tabbar if the number of tabs is less
+   then 2 widgets
+ * new feature: when qmdiHost adds a qmdiClient if that client is also a widget,
+   add it's menus+toolbars actions to the widget.
+ * new feature: you can tell qmdiHost not to update it's GUI by changing 
+   qmdiHost::updateMenusAndToolBars
  * new feature: you can convert a qmdiActionGroupList to a single popup menu
 
 0.0.4 - 29 Jun 2007 - Diego Iastrubni <elcuco@kde.org>

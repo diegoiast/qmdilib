@@ -6,21 +6,24 @@ on demand. This can be used to present different menus and toolbars to
 widgets inside a QTabWidget, hiding or showing a different set of menus 
 on demand or even enabling a small plugin system.
 
-The library is fully documented, and contains some demostrations. It should compile 
-flawlessly (no warnings) with a single "qmake; make" on the root directory of the 
-project. It is known to work on Windows and Linux, and there is no reason why it 
-should not work on other platforms supported by Qt4. Currently only gcc is tested, 
-but other compilers should be able to compile this library
+The library is fully documented, and contains some demostrations. It should 
+compile flawlessly (no warnings) with a single "qmake; make" on the root 
+directory of the project. It is known to work on Windows and Linux, and there is
+no reason why it should not work on other platforms supported by Qt4. Currently 
+only gcc is tested, but other compilers should be able to compile this library.
 
 The license of this library is LGPL version 2 or 3 as you need.
 
-If you have any questions, please the the HTML manual available at the doc/html directory.
+If you have any questions, please the the HTML manual available at the doc/html
+directory.
 
-I would like to thank these people for helping me with the development of this library:
+I would like to thank these people for helping me with the development of this
+library:
 
- * Nox PasNox <pasnox@gmail.com> for the patch for using QWorkspace as a mini qmdiServer
-   when stored into a qmdiTabWidget
- * Henry badinter <fullmetalcoder@hotmail.fr> for many suggestion in the internal interfaces
-   of qmdilib and his ediuk application which uses qmdilib for many of it's internal interfaces
+ * Nox PasNox <pasnox@gmail.com> for the patch for using QWorkspace as a mini
+   qmdiServer when stored into a qmdiTabWidget
+ * Henry badinter <fullmetalcoder@hotmail.fr> for many suggestion in the 
+   internal interfaces of qmdilib and his ediuk application which uses qmdilib 
+   for many of it's internal interfaces
 
 - Diego Iastrubni <elcuco@kde.org>, 11-4-2008

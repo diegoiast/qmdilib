@@ -109,9 +109,6 @@ qmdiTabWidget::~qmdiTabWidget()
 void qmdiTabWidget::tabChanged( int i )
 {
 	if (mdiHost == NULL)
-		mdiHost = dynamic_cast<qmdiHost*>(parentWidget());
-		
-	if (mdiHost == NULL)
 		return;
 		
 	QWidget *w = widget( i );
@@ -386,9 +383,11 @@ void qmdiTabWidget::tabInserted ( int index )
 	QWidget *w = widget( index );
 	qmdiClient *client = dynamic_cast<qmdiClient*>(w);
 
+	if (mdiHost == NULL)
+		mdiHost = dynamic_cast<qmdiHost*>(parent());
 	if (client)
 		client->mdiServer = this;
-
+	
 	QWorkspace* ws = qobject_cast<QWorkspace*>( w );
 	if (ws)
 		connect( ws, SIGNAL(windowActivated(QWidget*)), this, SLOT( workSpaceWindowActivated(QWidget*)));

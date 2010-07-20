@@ -178,6 +178,9 @@ void qmdiWorkspace::addTab( QWidget *widget, QString name )
 	if (!workspace)
 		return;
 
+	if (mdiHost == NULL)
+		mdiHost = dynamic_cast<qmdiHost*>(parent());
+	
 	qmdiClient *client = dynamic_cast<qmdiClient*>(widget);
 	if (client)
 		client->mdiServer = this;
