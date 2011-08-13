@@ -868,7 +868,7 @@ void PluginManager::closeClient()
  */
 void PluginManager::on_actionOpen_triggered()
 {
-	static QString workingDir
+	static QString workingDir;
 	QString extens, e, allExtens;
 	QStringList extensAvailable;
 	IPlugin *p;
