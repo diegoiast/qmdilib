@@ -217,7 +217,8 @@ bool qmdiClient::canCloseClient()
 
 /**
  * \brief The file opened by this MDI client
- * 
+ * \return by default an empth string.
+ *
  * This function returns the file name which is opened by the MDI client.
  * The file name is not really used inside \b qmdilib , but it's left 
  * for usage outside of library. The \b name property should reflect

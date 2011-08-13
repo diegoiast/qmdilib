@@ -17,13 +17,13 @@
 /**
  * \class qmdiServer
  * \brief A default interface for MDI servers
- *  
+ *
  * This class is used only to get messages from the qmdiClient
  * that it asks to be removed from the list.
- * 
+ *
  * Classes which derive this class, MUST implement the clientDeleted()
  * function. This a rather abstract class, you are probably looking for qmdiTabWidget.
- * 
+ *
  * Other classes which implement this interface are planned for next versions.
  */
 
@@ -130,6 +130,7 @@ void qmdiServer::deleteClient( qmdiClient* )
 /**
  * \fn qmdiServer::getClientsCount()
  * \brief return the number of sub clients in this server
+ * \return a number greater or equal to 0
  *
  * Return the number of sub-widgets in this server. Please note that
  * this function can return also non-mdi clients. 
@@ -146,7 +147,8 @@ void qmdiServer::deleteClient( qmdiClient* )
  * \fn  qmdiClient *qmdiServer::getClient( int i )
  * \brief return a pointer to an MDI client
  * \param i the number of sub widget to return
- * 
+ * \return and qmdiClinet pointer or NULL
+ *
  * Return a pointer to an MDI client. If the number passed
  * denotes a sub widget which does not derive qmdiClient
  * this function will return NULL.
@@ -292,3 +294,27 @@ void qmdiServer::showClientMenu( int i, QPoint p )
 		tryCloseAllClients();
 	}
 }
+
+
+/**
+ * \class qmdiMainWindow
+ * \brief A convience class that creates a main windows as the mdiServer
+ *
+ * This class is an dmi server inside a main window.
+ *
+ * \ref qmdiServer
+ */
+
+/**
+ * \fn qmdiMainWindow::qmdiMainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 ):
+ * \brief a generic constructor
+ * \param parent the parent of the window
+ * \param flags the window flags of the window
+ *
+ *
+ * This implements the normal constructor of QMainWindow, to ease
+ * the transition from/to a qmdiMainWindow.
+ *
+ * This method is added for compatibilty with QTabWidget. Trolltech calls
+ * this static overloading.
+ */

@@ -18,9 +18,6 @@ You can also read some documentation about the demos on this version:
 - \ref demo1
 - \ref demo2
 - \ref demo3
-- \ref demo4
-- \ref demo5
-- \ref demo6
 
 You can see the documentation for the classes of this library:
 
@@ -120,6 +117,20 @@ can modify on the fly another set of commands into your application, and do this
 To do this using plain Qt classes, the way for you to do this is to disable a lot of commands. The setup is
 really hard to implement if you want to switch between several states, and implementing a state machine. With
 this library, those things can become trivial.
+
+This application also shows how to build qmdilib as part as your application. All you need to do is add the
+following lines to your *.pro file:
+
+\code
+#include qmdilib project definition
+QMDILIB_SRC_DIR  = ../../src/
+INCLUDEPATH += $$QMDILIB_SRC_DIR
+include ($$QMDILIB_SRC_DIR/qmdilib.pri)
+
+# your code
+HEADERS += mainwindow.h
+SOURCES += mainwindow.cpp  main.cpp
+\endcode
 
 <img src="../adv-menus-2.jpg">
 
@@ -299,207 +310,6 @@ and out from the main window.
 
 This feature has been written originally by Nox PasNox (pasnox@gmail.com).
 
-\see Next: \ref demo4
-
-\page demo4 Demo4 - Building the code as a shared library
-This fourth demo, shows how to build qdmilib into dynamic libraries, and also how to build new libraries which
-use qmdilib classes.
-
-This application uses the same code as demo2, with a single difference: all the classes of qmdilib are compiled
-into a library (libqmdi.so.0.0.4 on Unix/Linux and qmdi0.dll on Win32), and the extended text editor and help browser
-into another library (libqexedit0.so.0.0.4 on Unix/Linux and qexedit0.dll on Win32). The main binary contains only 
-the main window and the main() function. 
-
-Note that on Unix/Linux (also Mac), the application will fail to load because the loader will not be able 
-to find the libraries. To make it work, you need to override the environment variable LD_LIBRARY_PATH to include the
-current directory. This example also includes a shell script which does this for you.
-
-The main project on this demo is a subdirs project, which will build the qmdilib library, the qexedit library and
-finally also the main application. 
-
-This is the project file for qmdilib:
-\code
-TEMPLATE = lib
-TARGET=qmdi
-VERSION=0.0.4
-DESTDIR=../
-
-MOC_DIR =  ../../../tmp/
-RCC_DIR =  ../../../tmp/
-UI_DIR =  ../../../tmp/
-OBJECTS_DIR = ../../../tmp/
-INCLUDEPATH += ../../../src .
-
-# Input
-HEADERS += ../../../src/actiongroup.h \
-           ../../../src/actiongrouplist.h \
-           ../../../src/qmdiclient.h \
-           ../../../src/qmdihost.h \
-           ../../../src/qmdiserver.h \
-           ../../../src/qmditabwidget.h
-
-SOURCES += ../../../src/actiongroup.cpp \
-           ../../../src/actiongrouplist.cpp \
-           ../../../src/qmdiclient.cpp \
-           ../../../src/qmdihost.cpp \
-           ../../../src/qmdiserver.cpp \
-           ../../../src/qmditabwidget.cpp
-\endcode
-
-This is the project file for qexedit, see how it also links the qmdi library:
-\code
-TEMPLATE = lib
-TARGET=qexedit
-VERSION=0.0.4
-DESTDIR=../
-
-MOC_DIR =  ../../../tmp/
-RCC_DIR =  ../../../tmp/
-UI_DIR =  ../../../tmp/
-OBJECTS_DIR = ../../../tmp/
-INCLUDEPATH += . ../../../src
-
-# Input
-unix:LIBS += -lqmdi -L../
-win32:LIBS += -lqmdi0 -L../
-
-HEADERS += ../../demo2/qexeditor.h \
-           ../../demo2/helpbrowse.h
-
-SOURCES += ../../demo2/qexeditor.cpp \
-           ../../demo2/helpbrowse.cpp
-\endcode
-
-This is the project file for the main application, see how it links qmdi and qexedit, note also that
-on Unix the application name is modified, and end-users should run the shell script wrapper instead:
-\code
-TEMPLATE = app
-unix:TARGET = demo4.bin
-win32:TARGET = demo4
-DEPENDPATH += .
-INCLUDEPATH += . ../../../src/ ../../demo2/
-DESTDIR = ../
-
-MOC_DIR =  ../../../tmp/
-RCC_DIR =  ../../../tmp/
-UI_DIR =  ../../../tmp/
-OBJECTS_DIR = ../../../tmp/
-
-# Input
-unix:LIBS += -L../ -lqmdi  -lqexedit
-win32:LIBS += -L../ -lqmdi0 -lqexedit0
-
-RESOURCES += demo4.qrc
-HEADERS += mainwindow4.h
-SOURCES += mainwindow4.cpp  main4.cpp
-\endcode
-
-\see \ref demo2
-\see \ref small_tutor
-\see Next: \ref demo5
-
-\page demo5 Demo5 - Building the code as a static library
-This fifth demo, shows how to build qdmilib into static libraries, and also how to build new libraries which
-use qmdilib classes and how to link those libraries into your application.
-
-This application uses the same code as demo2 and demo4, with a single difference: all the classes of qmdilib are compiled
-into a static library (libqmdi.a), and the extended text editor and help browser into another library (libqexedit.a). The final
-binary will be linked with those libraries. This demo will provide the same functionality as demo2 and demo4, but unlike
-demo4 the binary produced will be slightly bigger because of the static linking, it should be more or less the same
-size as demo2.
-
-The main project on this demo is a subdirs project, which will build the qmdilib library, the qexedit library and
-finally also the main application. 
-
-This is the project file for qmdilib:
-\code
-TEMPLATE = lib
-TARGET = qmdi
-CONFIG += staticlib
-VERSION = 0.0.4
-
-DESTDIR = ../
-MOC_DIR =  ../../../tmp/
-RCC_DIR =  ../../../tmp/
-UI_DIR =  ../../../tmp/
-OBJECTS_DIR = ../../../tmp/
-INCLUDEPATH += . ../../../src
-
-# Input
-HEADERS += ../../../src/actiongroup.h \
-           ../../../src/actiongrouplist.h \
-           ../../../src/qmdiclient.h \
-           ../../../src/qmdihost.h \
-           ../../../src/qmdiserver.h \
-           ../../../src/qmditabwidget.h
-
-SOURCES += ../../../src/actiongroup.cpp \
-           ../../../src/actiongrouplist.cpp \
-           ../../../src/qmdiclient.cpp \
-           ../../../src/qmdihost.cpp \
-           ../../../src/qmdiserver.cpp \
-           ../../../src/qmditabwidget.cpp
-\endcode
-
-This is the project file for qexedit, see how it also links the qmdi library:
-\code
-TEMPLATE = lib
-TARGET = qexedit
-CONFIG += staticlib
-VERSION = 0.0.4
-
-DESTDIR = ../
-MOC_DIR =  ../../../tmp/
-RCC_DIR =  ../../../tmp/
-UI_DIR =  ../../../tmp/
-OBJECTS_DIR = ../../../tmp/
-INCLUDEPATH += . ../../../src
-
-# Input
-unix:LIBS += -L../ -lqmdi
-
-HEADERS += ../../demo2/qexeditor.h \
-           ../../demo2/helpbrowse.h
-
-SOURCES += ../../demo2/qexeditor.cpp \
-           ../../demo2/helpbrowse.cpp
-\endcode
-
-This is the project file for the main application, see how it links qmdi and qexedit. Unlike demo4,
-the wrapper script is not needed on Unix, and the *.a files are not needed on the release package.
-\code
-TEMPLATE = app
-TARGET = demo5
-CONFIG += static
-
-DESTDIR = ../
-MOC_DIR =  ../../../tmp/
-RCC_DIR =  ../../../tmp/
-UI_DIR =  ../../../tmp/
-OBJECTS_DIR = ../../../tmp/
-INCLUDEPATH += . ../../../src/ ../../demo2/
-
-# Input
-unix:LIBS += -L../ -lqmdi  -lqexedit
-win32:LIBS += ../libqexedit.a ../libqmdi.a
-
-RESOURCES += demo5.qrc
-HEADERS += mainwindow5.h
-SOURCES += mainwindow5.cpp  main5.cpp
-\endcode
-
-\see \ref demo2
-\see \ref demo4
-\see \ref small_tutor
-\see Next: \ref demo6
-
-\page demo6 Demo6 - l10n and i18n when using qmdilib
-This six demo, shows how to use the l18n classes of Qt4.
-
-TODO
-Need to write an example for this stuff.
-\see Back to the main page \ref index
-
 \page changelog ChangeLog
 \section v_0_0_5 0.0.5 - SOMEDAY - Diego Iastrubni <diegoiast@gmail.com>
  - code is released now under a dual license: (L)GPL 2 or 3
@@ -512,6 +322,8 @@ Need to write an example for this stuff.
  - new feature: qmdiTabWidget will hide the tabbar if the number of tabs is less then 2
  - new feature: when qmdiHost adds a qmdiClient if that client is also a widget, add it's menus+toolbars actions to the widget.
  - new feature: you can tell qmdiHost not to update it's GUI by changing qmdiHost::updateMenusAndToolBars
+ - build system: redesign the build system to ease the usage of the library inside your application
+ - build system: building by default shared and static libraries
 
 \section v_0_0_4 0.0.4 - 29 Jun 2007 - Diego Iastrubni <elcuco@kde.org>
  - Documentation re-created using doxygen 1.4.7

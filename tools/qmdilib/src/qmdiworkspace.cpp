@@ -70,12 +70,6 @@
  */
 
 /**
- * \var qmdiWorkspace::_widgetList
- * 
- */
-
-
-/**
  * \var qmdiWorkspace::cornerWidget1
  * 
  */
@@ -348,7 +342,7 @@ int qmdiWorkspace::currentIndex()
 
 /**
  * \brief return the number of widgets available on the workspace
- *
+ * \return a number greater or equal to 0 *
  * Returns the number of widgets (or windows) available. The number
  * should be the same as the number of tabs seen on screen.
  *
@@ -365,6 +359,7 @@ int qmdiWorkspace::count()
 /**
  * \brief return the number of sub clients in this server
  * \param i the number of sub widget to return
+ * \return and qmdiClinet pointer or NULL
  *
  * Return the number of sub-widgets in this server. Please note that
  * this function can return also non-mdi clients. 
@@ -378,6 +373,7 @@ qmdiClient* qmdiWorkspace::getClient( int i )
 
 /**
  * \brief return the number of sub clients in this server
+ * \return a number greater or equal to 0
  *
  * Return the number of sub-widgets in this server. Please note that
  * this function can return also non-mdi clients. 

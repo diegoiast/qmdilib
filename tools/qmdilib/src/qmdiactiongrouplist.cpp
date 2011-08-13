@@ -175,6 +175,9 @@ QMenuBar* qmdiActionGroupList::updateMenuBar( QMenuBar *menubar )
 
 /**
  * \brief Deprecated - use updateMenuBar()
+ * \param menubar the menubar to be updated
+ * \return an updated menubar (same as the one passed as a parameter)
+ *
  *
  * This method is deprecated, please use updateMenuBar() instead.
  */
@@ -187,7 +190,7 @@ QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
 
 /**
  * \brief update a QMenu from the definitions on this action group list
- * \param menubar a QMenuBar to be updated
+ * \param popupMenu menubar a QMenuBar to be updated
  * \return the updated menubar (same instance which was passed)
  * 
  * This function generates from the definitions on this class a valid

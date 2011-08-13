@@ -301,6 +301,7 @@ bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event)
 /**
  * \brief return a specific MDI client
  * \param i the number of sub widget to return
+ * \return and qmdiClinet pointer or NULL
  *
  * This method returns the MDI client found in tab number \b i , or \b NULL if
  * that widget does not implement the qmdiClient interface.
@@ -312,11 +313,12 @@ qmdiClient *qmdiTabWidget::getClient( int i )
 
 /**
  * \brief return the number of sub clients in this server
+ * \return a number greater or equal to 0
  *
  * Return the number of sub-widgets in this server. Please note that
  * this function can return also non-mdi clients. 
  *
- * This function return the value of QTabWidget::count()
+ * This function returns the value of QTabWidget::count()
  */
 int qmdiTabWidget::getClientsCount()
 {

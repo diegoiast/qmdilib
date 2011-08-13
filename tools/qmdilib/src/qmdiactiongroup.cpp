@@ -424,6 +424,7 @@ void qmdiActionGroup::setMergePoint()
 /**
  * \brief compute the best merging point for new action groups
  * \since 0.0.4
+ * \return -1 is not defined, otherwise a position lower then count()
  * 
  * This function computes the best location in which a new action group
  * should be merged. The merge point is computed from the list of
