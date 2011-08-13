@@ -1,9 +1,13 @@
-include ( ../common/common.pri ) 
-include ( ../common/demos.pri ) 
-DESTDIR = ./
+# $Id$
+QMDILIB_SRC_DIR  = ../../src/
+INCLUDEPATH += $$QMDILIB_SRC_DIR
+include ($$QMDILIB_SRC_DIR/qmdilib.pri)
+include ( ../common/demos.pri )
 
+DESTDIR  = ../../
 TEMPLATE = app
-TARGET = plugin-demo
+CONFIG  += silent 
+TARGET   = plugin-demo
 FORMS = plugin_list.ui plugins/editor/editor_cfg.ui plugins/help/help_cfg.ui
 HEADERS += pluginmanager.h \
  pluginmodel.h \
@@ -29,5 +33,3 @@ SOURCES += pluginmanager.cpp \
  plugins/help/help_plg.cpp
 
 RESOURCES += richtext.qrc
-
-CONFIG += debug_and_release
