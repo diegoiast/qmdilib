@@ -8,7 +8,7 @@ class QexTextEdit2: public QexTextEdit
 {
 	Q_OBJECT
 public:
-	QexTextEdit2( QString file="", bool singleToolbar = false, QWidget *parent=0 );
+	QexTextEdit2( QString file=QString(), bool singleToolbar = false, QWidget *parent=0 );
 
 public slots:
 	void showQtKeyword();

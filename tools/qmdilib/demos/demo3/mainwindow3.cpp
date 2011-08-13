@@ -124,7 +124,7 @@ void MainWindow3::about()
 
 void MainWindow3::fileNew()
 {
-	QexTextEdit *editor = new QexTextEdit( SINGLE_TOOLBAR );
+	QexTextEdit *editor = new QexTextEdit( QString(), SINGLE_TOOLBAR );
 	editor->hide();
 	workspace->addWindow( editor );
 	editor->show();

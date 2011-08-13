@@ -155,7 +155,7 @@ void RichTextPlugin::fileNew()
 		return;
 	}
 
-	RichTextClient *editor = new RichTextClient("", dynamic_cast<QMainWindow*>(mdiServer) );
+	RichTextClient *editor = new RichTextClient(QString(), dynamic_cast<QMainWindow*>(mdiServer) );
 	editor->mdiClientName = tr("No name");
 	editor->setObjectName( editor->mdiClientName );
 	mdiServer->addClient( editor );

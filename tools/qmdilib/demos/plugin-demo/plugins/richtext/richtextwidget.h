@@ -30,7 +30,7 @@ class RichTextWidget: public QWidget
 {
 	Q_OBJECT
 public:
-	RichTextWidget( QWidget *parent, QString fileName="" );
+	RichTextWidget( QWidget *parent, QString fileName=QString() );
 	RichTextWidget( QWidget *parent, QTextEdit *e );
 	RichTextWidget( QWidget *parent, QString fileName, QTextEdit *e );
 	~RichTextWidget();

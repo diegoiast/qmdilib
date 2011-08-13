@@ -25,7 +25,7 @@ class QexTextEdit : public QTextEdit, public qmdiClient
 {
 	Q_OBJECT
 public:
-	QexTextEdit( QString file="", bool singleToolbar = false, QWidget *parent=0 );
+	QexTextEdit( QString file=QString(), bool singleToolbar = false, QWidget *parent=0 );
 	~QexTextEdit();
 	
 	bool canCloseClient();

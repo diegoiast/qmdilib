@@ -350,7 +350,7 @@ void	IPlugin::saveConfig( QSettings &settings )
  * 		return;
  * 	}
  * 
- * 	QexTextEdit *editor = new QexTextEdit("", true);
+ * 	QexTextEdit *editor = new QexTextEdit(QString(), true);
  * 	editor->mdiClientName = tr("No name");
  * 	editor->setObjectName( editor->mdiClientName );
  * 	mdiServer->addClient( editor );

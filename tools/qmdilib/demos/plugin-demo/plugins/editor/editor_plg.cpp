@@ -197,8 +197,9 @@ void EditorPlugin::fileNew()
 		return;
 	}
 
-	QexTextEdit *editor = new QexTextEdit2("", true);
+	QexTextEdit *editor = new QexTextEdit2(QString(), true);
 	editor->mdiClientName = tr("No name");
 	editor->setObjectName( editor->mdiClientName );
 	mdiServer->addClient( editor );
 }
+

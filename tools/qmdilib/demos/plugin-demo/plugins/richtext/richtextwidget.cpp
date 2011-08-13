@@ -36,7 +36,7 @@ RichTextWidget::RichTextWidget( QWidget *parent, QString fileName ):
 RichTextWidget::RichTextWidget( QWidget *parent, QTextEdit *e ):
 	QWidget(parent)
 {
-	initWidget( "", e );
+	initWidget( QString(), e );
 }
 
 RichTextWidget::RichTextWidget( QWidget *parent, QString fileName, QTextEdit *e )

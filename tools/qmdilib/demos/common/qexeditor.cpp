@@ -226,7 +226,7 @@ bool QexTextEdit::fileSaveAs()
 	QString s = QFileDialog::getSaveFileName(
 		NULL,
 		"Choose a filename to save under",
-		"",
+		QString(),
 		"Sources (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc);;"
 				"Headers (*.h *.hpp *.hxx *.inc);;"
 				"Qt project (*.pro *.pri);;"

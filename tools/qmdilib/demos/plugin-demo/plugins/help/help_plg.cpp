@@ -34,8 +34,8 @@ HelpPlugin::HelpPlugin()
 	autoEnabled	= true;
 	alwaysEnabled	= true;
 	
-	actionAbout	= new_action( QIcon(), tr("&About"), this, "", tr("XXXXX"), SLOT(showAboutApp()) );
-	actionAboutQt	= new_action( QIcon(), tr("&About Qt"), this, "", tr("XXXXX"), SLOT(showAboutQt()) );
+	actionAbout	= new_action( QIcon(), tr("&About"), this, QString(), tr("XXXXX"), SLOT(showAboutApp()) );
+	actionAboutQt	= new_action( QIcon(), tr("&About Qt"), this, QString(), tr("XXXXX"), SLOT(showAboutQt()) );
 	actionShowQtHelp= new_action( QIcon(), tr("&Qt help"), this, "Ctrl+F1", tr("XXXXX"), SLOT(showQtHelp()) );
 
 	menus["&Help"]->addAction( actionShowQtHelp );
