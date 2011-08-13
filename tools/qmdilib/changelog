@@ -24,6 +24,8 @@ $Id$
  * new feature: you can tell qmdiHost not to update it's GUI by changing 
    qmdiHost::updateMenusAndToolBars
  * new feature: you can convert a qmdiActionGroupList to a single popup menu
+ * build system: redesign the build system to ease the usage of the library inside your application
+ * build system: building by default shared and static libraries
 
 0.0.4 - 29 Jun 2007 - Diego Iastrubni <elcuco@kde.org>
  * Documentation re-created using doxygen 1.4.7
