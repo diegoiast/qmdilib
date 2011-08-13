@@ -10,5 +10,4 @@ SOURCES += mainwindow2.cpp  main2.cpp
 
 # link against qmdilib
 INCLUDEPATH += ../../src/
-#LIBS += -L../../ -lqmdi
 LIBS += ../../libqmdi.a
