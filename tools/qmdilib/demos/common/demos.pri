@@ -1,5 +1,6 @@
 # $Id$
 
+QT += widgets
 RESOURCES   += ../common/common.qrc
 INCLUDEPATH += ../common/
 

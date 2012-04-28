@@ -1,3 +1,4 @@
+QT += widgets
 SOURCES += \
 	$$QMDILIB_SRC_DIR/qmdiactiongroup.cpp \
 	$$QMDILIB_SRC_DIR/qmdiactiongrouplist.cpp \
