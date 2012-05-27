@@ -135,7 +135,7 @@ void ConfigDialog::updateInfo( int pluginNumber )
 	pluginListUi.pluginEnabled->setEnabled( p->canDisable() );
 	pluginListUi.pluginEnabled->blockSignals( false );
 	
-	pluginListUi.configurePlugin->setEnabled( w != NULL );
+//	pluginListUi.configurePluginButton->setEnabled( w != NULL );
 }
 
 bool ConfigDialog::execDialog( QWidget *w )
