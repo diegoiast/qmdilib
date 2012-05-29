@@ -21,6 +21,7 @@
 #include <QApplication>
 #include <QSettings>
 #include <QRegExp>
+#include <QDockWidget>
 
 #include "qmdihost.h"
 #include "qmdiserver.h"
@@ -832,6 +833,8 @@ void	PluginManager::initGUI()
 	connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(closeClient()));
 	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
 	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
+	tabWidget->setDocumentMode(true);
+	tabWidget->setMovable(true);
 	setCentralWidget( tabWidget );
 }
 
@@ -1040,9 +1043,17 @@ void PluginManager::on_actionHideGUI_changed()
 	menuBar()->setVisible( ! actionHideGUI->isChecked() );
 	foreach( QToolBar *b, findChildren<QToolBar*>() )
 	{
-		b->setVisible( ! actionHideGUI->isChecked() );
+		b->setVisible( !actionHideGUI->isChecked() );
 	}
-	
+
+	foreach( QDockWidget *d, findChildren<QDockWidget*>() )
+	{
+		if (!actionHideGUI->isChecked())
+		    d->setFeatures( d->features() | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable );
+		else
+		    d->setFeatures( d->features() & ~QDockWidget::DockWidgetMovable & ~QDockWidget::DockWidgetClosable & ~QDockWidget::DockWidgetFloatable );
+	}
+
 	if (currentClient && !actionHideGUI->isChecked())
 	{
 		mergeClient( currentClient );
