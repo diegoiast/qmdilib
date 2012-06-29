@@ -35,7 +35,7 @@ public slots:
 	void on_rightMouse_pressed( int, QPoint );
 	bool eventFilter(QObject *obj, QEvent *event);
 	
-	// need to overide this functions
+	// need to overide these functions
 public:
 	virtual void addClient( qmdiClient *client  );
 	virtual void deleteClient( qmdiClient* client );
