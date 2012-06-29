@@ -220,9 +220,19 @@ PluginManager::PluginManager()
 	actionHideGUI->setObjectName("actionHideGUI");
 	actionHideGUI->setCheckable(true);
 	
-	actionOpen->setIcon( QIcon(":/trolltech/styles/commonstyle/images/diropen-32.png") );
+
+	newFilePopup->setIcon(QIcon::fromTheme("document-new"));
+	actionQuit->setIcon(QIcon::fromTheme("application-exit"));
+	actionNextTab->setIcon(QIcon::fromTheme("go-next"));
+	actionPrevTab->setIcon(QIcon::fromTheme("go-previous"));
+
+//	actionOpen->setIcon( QIcon(":/trolltech/styles/commonstyle/images/diropen-32.png") );
+	actionOpen->setIcon(QIcon::fromTheme("document-open"));
 	actionOpen->setShortcut( QKeySequence("Ctrl+O") );
-	actionClose->setIcon( QIcon(":/trolltech/styles/commonstyle/images/standardbutton-cancel-32.png") );
+
+
+//	actionClose->setIcon( QIcon(":/trolltech/styles/commonstyle/images/standardbutton-cancel-32.png") );
+	actionClose->setIcon(QIcon::fromTheme("window-close"));
 	actionClose->setShortcut( QKeySequence("Ctrl+w") );
 	
 	actionNextTab->setShortcut( QKeySequence("Alt+Right") );
@@ -829,10 +839,21 @@ void	PluginManager::initGUI()
 	updateGUI();
 	
 	QToolButton *tabCloseBtn = new QToolButton(tabWidget);
-	tabCloseBtn->setAutoRaise( true );
 	connect( tabCloseBtn, SIGNAL(clicked()), this, SLOT(closeClient()));
-	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
+	tabCloseBtn->setAutoRaise( true );
+//	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
+	tabCloseBtn->setIcon(QIcon::fromTheme("window-close"));
 	tabWidget->setCornerWidget( tabCloseBtn, Qt::TopRightCorner  );
+
+	QToolButton *addNewMdiClient = new QToolButton(tabWidget);
+	connect(addNewMdiClient,SIGNAL(clicked()),addNewMdiClient,SLOT(showMenu()));
+	addNewMdiClient->setAutoRaise(true);
+//	addNewMdiClient->setIcon(QIcon(":images/closetab.png"));
+	addNewMdiClient->setIcon(QIcon::fromTheme("document-new"));
+	addNewMdiClient->setMenu(newFilePopup);
+	tabWidget->setCornerWidget( addNewMdiClient, Qt::TopLeftCorner  );
+
+
 	tabWidget->setDocumentMode(true);
 	tabWidget->setMovable(true);
 	setCentralWidget( tabWidget );
