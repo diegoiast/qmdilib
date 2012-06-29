@@ -1040,6 +1040,7 @@ void PluginManager::on_actionHideGUI_changed()
 
 	updateMenusAndToolBars = !actionHideGUI->isChecked();
 	setUpdatesEnabled(false);
+	statusBar()->setVisible( ! actionHideGUI->isChecked() );
 	menuBar()->setVisible( ! actionHideGUI->isChecked() );
 	foreach( QToolBar *b, findChildren<QToolBar*>() )
 	{
