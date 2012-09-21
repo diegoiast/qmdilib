@@ -25,9 +25,12 @@ set(QMDILIB_MOCHEADERS
 )
 QT4_WRAP_CPP(QMDILIB_MOC ${QMDILIB_MOCHEADERS} )
 add_library(QMDILIB_STATIC STATIC ${QMDILIB_SOURCES} ${QMDILIB_MOC})
-add_library(QMDILIB_SHARED SHARED ${QMDILIB_SOURCES} ${QMDILIB_MOC})
+target_link_libraries(QMDILIB_STATIC ${QT_LIBRARIES} )
+
 # add_library(qmdilib_shared SHARED)
 # target_link_libraries(qmdilib_shared qmdilib_static)
+add_library(QMDILIB_SHARED SHARED ${QMDILIB_SOURCES} ${QMDILIB_MOC})
+target_link_libraries(QMDILIB_SHARED ${QT_LIBRARIES} )
 
 set_target_properties(
   QMDILIB_SHARED
