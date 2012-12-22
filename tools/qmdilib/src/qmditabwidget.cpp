@@ -13,7 +13,10 @@
 #include <QAction>
 #include <QMenu>
 #include <QMainWindow>
+
+#if QT_VERSION < 0x050000 // supported on Qt4.x only
 #include <QWorkspace>
+#endif
 
 #include "qmditabwidget.h"
 #include "qmdihost.h"
@@ -121,25 +124,29 @@ void qmdiTabWidget::tabChanged( int i )
 	// it enables the usage of QWorspace as a self contained qmdiServer
 	if (activeWidget) {
 		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
+#if QT_VERSION < 0x050000 // supported on Qt4.x only
 		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
 		if ( ws )
 			mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(ws->activeWindow()) );
+#endif
 	}
 	
 	activeWidget = w;
 	
 	if (activeWidget) {
 		mdiHost->mergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
+#if QT_VERSION < 0x050000 // supported on Qt4.x only
 		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
 		if ( ws )
 			mdiHost->mergeClient( dynamic_cast<qmdiClient*>(ws->activeWindow()) );
-				
+#endif
 	}
 
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
 	mdiHost->updateGUI( m );	
 }
 
+#if QT_VERSION < 0x050000 // supported on Qt4.x only
 /**
  * \brief callback function for notifying of a new QWorkspace child activated
  * \param w the widget which now has the focus on the work space
@@ -179,6 +186,7 @@ void qmdiTabWidget::workSpaceWindowActivated( QWidget* w )
 	QMainWindow *m = dynamic_cast<QMainWindow*>(mdiHost);
 	mdiHost->updateGUI( m );
 }
+#endif
 
 /**
  * \brief mouse middle button click callback
@@ -351,11 +359,12 @@ void qmdiTabWidget::deleteClient( qmdiClient* client )
 	if (dynamic_cast<qmdiClient*>(activeWidget) != client)
 		return;
 	
+#if QT_VERSION < 0x050000 // supported on Qt4.x only
 	QWorkspace* ws = qobject_cast<QWorkspace*>( activeWidget );
 	if (ws)
 		foreach ( QWidget* c, ws->windowList() )
 			mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(c) );
-	
+#endif
 	mdiHost->unmergeClient( client );
 	mdiHost->updateGUI( dynamic_cast<QMainWindow*>(mdiHost) );
 	activeWidget = NULL;
@@ -390,10 +399,11 @@ void qmdiTabWidget::tabInserted ( int index )
 	if (client)
 		client->mdiServer = this;
 	
+#if QT_VERSION < 0x050000 // supported on Qt4.x only
 	QWorkspace* ws = qobject_cast<QWorkspace*>( w );
 	if (ws)
 		connect( ws, SIGNAL(windowActivated(QWidget*)), this, SLOT( workSpaceWindowActivated(QWidget*)));
-
+#endif
 //	if it's the only widget available, show it's number
 //	BUG is this supposed to be done by Qt?
 	int c = count();

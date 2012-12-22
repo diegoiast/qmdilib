@@ -30,7 +30,9 @@ public:
 
 public slots:
 	void tabChanged( int i );
+#if QT_VERSION < 0x050000 // supported on Qt4.x only
 	void workSpaceWindowActivated( QWidget* w );
+#endif
 	void on_middleMouse_pressed( int, QPoint );
 	void on_rightMouse_pressed( int, QPoint );
 	bool eventFilter(QObject *obj, QEvent *event);

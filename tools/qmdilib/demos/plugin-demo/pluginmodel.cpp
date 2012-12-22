@@ -31,7 +31,7 @@ PluginModel::~PluginModel()
 
 QModelIndex PluginModel::index( int row, int col, const QModelIndex &parent ) const
 {
-	return createIndex( row, col, 0 );
+	return createIndex( row, col, (quintptr)NULL );
 	
 	Q_UNUSED( parent );
 }
