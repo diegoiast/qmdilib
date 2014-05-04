@@ -22,10 +22,13 @@
 #include <QStackedWidget>
 
 #include "qmditabwidget.h"
-#include "qmdiworkspace.h"
 #include "mainwindow2.h"
 #include "qexeditor.h"
 #include "helpbrowse.h"
+
+#if QT_VERSION < 0x050000
+#include "qmdiworkspace.h"
+#endif
 
 /**
  * \class MainWindow2

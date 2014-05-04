@@ -22,6 +22,11 @@
 #	define TAB_CONTROL qmdiWorkspace
 #endif
 
+#if QT_VERSION >= 0x050000
+#   undef TAB_CONTROL
+#	define TAB_CONTROL qmdiTabWidget
+#endif
+
 // do you want the actions to be put in a single toolbar
 // or several toolbars...?
 #define SINGLE_TOOLBAR !false
