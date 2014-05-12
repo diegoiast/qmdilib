@@ -50,6 +50,11 @@ qmdiActionGroupList::qmdiActionGroupList()
 {
 }
 
+qmdiActionGroupList::~qmdiActionGroupList()
+{
+    actionGroups.clear();
+}
+
 /**
  * \brief overloaded operator for getting the instance of a action group
  * \param name the action group name you want to get

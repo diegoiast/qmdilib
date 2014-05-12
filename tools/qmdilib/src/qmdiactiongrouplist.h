@@ -29,6 +29,7 @@ class qmdiActionGroupList
 friend class qmdiHost;
 public:
 	qmdiActionGroupList();
+	~qmdiActionGroupList();
 	
 	qmdiActionGroup* operator[]( const QString name );
 	qmdiActionGroup* getActionGroup( const QString &name );
