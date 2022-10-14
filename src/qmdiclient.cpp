@@ -6,8 +6,6 @@
  * \see qmdiClient
  */
 
-// $Id$ 
-
 #include <QObject>
 #include <QWidget>
 #include "qmdiclient.h"
@@ -62,13 +60,13 @@
  * \param newName the name of the client.
  * 
  * Builds a new client assigning it an mdi client name of newName and assigning
- * a NULL mdiServer.
+ * a nullptr mdiServer.
  * 
  * \todo how about using "const QString&"?
  */
 qmdiClient::qmdiClient( const QString newName )
 {
-	mdiServer = NULL;
+	mdiServer = nullptr;
 	mdiClientName = newName;
 }
 
@@ -78,14 +76,14 @@ qmdiClient::qmdiClient( const QString newName )
  * Destructs the mdi client, and if an mdiServer is defined it will ask the 
  * server to delete later this client.
  * 
- * It will also set the mdi server to NULL.
+ * It will also set the mdi server to nullptr.
  */
 qmdiClient::~qmdiClient()
 {
-	if (mdiServer != NULL)
+	if (mdiServer != nullptr)
 		mdiServer->deleteClient( this );
 
-	mdiServer = NULL;
+	mdiServer = nullptr;
 }
 
 /**

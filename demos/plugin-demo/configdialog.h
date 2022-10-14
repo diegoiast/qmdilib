@@ -4,7 +4,7 @@
 /**
  * \file configdialog.h
  * \brief Declaration of the configuration dialog class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL 2 or 3
  * \see ConfigDialog
  */

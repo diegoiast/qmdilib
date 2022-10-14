@@ -1,6 +1,9 @@
-$Id$
+0.1.0 - (wip) - Diego Iastrubni <diegoiast@gmail.com>
+ * Removed qmake build system, only cmake is supported
+ * Removed support for Qt5 and Qt4
+ * Ported code to C++17
 
-0.0.5 - SOMEDAY - Diego Iastrubni <diegoiast@gmail.com>
+0.0.5 - (28 Aug 2018) - Diego Iastrubni <diegoiast@gmail.com>
  * code is released now under a dual license: (L)GPL 2 or 3
  * code refactoring: qmdiClient::mdiClientFileName() should be used instead of 
    old "filename"

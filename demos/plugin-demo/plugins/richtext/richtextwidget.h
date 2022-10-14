@@ -4,7 +4,7 @@
 /**
  * \file richtext.h
  * \brief Definition of the RichText class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL
  * \see QexRichTextBrowser
  * \see RichText

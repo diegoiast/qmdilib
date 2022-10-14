@@ -6,8 +6,6 @@
  * \see MainWindow
  */
 
-// $Id$
-
 #include <QAction>
 #include <QToolBar>
 #include <QMainWindow>
@@ -26,9 +24,6 @@
 #include "qexeditor.h"
 #include "helpbrowse.h"
 
-#if QT_VERSION < 0x050000
-#include "qmdiworkspace.h"
-#endif
 
 /**
  * \class MainWindow2
@@ -85,7 +80,7 @@ void MainWindow2::init_gui()
 	updateGUI();
 
 	// make the tab widget
-	tabWidget = new TAB_CONTROL;
+	tabWidget = new QTabWidget;
 	tabNewBtn = new QToolButton(tabWidget);
         tabNewBtn->setAutoRaise( true );
         connect( tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));

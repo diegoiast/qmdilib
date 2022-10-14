@@ -6,8 +6,6 @@
  * \see qmdiActionGroup
  */
  
-// $Id$ 
-
 #include <QAction>
 #include <QMenu>
 #include <QToolBar>
@@ -310,7 +308,7 @@ void qmdiActionGroup::addMenu( QMenu *menu, int location )
  */
 void qmdiActionGroup::addSeparator( int location )
 {
-	QAction *separator = new QAction( NULL );
+	QAction *separator = new QAction( nullptr );
 	separator->setSeparator( true );
 
 	addAction( separator, location );
@@ -563,7 +561,7 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
  * \return an updated menu
  *
  * Call this function to update a QMenu from these definitions.
- * If \b menu is \b NULL then a new menu will be allocated.
+ * If \b menu is \b nullptr then a new menu will be allocated.
  *
  * The returned value is not unallocated by this function, and it's
  * up to the programmer to un-allocate the memory used by the created menu.
@@ -572,7 +570,7 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
  * will be handled by QMenuBar, and you don't have to bother about it.
  * 
  * If the action group contains no items, no menu will be generated, and 
- * NULL will be the returned value. If the passed \b menu is not NULL
+ * nullptr will be the returned value. If the passed \b menu is not nullptr
  * it will be deallocated.
  *
  * \see updateToolBar
@@ -581,7 +579,7 @@ QMenu*	 qmdiActionGroup::updateMenu( QMenu *menu )
 {
 	if (actionGroupItems.isEmpty()) {
 		delete menu;
-		return NULL;
+		return nullptr;
 	}
 	
 	if (!menu)
@@ -609,7 +607,7 @@ QMenu*	 qmdiActionGroup::updateMenu( QMenu *menu )
  * \return an updated toolbar
  *
  * Call this function to update a QToolBar from these definitions.
- * If \param toolbar is \b NULL then a new toolbar will be allocated.
+ * If \param toolbar is \b nullptr then a new toolbar will be allocated.
  *
  * The returned value is not unallocated by this function, and it's
  * up to the programmer to un-allocate the memory used by the created menu.

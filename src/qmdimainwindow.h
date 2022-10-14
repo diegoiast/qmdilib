@@ -1,7 +1,8 @@
+#pragma once
+
 #include "qmdihost.h"
 #include <QMainWindow>
 
-// $Id$
 
 class QWidget;
 

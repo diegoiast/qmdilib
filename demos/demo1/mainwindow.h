@@ -1,5 +1,4 @@
-#ifndef __MAIN_WIN_H__
-#define __MAIN_WIN_H__
+#pragma once
 
 /**
  * \file mainwindow.h
@@ -41,5 +40,3 @@ private:
 	
  	qmdiClient *advanced;
 };
-
-#endif // __MAIN_WIN_H__

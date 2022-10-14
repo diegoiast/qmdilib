@@ -4,7 +4,7 @@
 /**
  * \file pluginmodel.h
  * \brief Definition of the PluginModel class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL 2 or 3
  * \see PluginModel
  */

@@ -1,5 +1,4 @@
-#ifndef __QMDI_TAB_WIDGET_H__
-#define __QMDI_TAB_WIDGET_H__
+#pragma once
 
 /**
  * \file qmditabwidget.h
@@ -9,10 +8,10 @@
  * \see qmdiServer, QTabWidget
  */
  
-// $Id$ 
  
 #include <QTabWidget>
 #include <QTabBar>
+
 #include "qmdiserver.h"
 
 class QWidget;
@@ -25,19 +24,15 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer
 {
 	Q_OBJECT
 public:
-	qmdiTabWidget( QWidget *parent=NULL, qmdiHost *host=NULL );
+	qmdiTabWidget( QWidget *parent=nullptr, qmdiHost *host=nullptr );
 	~qmdiTabWidget();
 
 public slots:
 	void tabChanged( int i );
-#if QT_VERSION < 0x050000 // supported on Qt4.x only
-	void workSpaceWindowActivated( QWidget* w );
-#endif
 	void on_middleMouse_pressed( int, QPoint );
 	void on_rightMouse_pressed( int, QPoint );
 	bool eventFilter(QObject *obj, QEvent *event);
 	
-	// need to overide these functions
 public:
 	virtual void addClient( qmdiClient *client  );
 	virtual void deleteClient( qmdiClient* client );
@@ -51,5 +46,3 @@ protected:
 private:
 	QWidget		*activeWidget;
 };
-
-#endif // __QMDI_TAB_WIDGET_H__

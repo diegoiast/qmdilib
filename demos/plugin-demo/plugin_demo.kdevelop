@@ -2,7 +2,7 @@
 <kdevelop>
   <general>
     <author>Diego Iastrubni</author>
-    <email>elcuco@kde.org</email>
+    <email>diegoiast@gmail.com</email>
     <version>$VERSION$</version>
     <projectmanagement>KDevTrollProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>

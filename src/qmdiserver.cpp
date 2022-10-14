@@ -45,7 +45,7 @@
  */
 qmdiServer::qmdiServer()
 {
-	mdiHost = NULL;
+	mdiHost = nullptr;
 }
 
 /**
@@ -110,7 +110,7 @@ qmdiServer::~qmdiServer()
  *  - Since I found that it gives you warnings, about calling a pure virtual
  *    function, lame excuse, which I would like to get rid of :)
  *  - For some reason when an mdi client wants to contact it's qmdiServer, 
- *    it reaches this NULL function insted of the overriden one (like 
+ *    it reaches this nullptr function insted of the overriden one (like 
  *    qmdiTabWidget::deleteClient) this makes the application die, since it's 
  *    calling a pure virtual function. Definetly a bug, but this a nice 
  *    workaround.
@@ -147,11 +147,11 @@ void qmdiServer::deleteClient( qmdiClient* )
  * \fn  qmdiClient *qmdiServer::getClient( int i )
  * \brief return a pointer to an MDI client
  * \param i the number of sub widget to return
- * \return and qmdiClinet pointer or NULL
+ * \return and qmdiClinet pointer or nullptr
  *
  * Return a pointer to an MDI client. If the number passed
  * denotes a sub widget which does not derive qmdiClient
- * this function will return NULL.
+ * this function will return nullptr.
  * 
  * Since it's defined as pure virtual, you must implement this on
  * derived classes.

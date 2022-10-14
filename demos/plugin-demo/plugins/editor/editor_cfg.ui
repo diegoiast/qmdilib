@@ -1,5 +1,5 @@
 <ui version="4.0" >
- <author>Diego Iastrubni &lt;elcuco@kde.org></author>
+ <author>Diego Iastrubni &lt;diegoiast@gmail.com></author>
  <class>EditorCfgUI</class>
  <widget class="QWidget" name="EditorCfgUI" >
   <property name="geometry" >

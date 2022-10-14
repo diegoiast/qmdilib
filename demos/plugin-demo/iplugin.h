@@ -4,7 +4,7 @@
 /**
  * \file iplugin.h
  * \brief Declaration of the IPlugin interface
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL 2 or 3
  * \see IPlugin
  */

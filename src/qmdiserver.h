@@ -1,5 +1,4 @@
-#ifndef __QMDI_SERVER_H__
-#define __QMDI_SERVER_H__
+#pragma once
 
 /**
  * \file qmdiserver.h
@@ -8,8 +7,6 @@
  * License LGPL 2 or 3
  * \see qmdiServer
  */
-
-// $Id$ 
 
 
 class QPoint;
@@ -31,8 +28,5 @@ public:
 	void tryCloseAllClients();
 	void showClientMenu( int i, QPoint p );
 	
-// protected:
 	qmdiHost* mdiHost;
 };
-
-#endif // __QMDI_SERVER_H__

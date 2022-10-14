@@ -1,7 +1,7 @@
 /**
  * \file help_plg.cpp
  * \brief Implementation of the HelpPlugin class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL
  * \see HelpPlugin
  */
@@ -28,7 +28,7 @@ HelpPlugin::HelpPlugin()
 	: IPlugin()
 {
 	name		= tr("Help plugin");
-	author		= "Diego Iastrubni <elcuco@kde.org>";
+	author		= "Diego Iastrubni <diegoiast@gmail.com>";
 	iVersion	= 0;
 	sVersion 	= "0.0.1";
 	autoEnabled	= true;
@@ -60,7 +60,7 @@ void HelpPlugin::showAbout()
 
 void HelpPlugin::showAboutApp()
 {
-	QMessageBox::about( 0, "qmdilib demo", "A small demo for loading plugins<br>Diego Iastrubni (elcuco@kde.org) - lgpl)" );
+	QMessageBox::about( 0, "qmdilib demo", "A small demo for loading plugins<br>Diego Iastrubni (diegoiast@gmail.com) - lgpl)" );
 }
 
 void HelpPlugin::showAboutQt()

@@ -1,6 +1,4 @@
-#ifndef __QMDI_HOST_H__
-#define __QMDI_HOST_H__
-
+#pragma once
 
 /**
  * \file qmdihost.h
@@ -10,8 +8,6 @@
  * \see qmdiHost
  */
  
-// $Id$ 
-
 // the reason for including this file, and not declare the classes
 // is for the developer using this library - one single include
 #include "qmdiactiongroup.h"
@@ -31,7 +27,7 @@ public:
 	qmdiActionGroupList menus;
 	qmdiActionGroupList toolbars;
 
-	virtual void updateGUI( QMainWindow *window = NULL );
+	virtual void updateGUI( QMainWindow *window = nullptr );
 	void mergeClient( qmdiClient *client );
 	void unmergeClient( qmdiClient *client );
 	
@@ -42,4 +38,3 @@ protected:
 	bool updateMenusAndToolBars;
 };
 
-#endif // __QMDI_CLIENT_H__

@@ -6,8 +6,6 @@
  * \see qmdiHost
  */
  
-// $Id$ 
-
 #include <QAction>
 #include <QMainWindow>
 #include "qmdihost.h"
@@ -103,7 +101,7 @@
 qmdiHost::qmdiHost()
 {
 	updateMenusAndToolBars = true;
-	toolBarList = NULL;
+	toolBarList = nullptr;
 }
 
 /**
@@ -141,11 +139,11 @@ qmdiHost::~qmdiHost()
  */
 void qmdiHost::updateGUI( QMainWindow *window )
 {
-	// if passed NULL, lets try another sanity check
-	if (window == NULL)
+	// if passed nullptr, lets try another sanity check
+	if (window == nullptr)
 		window = dynamic_cast<QMainWindow*>(this);
 
-	if (window == NULL) {
+	if (window == nullptr) {
 		qDebug("%s - warning, no QMainWindow specified", __FUNCTION__ );
 		return;
 	}
@@ -189,7 +187,7 @@ void qmdiHost::updateGUI( QMainWindow *window )
  */
 void qmdiHost::mergeClient( qmdiClient *client )
 {
-	if (client == NULL)
+	if (client == nullptr)
 		return;
 		
 	if (updateMenusAndToolBars) {
@@ -234,7 +232,7 @@ void qmdiHost::mergeClient( qmdiClient *client )
  */
 void qmdiHost::unmergeClient( qmdiClient *client )
 {
-	if (client == NULL)
+	if (client == nullptr)
 		return;
 		
 	if (updateMenusAndToolBars) {

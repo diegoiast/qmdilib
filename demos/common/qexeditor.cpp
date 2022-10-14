@@ -1,16 +1,14 @@
 /**
  * \file qexeditor.cpp
  * \brief Definition of the extended text editor class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  * License LGPL 2 or 3
  * \see MainWindow
  */
  
-// $Id$ 
 
 #include <QAction>
 #include <QString>
-#include <QTextCodec>
 #include <QTextStream>
 #include <QFile>
 #include <QMessageBox>
@@ -153,7 +151,7 @@ void QexTextEdit::initInterface( bool singleToolbar )
 	toolbars[ toolbarEdit ]->addAction( actionRedo );
 }
 
-bool QexTextEdit::openFile( QString newFile, QTextCodec *c )
+bool QexTextEdit::openFile( QString newFile)
 {
 	fileName = newFile;		// the full path of the loaded file
 	setObjectName( newFile );	// set the object name to the file name,
@@ -183,29 +181,21 @@ bool QexTextEdit::openFile( QString newFile, QTextCodec *c )
 	if (!f.open( QIODevice::ReadOnly ) )
 		return false;
 
-	if (c == NULL)
-		c = QTextCodec::codecForLocale();
-
 	QTextStream t(&f);
-	t.setCodec( c );
 	setPlainText( t.readAll() );
 	f.close();
 
 	return true;
 }
 
-bool QexTextEdit::saveFile( QString newFile, QTextCodec *c  )
+bool QexTextEdit::saveFile( QString newFile)
 {
 	QFile f( newFile );
 
 	if (!f.open( QIODevice::WriteOnly ) )
 		return false;
 	
-	if (c == NULL)
-		c = QTextCodec::codecForLocale();
-	
 	QTextStream t(&f);
-	t.setCodec( c );
 	t << toPlainText();
 	f.close();
 

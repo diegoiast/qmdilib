@@ -5,8 +5,6 @@
  * License GPL 2 or 3
  */
  
-// $Id$ 
-
 #include <QApplication>
 #include "mainwindow.h"
 

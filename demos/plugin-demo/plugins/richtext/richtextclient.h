@@ -4,7 +4,7 @@
 /**
  * \file richtext_browser.h
  * \brief Definition of the QexRichTextBrowser class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL
  * \see QexRichTextBrowser
  */

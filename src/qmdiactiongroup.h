@@ -1,5 +1,4 @@
-#ifndef __QMDI_ACTION_GROUP_H__
-#define __QMDI_ACTION_GROUP_H__
+#pragma once
 
 /**
  * \file qmdiactiongroup.h
@@ -9,7 +8,6 @@
  * \see qmdiActionGroup
  */
  
-// $Id$ 
  
 #include <QList>
 #include <QString>
@@ -46,7 +44,7 @@ public:
 	void		mergeGroup( qmdiActionGroup *group );
 	void		unmergeGroup( qmdiActionGroup *group );
 
-	QMenu*		updateMenu( QMenu *menu=NULL );
+	QMenu*		updateMenu( QMenu *menu=nullptr );
 	QToolBar*	updateToolBar( QToolBar *toolbar );
 
 	bool		breakAfter;
@@ -58,5 +56,3 @@ private:
 	int breakCount;
 	int mergeLocation;
 };
-
-#endif //__QMDI_ACTION_GROUP_H__

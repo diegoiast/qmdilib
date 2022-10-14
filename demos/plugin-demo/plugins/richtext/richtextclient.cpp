@@ -1,7 +1,7 @@
 /**
  * \file richtext_browser.cpp
  * \brief Implementation of the RichTextClient class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL
  * \see EditorPlugin
  */

@@ -1,15 +1,13 @@
-#ifndef __QEX_EDITOR_H__
-#define __QEX_EDITOR_H__
+#pragma once
 
 /**
  * \file qexeditor.h
  * \brief Definition of the extended text editor class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  * License LGPL 2 or 3
  * \see MainWindow
  */
 
-// $Id$
 
 #include <QTextEdit>
 
@@ -32,8 +30,8 @@ public:
 	QString mdiClientFileName();
 
 	void initInterface( bool singleToolbar=false );
-	bool openFile( QString newFile, QTextCodec *c=NULL  );
-	bool saveFile( QString newFile, QTextCodec *c=NULL  );
+	bool openFile( QString newFile);
+	bool saveFile( QString newFile);
 	
 public slots:
 	bool fileSave();
@@ -55,5 +53,3 @@ protected:
 
 	QString fileName;
 };
-
-#endif //__QEX_EDITOR_H__

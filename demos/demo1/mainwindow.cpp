@@ -6,7 +6,6 @@
  * \see MainWindow
  */
 
-// $Id$
 
 #include <QAction>
 #include <QToolBar>
@@ -44,7 +43,7 @@
  *     new qmdiClient is merged into the main window,
  *     and the gui is updated.
  *
- * On this application there are also defined also some NULL
+ * On this application there are also defined also some nullptr
  * QAction defined, just to fill up the menus and toolbars. They
  * could easily be connected to real slots.
  *
@@ -143,12 +142,12 @@ void MainWindow::showMenus()
 
 void MainWindow::about()
 {
-	QMessageBox::about(NULL, "About Program",
+	QMessageBox::about(nullptr, "About Program",
 		"This demo is part of the qmdilib library.\nDiego Iasturbni <diegoiast@gmail.com> - LGPL"
 	);
 }
 
 void MainWindow::aboutQt()
 {
-	QMessageBox::aboutQt(NULL, "About Qt");
+	QMessageBox::aboutQt(nullptr, "About Qt");
 }

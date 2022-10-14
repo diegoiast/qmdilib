@@ -6,8 +6,6 @@
  * \see qmdiActionGroupList
  */
 
-// $Id$
-
 #include <QString>
 #include <QAction>
 #include <QMenuBar>
@@ -86,7 +84,7 @@ qmdiActionGroup* qmdiActionGroupList::operator[]( const QString name )
  */
 qmdiActionGroup* qmdiActionGroupList::getActionGroup( const QString &name )
 {
-	qmdiActionGroup *item = NULL;
+	qmdiActionGroup *item = nullptr;
 
 	foreach( qmdiActionGroup* i, actionGroups ) {
 		if (i->getName() == name )
@@ -155,7 +153,7 @@ void qmdiActionGroupList::unmergeGroupList( qmdiActionGroupList *group )
  * This function generates from the definitions on this class a valid
  * QMenuBar which will be showed on a QMainWindow. 
  * 
- * If \c menubar is NULL, a new QMenuBar will be allocated for you, and
+ * If \c menubar is nullptr, a new QMenuBar will be allocated for you, and
  * will be returned.
  * 
  * You cannot generate items into a QMenuBar "by hand" and then "add"
@@ -201,7 +199,7 @@ QMenuBar* qmdiActionGroupList::updateMenu( QMenuBar *menubar )
  * This function generates from the definitions on this class a valid
  * QMenur which you can show on you widget as a context menu for example.
  * 
- * If \c popupMenu is NULL, a new QMenu will be allocated for you, and
+ * If \c popupMenu is nullptr, a new QMenu will be allocated for you, and
  * will be returned. This method is similar to updateMenuBar() with
  * the difference that the actio group list is converted to a single popup menu.
  * 
@@ -232,7 +230,7 @@ QMenu* qmdiActionGroupList::updatePopMenu( QMenu *popupMenu )
  * This function generates from the definitions on this class a valid list of
  * QToolBar which will be showed on the \c window .
  * 
- * If the \c toolbars array will be NULL, a new one will be allocated for you.
+ * If the \c toolbars array will be nullptr, a new one will be allocated for you.
  * When merging toolbars if a break is defined, a break will be added by this 
  * method.
  * 
@@ -242,11 +240,11 @@ QMenu* qmdiActionGroupList::updatePopMenu( QMenu *popupMenu )
  */
 QList<QToolBar*>* qmdiActionGroupList::updateToolBar( QList<QToolBar*> *toolbars, QMainWindow *window )
 {
-	if (toolbars == NULL)
+	if (toolbars == nullptr)
 		toolbars = new QList<QToolBar*>;
 
 	foreach( qmdiActionGroup* i, actionGroups ) {
-		QToolBar *tb = NULL;
+		QToolBar *tb = nullptr;
 		QString  actionName = i->getName();
 		
 		// find the correct toolbar
@@ -258,7 +256,7 @@ QList<QToolBar*>* qmdiActionGroupList::updateToolBar( QList<QToolBar*> *toolbars
 		}
 
 		// if none found, create one
-		if (tb == NULL) {
+		if (tb == nullptr) {
 			tb = new QToolBar( actionName, window );
 			tb->setObjectName( actionName );
 			*toolbars << tb;

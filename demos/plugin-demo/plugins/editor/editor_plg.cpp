@@ -1,7 +1,7 @@
 /**
  * \file editor_plg.cpp
  * \brief Implementation of the EditorPlugin class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL
  * \see EditorPlugin
  */
@@ -24,7 +24,7 @@
 EditorPlugin::EditorPlugin()
 {
 	name		= tr("Text editor plugin");
-	author		= tr("Diego Iastrubni <elcuco@kde.org>");
+	author		= tr("Diego Iastrubni <diegoiast@gmail.com>");
 	iVersion	= 0;
 	sVersion	= "0.0.1";
 	autoEnabled	= true;

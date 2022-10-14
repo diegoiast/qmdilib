@@ -6,7 +6,6 @@
  * \see qmdiServer, QTabWidget
  */
  
-// $Id$
 
 #include <QEvent>
 #include <QMouseEvent>
@@ -14,9 +13,6 @@
 #include <QMenu>
 #include <QMainWindow>
 
-#if QT_VERSION < 0x050000 // supported on Qt4.x only
-#include <QWorkspace>
-#endif
 
 #include "qmditabwidget.h"
 #include "qmdihost.h"
@@ -78,12 +74,12 @@
 qmdiTabWidget::qmdiTabWidget( QWidget *parent, qmdiHost *host )
 	: QTabWidget( parent )
 {
-	if (host == NULL)
+	if (host == nullptr)
 		mdiHost = dynamic_cast<qmdiHost*>(parent);
 	else
 		mdiHost = host;
 	
-	activeWidget = NULL;
+	activeWidget = nullptr;
 	connect( this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 	tabBar()->installEventFilter( this );
 }
@@ -111,7 +107,7 @@ qmdiTabWidget::~qmdiTabWidget()
  */
 void qmdiTabWidget::tabChanged( int i )
 {
-	if (mdiHost == NULL)
+	if (mdiHost == nullptr)
 		return;
 		
 	QWidget *w = widget( i );
@@ -124,11 +120,6 @@ void qmdiTabWidget::tabChanged( int i )
 	// it enables the usage of QWorspace as a self contained qmdiServer
 	if (activeWidget) {
 		mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(activeWidget) );
-#if QT_VERSION < 0x050000 // supported on Qt4.x only
-		QWorkspace *ws = qobject_cast<QWorkspace*>( activeWidget );
-		if ( ws )
-			mdiHost->unmergeClient( dynamic_cast<qmdiClient*>(ws->activeWindow()) );
-#endif
 	}
 	
 	activeWidget = w;
@@ -165,16 +156,16 @@ void qmdiTabWidget::tabChanged( int i )
  */
 void qmdiTabWidget::workSpaceWindowActivated( QWidget* w )
 {
-	static qmdiClient* last = NULL;
+	static qmdiClient* last = nullptr;
 
-	if (mdiHost == NULL)
+	if (mdiHost == nullptr)
 		mdiHost = dynamic_cast<qmdiHost*>(parentWidget());
 		
-	if (mdiHost == NULL)
+	if (mdiHost == nullptr)
 		return;
 	
 	QWorkspace* workspace = qobject_cast<QWorkspace*>( sender() );
-	if (workspace == NULL)
+	if (workspace == nullptr)
 		return;
 
 	QWidgetList l = workspace->windowList();
@@ -238,7 +229,7 @@ void qmdiTabWidget::addClient( qmdiClient *client )
 {
 	QWidget *w = dynamic_cast<QWidget*>(client);
 
-	if (w == NULL) {
+	if (w == nullptr) {
 		qDebug( "%s %s %d: warning trying to add a qmdiClient which does not derive QWidget", __FILE__, __FUNCTION__, __LINE__ );
 		return;
 	}
@@ -295,7 +286,7 @@ bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event)
 			on_rightMouse_pressed( clickedItem, position );
 			break;
 			
-		case Qt::MidButton:
+		case Qt::MiddleButton:
 			on_middleMouse_pressed( clickedItem, position );
 			break;
 		
@@ -309,9 +300,9 @@ bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event)
 /**
  * \brief return a specific MDI client
  * \param i the number of sub widget to return
- * \return and qmdiClinet pointer or NULL
+ * \return and qmdiClinet pointer or nullptr
  *
- * This method returns the MDI client found in tab number \b i , or \b NULL if
+ * This method returns the MDI client found in tab number \b i , or \b nullptr if
  * that widget does not implement the qmdiClient interface.
  */
 qmdiClient *qmdiTabWidget::getClient( int i )
@@ -342,7 +333,7 @@ int qmdiTabWidget::getClientsCount()
  * by deleting the object, this function will be called.
  * 
  * This function removes the menus and toolbars of the widget (if it is the
- * active widget) and sets the active widget to NULL. When a new tab will be selected,
+ * active widget) and sets the active widget to nullptr. When a new tab will be selected,
  * which will happen if there is another widget on the tab widget, the new client 
  * will be merged.
  * 
@@ -350,10 +341,10 @@ int qmdiTabWidget::getClientsCount()
  */
 void qmdiTabWidget::deleteClient( qmdiClient* client )
 {
-	if (client == NULL)
+	if (client == nullptr)
 		return;
 		
-	if (mdiHost == NULL)
+	if (mdiHost == nullptr)
 		return;
 	
 	if (dynamic_cast<qmdiClient*>(activeWidget) != client)
@@ -367,7 +358,7 @@ void qmdiTabWidget::deleteClient( qmdiClient* client )
 #endif
 	mdiHost->unmergeClient( client );
 	mdiHost->updateGUI( dynamic_cast<QMainWindow*>(mdiHost) );
-	activeWidget = NULL;
+	activeWidget = nullptr;
 }
 
 /**
@@ -394,7 +385,7 @@ void qmdiTabWidget::tabInserted ( int index )
 	QWidget *w = widget( index );
 	qmdiClient *client = dynamic_cast<qmdiClient*>(w);
 
-	if (mdiHost == NULL)
+	if (mdiHost == nullptr)
 		mdiHost = dynamic_cast<qmdiHost*>(parent());
 	if (client)
 		client->mdiServer = this;
@@ -436,13 +427,13 @@ void qmdiTabWidget::tabInserted ( int index )
  */
 void qmdiTabWidget::tabRemoved ( int index )
 {
-	if (mdiHost == NULL)
+	if (mdiHost == nullptr)
 		return;
 		
 	int c = count();
 
 	if (c == 0) {
-		activeWidget = NULL;
+		activeWidget = nullptr;
 
 		// the deletion of menus and toolbars is made by qmdiClient itself
 		mdiHost->updateGUI( dynamic_cast<QMainWindow*>(mdiHost) );

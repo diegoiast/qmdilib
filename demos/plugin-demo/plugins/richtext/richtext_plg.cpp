@@ -1,7 +1,7 @@
 /**
  * \file richtext_plg.cpp
  * \brief Implementation of the RichTextPlugin class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL
  * \see RichTextPlugin
  */
@@ -32,7 +32,7 @@
 RichTextPlugin::RichTextPlugin()
 {
 	name		= tr("Rich text editor plugin");
-	author		= tr("Diego Iastrubni <elcuco@kde.org>");
+	author		= tr("Diego Iastrubni <diegoiast@gmail.com>");
 	iVersion	= 0;
 	sVersion	= "0.0.1";
 	autoEnabled	= true;

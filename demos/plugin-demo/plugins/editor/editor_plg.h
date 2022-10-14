@@ -4,7 +4,7 @@
 /**
  * \file editorplugin.h
  * \brief Definition of the EditorPlugin class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL
  * \see EditorPlugin
  */

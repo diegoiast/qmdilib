@@ -4,7 +4,7 @@
 /**
  * \file help_plg.h
  * \brief Definition of the HelpPlugin class
- * \author Diego Iastrubni (elcuco@kde.org)
+ * \author Diego Iastrubni (diegoiast@gmail.com)
  *  License LGPL
  * \see HelpPlugin
  */

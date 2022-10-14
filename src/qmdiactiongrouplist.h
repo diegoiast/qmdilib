@@ -1,5 +1,4 @@
-#ifndef __QMDI_ACTION_GROUP_LIST_H__
-#define __QMDI_ACTION_GROUP_LIST_H__
+#pragma once
 
 /**
  * \file qmdiactiongrouplist.h
@@ -9,11 +8,8 @@
  * \see qmdiActionGroupList
  */
  
-// $Id$
-
 #include <QList>
 #include <QToolBar>
-//#include "qmdiactiongroup.h"
 
 class QObject;
 class QAction;
@@ -44,5 +40,3 @@ public:
 private:
 	QList<qmdiActionGroup*> actionGroups;
 };
-
-#endif //__QMDI_ACTION_GROUP_LIST_H__
