@@ -20,13 +20,11 @@
 #include <QStatusBar>
 #include <QApplication>
 #include <QSettings>
-#include <QRegExp>
 #include <QDockWidget>
 
 #include "qmdihost.h"
 #include "qmdiserver.h"
 #include "qmditabwidget.h"
-#include "qmdiworkspace.h"
 #include "iplugin.h"
 #include "pluginmanager.h"
 #include "configdialog.h"
@@ -913,16 +911,13 @@ void PluginManager::on_actionOpen_triggered()
 		if (i<j-1)
 			extens += ";;";
 		
-		QRegExp regexp("\\((.*)\\)");
-		if (!regexp.indexIn(s))
-			continue;
-		QString s1 = regexp.cap(1).simplified();
+        QRegularExpression regexp("\\((.*)\\)");
+        auto m = regexp.match(s);
+        QString s1 = m.captured(1).simplified();
 		if (!s1.isEmpty())
 		{
-			// remove *.* from that list
 			s1.remove( "*.*" );
-// 			s1.remove( QRegExp("\\b[*.*]+\\b") );
-			s1.remove( QRegExp("\\b*\\b") );
+            s1.remove( QRegularExpression("\\b*\\b") );
 			allExtens += " " + s1;
 		}
 	}
