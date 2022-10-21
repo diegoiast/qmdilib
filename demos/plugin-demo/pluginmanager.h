@@ -1,5 +1,4 @@
-#ifndef PLUNINGMANAGER_H
-#define PLUNINGMANAGER_H
+#pragma once
 
 /**
  * \file pluginmanager.h
@@ -8,8 +7,6 @@
  *  License LGPL 2 or 3
  * \see PluginManager
  */
-
-// $Id$
 
 #include <QMainWindow>
 #include "qmdihost.h"
@@ -73,5 +70,3 @@ public:
 	QAction		*actionPrevTab;
 	QAction		*actionHideGUI;
 };
-
-#endif

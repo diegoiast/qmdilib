@@ -1,5 +1,4 @@
-#ifndef __PLUGINMODEL_H__
-#define __PLUGINMODEL_H__
+#pragma once
 
 /**
  * \file pluginmodel.h
@@ -9,7 +8,6 @@
  * \see PluginModel
  */
 
-// $Id$
 
 #include <QAbstractItemModel>
 
@@ -32,5 +30,3 @@ public:
 private:
 	PluginManager *pluginManager;
 };
- 
-#endif // #ifndef __PLUGINMODEL_H__

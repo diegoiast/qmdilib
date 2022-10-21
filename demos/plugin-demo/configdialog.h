@@ -1,5 +1,4 @@
-#ifndef CONFIGDIALOG_H
-#define CONFIGDIALOG_H
+#pragma once
 
 /**
  * \file configdialog.h
@@ -8,8 +7,6 @@
  *  License LGPL 2 or 3
  * \see ConfigDialog
  */
-
-// $Id$
 
 #include <QDialog>
 #include <QIcon>
@@ -50,5 +47,3 @@ private:
 	
 	Ui::PluginList	pluginListUi;
 };
-
-#endif
