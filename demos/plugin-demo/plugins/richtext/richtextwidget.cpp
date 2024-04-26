@@ -77,10 +77,10 @@ void RichTextWidget::initWidget( QString fileName, QTextEdit *e )
 	tabWidget->addTab( textEdit, tr("HTML") );
 
 	QLayout *myLayout = new QVBoxLayout( this );
-	myLayout->addWidget( tabWidget );
-	myLayout->setMargin( 0 );
-	myLayout->setSpacing( 0 );
-	myLayout->setObjectName( "RichTextWidget::myLayout" );
+    myLayout->addWidget(tabWidget);
+    myLayout->setContentsMargins(0, 0, 0, 0);
+    myLayout->setSpacing(0);
+    myLayout->setObjectName( "RichTextWidget::myLayout" );
 	setLayout( myLayout );
 
 	// create the actions

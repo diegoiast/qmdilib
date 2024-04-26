@@ -1,5 +1,4 @@
-#ifndef __Q_EX_RICHTEXTBROWSER_H__
-#define __Q_EX_RICHTEXTBROWSER_H__
+#pragma once
 
 /**
  * \file richtext_browser.h
@@ -8,8 +7,6 @@
  *  License LGPL
  * \see QexRichTextBrowser
  */
-
-// $Id: pluginmanager.h 146 2007-04-23 22:45:01Z elcuco $
 
 #include "qmdiclient.h"
 #include "richtextwidget.h"
@@ -26,4 +23,3 @@ private:
 	QTextEdit *edit;
 };
 
-#endif //__Q_EX_RICHTEXTBROWSER_H__

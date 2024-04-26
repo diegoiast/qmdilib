@@ -1,5 +1,4 @@
-#ifndef __IPLUGIN_H__
-#define __IPLUGIN_H__
+#pragma once
 
 /**
  * \file iplugin.h
@@ -8,8 +7,6 @@
  *  License LGPL 2 or 3
  * \see IPlugin
  */
-
-// $Id$
 
 #include <QObject>
 #include "qmdiclient.h"
@@ -64,4 +61,3 @@ protected:
 	bool enabled;
 };
 
-#endif // __IPLUGIN_H__

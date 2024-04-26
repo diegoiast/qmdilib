@@ -9,10 +9,11 @@
 // $Id: pluginmanager.h 146 2007-04-23 22:45:01Z elcuco $
 
 #include <QAction>
-#include <QUrl>
-#include <QMessageBox>
+#include <QActionGroup>
 #include <QFileDialog>
 #include <QMainWindow>
+#include <QMessageBox>
+#include <QUrl>
 
 #include "iplugin.h"
 #include "qmdiserver.h"

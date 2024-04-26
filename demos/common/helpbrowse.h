@@ -1,5 +1,4 @@
-#ifndef __HELP_BROWESER_H__
-#define __HELP_BROWESER_H__
+#pragma once
 
 /**
  * \file helpbrowse.h
@@ -9,7 +8,6 @@
  * \see MainWindow
  */
  
-// $Id$ 
 
 #include <QTextBrowser>
 #include "qmdiclient.h"
@@ -43,5 +41,3 @@ private:
 	QComboBox *documentCombo;
 	QUrl homePage;
 };
-
-#endif // __HELP_BROWESER_H__

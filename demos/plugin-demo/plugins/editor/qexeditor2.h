@@ -1,6 +1,4 @@
-#ifndef __QEXEDITOR2_H__
-#define __QEXEDITOR2_H__
-
+#pragma once
 
 #include "qexeditor.h"
 
@@ -16,6 +14,3 @@ public slots:
 private:
 	QAction *actionShowQtKeyword;
 };
-
-#endif // __QEXEDITOR2_H__
-

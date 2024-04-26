@@ -1,6 +1,4 @@
-#ifndef __EDITOR_PLUGIN_H__
-#define __EDITOR_PLUGIN_H__
-
+#pragma once
 /**
  * \file editorplugin.h
  * \brief Definition of the EditorPlugin class
@@ -9,7 +7,6 @@
  * \see EditorPlugin
  */
 
-// $Id$
 
 #include "iplugin.h"
 #include "ui_editor_cfg.h"
@@ -49,5 +46,3 @@ private:
 	QFont	editorFont;
 	int	endOfLine;
 };
-
-#endif// __EDITOR_PLUGIN_H__

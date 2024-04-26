@@ -1,5 +1,4 @@
-#ifndef __HELP_PLUGIN_H__
-#define __HELP_PLUGIN_H__
+#pragma once
 
 /**
  * \file help_plg.h
@@ -9,7 +8,6 @@
  * \see HelpPlugin
  */
 
-// $Id$
 
 #include "iplugin.h"
 
@@ -42,5 +40,3 @@ private:
 
 	QString externalBrowser;
 };
-
-#endif// __HELP_PLUGIN_H__

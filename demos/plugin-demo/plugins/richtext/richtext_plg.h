@@ -1,5 +1,4 @@
-#ifndef __RICHTEXT_PLUGIN_H__
-#define __RICHTEXT_PLUGIN_H__
+#pragma once
 
 /**
  * \file richtext_plg.h
@@ -9,10 +8,8 @@
  * \see RichTextPlugin
  */
 
-// $Id: pluginmanager.h 146 2007-04-23 22:45:01Z elcuco $
 
 #include "iplugin.h"
-#include "ui_editor_cfg.h"
 
 class QAction;
 
@@ -48,4 +45,3 @@ private:
 	int	endOfLine;
 };
 
-#endif// __RICHTEXT_PLUGIN_H__

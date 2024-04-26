@@ -1,5 +1,4 @@
-#ifndef __RICH_TEXT_H__
-#define __RICH_TEXT_H__
+#pragma once
 
 /**
  * \file richtext.h
@@ -10,7 +9,6 @@
  * \see RichText
  */
 
-// $Id: pluginmanager.h 146 2007-04-23 22:45:01Z elcuco $
 
 #include <QWidget>
 #include <QTextListFormat>
@@ -110,4 +108,3 @@ private:
 	bool dirtyFlag;
 };
 
-#endif // __RICH_TEXT_H__

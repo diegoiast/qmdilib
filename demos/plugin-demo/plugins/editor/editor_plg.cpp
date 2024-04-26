@@ -9,11 +9,12 @@
 // $Id$
 
 #include <QAction>
-#include <QUrl>
-#include <QMessageBox>
+#include <QActionGroup>
 #include <QFileDialog>
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QSettings>
+#include <QUrl>
 
 #include "iplugin.h"
 #include "qmdiserver.h"
