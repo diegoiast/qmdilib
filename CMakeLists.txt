@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project (qmdilib) 
 
 set(CMAKE_CXX_STANDARD 17)
-set(QMDILIB_VERSION "0.2.0")
+set(QMDILIB_VERSION "0.1.0")
 set(QMDILIB_SOVERSION "0")
 
 option(QMDILIB_BUILD_EXAMPLES "Build examples for qmdilib" ON)

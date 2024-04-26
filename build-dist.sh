@@ -3,7 +3,7 @@
 set -x
 set -e
 
-VERSION=v0.0.5
+VERSION=v0.1.0
 OUTPUT=qmdilib-${VERSION}
 OUTPUT_FILE=${OUTPUT}.tar.gz
 TEMP=$(mktemp -d /tmp/${OUTPUT}-XXXXXXXX)
