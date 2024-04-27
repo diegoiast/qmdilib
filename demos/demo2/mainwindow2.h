@@ -11,9 +11,9 @@
 
 // $Id$
 
-#include <QMainWindow>
-#include "qmdihost.h"
 #include "qmdiclient.h"
+#include "qmdihost.h"
+#include <QMainWindow>
 
 // do you want the actions to be put in a single toolbar
 // or several toolbars...?
@@ -22,29 +22,28 @@
 class QTabWidget;
 class QToolButton;
 
-class MainWindow2: public QMainWindow, public qmdiHost
-{
-Q_OBJECT
-public:
-	MainWindow2( QWidget *owner=NULL );
+class MainWindow2 : public QMainWindow, public qmdiHost {
+    Q_OBJECT
+  public:
+    MainWindow2(QWidget *owner = NULL);
 
-public slots:
-	void init_actions();
-	void init_gui();
-	void about();
-	void fileNew();
-	void fileClose();
-	void helpQtTopics();
-	
-private:
-	QAction *actionQuit;
-	QAction *actionFileNew;
-	QAction *actionQtTopics;
-	QAction *actionAbout;
-	QTabWidget *tabWidget;
+  public slots:
+    void init_actions();
+    void init_gui();
+    void about();
+    void fileNew();
+    void fileClose();
+    void helpQtTopics();
 
-	QToolButton *tabCloseBtn;
-	QToolButton *tabNewBtn;
+  private:
+    QAction *actionQuit;
+    QAction *actionFileNew;
+    QAction *actionQtTopics;
+    QAction *actionAbout;
+    QTabWidget *tabWidget;
+
+    QToolButton *tabCloseBtn;
+    QToolButton *tabNewBtn;
 };
 
 #endif // __MAIN_WIN_H__

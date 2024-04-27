@@ -7,37 +7,35 @@
  * License LGPL 2 or 3
  * \see MainWindow
  */
- 
 
-#include <QTextBrowser>
 #include "qmdiclient.h"
+#include <QTextBrowser>
 
 class QAction;
 class QWidget;
 class QComboBox;
 
-class QexHelpBrowser: public QTextBrowser, public qmdiClient
-{
-	Q_OBJECT
-public:
-	QexHelpBrowser( QUrl home, bool singleToolbar=false, QWidget *parent=0 );
-	void initInterface( bool singleToolbar=false );
-	QString mdiClientFileName();
+class QexHelpBrowser : public QTextBrowser, public qmdiClient {
+    Q_OBJECT
+  public:
+    QexHelpBrowser(QUrl home, bool singleToolbar = false, QWidget *parent = 0);
+    void initInterface(bool singleToolbar = false);
+    QString mdiClientFileName();
 
-public slots:
-	void goHome();
-	void on_documentCombo_currentIndexChanged( int index );
+  public slots:
+    void goHome();
+    void on_documentCombo_currentIndexChanged(int index);
 
-private:
-	QAction *actionBack;
-	QAction *actionNext;
-	QAction *actionHome;
-	QAction *actionZoomIn;
-	QAction *actionZoomOut;
-	
-	QAction *actionCopy;
-	QAction *actionFind;
+  private:
+    QAction *actionBack;
+    QAction *actionNext;
+    QAction *actionHome;
+    QAction *actionZoomIn;
+    QAction *actionZoomOut;
 
-	QComboBox *documentCombo;
-	QUrl homePage;
+    QAction *actionCopy;
+    QAction *actionFind;
+
+    QComboBox *documentCombo;
+    QUrl homePage;
 };

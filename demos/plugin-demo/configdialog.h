@@ -8,9 +8,9 @@
  * \see ConfigDialog
  */
 
+#include "ui_plugin_list.h"
 #include <QDialog>
 #include <QIcon>
-#include "ui_plugin_list.h"
 
 class QIcon;
 class QLabel;
@@ -22,28 +22,27 @@ class QListView;
 class PluginManager;
 class PluginModel;
 
-class ConfigDialog : public QDialog
-{
-	Q_OBJECT
+class ConfigDialog : public QDialog {
+    Q_OBJECT
 
-public:
-	ConfigDialog( QWidget *owner=NULL  );
-	~ConfigDialog();
-	void setManager( PluginManager *manager );
+  public:
+    ConfigDialog(QWidget *owner = NULL);
+    ~ConfigDialog();
+    void setManager(PluginManager *manager);
 
-private slots:
-	void on_aboutPlugin_clicked( bool );
-	void on_configurePlugin_clicked( bool );
-	void on_pluginList_activated ( const QModelIndex & index );
-	void on_pluginList_clicked ( const QModelIndex & index );
-	void on_pluginEnabled_toggled( bool enabled );
+  private slots:
+    void on_aboutPlugin_clicked(bool);
+    void on_configurePlugin_clicked(bool);
+    void on_pluginList_activated(const QModelIndex &index);
+    void on_pluginList_clicked(const QModelIndex &index);
+    void on_pluginEnabled_toggled(bool enabled);
 
-private:
-	void updateInfo( int pluginNumber );
-	bool execDialog( QWidget *w );
-	
-	PluginManager	*pluginManager;
-	PluginModel	*pluginModel;
-	
-	Ui::PluginList	pluginListUi;
+  private:
+    void updateInfo(int pluginNumber);
+    bool execDialog(QWidget *w);
+
+    PluginManager *pluginManager;
+    PluginModel *pluginModel;
+
+    Ui::PluginList pluginListUi;
 };

@@ -8,7 +8,6 @@
  * \see MainWindow
  */
 
-
 #include <QTextEdit>
 
 #include "qmdiclient.h"
@@ -19,37 +18,36 @@ class QToolBar;
 class QAction;
 class QTextCodec;
 
-class QexTextEdit : public QTextEdit, public qmdiClient
-{
-	Q_OBJECT
-public:
-	QexTextEdit( QString file=QString(), bool singleToolbar = false, QWidget *parent=0 );
-	~QexTextEdit();
-	
-	bool canCloseClient();
-	QString mdiClientFileName();
+class QexTextEdit : public QTextEdit, public qmdiClient {
+    Q_OBJECT
+  public:
+    QexTextEdit(QString file = QString(), bool singleToolbar = false, QWidget *parent = 0);
+    ~QexTextEdit();
 
-	void initInterface( bool singleToolbar=false );
-	bool openFile( QString newFile);
-	bool saveFile( QString newFile);
-	
-public slots:
-	bool fileSave();
-	bool fileSaveAs();
-	bool fileClose();
-	void helpShowHelp();
+    bool canCloseClient();
+    QString mdiClientFileName();
 
-protected:
-	QAction *actionSave;
-	QAction *actionClose;
+    void initInterface(bool singleToolbar = false);
+    bool openFile(QString newFile);
+    bool saveFile(QString newFile);
 
-	QAction *actionUndo;
-	QAction *actionRedo;	
-	QAction *actionCopy;
-	QAction *actionCut;
-	QAction *actionPaste;
-	QAction *actionFind;
-	QAction *actiohAskHelp;
+  public slots:
+    bool fileSave();
+    bool fileSaveAs();
+    bool fileClose();
+    void helpShowHelp();
 
-	QString fileName;
+  protected:
+    QAction *actionSave;
+    QAction *actionClose;
+
+    QAction *actionUndo;
+    QAction *actionRedo;
+    QAction *actionCopy;
+    QAction *actionCut;
+    QAction *actionPaste;
+    QAction *actionFind;
+    QAction *actiohAskHelp;
+
+    QString fileName;
 };

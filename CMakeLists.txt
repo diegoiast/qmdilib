@@ -2,9 +2,29 @@ cmake_minimum_required(VERSION 3.20)
 
 project (qmdilib) 
 
+include(FetchContent)
+include(cmake/conan.cmake)
+include(cmake/CPM.cmake)
+include(cmake/CreateResources.cmake)
+include(cmake/mold-linker.cmake)
+
+cpmaddpackage(
+    NAME     Format.cmake
+    VERSION     1.8.1
+    GITHUB_REPOSITORY
+    TheLartians/Format.cmake
+    OPTIONS # set to yes skip cmake formatting
+    "FORMAT_SKIP_CMAKE NO"
+    # path to exclude (optional, supports regular expressions)
+    "CMAKE_FORMAT_EXCLUDE cmake/*"
+)
+
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QMDILIB_VERSION "0.1.0")
 set(QMDILIB_SOVERSION "0")
+
+
 
 option(QMDILIB_BUILD_EXAMPLES "Build examples for qmdilib" ON)
 

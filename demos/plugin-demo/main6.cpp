@@ -15,24 +15,23 @@
 #include "plugins/help/help_plg.h"
 #include "plugins/richtext/richtext_plg.h"
 
-int main( int argc, char *argv[] )
-{
-	QApplication app( argc, argv );
-	PluginManager pluginManager;
-	//pluginManager.setNativeSettingsManager( "Diego", "PluginManager" );
-	pluginManager.setFileSettingsManager( "plugin-demo.ini" );
-	
-	// load a set of default plugins
-	pluginManager.addPlugin( new HelpPlugin );
-	pluginManager.addPlugin( new EditorPlugin );
-	pluginManager.addPlugin( new RichTextPlugin );
-	pluginManager.updateGUI();
-	
-	// start the application
-	pluginManager.restoreSettings();
-	pluginManager.statusBar()->showMessage( QT_TR_NOOP("Welcome - feel free to configure the GUI to your needs") ,5000);
-	//pluginManager.show();
-	
-	return app.exec();
-}
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    PluginManager pluginManager;
+    // pluginManager.setNativeSettingsManager( "Diego", "PluginManager" );
+    pluginManager.setFileSettingsManager("plugin-demo.ini");
 
+    // load a set of default plugins
+    pluginManager.addPlugin(new HelpPlugin);
+    pluginManager.addPlugin(new EditorPlugin);
+    pluginManager.addPlugin(new RichTextPlugin);
+    pluginManager.updateGUI();
+
+    // start the application
+    pluginManager.restoreSettings();
+    pluginManager.statusBar()->showMessage(
+        QT_TR_NOOP("Welcome - feel free to configure the GUI to your needs"), 5000);
+    // pluginManager.show();
+
+    return app.exec();
+}

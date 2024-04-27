@@ -5,13 +5,13 @@
  * License LGPL 2 or 3
  * \see qmdiActionGroup
  */
- 
+
 #include <QAction>
-#include <QMenu>
-#include <QToolBar>
+#include <QActionGroup>
 #include <QApplication>
 #include <QMainWindow>
-#include <QActionGroup>
+#include <QMenu>
+#include <QToolBar>
 
 #include "qmdiactiongroup.h"
 
@@ -23,7 +23,7 @@
  * QToolBar, with a much simplified interface. This class has
  * the ability to merge two menus, and thus allowing the new menu
  * to overwrite the actions of the original one.
- * 
+ *
  * The action group has a name, which will be used for creating a
  * pop-up menu on a QMenuBar, or setting the toolbar name.
  *
@@ -34,13 +34,13 @@
 /**
  * \var qmdiActionGroup::name
  * \brief the name of the group
- * 
- * The name of the group, as passed to the constructor. This should not be 
- * changed, since it also defined the text to be seen on the menu of toolbar 
+ *
+ * The name of the group, as passed to the constructor. This should not be
+ * changed, since it also defined the text to be seen on the menu of toolbar
  * created by this class.
- * 
+ *
  * \internal
- * 
+ *
  * \see getName()
  * \see setName()
  */
@@ -48,24 +48,24 @@
 /**
  * \var qmdiActionGroup::breakAfter
  * \brief defined if after mergeing, a break should be put
- * 
+ *
  * This property defines if after merging this group there should be a break.
  * This is used by qmdiActionGroupList::updateToolBar()
- * 
+ *
  * \copydoc read_only_after_constructor
- * 
+ *
  * \see qmdiActionGroupList::updateToolBar()
  */
 
 /**
  * \var qmdiActionGroup::actionGroupItems
  * \brief sub items in this list
- * 
+ *
  * A list of \b QAction or \b QWidget which shuold be displayed on the toolbars
- * or menus created by this list. Items can be put into this list by addding 
+ * or menus created by this list. Items can be put into this list by addding
  * them directly (using addAction() or addWidget() ) or by merging in another
  * action group.
- * 
+ *
  * \internal
  * \see mergeGroup()
  * \see addAction()
@@ -75,9 +75,9 @@
 /**
  * \var qmdiActionGroup::actionGroups
  * \brief other groups available in this group
- * 
+ *
  * List of merged in groups.
- * 
+ *
  * \internal
  * \see mergeGroup()
  */
@@ -85,7 +85,7 @@
 /**
  * \var qmdiActionGroup::breakCount
  * \brief
- * 
+ *
  * \todo document this variable
  * \internal
  */
@@ -93,129 +93,120 @@
 /**
  * \var qmdiActionGroup::mergeLocation
  * \brief the location where to merge in new sub groups
- * 
+ *
  * This defined the location in which to merge in actions of merged in groups.
- * 
+ *
  * \internal
  * \see mergeGroup()
  */
 
-
 /**
  * \brief Constructs an MDI action group
  * \param name the name of the action group
- * 
+ *
  * Default constructor. Builds a new qmdiActionGroup
- * with a give name. The action group will contain no 
+ * with a give name. The action group will contain no
  * actions by default, representing an empty menu or toolbar.
- * 
- * If you generate a menu from this action group, the 
+ *
+ * If you generate a menu from this action group, the
  * \b name will be used as the title of the menu.
- * 
- * If you generate a toolbar from this action group, the 
+ *
+ * If you generate a toolbar from this action group, the
  * \b name will be used as title of this toolbar.
- * 
+ *
  * \see updateMenu()
  * \see updateToolBar()
- * 
- * \todo How about localization? maybe we need to differentiate between name and title?
+ *
+ * \todo How about localization? maybe we need to differentiate between name and
+ * title?
  */
-qmdiActionGroup::qmdiActionGroup( QString name )
-{
-	this->name = name;
+qmdiActionGroup::qmdiActionGroup(QString name) {
+    this->name = name;
 
-	breakAfter = false;
-	breakCount = -1;
-	mergeLocation = -1;
+    breakAfter = false;
+    breakCount = -1;
+    mergeLocation = -1;
 }
 
 /**
  * Empty destructor. Destroys the object.
  */
-qmdiActionGroup::~qmdiActionGroup()
-{
-	// TODO should we delete all ?
+qmdiActionGroup::~qmdiActionGroup() {
+    // TODO should we delete all ?
 }
 
 /**
  * \var qmdiActionGroup::breakAfter
  * \brief Defines if a break should be added after this action group list
- * 
+ *
  * If you set this property to \b true , and you are generating a toolbar
- * from this action group list, when the toolbar will be displayed for the 
+ * from this action group list, when the toolbar will be displayed for the
  * fist time at the screen a break will be entered after this tool.
- * 
+ *
  * This will actually  call:
  * \code
  * QMainWindow::addToolBarBreak()
  * \endcode
- * 
+ *
  * \copydoc read_only_after_constructor
  */
 
 /**
  * \brief sets an name for this action group
  * \param newName the new name for the action group
- * 
+ *
  * Sets the name for the action group. The name will be used
  * for describing the toolbar or menu item, and thus is very
  * important to set it correctly.
- * 
+ *
  * This will not modify the menu or toolbar text - please call the correct
  * update method to do that.
- * 
+ *
  * \see getName
  * \see updateMenu()
  * \see updateToolBar()
  */
-void qmdiActionGroup::setName( const QString &newName )
-{
-	this->name = newName;
-}
+void qmdiActionGroup::setName(const QString &newName) { this->name = newName; }
 
 /**
  * \brief returns the name of the action group
  * \return the name of the action group
- * 
+ *
  * Gets the name for the action group. The name will be used
  * for describing the toolbar or menu item, and thus is very
  * important to set it correctly.
  */
-QString qmdiActionGroup::getName()
-{
-	return name;
-}
+QString qmdiActionGroup::getName() { return name; }
 
 /**
  * \brief add a new action to the action group
  * \param action item to be added to the action group
  * \param location where to add the new action
- * 
- * When calling this function, you are adding a new 
+ *
+ * When calling this function, you are adding a new
  * item to the toolbar or menu represented by the action
  * group.
- * 
- * The action is added to the end of the list, if the location  parameter is -1 
- * or the mergepoint, otherwise the location specifies where the actions are 
+ *
+ * The action is added to the end of the list, if the location  parameter is -1
+ * or the mergepoint, otherwise the location specifies where the actions are
  * added.
- * 
+ *
  * There is no way to reorder the actions once they are in the group.
- * 
+ *
  * \see addSeparator()
  * \see addMenu()
  * \see containsAction()
  * \see removeAction()
  * \see setMergePoint()
  */
-void qmdiActionGroup::addAction( QAction *action, int location )
-{
-	if (containsAction(action))
-		removeAction( action );
+void qmdiActionGroup::addAction(QAction *action, int location) {
+    if (containsAction(action))
+        removeAction(action);
 
-	if (location != -1)
-		actionGroupItems.insert( location, action );
-	else
-		actionGroupItems << action;
+    if (location != -1)
+        actionGroupItems.insert(location, action);
+    else
+        actionGroupItems << action;
 }
 
 /**
@@ -223,20 +214,18 @@ void qmdiActionGroup::addAction( QAction *action, int location )
  * \param actions items to be added to the action group
  * \param location where to add the new actiongroup
  * \since 0.0.4
- * 
+ *
  * Overloaded function for convience.
- * 
+ *
  * \see addAction
  */
-void qmdiActionGroup::addActions( QActionGroup *actions, int location )
-{
-	if (location == -1)
-		location = actionGroupItems.count();
-	foreach( QAction *a, actions->actions() )
-	{
-		addAction( a, location );
-		location++;
-	}
+void qmdiActionGroup::addActions(QActionGroup *actions, int location) {
+    if (location == -1)
+        location = actionGroupItems.count();
+    foreach (QAction *a, actions->actions()) {
+        addAction(a, location);
+        location++;
+    }
 }
 
 /**
@@ -258,12 +247,11 @@ void qmdiActionGroup::addActions( QActionGroup *actions, int location )
  * \see updateToolBar
  * \see setMergePoint
  */
-void qmdiActionGroup::addWidget( QWidget *widget, int location )
-{
-	if (location != -1)
-		actionGroupItems.insert( location, widget );
-	else
-		actionGroupItems << widget;
+void qmdiActionGroup::addWidget(QWidget *widget, int location) {
+    if (location != -1)
+        actionGroupItems.insert(location, widget);
+    else
+        actionGroupItems << widget;
 }
 
 /**
@@ -271,103 +259,95 @@ void qmdiActionGroup::addWidget( QWidget *widget, int location )
  * \param menu item to be added to the action group
  * \param location  where to add the new widget
  * \since 0.0.4
- * 
- * If you want to add sub menus to some menu bars, you should 
+ *
+ * If you want to add sub menus to some menu bars, you should
  * use this function.
- * 
+ *
  * The menu is added to the end of the list if location is -1,
  * otherwise the location specifies where the menu is added.
  *
  * If you are are generating a toolbar, this menu is ignored.
- * 
+ *
  * \see updateToolBar
  * \see updateMenu
  * \see addWidget
  * \see setMergePoint
  */
-void qmdiActionGroup::addMenu( QMenu *menu, int location )
-{
-	if (location != -1)
-		actionGroupItems.insert( location, menu );
-	else
-		actionGroupItems << menu;
+void qmdiActionGroup::addMenu(QMenu *menu, int location) {
+    if (location != -1)
+        actionGroupItems.insert(location, menu);
+    else
+        actionGroupItems << menu;
 }
 
 /**
  * \brief adds a separator to the menu or toolbar
  * \param location where to add the new widget
  *
- * This function will add a separator to the menu or 
+ * This function will add a separator to the menu or
  * toolbar represented by this action group. The
  * separator will be added to the end of the list,
  * unless a location is not -1.
- * 
+ *
  * \see addAction
  * \see removeAction
  * \see setMergePoint
  */
-void qmdiActionGroup::addSeparator( int location )
-{
-	QAction *separator = new QAction( nullptr );
-	separator->setSeparator( true );
+void qmdiActionGroup::addSeparator(int location) {
+    QAction *separator = new QAction(nullptr);
+    separator->setSeparator(true);
 
-	addAction( separator, location );
+    addAction(separator, location);
 }
 
 /**
  * \brief returns if an action is found in this group
  * \param action QAction to be tested
  * \return true if the action is found in this group action
- * 
+ *
  * Use this function for testing if some action is found on
  * the action group.
  */
-bool qmdiActionGroup::containsAction( QAction *action )
-{
-	return actionGroupItems.contains( action );
-}
+bool qmdiActionGroup::containsAction(QAction *action) { return actionGroupItems.contains(action); }
 
 /**
  * \brief remove an action from the action group
  * \param action QAction item to be removed
- * 
- * Use this function for removing items from the menu or 
+ *
+ * Use this function for removing items from the menu or
  * toolbar represented by this action group.
- * 
+ *
  * \see addAction
  */
-void qmdiActionGroup::removeAction( QAction *action )
-{
-	int i =	actionGroupItems.indexOf( action );
+void qmdiActionGroup::removeAction(QAction *action) {
+    int i = actionGroupItems.indexOf(action);
 
-	if ( i != -1 )
-		actionGroupItems.removeAt( i );
+    if (i != -1)
+        actionGroupItems.removeAt(i);
 }
 
 /**
  * \brief remove a actions from the action group
  * \param actions items to be removed
  * \since 0.0.4
- * 
- * Use this function for removing items from the menu or 
+ *
+ * Use this function for removing items from the menu or
  * toolbar represented by this action group.
- * 
+ *
  * \see removeAction
  * \see addAction
  */
-void qmdiActionGroup::removeActions( QActionGroup *actions )
-{
-	foreach( QAction *a, actions->actions() )
-	{
-		removeAction( a );
-	}
+void qmdiActionGroup::removeActions(QActionGroup *actions) {
+    foreach (QAction *a, actions->actions()) {
+        removeAction(a);
+    }
 }
 
 /**
  * \brief remove a menu from the action group
  * \param menu menu item to be removed
  *
- * Use this function for removing sub-menus from the menu represented 
+ * Use this function for removing sub-menus from the menu represented
  * by this action group.
  *
  * \see removeAction
@@ -376,12 +356,11 @@ void qmdiActionGroup::removeActions( QActionGroup *actions )
  * \see addMenu
  * \see updateMenu
  */
-void qmdiActionGroup::removeMenu( QMenu *menu )
-{
-	int i =	actionGroupItems.indexOf( menu );
+void qmdiActionGroup::removeMenu(QMenu *menu) {
+    int i = actionGroupItems.indexOf(menu);
 
-	if ( i != -1 )
-		actionGroupItems.removeAt( i );
+    if (i != -1)
+        actionGroupItems.removeAt(i);
 }
 
 /**
@@ -397,12 +376,11 @@ void qmdiActionGroup::removeMenu( QMenu *menu )
  * \see updateMenu
  * \see updateToolBar
  */
-void qmdiActionGroup::removeWidget( QWidget *widget )
-{
-	int i =	actionGroupItems.indexOf( widget );
+void qmdiActionGroup::removeWidget(QWidget *widget) {
+    int i = actionGroupItems.indexOf(widget);
 
-	if ( i != -1 )
-		actionGroupItems.removeAt( i );
+    if (i != -1)
+        actionGroupItems.removeAt(i);
 }
 
 /**
@@ -414,145 +392,139 @@ void qmdiActionGroup::removeWidget( QWidget *widget )
  * location to merge new action groups.
  *
  */
-void qmdiActionGroup::setMergePoint()
-{
-	mergeLocation = actionGroupItems.count();
-}
+void qmdiActionGroup::setMergePoint() { mergeLocation = actionGroupItems.count(); }
 
 /**
  * \brief compute the best merging point for new action groups
  * \since 0.0.4
  * \return -1 is not defined, otherwise a position lower then count()
- * 
+ *
  * This function computes the best location in which a new action group
  * should be merged. The merge point is computed from the list of
  * merged action groups - the last added action group will win.
- * 
+ *
  * If no merging point is defined, the default is to merge at the top
  * of menu or toolbar.
- * 
+ *
  * \todo action groups should also have merging priorities
  * \see mergeGroup
  */
-int qmdiActionGroup::getMergePoint()
-{
-	int i = -1;
-	
-	foreach( qmdiActionGroup* ag, actionGroups)
-	{
-		if (ag->mergeLocation > i)
-			i = ag->mergeLocation;
-	}
-	
-	if (mergeLocation > i)
-		i = mergeLocation;
-	
-	return i;
+int qmdiActionGroup::getMergePoint() {
+    int i = -1;
+
+    foreach (qmdiActionGroup *ag, actionGroups) {
+        if (ag->mergeLocation > i)
+            i = ag->mergeLocation;
+    }
+
+    if (mergeLocation > i)
+        i = mergeLocation;
+
+    return i;
 }
 
 /**
  * \brief merges another action group actions into this action group
  * \param group the new group to be merged
- * 
+ *
  * Use this call if you want to merge the items of another group into
  * one. The actions of the new group will be placed at the end of the
  * list of actions available on this, unless a merge location as been
- * defined. 
- * 
+ * defined.
+ *
  * The merge point is calculated from the list of merged action groups
- * or the self defined action group. For more documentation see the 
+ * or the self defined action group. For more documentation see the
  * documentation of getMergePoint.
- * 
+ *
  * \see unmergeGroup
  * \see setMergePoint
  * \see getMergePoint
  */
-void qmdiActionGroup::mergeGroup( qmdiActionGroup *group )
-{
-	if (!group)
-		return;
+void qmdiActionGroup::mergeGroup(qmdiActionGroup *group) {
+    if (!group)
+        return;
 
-	if ( (group->breakAfter) )
-		breakCount = breakCount == -1 ? 1 : breakCount+1;
+    if ((group->breakAfter))
+        breakCount = breakCount == -1 ? 1 : breakCount + 1;
 
-	int i = 0;
-	foreach( QObject *o, group->actionGroupItems ) {
-		if (actionGroupItems.contains(o))
-			continue;
-		
-		QAction *a = qobject_cast<QAction*> (o);
-		
-		if (a) {
-			int m = getMergePoint();
-			
-			if (m != -1)
-				addAction( a, m + i );
-			else
-				addAction( a );
-		} else {
-			QWidget *w = qobject_cast<QWidget*> (o);
-			if (w) {
-				int m = getMergePoint();
-				
-				if (m != -1)
-					addWidget( w, m + i );
-				else
-					addWidget( w );
-				
-				// don't display menus, as they are displayed on demand
-				// when selected in the QMainMenu
-				if (!w->inherits("QMenu"))
-					w->setVisible(true);
-			} else
-				qDebug("%s %d : erorr - wrong QObject type added to action group", __FILE__, __LINE__ );
-		}
-		
-		i ++;
-	}
+    int i = 0;
+    foreach (QObject *o, group->actionGroupItems) {
+        if (actionGroupItems.contains(o))
+            continue;
 
-	if (breakCount>0)
-		breakAfter = true;
-	
-	actionGroups << group;
+        QAction *a = qobject_cast<QAction *>(o);
+
+        if (a) {
+            int m = getMergePoint();
+
+            if (m != -1)
+                addAction(a, m + i);
+            else
+                addAction(a);
+        } else {
+            QWidget *w = qobject_cast<QWidget *>(o);
+            if (w) {
+                int m = getMergePoint();
+
+                if (m != -1)
+                    addWidget(w, m + i);
+                else
+                    addWidget(w);
+
+                // don't display menus, as they are displayed on demand
+                // when selected in the QMainMenu
+                if (!w->inherits("QMenu"))
+                    w->setVisible(true);
+            } else
+                qDebug("%s %d : erorr - wrong QObject type added to action group", __FILE__,
+                       __LINE__);
+        }
+
+        i++;
+    }
+
+    if (breakCount > 0)
+        breakAfter = true;
+
+    actionGroups << group;
 }
 
 /**
  * \brief un-merges another action group actions into this action group
  * \param group the group to be removed from this group
- * 
+ *
  * Use this call if you want to un-merge the items of another group into
  * one.
- * 
+ *
  * \see mergeGroup
  */
-void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
-{
-	if (!group)
-		return;
-		
-	if ( (group->breakAfter) )
-		breakCount = breakCount >1  ? -1 : breakCount-1;
-	
-	foreach( QObject *o, group->actionGroupItems ) {
-		if (!actionGroupItems.contains(o))
-			continue;
-			
-		QAction *a = qobject_cast<QAction*> (o);
-		if (a)
-			removeAction( a );
-		else {
-			QWidget *w = qobject_cast<QWidget*> (o);
-			if (w) {
-				w->setVisible(false);
-				removeWidget( w );
-			}
-		}
-	}
+void qmdiActionGroup::unmergeGroup(qmdiActionGroup *group) {
+    if (!group)
+        return;
 
-	if (breakCount>0)
-		breakAfter = true;
+    if ((group->breakAfter))
+        breakCount = breakCount > 1 ? -1 : breakCount - 1;
 
-	actionGroups.removeAt( actionGroups.indexOf(group) );
+    foreach (QObject *o, group->actionGroupItems) {
+        if (!actionGroupItems.contains(o))
+            continue;
+
+        QAction *a = qobject_cast<QAction *>(o);
+        if (a)
+            removeAction(a);
+        else {
+            QWidget *w = qobject_cast<QWidget *>(o);
+            if (w) {
+                w->setVisible(false);
+                removeWidget(w);
+            }
+        }
+    }
+
+    if (breakCount > 0)
+        breakAfter = true;
+
+    actionGroups.removeAt(actionGroups.indexOf(group));
 }
 
 /**
@@ -568,37 +540,36 @@ void qmdiActionGroup::unmergeGroup( qmdiActionGroup *group )
  *
  * If you are inserting that QMenu into a QMenuBar the memory deallocation
  * will be handled by QMenuBar, and you don't have to bother about it.
- * 
- * If the action group contains no items, no menu will be generated, and 
+ *
+ * If the action group contains no items, no menu will be generated, and
  * nullptr will be the returned value. If the passed \b menu is not nullptr
  * it will be deallocated.
  *
  * \see updateToolBar
  */
-QMenu*	 qmdiActionGroup::updateMenu( QMenu *menu )
-{
-	if (actionGroupItems.isEmpty()) {
-		delete menu;
-		return nullptr;
-	}
-	
-	if (!menu)
-		menu = new QMenu( name );
-	else
-		menu->setTitle( name );
-	menu->clear();
-	
-	foreach( QObject *o, actionGroupItems ) {
-		QAction *a = qobject_cast<QAction*> (o);
-		if (a)
-			menu->addAction( a );
-		
-		QMenu *m = qobject_cast<QMenu*> (o);
-		if (m)
-			menu->addMenu( m );
-	}
+QMenu *qmdiActionGroup::updateMenu(QMenu *menu) {
+    if (actionGroupItems.isEmpty()) {
+        delete menu;
+        return nullptr;
+    }
 
-	return menu;
+    if (!menu)
+        menu = new QMenu(name);
+    else
+        menu->setTitle(name);
+    menu->clear();
+
+    foreach (QObject *o, actionGroupItems) {
+        QAction *a = qobject_cast<QAction *>(o);
+        if (a)
+            menu->addAction(a);
+
+        QMenu *m = qobject_cast<QMenu *>(o);
+        if (m)
+            menu->addMenu(m);
+    }
+
+    return menu;
 }
 
 /**
@@ -617,38 +588,36 @@ QMenu*	 qmdiActionGroup::updateMenu( QMenu *menu )
  *
  * \see updateMenu
  */
-QToolBar* qmdiActionGroup::updateToolBar( QToolBar *toolbar )
-{
-	if (!toolbar)
-		toolbar = new QToolBar( name );
-	else
-		toolbar->setWindowTitle( name );
+QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
+    if (!toolbar)
+        toolbar = new QToolBar(name);
+    else
+        toolbar->setWindowTitle(name);
 
-	toolbar->setUpdatesEnabled(false);
-	toolbar->hide();
-	toolbar->clear();
-	int i = 0;	
-	foreach( QObject *o, actionGroupItems ) {
-		QAction *a = qobject_cast<QAction*> (o);
-		if (a)
-			toolbar->addAction( a );
-		else {
-			QWidget *w = qobject_cast<QWidget*> (o);
-			if (w) {
-				// don't even try to add menus to toolbars, this just does not work
-				if (! w->inherits("QMenu"))
-					toolbar->addWidget( w );
-			}
-		}
-		i++;
-	}
+    toolbar->setUpdatesEnabled(false);
+    toolbar->hide();
+    toolbar->clear();
+    int i = 0;
+    foreach (QObject *o, actionGroupItems) {
+        QAction *a = qobject_cast<QAction *>(o);
+        if (a)
+            toolbar->addAction(a);
+        else {
+            QWidget *w = qobject_cast<QWidget *>(o);
+            if (w) {
+                // don't even try to add menus to toolbars, this just does not work
+                if (!w->inherits("QMenu"))
+                    toolbar->addWidget(w);
+            }
+        }
+        i++;
+    }
 
-	if (actionGroupItems.count() == 0)
-		toolbar->hide();
-	else
-		toolbar->show();
-	toolbar->setUpdatesEnabled(true);
+    if (actionGroupItems.count() == 0)
+        toolbar->hide();
+    else
+        toolbar->show();
+    toolbar->setUpdatesEnabled(true);
 
-	return toolbar;
+    return toolbar;
 }
-

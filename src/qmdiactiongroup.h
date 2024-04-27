@@ -7,8 +7,7 @@
  * License LGPL 2 or 3
  * \see qmdiActionGroup
  */
- 
- 
+
 #include <QList>
 #include <QString>
 
@@ -19,40 +18,41 @@ class QMenu;
 class QToolBar;
 class QActionGroup;
 
-class qmdiActionGroup
-{
-friend class qmdiHost;
-public:
-	qmdiActionGroup( QString name );
-	~qmdiActionGroup();
+class qmdiActionGroup {
+    friend class qmdiHost;
 
-	void		setName( const QString &newName );
-	QString		getName();	
-	void		addAction( QAction *action, int location=-1 );
-	void		addActions( QActionGroup *actions, int location=-1 );
-	void		addWidget( QWidget *widget, int location=-1 );
-	void		addMenu( QMenu *menu, int location=-1 );
-	void		addSeparator( int location=-1 );
-	bool		containsAction( QAction *action );
-	void		removeAction( QAction *action );
-	void		removeActions( QActionGroup *actions );
-	void		removeMenu( QMenu *menu );
-	void		removeWidget( QWidget *widget );
-	void		setMergePoint();
-	int		getMergePoint();
+  public:
+    qmdiActionGroup(QString name);
+    ~qmdiActionGroup();
 
-	void		mergeGroup( qmdiActionGroup *group );
-	void		unmergeGroup( qmdiActionGroup *group );
+    void setName(const QString &newName);
+    QString getName();
+    void addAction(QAction *action, int location = -1);
+    void addActions(QActionGroup *actions, int location = -1);
+    void addWidget(QWidget *widget, int location = -1);
+    void addMenu(QMenu *menu, int location = -1);
+    void addSeparator(int location = -1);
+    bool containsAction(QAction *action);
+    void removeAction(QAction *action);
+    void removeActions(QActionGroup *actions);
+    void removeMenu(QMenu *menu);
+    void removeWidget(QWidget *widget);
+    void setMergePoint();
+    int getMergePoint();
 
-	QMenu*		updateMenu( QMenu *menu=nullptr );
-	QToolBar*	updateToolBar( QToolBar *toolbar );
+    void mergeGroup(qmdiActionGroup *group);
+    void unmergeGroup(qmdiActionGroup *group);
 
-	bool		breakAfter;
-private:
-	QString name;
-	QList<QObject*> actionGroupItems;
-	QList<qmdiActionGroup*> actionGroups;
+    QMenu *updateMenu(QMenu *menu = nullptr);
+    QToolBar *updateToolBar(QToolBar *toolbar);
 
-	int breakCount;
-	int mergeLocation;
+    bool breakAfter;
+
+  private:
+    QString name;
+    QList<QObject *> actionGroupItems;
+    QList<qmdiActionGroup *> actionGroups;
+
+    int breakCount;
+    int mergeLocation;
 };
