@@ -6,8 +6,6 @@
  * \see PluginManager
  */
 
-// $Id$
-
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
@@ -18,9 +16,10 @@
 #include <QMenuBar>
 #include <QSettings>
 #include <QStandardItemModel>
-#include <QStatusBar>
 #include <QTabWidget>
 #include <QToolButton>
+
+#include "ui_pluginwindow.h"
 
 #include "configdialog.h"
 #include "iplugin.h"
@@ -243,8 +242,64 @@ PluginManager::PluginManager() {
     addAction(actionPrevTab);
     addAction(actionHideGUI);
 
-    metaObject()->connectSlotsByName(this);
     initGUI();
+
+    for (int i = 0; i < 8; ++i) {
+        auto tabSelectShortcut = new QAction(this);
+        auto key = static_cast<Qt::Key>(Qt::Key_1 + i);
+        tabSelectShortcut->setShortcut(QKeySequence(Qt::AltModifier | key));
+        tabSelectShortcut->setShortcutContext(Qt::ApplicationShortcut);
+        connect(tabSelectShortcut, &QAction::triggered, this,
+                [=]() { tabWidget->setCurrentIndex(i); });
+        tabWidget->addAction(tabSelectShortcut);
+    }
+
+    // alt+9 will always send you to the last
+    {
+        auto tabSelectShortcut = new QAction(this);
+        tabSelectShortcut->setShortcut(QKeySequence(Qt::AltModifier | Qt::Key_9));
+        tabSelectShortcut->setShortcutContext(Qt::ApplicationShortcut);
+        connect(tabSelectShortcut, &QAction::triggered, this, [=]() {
+            auto size = tabWidget->count();
+            if (size > 0) {
+                tabWidget->setCurrentIndex(size - 1);
+            }
+        });
+        tabWidget->addAction(tabSelectShortcut);
+    }
+
+    auto tabClickHandler = [this](PanelState &state, int index) {
+        if (ui->westPanel->currentIndex() == index) {
+            if (ui->westPanel->widget(index)->isVisible()) {
+                auto maxWidth = ui->westPanel->tabBar()->width();
+
+                hidePanel(Panels::West);
+                state.isMinimized = true;
+                ui->westPanel->setMaximumWidth(maxWidth);
+            } else {
+                showPanel(Panels::West, index);
+                if (state.isMinimized) {
+                    ui->westPanel->setMaximumWidth(state.savedSize.width());
+                    state.isMinimized = false;
+                }
+            }
+        } else {
+            if (state.isMinimized) {
+                ui->westPanel->setMaximumWidth(state.savedSize.width());
+                state.isMinimized = false;
+            }
+        }
+    };
+
+    eastState.panel = ui->eastPanel;
+    westState.panel = ui->westPanel;
+    southState.panel = ui->southPanel;
+    connect(ui->westPanel, &QTabWidget::tabBarClicked,
+            [this, tabClickHandler](int index) { tabClickHandler(this->westState, index); });
+    connect(ui->eastPanel, &QTabWidget::tabBarClicked,
+            [this, tabClickHandler](int index) { tabClickHandler(this->eastState, index); });
+    connect(ui->southPanel, &QTabWidget::tabBarClicked,
+            [this, tabClickHandler](int index) { tabClickHandler(this->southState, index); });
 }
 
 /**
@@ -264,9 +319,9 @@ PluginManager::~PluginManager() {
     }
 
     foreach (IPlugin *p, plugins) {
-        if (plugins.removeAll(p) == 1)
+        if (plugins.removeAll(p) == 1) {
             delete p;
-        else {
+        } else {
             qDebug("%s - %d: could not remove plugin from the plugin manager (%s)", __FILE__,
                    __LINE__, qPrintable(p->getName()));
             return;
@@ -295,16 +350,19 @@ PluginManager::~PluginManager() {
  * \see openFile()
  */
 int PluginManager::tabForFileName(QString fileName) {
-    if (fileName.isEmpty())
+    if (fileName.isEmpty()) {
         return -1;
+    }
 
     for (int i = 0; i < tabWidget->count(); i++) {
         qmdiClient *c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
-        if (!c)
+        if (!c) {
             continue;
+        }
 
-        if (c->mdiClientFileName() == fileName)
+        if (c->mdiClientFileName() == fileName) {
             return i;
+        }
     }
     return -1;
 }
@@ -326,8 +384,9 @@ int PluginManager::tabForFileName(QString fileName) {
  */
 void PluginManager::setNativeSettingsManager(const QString &organization,
                                              const QString &application) {
-    if (settingsManager)
+    if (settingsManager) {
         delete settingsManager;
+    }
     settingsManager = new QSettings(organization, application);
 }
 
@@ -346,8 +405,9 @@ void PluginManager::setNativeSettingsManager(const QString &organization,
  * \see QSettings
  */
 void PluginManager::setFileSettingsManager(const QString &fileName) {
-    if (settingsManager)
+    if (settingsManager) {
         delete settingsManager;
+    }
     settingsManager = new QSettings(fileName, QSettings::IniFormat);
 }
 
@@ -373,8 +433,9 @@ void PluginManager::setFileSettingsManager(const QString &fileName) {
  * \see updateActionsStatus()
  */
 void PluginManager::restoreSettings() {
-    if (!settingsManager)
+    if (!settingsManager) {
         return;
+    }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QApplication::processEvents();
@@ -395,43 +456,75 @@ void PluginManager::restoreSettings() {
 		}
 	show();
 #else
-    if (settingsManager->contains("state"))
+    if (settingsManager->contains("state")) {
         restoreState(settingsManager->value("state", saveState()).toByteArray());
-    if (settingsManager->contains("geometry"))
+    }
+    if (settingsManager->contains("geometry")) {
         restoreGeometry(settingsManager->value("geometry", saveGeometry()).toByteArray());
-    if (settingsManager->value("maximized", false).toBool())
+    }
+    if (settingsManager->value("maximized", false).toBool()) {
         setWindowState(windowState() | Qt::WindowMaximized);
-    if (settingsManager->contains("size"))
+    }
+    if (settingsManager->contains("size")) {
         resize(settingsManager->value("size", size()).toSize());
-    if (settingsManager->contains("location"))
+    }
+    if (settingsManager->contains("location")) {
         move(settingsManager->value("location", pos()).toPoint());
-    if (settingsManager->contains("hidegui"))
+    }
+    if (settingsManager->contains("hidegui")) {
         actionHideGUI->setChecked(settingsManager->value("hidegui", false).toBool());
+    }
 #endif
     settingsManager->endGroup();
 
+    settingsManager->beginGroup("ui");
+#if 0
+    if (settingsManager->value("eastMinimized", false).toBool()) {
+        hidePanel(Panels::East);
+    }
+    if (settingsManager->value("westMinimized", false).toBool()) {
+        hidePanel(Panels::West);
+    }
+    if (settingsManager->value("southMinimized", false).toBool()) {
+        hidePanel(Panels::South);
+    }
+#endif
+    auto panelNumber = 0;
+    panelNumber = settingsManager->value("eastSelected", -1).toInt();
+    if (panelNumber >= 0) {
+        showPanel(Panels::East, panelNumber);
+    }
+    panelNumber = settingsManager->value("westSelected", -1).toInt();
+    if (panelNumber >= 0) {
+        showPanel(Panels::West, panelNumber);
+    }
+    panelNumber = settingsManager->value("southSelected", -1).toInt();
+    if (panelNumber >= 0) {
+        showPanel(Panels::South, panelNumber);
+    }
+    settingsManager->endGroup();
+
     show();
-    statusBar()->showMessage(tr("Loading files..."), 5000);
     QApplication::restoreOverrideCursor();
     QApplication::processEvents();
 
     // restore opened files
     settingsManager->beginGroup("files");
     foreach (QString s, settingsManager->childKeys()) {
-        if (!s.startsWith("file"))
+        if (!s.startsWith("file")) {
             continue;
+        }
         QString fileName = settingsManager->value(s).toString();
-        statusBar()->showMessage(tr("Loading file %1").arg(fileName), 5000);
         QApplication::processEvents();
         openFile(fileName);
     }
 
     // re-select the current tab
     int current = settingsManager->value("current", -1).toInt();
-    if (current != -1)
+    if (current != -1) {
         tabWidget->setCurrentIndex(current);
+    }
 
-    statusBar()->clearMessage();
     settingsManager->endGroup();
 
     foreach (auto plugin, plugins) {
@@ -460,8 +553,9 @@ void PluginManager::restoreSettings() {
  * \see QSettings::sync()
  */
 void PluginManager::saveSettings() {
-    if (!settingsManager)
+    if (!settingsManager) {
         return;
+    }
 
     // main window state
     settingsManager->beginGroup("mainwindow");
@@ -481,20 +575,28 @@ void PluginManager::saveSettings() {
         settingsManager->beginGroup("files");
         for (int i = 0; i < tabWidget->count(); i++) {
             c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
-            if (c)
-                s = c->mdiClientFileName();
-            else
-                s.clear();
-
-            if (!s.isEmpty())
+            if (!c) {
+                continue;
+            }
+            s = c->mdiClientFileName();
+            if (!s.isEmpty()) {
                 settingsManager->setValue(QString("file%1").arg(i), s);
-            else {
+            } else {
                 settingsManager->setValue(QString("file%1").arg(i), "@");
             }
         }
 
         settingsManager->setValue("current", tabWidget->currentIndex());
     }
+    settingsManager->endGroup();
+
+    settingsManager->beginGroup("ui");
+    settingsManager->setValue("eastMinimized", eastState.isMinimized);
+    settingsManager->setValue("eastSelected", eastState.panel->currentIndex());
+    settingsManager->setValue("westMinimized", westState.isMinimized);
+    settingsManager->setValue("westSelected", westState.panel->currentIndex());
+    settingsManager->setValue("southMinimized", southState.isMinimized);
+    settingsManager->setValue("southSelected", southState.panel->currentIndex());
     settingsManager->endGroup();
 
     // let each ones of the plugins save it's state
@@ -542,25 +644,17 @@ void PluginManager::updateActionsStatus() {
  * \todo how does a developer know why the loading of a file failed?
  */
 bool PluginManager::openFile(QString fileName, int x, int y, int z) {
-    // see if it's already open
-    int i = tabForFileName(fileName);
-    if (i != -1) {
-        tabWidget->setCurrentIndex(i);
-        return true;
-    }
-
-    // ok, not opened. who can open this file...?
-    IPlugin *bestPlugin = NULL;
-    IPlugin *p;
-    int highestScore = -1;
 
     // see which plugin is the most suited for openning this file
-    foreach (p, plugins) {
-        if (!p->enabled)
+    IPlugin *bestPlugin = NULL;
+    int highestScore = -1;
+    foreach (auto *p, plugins) {
+        if (!p->enabled) {
             continue;
+        }
 
         // is this plugin better then the selected?
-        i = p->canOpenFile(fileName);
+        auto i = p->canOpenFile(fileName);
 
         if (i > highestScore) {
             bestPlugin = p;
@@ -568,16 +662,29 @@ bool PluginManager::openFile(QString fileName, int x, int y, int z) {
         }
     }
 
+    int i = tabForFileName(fileName);
+    // see if it's already open
+    if (i != -1) {
+        tabWidget->setCurrentIndex(i);
+        auto client = tabWidget->getClient(i);
+        bestPlugin->navigateFile(client, x, y, x);
+        return true;
+    }
+
+    // ok, not opened. who can open this file...?
+
     // ask best plugin to open the file
     if (bestPlugin) {
         bool fileOpened = bestPlugin->openFile(fileName, x, y, z);
-        if (fileOpened)
+        if (fileOpened) {
             updateActionsStatus();
+        }
         return fileOpened;
-    } else
+    } else {
         // no plugin can handle this file,
         // this should not happen, and usually means a bug
         return false;
+    }
 }
 
 /**
@@ -603,6 +710,99 @@ bool PluginManager::openFiles(QStringList fileNames) {
     return b;
 }
 
+void PluginManager::hideUnusedPanels() {
+    if (ui->westPanel->tabBar()->count() == 0) {
+        ui->westPanel->hide();
+    }
+    if (ui->eastPanel->tabBar()->count() == 0) {
+        ui->eastPanel->hide();
+    }
+    if (ui->southPanel->tabBar()->count() == 0) {
+        ui->southPanel->hide();
+    }
+}
+
+void PluginManager::hidePanel(Panels p) {
+    QTabWidget *panel = nullptr;
+    switch (p) {
+    case Panels::East:
+        panel = this->ui->eastPanel;
+        break;
+    case Panels::West:
+        panel = this->ui->westPanel;
+        break;
+    case Panels::South:
+        panel = this->ui->southPanel;
+        break;
+    }
+    assert(panel != nullptr);
+    for (int i = 0; i < panel->count(); ++i) {
+        panel->widget(i)->setVisible(false);
+    }
+
+    if (panel->tabBar()->count() == 0) {
+        panel->hide();
+    } else {
+        this->westState.savedSize = ui->westPanel->size();
+        auto tabSize = panel->tabBar()->sizeHint().width();
+        panel->setMaximumWidth(tabSize);
+    }
+}
+
+void PluginManager::showPanel(Panels p, int index) {
+    QTabWidget *panel = nullptr;
+    switch (p) {
+    case Panels::East:
+        panel = this->ui->eastPanel;
+        break;
+    case Panels::West:
+        panel = this->ui->westPanel;
+        break;
+    case Panels::South:
+        panel = this->ui->southPanel;
+        break;
+    }
+    assert(panel != nullptr);
+    panel->setFocus();
+    for (int i = 0; i < panel->count(); ++i) {
+        panel->setCurrentIndex(index);
+        panel->widget(index)->show();
+        panel->widget(index)->focusWidget();
+    }
+}
+
+int PluginManager::createNewPanel(Panels p, QString name, QWidget *widget) {
+    QTabWidget *t = nullptr;
+    switch (p) {
+    case Panels::East:
+        t = this->ui->eastPanel;
+        break;
+    case Panels::West:
+        t = this->ui->westPanel;
+        break;
+    case Panels::South:
+        t = this->ui->southPanel;
+        break;
+    }
+    return t->addTab(widget, name);
+}
+
+QWidget *PluginManager::getPanel(Panels p, int index) {
+    QTabWidget *t = nullptr;
+    switch (p) {
+    case Panels::East:
+        t = this->ui->eastPanel;
+        break;
+    case Panels::West:
+        t = this->ui->westPanel;
+        break;
+    case Panels::South:
+        t = this->ui->southPanel;
+        break;
+    }
+    return t->widget(index);
+}
+
 /**
  * \brief add a new plugin to the plugin manager system
  * \param newplugin the plugin to add to the system
@@ -625,21 +825,26 @@ bool PluginManager::openFiles(QStringList fileNames) {
 void PluginManager::addPlugin(IPlugin *newplugin) {
     plugins << newplugin;
 
-    if (!newplugin)
+    if (!newplugin) {
         return;
+    }
 
     newplugin->mdiServer = dynamic_cast<qmdiServer *>(tabWidget);
-    if (newplugin->alwaysEnabled)
+    if (newplugin->alwaysEnabled) {
         newplugin->autoEnabled = true;
+    }
 
-    if (newplugin->autoEnabled)
+    if (newplugin->autoEnabled) {
         newplugin->enabled = true;
+    }
 
-    if (newplugin->enabled)
+    if (newplugin->enabled) {
         enablePlugin(newplugin);
+    }
 
-    if (settingsManager)
+    if (settingsManager) {
         newplugin->loadConfig(*settingsManager);
+    }
 }
 
 /**
@@ -653,14 +858,15 @@ void PluginManager::addPlugin(IPlugin *newplugin) {
  * \see disablePlugin
  */
 void PluginManager::removePlugin(IPlugin *oldplugin) {
-    if (!oldplugin)
+    if (!oldplugin) {
         return;
+    }
 
     disablePlugin(oldplugin);
 
-    if (plugins.removeAll(oldplugin) == 1)
+    if (plugins.removeAll(oldplugin) == 1) {
         delete oldplugin;
-    else {
+    } else {
         qDebug("%s - %d: could not remove plugin from the plugin manager (%s)", __FILE__, __LINE__,
                qPrintable(oldplugin->getName()));
         return;
@@ -683,8 +889,9 @@ void PluginManager::removePlugin(IPlugin *oldplugin) {
  * \see qmdiHost::mergeClient()
  */
 void PluginManager::enablePlugin(IPlugin *plugin) {
-    if (!plugin)
+    if (!plugin) {
         return;
+    }
 
     if (!plugins.contains(plugin)) {
         qDebug("%s - %d: tried to enable a plugin which was not part of the plugin "
@@ -701,8 +908,9 @@ void PluginManager::enablePlugin(IPlugin *plugin) {
     QAction *a;
     QActionGroup *ag;
     ag = plugin->newFileActions();
-    if (!ag)
+    if (!ag) {
         return;
+    }
 
     foreach (a, ag->actions()) {
         newFilePopup->addAction(a);
@@ -727,8 +935,9 @@ void PluginManager::enablePlugin(IPlugin *plugin) {
  * \see qmdiHost::unmergeClient()
  */
 void PluginManager::disablePlugin(IPlugin *plugin) {
-    if (!plugin)
+    if (!plugin) {
         return;
+    }
 
     if (!plugins.contains(plugin)) {
         qDebug("%s - %d: tried to disable a plugin which was not part of the "
@@ -804,8 +1013,13 @@ void PluginManager::initGUI() {
     toolbars[tr("main")]->addAction(actionOpen);
     toolbars[tr("main")]->addAction(actionConfig);
 
-    tabWidget = new qmdiTabWidget(this);
-    updateGUI();
+    this->ui = new Ui::PluginManagedWindow;
+    this->ui->setupUi(this);
+    //    this->ui->splitter->setStretchFactor(0, 1);
+    //    this->ui->splitter->setStretchFactor(1, 1);
+    //    this->ui->splitter->setStretchFactor(2, 1);
+    this->ui->splitter->setSizes(QList<int>({1, 2, 1}));
+    tabWidget = this->ui->mdiTabWidget;
 
     QToolButton *tabCloseBtn = new QToolButton(tabWidget);
     connect(tabCloseBtn, SIGNAL(clicked()), this, SLOT(closeClient()));
@@ -820,11 +1034,12 @@ void PluginManager::initGUI() {
     //	addNewMdiClient->setIcon(QIcon(":images/closetab.png"));
     addNewMdiClient->setIcon(QIcon::fromTheme("document-new"));
     addNewMdiClient->setMenu(newFilePopup);
-    tabWidget->setCornerWidget(addNewMdiClient, Qt::TopLeftCorner);
+    // tabWidget->setCornerWidget(addNewMdiClient, Qt::TopLeftCorner);
 
+    tabWidget->mdiHost = this;
     tabWidget->setDocumentMode(true);
     tabWidget->setMovable(true);
-    setCentralWidget(tabWidget);
+    updateGUI();
 }
 
 /**
@@ -836,10 +1051,22 @@ void PluginManager::initGUI() {
  */
 void PluginManager::closeClient() {
     qmdiClient *client = dynamic_cast<qmdiClient *>(tabWidget->currentWidget());
-    if (client == NULL)
+    if (client == NULL) {
         tabWidget->currentWidget()->deleteLater();
-    else
+    } else {
         client->closeClient();
+    }
+}
+
+/**
+ * @brief Set the focus on the currently active tab
+ *
+ * Will focus the tab widget and then set the focus to the content of the
+ * current tab.
+ */
+void PluginManager::focusCenter() {
+    tabWidget->setFocus();
+    tabWidget->currentWidget()->setFocus();
 }
 
 /**
@@ -865,8 +1092,9 @@ void PluginManager::on_actionOpen_triggered() {
 
     // get list of available extensions to open from each plugin
     foreach (p, plugins) {
-        if (!p->enabled)
+        if (!p->enabled) {
             continue;
+        }
         extensAvailable << p->myExtensions();
     }
 
@@ -874,8 +1102,9 @@ void PluginManager::on_actionOpen_triggered() {
     for (int i = 0; i < j; ++i) {
         QString s = extensAvailable.at(i);
         extens += s;
-        if (i < j - 1)
+        if (i < j - 1) {
             extens += ";;";
+        }
 
         QRegularExpression regexp("\\((.*)\\)");
         auto m = regexp.match(s);
@@ -895,8 +1124,9 @@ void PluginManager::on_actionOpen_triggered() {
 
     QStringList s = QFileDialog::getOpenFileNames(NULL, tr("Choose a file"), workingDir, extens);
 
-    if (s.isEmpty())
+    if (s.isEmpty()) {
         return;
+    }
 
     openFiles(s);
 }
@@ -966,8 +1196,9 @@ void PluginManager::on_actionConfigure_triggered() {
  */
 void PluginManager::on_actionPrev_triggered() {
     int i = tabWidget->currentIndex();
-    if (i == 0)
+    if (i == 0) {
         return;
+    }
 
     i--;
     tabWidget->setCurrentIndex(i);
@@ -988,8 +1219,9 @@ void PluginManager::on_actionPrev_triggered() {
  */
 void PluginManager::on_actionNext_triggered() {
     int i = tabWidget->currentIndex();
-    if (i == tabWidget->count())
+    if (i == tabWidget->count()) {
         return;
+    }
 
     i++;
     tabWidget->setCurrentIndex(i);
@@ -1007,19 +1239,19 @@ void PluginManager::on_actionHideGUI_changed() {
 
     updateMenusAndToolBars = !actionHideGUI->isChecked();
     setUpdatesEnabled(false);
-    statusBar()->setVisible(!actionHideGUI->isChecked());
     menuBar()->setVisible(!actionHideGUI->isChecked());
     foreach (QToolBar *b, findChildren<QToolBar *>()) {
         b->setVisible(!actionHideGUI->isChecked());
     }
 
     foreach (QDockWidget *d, findChildren<QDockWidget *>()) {
-        if (!actionHideGUI->isChecked())
+        if (!actionHideGUI->isChecked()) {
             d->setFeatures(d->features() | QDockWidget::DockWidgetMovable |
                            QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
-        else
+        } else {
             d->setFeatures(d->features() & ~QDockWidget::DockWidgetMovable &
                            ~QDockWidget::DockWidgetClosable & ~QDockWidget::DockWidgetFloatable);
+        }
     }
 
     if (currentClient && !actionHideGUI->isChecked()) {

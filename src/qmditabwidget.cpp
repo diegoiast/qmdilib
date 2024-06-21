@@ -72,10 +72,11 @@
  * \see QWidget::parentWidget()
  */
 qmdiTabWidget::qmdiTabWidget(QWidget *parent, qmdiHost *host) : QTabWidget(parent) {
-    if (host == nullptr)
+    if (host == nullptr) {
         mdiHost = dynamic_cast<qmdiHost *>(parent);
-    else
+    } else {
         mdiHost = host;
+    }
 
     activeWidget = nullptr;
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
@@ -102,17 +103,17 @@ qmdiTabWidget::~qmdiTabWidget() {}
  * \see workSpaceWindowActivated(QWidget*)
  */
 void qmdiTabWidget::tabChanged(int i) {
-    if (mdiHost == nullptr)
+    if (mdiHost == nullptr) {
         return;
+    }
 
     QWidget *w = widget(i);
 
     // nothing to do, if the same tab has been selected twice
-    if (w == activeWidget)
+    if (w == activeWidget) {
         return;
+    }
 
-    // thanks to Nox PasNox <pasnox@gmail.com> for this code
-    // it enables the usage of QWorspace as a self contained qmdiServer
     if (activeWidget) {
         mdiHost->unmergeClient(dynamic_cast<qmdiClient *>(activeWidget));
     }
@@ -121,57 +122,11 @@ void qmdiTabWidget::tabChanged(int i) {
 
     if (activeWidget) {
         mdiHost->mergeClient(dynamic_cast<qmdiClient *>(activeWidget));
-#if QT_VERSION < 0x050000 // supported on Qt4.x only
-        QWorkspace *ws = qobject_cast<QWorkspace *>(activeWidget);
-        if (ws)
-            mdiHost->mergeClient(dynamic_cast<qmdiClient *>(ws->activeWindow()));
-#endif
     }
 
     QMainWindow *m = dynamic_cast<QMainWindow *>(mdiHost);
     mdiHost->updateGUI(m);
 }
-
-#if QT_VERSION < 0x050000 // supported on Qt4.x only
-/**
- * \brief callback function for notifying of a new QWorkspace child activated
- * \param w the widget which now has the focus on the work space
- *
- * Since qmdilib 0.0.3 it's possible to insert a QWorkspace into
- * a QTabWidget and when a new child will be focused on the QWorkspace
- * it's menus will be merged, just like it a normal widget on the qmdiTabWidget.
- *
- * This slow it automatically connected by tabInserted(int).
- *
- * Thanks to Nox PasNox (pasnox@gmail.com) for this code.
- *
- * \since 0.0.3
- * \see tabInserted( int )
- * \see tabChanged( int )
- */
-void qmdiTabWidget::workSpaceWindowActivated(QWidget *w) {
-    static qmdiClient *last = nullptr;
-
-    if (mdiHost == nullptr)
-        mdiHost = dynamic_cast<qmdiHost *>(parentWidget());
-
-    if (mdiHost == nullptr)
-        return;
-
-    QWorkspace *workspace = qobject_cast<QWorkspace *>(sender());
-    if (workspace == nullptr)
-        return;
-
-    QWidgetList l = workspace->windowList();
-    qmdiClient *client = dynamic_cast<qmdiClient *>(w);
-    mdiHost->unmergeClient(last);
-    mdiHost->mergeClient(client);
-    last = client;
-
-    QMainWindow *m = dynamic_cast<QMainWindow *>(mdiHost);
-    mdiHost->updateGUI(m);
-}
-#endif
 
 /**
  * \brief mouse middle button click callback
@@ -250,11 +205,13 @@ void qmdiTabWidget::addClient(qmdiClient *client) {
  * \since 0.0.4
  */
 bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event) {
-    if (obj != tabBar())
+    if (obj != tabBar()) {
         return QObject::eventFilter(obj, event);
+    }
 
-    if (event->type() != QEvent::MouseButtonPress)
+    if (event->type() != QEvent::MouseButtonPress) {
         return QObject::eventFilter(obj, event);
+    }
 
     // compute the tab number
     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
@@ -262,8 +219,9 @@ bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event) {
     int clickedItem = tabBar()->tabAt(position);
 
     // just in case
-    if (clickedItem == -1)
+    if (clickedItem == -1) {
         return QObject::eventFilter(obj, event);
+    }
 
     switch (mouseEvent->button()) {
     case Qt::LeftButton:
@@ -322,20 +280,25 @@ int qmdiTabWidget::getClientsCount() { return count(); }
  * \see qmdiServer::clientDeleted( QObject * )
  */
 void qmdiTabWidget::deleteClient(qmdiClient *client) {
-    if (client == nullptr)
+    if (client == nullptr) {
         return;
+    }
 
-    if (mdiHost == nullptr)
+    if (mdiHost == nullptr) {
         return;
+    }
 
-    if (dynamic_cast<qmdiClient *>(activeWidget) != client)
+    if (dynamic_cast<qmdiClient *>(activeWidget) != client) {
         return;
+    }
 
 #if QT_VERSION < 0x050000 // supported on Qt4.x only
     QWorkspace *ws = qobject_cast<QWorkspace *>(activeWidget);
-    if (ws)
-        foreach (QWidget *c, ws->windowList())
+    if (ws) {
+        foreach (QWidget *c, ws->windowList()) {
             mdiHost->unmergeClient(dynamic_cast<qmdiClient *>(c));
+        }
+    }
 #endif
     mdiHost->unmergeClient(client);
     mdiHost->updateGUI(dynamic_cast<QMainWindow *>(mdiHost));
@@ -365,16 +328,19 @@ void qmdiTabWidget::tabInserted(int index) {
     QWidget *w = widget(index);
     qmdiClient *client = dynamic_cast<qmdiClient *>(w);
 
-    if (mdiHost == nullptr)
+    if (mdiHost == nullptr) {
         mdiHost = dynamic_cast<qmdiHost *>(parent());
-    if (client)
+    }
+    if (client) {
         client->mdiServer = this;
+    }
 
 #if QT_VERSION < 0x050000 // supported on Qt4.x only
     QWorkspace *ws = qobject_cast<QWorkspace *>(w);
-    if (ws)
+    if (ws) {
         connect(ws, SIGNAL(windowActivated(QWidget *)), this,
                 SLOT(workSpaceWindowActivated(QWidget *)));
+    }
 #endif
     //	if it's the only widget available, show it's number
     //	BUG is this supposed to be done by Qt?
@@ -407,8 +373,9 @@ void qmdiTabWidget::tabInserted(int index) {
  * \see QTabWidget::tabBar()
  */
 void qmdiTabWidget::tabRemoved(int index) {
-    if (mdiHost == nullptr)
+    if (mdiHost == nullptr) {
         return;
+    }
 
     int c = count();
 
@@ -422,8 +389,9 @@ void qmdiTabWidget::tabRemoved(int index) {
 
     //	if it's the only widget available, show it's number
     //	BUG is this supposed to be done by Qt?
-    if (c == 1)
+    if (c == 1) {
         tabChanged(0);
+    }
 
     Q_UNUSED(index);
 }

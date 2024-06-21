@@ -20,6 +20,18 @@ class IPlugin;
 class ConfigDialog;
 class PluginModel;
 
+namespace Ui {
+class PluginManagedWindow;
+};
+
+enum class Panels { West, East, South };
+
+struct PanelState {
+    bool isMinimized = false;
+    QSize savedSize;
+    QTabWidget *panel;
+};
+
 class PluginManager : public QMainWindow, public qmdiHost {
     Q_OBJECT
     friend class PluginModel;
@@ -31,6 +43,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     int tabForFileName(QString fileName);
     void setNativeSettingsManager(const QString &organization = QString(),
                                   const QString &application = QString());
+  public slots:
     void setFileSettingsManager(const QString &fileName = QString());
     void restoreSettings();
     void saveSettings();
@@ -38,12 +51,21 @@ class PluginManager : public QMainWindow, public qmdiHost {
     bool openFile(QString fileName, int x = -1, int y = -1, int z = -1);
     bool openFiles(QStringList fileNames);
 
+    void hideUnusedPanels();
+    void hidePanel(Panels p);
+    void showPanel(Panels p, int index);
+
+  public:
+    int createNewPanel(Panels p, QString name, QWidget *widget);
+    QWidget *getPanel(Panels p, int index);
+
   public slots:
     void addPlugin(IPlugin *newplugin);
     void removePlugin(IPlugin *oldplugin);
     void enablePlugin(IPlugin *plugin);
     void disablePlugin(IPlugin *plugin);
     void closeClient();
+    void focusCenter();
 
     void on_actionOpen_triggered();
     void on_actionClose_triggered();
@@ -54,11 +76,14 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void on_actionHideGUI_changed();
 
   protected:
+    PanelState westState, eastState, southState;
+
     void initGUI();
     QList<IPlugin *> plugins;
     qmdiTabWidget *tabWidget;
     ConfigDialog *configDialog;
     QSettings *settingsManager;
+    Ui::PluginManagedWindow *ui;
 
   public:
     QMenu *newFilePopup;
