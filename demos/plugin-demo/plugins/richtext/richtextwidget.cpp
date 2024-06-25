@@ -142,7 +142,8 @@ void RichTextWidget::initWidget(QString fileName, QTextEdit *e) {
     connect(listGroup, SIGNAL(triggered(QAction *)), this, SLOT(setList_(QAction *)));
     connect(fontComboBox, SIGNAL(textActivated(const QString &)), this,
             SLOT(textFamily(const QString &)));
-    connect(comboSize, SIGNAL(textActivated(const QString &)), this, SLOT(textSize(const QString &)));
+    connect(comboSize, SIGNAL(textActivated(const QString &)), this,
+            SLOT(textSize(const QString &)));
 
     setMSWordShortCuts();
 

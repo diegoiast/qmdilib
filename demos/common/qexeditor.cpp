@@ -89,13 +89,13 @@ bool QexTextEdit::canCloseClient() {
         return true;
     }
 
-    // ask for saving    
+    // ask for saving
     int ret = QMessageBox::warning(this, tr("Application"),
                                    tr("The document has been modified.\n"
                                       "Do you want to save your changes?"),
                                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
                                    QMessageBox::No);
-    
+
     if (ret == QMessageBox::Yes) {
         return fileSave();
     } else if (ret == QMessageBox::Cancel) {
