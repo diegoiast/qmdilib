@@ -140,9 +140,9 @@ void RichTextWidget::initWidget(QString fileName, QTextEdit *e) {
     connect(alignGroup, SIGNAL(triggered(QAction *)), this, SLOT(textAlign(QAction *)));
     connect(directionGroup, SIGNAL(triggered(QAction *)), this, SLOT(textDirection(QAction *)));
     connect(listGroup, SIGNAL(triggered(QAction *)), this, SLOT(setList_(QAction *)));
-    connect(fontComboBox, SIGNAL(activated(const QString &)), this,
+    connect(fontComboBox, SIGNAL(textActivated(const QString &)), this,
             SLOT(textFamily(const QString &)));
-    connect(comboSize, SIGNAL(activated(const QString &)), this, SLOT(textSize(const QString &)));
+    connect(comboSize, SIGNAL(textActivated(const QString &)), this, SLOT(textSize(const QString &)));
 
     setMSWordShortCuts();
 
