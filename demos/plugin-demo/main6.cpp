@@ -11,6 +11,7 @@
 
 #include "pluginmanager.h"
 #include "plugins/editor/editor_plg.h"
+#include "plugins/filesystem/filesystembrowser.h"
 #include "plugins/help/help_plg.h"
 #include "plugins/richtext/richtext_plg.h"
 
@@ -24,6 +25,7 @@ int main(int argc, char *argv[]) {
     pluginManager.addPlugin(new HelpPlugin);
     pluginManager.addPlugin(new EditorPlugin);
     pluginManager.addPlugin(new RichTextPlugin);
+    pluginManager.addPlugin(new FileSystemBrowserPlugin);
     pluginManager.updateGUI();
     pluginManager.hideUnusedPanels();
 
