@@ -104,7 +104,9 @@ bool QexTextEdit::canCloseClient() {
     return true;
 }
 
-QString QexTextEdit::mdiClientFileName() { return fileName; }
+QString QexTextEdit::mdiClientFileName() {
+    return fileName;
+}
 
 void QexTextEdit::initInterface(bool singleToolbar) {
     QString toolbarFile = singleToolbar ? "main" : "File";
@@ -156,6 +158,10 @@ bool QexTextEdit::openFile(QString newFile) {
             s = newFile.mid(i + 1);
         else
             s = newFile;
+    }
+    
+    if (s.isEmpty()) {
+        s = "No Name";
     }
     mdiClientName = s;
 

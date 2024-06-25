@@ -74,6 +74,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void on_actionPrev_triggered();
     void on_actionNext_triggered();
     void on_actionHideGUI_changed();
+    
+    size_t visibleTabs() const;
 
   protected:
     PanelState westState, eastState, southState;

@@ -5,9 +5,8 @@
  * License GPL 2 or 3
  */
 
-// $Id$
-
 #include <QApplication>
+#include <QMenu>
 #include <QStatusBar>
 
 #include "pluginmanager.h"
@@ -26,12 +25,17 @@ int main(int argc, char *argv[]) {
     pluginManager.addPlugin(new EditorPlugin);
     pluginManager.addPlugin(new RichTextPlugin);
     pluginManager.updateGUI();
+    pluginManager.hideUnusedPanels();
 
     // start the application
     pluginManager.restoreSettings();
     pluginManager.statusBar()->showMessage(
         QT_TR_NOOP("Welcome - feel free to configure the GUI to your needs"), 5000);
-    // pluginManager.show();
+    pluginManager.show();
 
+    auto l = pluginManager.visibleTabs();
+    if (pluginManager.visibleTabs() < 2) {
+        pluginManager.newFilePopup->actions().first()->activate(QAction::Trigger);
+    }
     return app.exec();
 }

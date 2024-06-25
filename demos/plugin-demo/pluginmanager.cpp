@@ -582,7 +582,7 @@ void PluginManager::saveSettings() {
             if (!s.isEmpty()) {
                 settingsManager->setValue(QString("file%1").arg(i), s);
             } else {
-                settingsManager->setValue(QString("file%1").arg(i), "@");
+                settingsManager->setValue(QString("file%1").arg(i), "");
             }
         }
 
@@ -1261,3 +1261,5 @@ void PluginManager::on_actionHideGUI_changed() {
 
     setUpdatesEnabled(true);
 }
+
+size_t PluginManager::visibleTabs() const { return tabWidget->count(); }
