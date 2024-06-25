@@ -65,7 +65,7 @@ void HelpPlugin::showAboutQt() { QApplication::aboutQt(); }
 
 void HelpPlugin::showQtHelp() {
     QString helpFile =
-        QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
+        QLibraryInfo::path(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
     loadHTML(helpFile);
 }
 
@@ -100,7 +100,7 @@ int HelpPlugin::canOpenFile(const QString fileName) {
 
     // now, lets assume this is a class name or a full qualified file name
     QString className = u.path().toLower();
-    if ((QFile::exists(QLibraryInfo::location(QLibraryInfo::DocumentationPath) +
+    if ((QFile::exists(QLibraryInfo::path(QLibraryInfo::DocumentationPath) +
                        QLatin1String("/html/") + className + QLatin1String(".html"))) ||
         QFile::exists(className)) {
         return 10;
@@ -113,12 +113,12 @@ bool HelpPlugin::openFile(const QString fileName, int x, int y, int z) {
     QUrl u(fileName);
     bool fileLoaded = false;
 
-    if (QFile::exists(QLibraryInfo::location(QLibraryInfo::DocumentationPath) +
+    if (QFile::exists(QLibraryInfo::path(QLibraryInfo::DocumentationPath) +
                       QLatin1String("/html/") + fileName + QLatin1String(".html"))) {
         fileLoaded = canOpenFile(fileName) > 0;
         if (fileLoaded) {
             fileLoaded =
-                loadHTML(QLibraryInfo::location(QLibraryInfo::DocumentationPath) +
+                loadHTML(QLibraryInfo::path(QLibraryInfo::DocumentationPath) +
                              QLatin1String("/html/") + u.path().toLower() + QLatin1String(".html"),
                          x, y, z);
         }

@@ -445,7 +445,7 @@ void RichTextWidget::textSize(QString p) {
 
 void RichTextWidget::textFamily(const QString &f) {
     QTextCharFormat fmt;
-    fmt.setFontFamily(f);
+    fmt.setFont(QFont(f)); // Set font using QFont constructor
     mergeFormatOnWordOrSelection(fmt);
 }
 

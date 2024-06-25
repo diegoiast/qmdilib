@@ -128,7 +128,7 @@ void MainWindow2::fileClose() {
 
 void MainWindow2::helpQtTopics() {
     QString helpFile =
-        QLibraryInfo::location(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
+        QLibraryInfo::path(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
     QexHelpBrowser *browser = new QexHelpBrowser(QUrl::fromLocalFile(helpFile), SINGLE_TOOLBAR);
     browser->hide();
     tabWidget->addTab(browser, "Qt help");
