@@ -106,8 +106,9 @@ void RichTextWidget::initWidget(QString fileName, QTextEdit *e) {
     QFontDatabase db;
     comboSize->setObjectName("Choose font size");
     comboSize->setEditable(true);
-    foreach (int size, db.standardSizes())
+    foreach (int size, db.standardSizes()) {
         comboSize->addItem(QString::number(size));
+    }
 
     actionLTR->setCheckable(true);
     actionRTL->setCheckable(true);
@@ -145,19 +146,22 @@ void RichTextWidget::initWidget(QString fileName, QTextEdit *e) {
 
     setMSWordShortCuts();
 
-    if (!fileName.isEmpty())
+    if (!fileName.isEmpty()) {
         loadFile(fileName);
+    }
 }
 
 void RichTextWidget::loadFile(QString fileName) {
     QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return;
+    }
 
     QString content;
     QTextStream in(&file);
-    while (!in.atEnd())
+    while (!in.atEnd()) {
         content += in.readLine() + "\n";
+    }
 
     textEdit->setPlainText(content);
     richText->setHtml(content);
@@ -228,8 +232,9 @@ QTextList *RichTextWidget::getList() {
 
 void RichTextWidget::mergeFormatOnWordOrSelection(const QTextCharFormat &format) {
     QTextCursor cursor = richText->textCursor();
-    if (!cursor.hasSelection())
+    if (!cursor.hasSelection()) {
         cursor.select(QTextCursor::WordUnderCursor);
+    }
     cursor.mergeCharFormat(format);
     richText->mergeCurrentCharFormat(format);
 }
@@ -249,19 +254,19 @@ void RichTextWidget::cursorPositionChanged() {
     } else {
         QTextListFormat::Style style = l->format().style();
 
-        if (style == QTextListFormat::ListDisc)
+        if (style == QTextListFormat::ListDisc) {
             actionListDisc->setChecked(true);
-        else if (style == QTextListFormat::ListCircle)
+        } else if (style == QTextListFormat::ListCircle) {
             actionListCircle->setChecked(true);
-        else if (style == QTextListFormat::ListSquare)
+        } else if (style == QTextListFormat::ListSquare) {
             actionListSquare->setChecked(true);
-        else if (style == QTextListFormat::ListDecimal)
+        } else if (style == QTextListFormat::ListDecimal) {
             actionListDecmial->setChecked(true);
-        else if (style == QTextListFormat::ListLowerAlpha)
+        } else if (style == QTextListFormat::ListLowerAlpha) {
             actionListLowerAlpha->setChecked(true);
-        else if (style == QTextListFormat::ListUpperAlpha)
+        } else if (style == QTextListFormat::ListUpperAlpha) {
             actionListUpperAlpha->setChecked(true);
-        else {
+        } else {
             actionListDisc->setChecked(false);
             actionListCircle->setChecked(false);
             actionListSquare->setChecked(false);
@@ -319,10 +324,11 @@ void RichTextWidget::alignmentChanged(Qt::Alignment a) {
 }
 
 void RichTextWidget::directionChanged(Qt::LayoutDirection d) {
-    if (d == Qt::RightToLeft)
+    if (d == Qt::RightToLeft) {
         actionRTL->setChecked(true);
-    else if (d == Qt::LeftToRight)
+    } else if (d == Qt::LeftToRight) {
         actionLTR->setChecked(true);
+    }
     // WTF?
     else {
         actionRTL->setChecked(false);
@@ -332,8 +338,9 @@ void RichTextWidget::directionChanged(Qt::LayoutDirection d) {
 
 void RichTextWidget::setShowSource(bool shouldShow) {
     // 	tabWidget->tabBar()->setVisible( shouldShow );
-    if (!shouldShow)
+    if (!shouldShow) {
         tabWidget->setCurrentIndex(0);
+    }
 }
 
 bool RichTextWidget::getShowSource() {
@@ -355,18 +362,20 @@ void RichTextWidget::textDirection(QAction *a) {
         qtbf.setLayoutDirection(Qt::LeftToRight);
         qtc.setBlockFormat(qtbf);
 
-        if (qta == Qt::AlignRight)
+        if (qta == Qt::AlignRight) {
             qta = Qt::AlignLeft;
-        else if (qta == Qt::AlignLeft)
+        } else if (qta == Qt::AlignLeft) {
             qta = Qt::AlignRight;
+        }
     } else if (a == actionRTL) {
         qtbf.setLayoutDirection(Qt::RightToLeft);
         qtc.setBlockFormat(qtbf);
 
-        if (qta == Qt::AlignRight)
+        if (qta == Qt::AlignRight) {
             qta = Qt::AlignLeft;
-        else if (richText->alignment() == Qt::AlignLeft)
+        } else if (richText->alignment() == Qt::AlignLeft) {
             qta = Qt::AlignRight;
+        }
     }
     //	else WTF?
 
@@ -375,29 +384,31 @@ void RichTextWidget::textDirection(QAction *a) {
 }
 
 void RichTextWidget::textAlign(QAction *a) {
-    if (a == actionAlignLeft)
+    if (a == actionAlignLeft) {
         richText->setAlignment(Qt::AlignLeft);
-    else if (a == actionAlignCenter)
+    } else if (a == actionAlignCenter) {
         richText->setAlignment(Qt::AlignHCenter);
-    else if (a == actionAlignRight)
+    } else if (a == actionAlignRight) {
         richText->setAlignment(Qt::AlignRight);
-    else if (a == actionAlignJustify)
+    } else if (a == actionAlignJustify) {
         richText->setAlignment(Qt::AlignJustify);
+    }
 }
 
 void RichTextWidget::setList_(QAction *a) {
-    if (a == actionListDisc)
+    if (a == actionListDisc) {
         setList(QTextListFormat::ListDisc);
-    else if (a == actionListCircle)
+    } else if (a == actionListCircle) {
         setList(QTextListFormat::ListCircle);
-    else if (a == actionListSquare)
+    } else if (a == actionListSquare) {
         setList(QTextListFormat::ListSquare);
-    else if (a == actionListDecmial)
+    } else if (a == actionListDecmial) {
         setList(QTextListFormat::ListDecimal);
-    else if (a == actionListLowerAlpha)
+    } else if (a == actionListLowerAlpha) {
         setList(QTextListFormat::ListLowerAlpha);
-    else if (a == actionListUpperAlpha)
+    } else if (a == actionListUpperAlpha) {
         setList(QTextListFormat::ListUpperAlpha);
+    }
 }
 
 void RichTextWidget::fontChanged(const QFont &f) {
@@ -416,8 +427,9 @@ void RichTextWidget::colorChanged(const QColor &c) {
 
 void RichTextWidget::textColor() {
     QColor col = QColorDialog::getColor(textEdit->textColor(), this);
-    if (!col.isValid())
+    if (!col.isValid()) {
         return;
+    }
 
     QTextCharFormat fmt;
     fmt.setForeground(col);

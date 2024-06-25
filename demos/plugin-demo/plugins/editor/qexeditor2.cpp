@@ -21,11 +21,13 @@ QexTextEdit2::QexTextEdit2(QString file, bool singleToolbar, QWidget *parent)
 }
 
 void QexTextEdit2::showQtKeyword() {
-    if (!mdiServer)
+    if (!mdiServer) {
         return;
+    }
 
-    if (!mdiServer->mdiHost)
+    if (!mdiServer->mdiHost) {
         return;
+    }
 
     PluginManager *m = dynamic_cast<PluginManager *>(mdiServer->mdiHost);
     QMainWindow *w = qobject_cast<QMainWindow *>(this->window());
@@ -34,8 +36,9 @@ void QexTextEdit2::showQtKeyword() {
     cursor.select(QTextCursor::WordUnderCursor);
     if (!m->openFile("help:" + cursor.selectedText().toLower())) {
         // lets inform the user
-        if (w)
+        if (w) {
             w->statusBar()->showMessage("Could not find help for this keyword",
                                         5 * 1000); // this is msec
+        }
     }
 }

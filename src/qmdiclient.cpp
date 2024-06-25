@@ -79,8 +79,9 @@ qmdiClient::qmdiClient(const QString newName) {
  * It will also set the mdi server to nullptr.
  */
 qmdiClient::~qmdiClient() {
-    if (mdiServer != nullptr)
+    if (mdiServer != nullptr) {
         mdiServer->deleteClient(this);
+    }
 
     mdiServer = nullptr;
 }
@@ -182,13 +183,15 @@ bool qmdiClient::closeClient() {
         QObject *o = dynamic_cast<QObject *>(this);
         if (o) {
             QWidget *w = qobject_cast<QWidget *>(o);
-            if (w)
+            if (w) {
                 w->hide();
+            }
             o->deleteLater();
         }
         return true;
-    } else
+    } else {
         return false;
+    }
 }
 
 /**

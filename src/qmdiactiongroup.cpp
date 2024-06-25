@@ -200,13 +200,15 @@ QString qmdiActionGroup::getName() { return name; }
  * \see setMergePoint()
  */
 void qmdiActionGroup::addAction(QAction *action, int location) {
-    if (containsAction(action))
+    if (containsAction(action)) {
         removeAction(action);
+    }
 
-    if (location != -1)
+    if (location != -1) {
         actionGroupItems.insert(location, action);
-    else
+    } else {
         actionGroupItems << action;
+    }
 }
 
 /**
@@ -220,8 +222,9 @@ void qmdiActionGroup::addAction(QAction *action, int location) {
  * \see addAction
  */
 void qmdiActionGroup::addActions(QActionGroup *actions, int location) {
-    if (location == -1)
+    if (location == -1) {
         location = actionGroupItems.count();
+    }
     foreach (QAction *a, actions->actions()) {
         addAction(a, location);
         location++;
@@ -248,10 +251,11 @@ void qmdiActionGroup::addActions(QActionGroup *actions, int location) {
  * \see setMergePoint
  */
 void qmdiActionGroup::addWidget(QWidget *widget, int location) {
-    if (location != -1)
+    if (location != -1) {
         actionGroupItems.insert(location, widget);
-    else
+    } else {
         actionGroupItems << widget;
+    }
 }
 
 /**
@@ -274,10 +278,11 @@ void qmdiActionGroup::addWidget(QWidget *widget, int location) {
  * \see setMergePoint
  */
 void qmdiActionGroup::addMenu(QMenu *menu, int location) {
-    if (location != -1)
+    if (location != -1) {
         actionGroupItems.insert(location, menu);
-    else
+    } else {
         actionGroupItems << menu;
+    }
 }
 
 /**
@@ -322,8 +327,9 @@ bool qmdiActionGroup::containsAction(QAction *action) { return actionGroupItems.
 void qmdiActionGroup::removeAction(QAction *action) {
     int i = actionGroupItems.indexOf(action);
 
-    if (i != -1)
+    if (i != -1) {
         actionGroupItems.removeAt(i);
+    }
 }
 
 /**
@@ -359,8 +365,9 @@ void qmdiActionGroup::removeActions(QActionGroup *actions) {
 void qmdiActionGroup::removeMenu(QMenu *menu) {
     int i = actionGroupItems.indexOf(menu);
 
-    if (i != -1)
+    if (i != -1) {
         actionGroupItems.removeAt(i);
+    }
 }
 
 /**
@@ -379,8 +386,9 @@ void qmdiActionGroup::removeMenu(QMenu *menu) {
 void qmdiActionGroup::removeWidget(QWidget *widget) {
     int i = actionGroupItems.indexOf(widget);
 
-    if (i != -1)
+    if (i != -1) {
         actionGroupItems.removeAt(i);
+    }
 }
 
 /**
@@ -413,12 +421,14 @@ int qmdiActionGroup::getMergePoint() {
     int i = -1;
 
     foreach (qmdiActionGroup *ag, actionGroups) {
-        if (ag->mergeLocation > i)
+        if (ag->mergeLocation > i) {
             i = ag->mergeLocation;
+        }
     }
 
-    if (mergeLocation > i)
+    if (mergeLocation > i) {
         i = mergeLocation;
+    }
 
     return i;
 }
@@ -441,50 +451,58 @@ int qmdiActionGroup::getMergePoint() {
  * \see getMergePoint
  */
 void qmdiActionGroup::mergeGroup(qmdiActionGroup *group) {
-    if (!group)
+    if (!group) {
         return;
+    }
 
-    if ((group->breakAfter))
+    if ((group->breakAfter)) {
         breakCount = breakCount == -1 ? 1 : breakCount + 1;
+    }
 
     int i = 0;
     foreach (QObject *o, group->actionGroupItems) {
-        if (actionGroupItems.contains(o))
+        if (actionGroupItems.contains(o)) {
             continue;
+        }
 
         QAction *a = qobject_cast<QAction *>(o);
 
         if (a) {
             int m = getMergePoint();
 
-            if (m != -1)
+            if (m != -1) {
                 addAction(a, m + i);
-            else
+            } else {
                 addAction(a);
+            }
         } else {
             QWidget *w = qobject_cast<QWidget *>(o);
             if (w) {
                 int m = getMergePoint();
 
-                if (m != -1)
+                if (m != -1) {
                     addWidget(w, m + i);
-                else
+                } else {
                     addWidget(w);
+                }
 
                 // don't display menus, as they are displayed on demand
                 // when selected in the QMainMenu
-                if (!w->inherits("QMenu"))
+                if (!w->inherits("QMenu")) {
                     w->setVisible(true);
-            } else
+                }
+            } else {
                 qDebug("%s %d : erorr - wrong QObject type added to action group", __FILE__,
                        __LINE__);
+            }
         }
 
         i++;
     }
 
-    if (breakCount > 0)
+    if (breakCount > 0) {
         breakAfter = true;
+    }
 
     actionGroups << group;
 }
@@ -499,20 +517,23 @@ void qmdiActionGroup::mergeGroup(qmdiActionGroup *group) {
  * \see mergeGroup
  */
 void qmdiActionGroup::unmergeGroup(qmdiActionGroup *group) {
-    if (!group)
+    if (!group) {
         return;
+    }
 
-    if ((group->breakAfter))
+    if ((group->breakAfter)) {
         breakCount = breakCount > 1 ? -1 : breakCount - 1;
+    }
 
     foreach (QObject *o, group->actionGroupItems) {
-        if (!actionGroupItems.contains(o))
+        if (!actionGroupItems.contains(o)) {
             continue;
+        }
 
         QAction *a = qobject_cast<QAction *>(o);
-        if (a)
+        if (a) {
             removeAction(a);
-        else {
+        } else {
             QWidget *w = qobject_cast<QWidget *>(o);
             if (w) {
                 w->setVisible(false);
@@ -521,11 +542,13 @@ void qmdiActionGroup::unmergeGroup(qmdiActionGroup *group) {
         }
     }
 
-    if (breakCount > 0)
+    if (breakCount > 0) {
         breakAfter = true;
+    }
 
-    if (actionGroups.contains(group))
+    if (actionGroups.contains(group)) {
         actionGroups.removeAt(actionGroups.indexOf(group));
+    }
 }
 
 /**
@@ -554,20 +577,23 @@ QMenu *qmdiActionGroup::updateMenu(QMenu *menu) {
         return nullptr;
     }
 
-    if (!menu)
+    if (!menu) {
         menu = new QMenu(name);
-    else
+    } else {
         menu->setTitle(name);
+    }
     menu->clear();
 
     foreach (QObject *o, actionGroupItems) {
         QAction *a = qobject_cast<QAction *>(o);
-        if (a)
+        if (a) {
             menu->addAction(a);
+        }
 
         QMenu *m = qobject_cast<QMenu *>(o);
-        if (m)
+        if (m) {
             menu->addMenu(m);
+        }
     }
 
     return menu;
@@ -590,10 +616,11 @@ QMenu *qmdiActionGroup::updateMenu(QMenu *menu) {
  * \see updateMenu
  */
 QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
-    if (!toolbar)
+    if (!toolbar) {
         toolbar = new QToolBar(name);
-    else
+    } else {
         toolbar->setWindowTitle(name);
+    }
 
     toolbar->setUpdatesEnabled(false);
     toolbar->hide();
@@ -601,23 +628,25 @@ QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
     int i = 0;
     foreach (QObject *o, actionGroupItems) {
         QAction *a = qobject_cast<QAction *>(o);
-        if (a)
+        if (a) {
             toolbar->addAction(a);
-        else {
+        } else {
             QWidget *w = qobject_cast<QWidget *>(o);
             if (w) {
                 // don't even try to add menus to toolbars, this just does not work
-                if (!w->inherits("QMenu"))
+                if (!w->inherits("QMenu")) {
                     toolbar->addWidget(w);
+                }
             }
         }
         i++;
     }
 
-    if (actionGroupItems.count() == 0)
+    if (actionGroupItems.count() == 0) {
         toolbar->hide();
-    else
+    } else {
         toolbar->show();
+    }
     toolbar->setUpdatesEnabled(true);
 
     return toolbar;

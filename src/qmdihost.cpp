@@ -136,16 +136,18 @@ qmdiHost::~qmdiHost() { delete toolBarList; }
  */
 void qmdiHost::updateGUI(QMainWindow *window) {
     // if passed nullptr, lets try another sanity check
-    if (window == nullptr)
+    if (window == nullptr) {
         window = dynamic_cast<QMainWindow *>(this);
+    }
 
     if (window == nullptr) {
         qDebug("%s - warning, no QMainWindow specified", __FUNCTION__);
         return;
     }
 
-    if (!updateMenusAndToolBars)
+    if (!updateMenusAndToolBars) {
         return;
+    }
 
     window->setUpdatesEnabled(false);
     toolBarList = toolbars.updateToolBar(toolBarList, window);
@@ -182,8 +184,9 @@ void qmdiHost::updateGUI(QMainWindow *window) {
  * \see qmdiClient::on_client_merged()
  */
 void qmdiHost::mergeClient(qmdiClient *client) {
-    if (client == nullptr)
+    if (client == nullptr) {
         return;
+    }
 
     if (updateMenusAndToolBars) {
         menus.mergeGroupList(&client->menus);
@@ -192,8 +195,9 @@ void qmdiHost::mergeClient(qmdiClient *client) {
     client->on_client_merged(this);
 
     QWidget *w = dynamic_cast<QWidget *>(client);
-    if (!w)
+    if (!w) {
         return;
+    }
     addActionsToWidget(client->menus, w);
     addActionsToWidget(client->toolbars, w);
 }
@@ -226,8 +230,9 @@ void qmdiHost::mergeClient(qmdiClient *client) {
  * \see qmdiClient::on_client_unmerged()
  */
 void qmdiHost::unmergeClient(qmdiClient *client) {
-    if (client == nullptr)
+    if (client == nullptr) {
         return;
+    }
 
     if (updateMenusAndToolBars) {
         menus.unmergeGroupList(&client->menus);
@@ -236,8 +241,9 @@ void qmdiHost::unmergeClient(qmdiClient *client) {
     client->on_client_unmerged(this);
 
     QWidget *w = dynamic_cast<QWidget *>(client);
-    if (!w)
+    if (!w) {
         return;
+    }
     removeActionsFromWidget(client->menus, w);
     removeActionsFromWidget(client->toolbars, w);
 }
@@ -256,16 +262,19 @@ void qmdiHost::unmergeClient(qmdiClient *client) {
  * \see QWidget::addAction
  */
 void qmdiHost::addActionsToWidget(qmdiActionGroupList &agl, QWidget *w) {
-    foreach (qmdiActionGroup *g, agl.actionGroups)
+    foreach (qmdiActionGroup *g, agl.actionGroups) {
         foreach (QObject *o, g->actionGroupItems) {
             QAction *a = qobject_cast<QAction *>(o);
-            if (!a)
+            if (!a) {
                 continue;
+            }
 
-            if (w->actions().contains(a))
+            if (w->actions().contains(a)) {
                 continue;
+            }
             w->addAction(a);
         }
+    }
 }
 
 /**
@@ -282,14 +291,17 @@ void qmdiHost::addActionsToWidget(qmdiActionGroupList &agl, QWidget *w) {
  * \see QWidget::addAction
  */
 void qmdiHost::removeActionsFromWidget(qmdiActionGroupList &agl, QWidget *w) {
-    foreach (qmdiActionGroup *g, agl.actionGroups)
+    foreach (qmdiActionGroup *g, agl.actionGroups) {
         foreach (QObject *o, g->actionGroupItems) {
             QAction *a = qobject_cast<QAction *>(o);
-            if (!a)
+            if (!a) {
                 continue;
+            }
 
-            if (!w->actions().contains(a))
+            if (!w->actions().contains(a)) {
                 continue;
+            }
             w->removeAction(a);
         }
+    }
 }

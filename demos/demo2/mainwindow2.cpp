@@ -117,12 +117,13 @@ void MainWindow2::fileNew() {
 void MainWindow2::fileClose() {
     qmdiClient *c = dynamic_cast<qmdiClient *>(tabWidget->currentWidget());
 
-    if (c == NULL)
+    if (c == NULL) {
         // if it's not an mdi client, safe to kill it
         delete tabWidget->currentWidget();
-    else
+    } else {
         // otherwise, ask politelly for it to close it
         c->closeClient();
+    }
 }
 
 void MainWindow2::helpQtTopics() {

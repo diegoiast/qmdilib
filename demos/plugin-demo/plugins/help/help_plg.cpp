@@ -70,37 +70,43 @@ void HelpPlugin::showQtHelp() {
 }
 
 void HelpPlugin::on_browser_sourceChanged(const QUrl &src) {
-    if (externalBrowser.isEmpty())
+    if (externalBrowser.isEmpty()) {
         return;
+    }
 
-    if ((src.scheme() == "file") || (src.scheme().isEmpty()))
+    if ((src.scheme() == "file") || (src.scheme().isEmpty())) {
         return;
+    }
 
     if (!QProcess::startDetached(externalBrowser, QStringList(src.toString()))) {
         QWidget *w = dynamic_cast<QWidget *>(mdiServer);
-        if (w == NULL)
+        if (w == NULL) {
             return;
+        }
 
         QMainWindow *ww = dynamic_cast<QMainWindow *>(w->window());
-        if (ww)
+        if (ww) {
             ww->statusBar()->showMessage("Error: could not start external browser", 5000);
+        }
     }
 }
 
 int HelpPlugin::canOpenFile(const QString fileName) {
     QUrl u(fileName);
 
-    if (u.scheme().toLower() != "help")
+    if (u.scheme().toLower() != "help") {
         return -1;
+    }
 
     // now, lets assume this is a class name or a full qualified file name
     QString className = u.path().toLower();
     if ((QFile::exists(QLibraryInfo::location(QLibraryInfo::DocumentationPath) +
                        QLatin1String("/html/") + className + QLatin1String(".html"))) ||
-        QFile::exists(className))
+        QFile::exists(className)) {
         return 10;
-    else
+    } else {
         return -1;
+    }
 }
 
 bool HelpPlugin::openFile(const QString fileName, int x, int y, int z) {
@@ -110,11 +116,12 @@ bool HelpPlugin::openFile(const QString fileName, int x, int y, int z) {
     if (QFile::exists(QLibraryInfo::location(QLibraryInfo::DocumentationPath) +
                       QLatin1String("/html/") + fileName + QLatin1String(".html"))) {
         fileLoaded = canOpenFile(fileName) > 0;
-        if (fileLoaded)
+        if (fileLoaded) {
             fileLoaded =
                 loadHTML(QLibraryInfo::location(QLibraryInfo::DocumentationPath) +
                              QLatin1String("/html/") + u.path().toLower() + QLatin1String(".html"),
                          x, y, z);
+        }
     } else if (QFile::exists(u.path())) {
         fileLoaded = loadHTML(u.path(), x, y, z);
     }

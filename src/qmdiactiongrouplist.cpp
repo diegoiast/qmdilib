@@ -81,8 +81,9 @@ qmdiActionGroup *qmdiActionGroupList::getActionGroup(const QString &name) {
     qmdiActionGroup *item = nullptr;
 
     foreach (qmdiActionGroup *i, actionGroups) {
-        if (i->getName() == name)
+        if (i->getName() == name) {
             return i;
+        }
     }
 
     // if menu does not exist, create it
@@ -156,16 +157,18 @@ void qmdiActionGroupList::unmergeGroupList(qmdiActionGroupList *group) {
  * the definitions on this class.
  */
 QMenuBar *qmdiActionGroupList::updateMenuBar(QMenuBar *menubar) {
-    if (menubar)
+    if (menubar) {
         menubar->clear();
-    else
+    } else {
         menubar = new QMenuBar(menubar);
+    }
 
     foreach (qmdiActionGroup *i, actionGroups) {
         QMenu *m = i->updateMenu();
 
-        if (m)
+        if (m) {
             menubar->addMenu(m);
+        }
     }
 
     return menubar;
@@ -199,16 +202,18 @@ QMenuBar *qmdiActionGroupList::updateMenu(QMenuBar *menubar) {
  *
  */
 QMenu *qmdiActionGroupList::updatePopMenu(QMenu *popupMenu) {
-    if (popupMenu)
+    if (popupMenu) {
         popupMenu->clear();
-    else
+    } else {
         popupMenu = new QMenu(popupMenu);
+    }
 
     foreach (qmdiActionGroup *i, actionGroups) {
         QMenu *m = i->updateMenu();
 
-        if (m)
+        if (m) {
             popupMenu->addMenu(m);
+        }
     }
 
     return popupMenu;
@@ -233,8 +238,9 @@ QMenu *qmdiActionGroupList::updatePopMenu(QMenu *popupMenu) {
  */
 QList<QToolBar *> *qmdiActionGroupList::updateToolBar(QList<QToolBar *> *toolbars,
                                                       QMainWindow *window) {
-    if (toolbars == nullptr)
+    if (toolbars == nullptr) {
         toolbars = new QList<QToolBar *>;
+    }
 
     foreach (qmdiActionGroup *i, actionGroups) {
         QToolBar *tb = nullptr;
@@ -254,8 +260,9 @@ QList<QToolBar *> *qmdiActionGroupList::updateToolBar(QList<QToolBar *> *toolbar
             tb->setObjectName(actionName);
             *toolbars << tb;
             window->addToolBar(tb);
-            if (i->breakAfter)
+            if (i->breakAfter) {
                 window->addToolBarBreak();
+            }
         }
 
         // merge it with the corresponding group list

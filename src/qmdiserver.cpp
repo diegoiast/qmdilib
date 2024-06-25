@@ -176,8 +176,9 @@ void qmdiServer::deleteClient(qmdiClient *) {
 void qmdiServer::tryCloseClient(int i) {
     qmdiClient *client = getClient(i);
 
-    if (!client)
+    if (!client) {
         return;
+    }
 
     client->closeClient();
 }
@@ -212,11 +213,13 @@ void qmdiServer::tryCloseAllButClient(int i) {
         qmdiClient *c = getClient(j);
 
         // item is not an mdi client
-        if (!c)
+        if (!c) {
             continue;
+        }
 
-        if (c == client)
+        if (c == client) {
             continue;
+        }
 
         c->closeClient();
     }
@@ -237,8 +240,9 @@ void qmdiServer::tryCloseAllClients() {
 
     for (int i = 0; i < c; i++) {
         qmdiClient *client = getClient(i);
-        if (!client)
+        if (!client) {
             continue;
+        }
 
         client->closeClient();
     }
@@ -274,8 +278,9 @@ void qmdiServer::showClientMenu(int i, QPoint p) {
 
     // ugly code, but I don't know a better way of doying this
     QWidget *w = dynamic_cast<QWidget *>(this);
-    if (w)
+    if (w) {
         p = w->mapToGlobal(p);
+    }
     QAction *q = menu->exec(p);
 
     if (q == closeThis) {

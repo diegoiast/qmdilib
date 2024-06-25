@@ -78,13 +78,15 @@ void ConfigDialog::on_configurePlugin_clicked(bool) {
     IPlugin *p = pluginManager->plugins[pluginNumber];
     QWidget *w = p->getConfigDialog();
 
-    if (!w)
+    if (!w) {
         return;
+    }
 
     hide();
     p->setData();
-    if (execDialog(w))
+    if (execDialog(w)) {
         p->getData();
+    }
     show();
 }
 
@@ -97,10 +99,11 @@ void ConfigDialog::on_pluginEnabled_toggled(bool enabled) {
     IPlugin *p = pluginManager->plugins[pluginNumber];
 
     p->setEnabled(enabled);
-    if (enabled)
+    if (enabled) {
         pluginManager->mergeClient(p);
-    else
+    } else {
         pluginManager->unmergeClient(p);
+    }
 }
 
 void ConfigDialog::updateInfo(int pluginNumber) {

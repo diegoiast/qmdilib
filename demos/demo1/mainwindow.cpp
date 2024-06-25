@@ -121,10 +121,11 @@ void MainWindow::init_gui() {
 void MainWindow::showMenus() {
     bool isChecked = actionShowAll->isChecked();
 
-    if (isChecked)
+    if (isChecked) {
         mergeClient(advanced);
-    else
+    } else {
         unmergeClient(advanced);
+    }
 
     // show the stuff on screen
     updateGUI();

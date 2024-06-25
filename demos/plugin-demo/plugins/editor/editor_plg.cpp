@@ -115,30 +115,33 @@ int EditorPlugin::canOpenFile(const QString fileName) {
             scheme = "c:\"
      */
     // if the scheme is a single line, lets assume this is a windows drive
-    if (u.scheme().length() != 1)
-        if ((u.scheme().toLower() != "file") && (!u.scheme().isEmpty()))
+    if (u.scheme().length() != 1) {
+        if ((u.scheme().toLower() != "file") && (!u.scheme().isEmpty())) {
             return -2;
+        }
+    }
 
-    if (fileName.endsWith(".c", Qt::CaseInsensitive))
+    if (fileName.endsWith(".c", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".cpp", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".cpp", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".cxx", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".cxx", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".h", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".h", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".hpp", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".hpp", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".hxx", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".hxx", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".inc", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".inc", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".pro", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".pro", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".pri", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".pri", Qt::CaseInsensitive)) {
         return 5;
-    else
+    } else {
         return 1;
+    }
 }
 
 /**

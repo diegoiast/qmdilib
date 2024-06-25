@@ -85,8 +85,9 @@ QexTextEdit::~QexTextEdit() {
 }
 
 bool QexTextEdit::canCloseClient() {
-    if (!document()->isModified())
+    if (!document()->isModified()) {
         return true;
+    }
 
     // ask for saving
     int ret = QMessageBox::warning(this, tr("Application"),
@@ -95,18 +96,17 @@ bool QexTextEdit::canCloseClient() {
                                    QMessageBox::Yes | QMessageBox::Default, QMessageBox::No,
                                    QMessageBox::Cancel | QMessageBox::Escape);
 
-    if (ret == QMessageBox::Yes)
+    if (ret == QMessageBox::Yes) {
         return fileSave();
-    else if (ret == QMessageBox::Cancel)
+    } else if (ret == QMessageBox::Cancel) {
         return false;
+    }
 
     // shut up GCC warnings
     return true;
 }
 
-QString QexTextEdit::mdiClientFileName() {
-    return fileName;
-}
+QString QexTextEdit::mdiClientFileName() { return fileName; }
 
 void QexTextEdit::initInterface(bool singleToolbar) {
     QString toolbarFile = singleToolbar ? "main" : "File";
@@ -124,15 +124,17 @@ void QexTextEdit::initInterface(bool singleToolbar) {
     menus["&Search"]->addAction(actionFind);
 
     // define the toolbars for this widget
-    if (singleToolbar)
+    if (singleToolbar) {
         toolbars[toolbarFile]->addSeparator();
+    }
 
     toolbars[toolbarFile]->breakAfter = true;
     toolbars[toolbarFile]->addAction(actionSave);
     toolbars[toolbarFile]->addAction(actionClose);
 
-    if (singleToolbar)
+    if (singleToolbar) {
         toolbars[toolbarEdit]->addSeparator();
+    }
 
     toolbars[toolbarEdit]->addAction(actionCopy);
     toolbars[toolbarEdit]->addAction(actionCut);
@@ -150,28 +152,31 @@ bool QexTextEdit::openFile(QString newFile) {
     // is the file name alone, without the directory
     int i = newFile.lastIndexOf('/');
     QString s;
-    if (i != -1)
+    if (i != -1) {
         s = newFile.mid(i + 1);
-    else {
+    } else {
         i = newFile.lastIndexOf('\\');
-        if (i != -1)
+        if (i != -1) {
             s = newFile.mid(i + 1);
-        else
+        } else {
             s = newFile;
+        }
     }
-    
+
     if (s.isEmpty()) {
         s = "No Name";
     }
     mdiClientName = s;
 
-    if (newFile.isEmpty())
+    if (newFile.isEmpty()) {
         return true;
+    }
 
     QFile f(fileName);
 
-    if (!f.open(QIODevice::ReadOnly))
+    if (!f.open(QIODevice::ReadOnly)) {
         return false;
+    }
 
     QTextStream t(&f);
     setPlainText(t.readAll());
@@ -183,8 +188,9 @@ bool QexTextEdit::openFile(QString newFile) {
 bool QexTextEdit::saveFile(QString newFile) {
     QFile f(newFile);
 
-    if (!f.open(QIODevice::WriteOnly))
+    if (!f.open(QIODevice::WriteOnly)) {
         return false;
+    }
 
     QTextStream t(&f);
     t << toPlainText();
@@ -194,8 +200,9 @@ bool QexTextEdit::saveFile(QString newFile) {
 }
 
 bool QexTextEdit::fileSave() {
-    if (fileName.isEmpty())
+    if (fileName.isEmpty()) {
         return fileSaveAs();
+    }
 
     return saveFile(fileName);
 }
@@ -208,8 +215,9 @@ bool QexTextEdit::fileSaveAs() {
                                              "Qt project (*.pro *.pri);;"
                                              "All files (*.*)");
 
-    if (s.isEmpty())
+    if (s.isEmpty()) {
         return false;
+    }
 
     fileName = s;
     return saveFile(fileName);
@@ -218,8 +226,9 @@ bool QexTextEdit::fileSaveAs() {
 bool QexTextEdit::fileClose() { return closeClient(); }
 
 void QexTextEdit::helpShowHelp() {
-    if (!mdiServer)
+    if (!mdiServer) {
         return;
+    }
 
     // 	mdiServer->
 }

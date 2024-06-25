@@ -89,12 +89,14 @@ void QexHelpBrowser::initInterface(bool singleToolbar) {
     menus["&Navigation"]->addAction(actionZoomOut);
 
     // define the toolbars for this widget
-    if (singleToolbar)
+    if (singleToolbar) {
         toolbars[toolbarFile]->addSeparator();
+    }
     toolbars[toolbarEdit]->addAction(actionCopy);
 
-    if (singleToolbar)
+    if (singleToolbar) {
         toolbars[toolbarNavigate]->addSeparator();
+    }
     toolbars[toolbarNavigate]->addAction(actionHome);
     toolbars[toolbarNavigate]->addAction(actionBack);
     toolbars[toolbarNavigate]->addAction(actionNext);
@@ -112,11 +114,13 @@ void QexHelpBrowser::on_documentCombo_currentIndexChanged(int index) {
     QString mainDir = homePage.path();
     int l = mainDir.lastIndexOf('/');
 
-    if (l == -1)
+    if (l == -1) {
         l = mainDir.lastIndexOf('\\');
+    }
 
-    if (l != -1)
+    if (l != -1) {
         mainDir = mainDir.left(l);
+    }
 
     QUrl u = QUrl::fromLocalFile(mainDir + '/' + documentCombo->itemData(index).toString());
     setSource(u);

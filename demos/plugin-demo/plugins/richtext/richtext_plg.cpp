@@ -83,14 +83,15 @@ int RichTextPlugin::canOpenFile(const QString fileName) {
             if ( (u.scheme().toLower() != "file") && (!u.scheme().isEmpty()) )
                     return -1;
     */
-    if (fileName.endsWith(".html", Qt::CaseInsensitive))
+    if (fileName.endsWith(".html", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".htm", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".htm", Qt::CaseInsensitive)) {
         return 5;
-    else if (fileName.endsWith(".xhtml", Qt::CaseInsensitive))
+    } else if (fileName.endsWith(".xhtml", Qt::CaseInsensitive)) {
         return 5;
-    else
+    } else {
         return -1;
+    }
 }
 
 bool RichTextPlugin::canCloseClient() {

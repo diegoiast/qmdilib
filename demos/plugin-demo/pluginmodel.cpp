@@ -36,10 +36,11 @@ QModelIndex PluginModel::parent(const QModelIndex &child) const {
 }
 
 int PluginModel::rowCount(const QModelIndex &parent) const {
-    if (pluginManager == NULL)
+    if (pluginManager == NULL) {
         return 0;
-    else
+    } else {
         return pluginManager->plugins.count();
+    }
 
     Q_UNUSED(parent);
 }
@@ -52,14 +53,17 @@ int PluginModel::columnCount(const QModelIndex &parent) const {
 }
 
 QVariant PluginModel::data(const QModelIndex &index, int roles) const {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return QVariant();
+    }
 
-    if (index.row() >= pluginManager->plugins.count())
+    if (index.row() >= pluginManager->plugins.count()) {
         return QVariant();
+    }
 
-    if (roles == Qt::DisplayRole)
+    if (roles == Qt::DisplayRole) {
         return pluginManager->plugins[index.row()]->getName();
-    else
+    } else {
         return QVariant();
+    }
 }
