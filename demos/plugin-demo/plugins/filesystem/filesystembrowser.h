@@ -10,13 +10,17 @@
 
 #include "iplugin.h"
 
-class QFileSystemModel;
-class QTreeView;
-    
+class FileSystemWidget;
+
 class FileSystemBrowserPlugin : public IPlugin {
   public:
     FileSystemBrowserPlugin();
     ~FileSystemBrowserPlugin();
-    void on_client_merged(qmdiHost *host);
-    void on_client_unmerged(qmdiHost *host);
+    virtual void on_client_merged(qmdiHost *host) override;
+    virtual void on_client_unmerged(qmdiHost *host) override;
+    virtual void loadConfig(QSettings &settings) override;
+    virtual void saveConfig(QSettings &settings) override;
+
+  private:
+    FileSystemWidget *panel;
 };

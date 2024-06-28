@@ -17,6 +17,7 @@
 #include <QLineEdit>
 #include <QListView>
 #include <QPushButton>
+#include <QSettings>
 #include <QTableView>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -31,22 +32,27 @@ class FileSystemWidget : public QWidget {
 
         model = new QFileSystemModel(this);
         model->setRootPath(homePath);
-        model->setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+        model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::AllDirs);
         model->setNameFilterDisables(false);
 
-        backButton = new QPushButton(tr("Back"), this);
+        backButton = new QPushButton(style()->standardIcon(QStyle::SP_ArrowBack), "", this);
+        backButton->setToolTip(tr("Back"));
         connect(backButton, &QPushButton::clicked, this, &FileSystemWidget::navigateBack);
 
-        homeButton = new QPushButton(tr("Home"), this);
+        homeButton = new QPushButton(style()->standardIcon(QStyle::SP_DirHomeIcon), "", this);
+        homeButton->setToolTip(tr("Navigate to the home directory"));
         connect(homeButton, &QPushButton::clicked, this, &FileSystemWidget::navigateHome);
 
-        upButton = new QPushButton(tr("Up"), this);
+        upButton = new QPushButton(style()->standardIcon(QStyle::SP_ArrowUp), "", this);
+        upButton->setToolTip(tr("Navigate to the parent directory"));
         connect(upButton, &QPushButton::clicked, this, &FileSystemWidget::navigateUp);
 
-        nextButton = new QPushButton(tr("Next"), this);
+        nextButton = new QPushButton(style()->standardIcon(QStyle::SP_ArrowForward), "", this);
+        nextButton->setToolTip(tr("Next"));
         connect(nextButton, &QPushButton::clicked, this, &FileSystemWidget::navigateNext);
 
-        toggleButton = new QPushButton(tr("Toggle View"), this);
+        toggleButton = new QPushButton(style()->standardIcon(QStyle::SP_FileDialogInfoView), "", this);
+        toggleButton->setToolTip(tr("Toggle View"));
         connect(toggleButton, &QPushButton::clicked, this, &FileSystemWidget::toggleView);
 
         QHBoxLayout *buttonLayout = new QHBoxLayout;
@@ -54,8 +60,8 @@ class FileSystemWidget : public QWidget {
         buttonLayout->addWidget(nextButton);
         buttonLayout->addWidget(upButton);
         buttonLayout->addWidget(homeButton);
-        buttonLayout->addWidget(toggleButton);
         buttonLayout->addStretch();
+        buttonLayout->addWidget(toggleButton);
 
         treeView = new QTreeView(this);
         treeView->setModel(model);
@@ -73,12 +79,11 @@ class FileSystemWidget : public QWidget {
                 treeView->hideColumn(i);
             }
         }
-        // treeView->header()->setDefaultAlignment(Qt::AlignRight);
-        // treeView->header()->setStretchLastSection(true);
         treeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
         treeView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 
         rootPathEdit = new QLineEdit(homePath, this);
+        rootPathEdit->setClearButtonEnabled(true);
 
         QCompleter *completer = new QCompleter(model, this);
         completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
@@ -87,8 +92,13 @@ class FileSystemWidget : public QWidget {
         connect(rootPathEdit, &QLineEdit::returnPressed, this, &FileSystemWidget::onRootPathEdited);
 
         filterEdit = new QLineEdit("*.*", this);
+        filterEdit->setClearButtonEnabled(true);
         connect(filterEdit, &QLineEdit::returnPressed, this, &FileSystemWidget::onFilterChanged);
+        QLabel *filterLabel = new QLabel(tr("Filter:"), this); // Label for the filter input
 
+        QHBoxLayout *filterLayout = new QHBoxLayout;
+        filterLayout->addWidget(filterLabel);
+        filterLayout->addWidget(filterEdit);
         showTreeView();
 
         QVBoxLayout *layout = new QVBoxLayout(this);
@@ -96,7 +106,7 @@ class FileSystemWidget : public QWidget {
         layout->addWidget(rootPathEdit);
         layout->addWidget(treeView);
         layout->addWidget(iconView);
-        layout->addWidget(filterEdit);
+        layout->addLayout(filterLayout);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->setSpacing(0);
 
@@ -115,7 +125,7 @@ class FileSystemWidget : public QWidget {
   signals:
     void fileDoubleClicked(const QString &filePath);
 
-  private slots:
+  public slots:
     void toggleView() {
         if (treeView->isVisible()) {
             showIconView();
@@ -166,19 +176,18 @@ class FileSystemWidget : public QWidget {
         if (fileInfo.isFile()) {
             emit fileDoubleClicked(fileInfo.filePath());
         } else if (fileInfo.isDir()) {
-            if (QDir(path).exists()) {
-                navigateTo(path);
-            }
+            navigateTo(path);
         }
     }
 
     void onFilterChanged() {
         QString filterText = filterEdit->text().trimmed();
-        QStringList filters = filterText.split(";", Qt::SkipEmptyParts);
+        QStringList filters = filterText.split(QRegularExpression("[,;]"), Qt::SkipEmptyParts);
+        filters.replaceInStrings(QRegularExpression("^\\s+|\\s+$"), "");
         model->setNameFilters(filters);
     }
 
-  private:
+  public:
     QFileSystemModel *model;
     QTreeView *treeView;
     QListView *iconView;
@@ -189,21 +198,27 @@ class FileSystemWidget : public QWidget {
     QPushButton *backButton;
     QPushButton *nextButton;
     QPushButton *homeButton;
+    bool isTreeVisible = true;
 
     QStack<QString> historyStack;
     int currentHistoryIndex;
 
     void showTreeView() {
+        isTreeVisible = true;
         treeView->show();
         iconView->hide();
     }
 
     void showIconView() {
+        isTreeVisible = false;
         iconView->show();
         treeView->hide();
     }
 
     void navigateTo(const QString &path) {
+        if (!QDir(path).exists()) {
+            return;
+        }
         treeView->setRootIndex(model->index(path));
         iconView->setRootIndex(model->index(path));
         rootPathEdit->setText(path);
@@ -216,7 +231,8 @@ class FileSystemWidget : public QWidget {
             historyStack.push(path);
             currentHistoryIndex = historyStack.size() - 1;
         }
-
+        
+        upButton->setEnabled(!QDir(path).isRoot());
         updateButtonStates();
     }
 
@@ -239,10 +255,10 @@ FileSystemBrowserPlugin::~FileSystemBrowserPlugin() {}
 
 void FileSystemBrowserPlugin::on_client_merged(qmdiHost *host) {
     auto *pluginManager = dynamic_cast<PluginManager *>(host);
-    auto panel = new FileSystemWidget;
+    panel = new FileSystemWidget;
     pluginManager->createNewPanel(Panels::West, tr("File system"), panel);
 
-    connect(panel, &FileSystemWidget::fileDoubleClicked, [this, host](const QString &filePath) {
+    connect(panel, &FileSystemWidget::fileDoubleClicked, [this](const QString &filePath) {
         PluginManager *pluginManager = dynamic_cast<PluginManager *>(mdiServer->mdiHost);
         if (pluginManager) {
             pluginManager->openFile(filePath);
@@ -250,6 +266,37 @@ void FileSystemBrowserPlugin::on_client_merged(qmdiHost *host) {
     });
 }
 
-void FileSystemBrowserPlugin::on_client_unmerged(qmdiHost *host) {}
+void FileSystemBrowserPlugin::on_client_unmerged(qmdiHost *host) {
+    // auto *pluginManager = dynamic_cast<PluginManager *>(host);
+}
+
+void FileSystemBrowserPlugin::loadConfig(QSettings &settings) {
+    settings.beginGroup("FileBrowserPlugin");
+    auto savedFilter = settings.value("filter", "").toString();
+    auto savedDir = settings.value("directory", QDir::homePath()).toString();
+    auto isTreeVisible = settings.value("display-tree", true).toBool();
+    
+    this->panel->filterEdit->setText(savedFilter);
+    this->panel->rootPathEdit->setText(savedDir);
+    settings.endGroup();
+
+    auto indexPath = this->panel->model->index(savedDir);
+    this->panel->treeView->setRootIndex(indexPath);
+    this->panel->iconView->setRootIndex(indexPath);
+    
+    if (isTreeVisible) {
+        this->panel->showTreeView();
+    } else {
+        this->panel->showIconView();
+    }
+}
+
+void FileSystemBrowserPlugin::saveConfig(QSettings &settings) {
+    settings.beginGroup("FileBrowserPlugin");
+    settings.setValue("filter", this->panel->filterEdit->text());
+    settings.setValue("directory", this->panel->rootPathEdit->text());
+    settings.setValue("display-tree", this->panel->isTreeVisible);
+    settings.endGroup();
+}
 
 #include "filesystembrowser.moc"

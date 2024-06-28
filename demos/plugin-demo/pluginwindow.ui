@@ -45,8 +45,11 @@
        <property name="currentIndex">
         <number>-1</number>
        </property>
+       <property name="documentMode">
+        <bool>true</bool>
+       </property>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="centralLayout">
         <item>
          <widget class="qmdiTabWidget" name="mdiTabWidget">
@@ -74,6 +77,9 @@
           <property name="tabPosition">
            <enum>QTabWidget::South</enum>
           </property>
+          <property name="documentMode">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
@@ -84,6 +90,9 @@
        </property>
        <property name="currentIndex">
         <number>-1</number>
+       </property>
+       <property name="documentMode">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>
@@ -96,7 +105,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

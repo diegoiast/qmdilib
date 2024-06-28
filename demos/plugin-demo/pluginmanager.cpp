@@ -300,6 +300,8 @@ PluginManager::PluginManager() {
             [this, tabClickHandler](int index) { tabClickHandler(this->eastState, index); });
     connect(ui->southPanel, &QTabWidget::tabBarClicked,
             [this, tabClickHandler](int index) { tabClickHandler(this->southState, index); });
+
+    restoreSettings();
 }
 
 /**
