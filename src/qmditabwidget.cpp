@@ -79,6 +79,7 @@ qmdiTabWidget::qmdiTabWidget(QWidget *parent, qmdiHost *host) : QTabWidget(paren
     }
 
     activeWidget = nullptr;
+    setDocumentMode(true);
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     tabBar()->installEventFilter(this);
 }
