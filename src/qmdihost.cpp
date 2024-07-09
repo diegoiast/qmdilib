@@ -188,11 +188,11 @@ void qmdiHost::mergeClient(qmdiClient *client) {
         return;
     }
 
+    client->on_client_merged(this);
     if (updateMenusAndToolBars) {
         menus.mergeGroupList(&client->menus);
         toolbars.mergeGroupList(&client->toolbars);
     }
-    client->on_client_merged(this);
 
     QWidget *w = dynamic_cast<QWidget *>(client);
     if (!w) {
