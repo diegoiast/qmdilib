@@ -215,6 +215,7 @@ PluginManager::PluginManager() {
     actionHideGUI->setCheckable(true);
 
     newFilePopup->setIcon(QIcon::fromTheme("document-new"));
+    actionConfig->setIcon(QIcon::fromTheme("configure"));
     actionQuit->setIcon(QIcon::fromTheme("application-exit"));
     actionNextTab->setIcon(QIcon::fromTheme("go-next"));
     actionPrevTab->setIcon(QIcon::fromTheme("go-previous"));
