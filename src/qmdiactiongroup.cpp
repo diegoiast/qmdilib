@@ -587,12 +587,16 @@ QMenu *qmdiActionGroup::updateMenu(QMenu *menu) {
     foreach (QObject *o, actionGroupItems) {
         QAction *a = qobject_cast<QAction *>(o);
         if (a) {
-            menu->addAction(a);
+            if (a->isVisible()) {
+                menu->addAction(a);
+            }
         }
 
         QMenu *m = qobject_cast<QMenu *>(o);
         if (m) {
-            menu->addMenu(m);
+            if (m->isVisible()) {
+                menu->addMenu(m);
+            }
         }
     }
 
@@ -629,12 +633,14 @@ QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
     foreach (QObject *o, actionGroupItems) {
         QAction *a = qobject_cast<QAction *>(o);
         if (a) {
-            toolbar->addAction(a);
+            if (a->isVisible()) {
+                toolbar->addAction(a);
+            }
         } else {
             QWidget *w = qobject_cast<QWidget *>(o);
             if (w) {
                 // don't even try to add menus to toolbars, this just does not work
-                if (!w->inherits("QMenu")) {
+                if (!w->inherits("QMenu") && w->isVisible()) {
                     toolbar->addWidget(w);
                 }
             }
