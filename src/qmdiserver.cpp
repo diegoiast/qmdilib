@@ -6,8 +6,6 @@
  * \see qmdiServer
  */
 
-// $Id$
-
 #include <QMenu>
 #include <QPoint>
 
@@ -174,7 +172,7 @@ void qmdiServer::deleteClient(qmdiClient *) {
  * \see qmdiClient::closeClient()
  */
 void qmdiServer::tryCloseClient(int i) {
-    qmdiClient *client = getClient(i);
+    auto client = getClient(i);
 
     if (!client) {
         return;
@@ -206,11 +204,11 @@ void qmdiServer::tryCloseClient(int i) {
  * \see tryCloseAllClients
  */
 void qmdiServer::tryCloseAllButClient(int i) {
-    int n = getClientsCount();
-    qmdiClient *client = getClient(i);
+    auto n = getClientsCount();
+    auto client = getClient(i);
 
-    for (int j = 0; j < n; j++) {
-        qmdiClient *c = getClient(j);
+    for (auto j = 0; j < n; j++) {
+        auto c = getClient(j);
 
         // item is not an mdi client
         if (!c) {
@@ -236,14 +234,12 @@ void qmdiServer::tryCloseAllButClient(int i) {
  * \since 0.0.4
  */
 void qmdiServer::tryCloseAllClients() {
-    int c = getClientsCount();
-
-    for (int i = 0; i < c; i++) {
+    auto c = getClientsCount();
+    for (auto i = 0; i < c; i++) {
         qmdiClient *client = getClient(i);
         if (!client) {
             continue;
         }
-
         client->closeClient();
     }
 }
@@ -266,10 +262,10 @@ void qmdiServer::tryCloseAllClients() {
  * \see qmdiTabBar
  */
 void qmdiServer::showClientMenu(int i, QPoint p) {
-    QMenu *menu = new QMenu;
-    QAction *closeThis = new QAction(menu->tr("Close this window"), menu);
-    QAction *closeOthers = new QAction(menu->tr("Close other windows"), menu);
-    QAction *closeAll = new QAction(menu->tr("Close all windows"), menu);
+    auto menu = new QMenu;
+    auto closeThis = new QAction(menu->tr("Close this window"), menu);
+    auto closeOthers = new QAction(menu->tr("Close other windows"), menu);
+    auto closeAll = new QAction(menu->tr("Close all windows"), menu);
 
     menu->setTitle(menu->tr("Local actions"));
     menu->addAction(closeThis);
@@ -277,11 +273,11 @@ void qmdiServer::showClientMenu(int i, QPoint p) {
     menu->addAction(closeAll);
 
     // ugly code, but I don't know a better way of doying this
-    QWidget *w = dynamic_cast<QWidget *>(this);
+    auto w = dynamic_cast<QWidget *>(this);
     if (w) {
         p = w->mapToGlobal(p);
     }
-    QAction *q = menu->exec(p);
+    auto q = menu->exec(p);
 
     if (q == closeThis) {
         tryCloseClient(i);

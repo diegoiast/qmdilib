@@ -26,7 +26,7 @@ class ConfigDialog : public QDialog {
     Q_OBJECT
 
   public:
-    ConfigDialog(QWidget *owner = NULL);
+    ConfigDialog(QWidget *owner = nullptr);
     ~ConfigDialog();
     void setManager(PluginManager *manager);
 

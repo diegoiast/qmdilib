@@ -9,14 +9,14 @@
  */
 
 #include <QList>
-#include <QString>
 
 class QAction;
-class QObject;
-class QWidget;
+class QActionGroup;
 class QMenu;
 class QToolBar;
-class QActionGroup;
+class QString;
+class QObject;
+class QWidget;
 
 class qmdiActionGroup {
     friend class qmdiHost;

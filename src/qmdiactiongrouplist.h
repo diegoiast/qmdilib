@@ -9,8 +9,8 @@
  */
 
 #include <QList>
-#include <QToolBar>
 
+class QToolBar;
 class QObject;
 class QAction;
 class QString;
@@ -32,7 +32,6 @@ class qmdiActionGroupList {
     void mergeGroupList(qmdiActionGroupList *group);
     void unmergeGroupList(qmdiActionGroupList *group);
 
-    QMenuBar *updateMenu(QMenuBar *menubar);
     QMenuBar *updateMenuBar(QMenuBar *menubar);
     QMenu *updatePopMenu(QMenu *popupMenu);
     QList<QToolBar *> *updateToolBar(QList<QToolBar *> *toolbars, QMainWindow *window);

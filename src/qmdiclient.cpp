@@ -180,9 +180,9 @@ qmdiClient::~qmdiClient() {
 bool qmdiClient::closeClient() {
     if (canCloseClient()) {
         this->mdiServer->mdiHost->unmergeClient(this);
-        QObject *o = dynamic_cast<QObject *>(this);
+        auto o = dynamic_cast<QObject *>(this);
         if (o) {
-            QWidget *w = qobject_cast<QWidget *>(o);
+            auto w = qobject_cast<QWidget *>(o);
             if (w) {
                 w->hide();
             }

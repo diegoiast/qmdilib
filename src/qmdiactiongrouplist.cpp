@@ -80,7 +80,7 @@ qmdiActionGroup *qmdiActionGroupList::operator[](const QString name) {
 qmdiActionGroup *qmdiActionGroupList::getActionGroup(const QString &name) {
     qmdiActionGroup *item = nullptr;
 
-    foreach (qmdiActionGroup *i, actionGroups) {
+    foreach (auto i, actionGroups) {
         if (i->getName() == name) {
             return i;
         }
@@ -111,8 +111,8 @@ qmdiActionGroup *qmdiActionGroupList::getActionGroup(const QString &name) {
  * \see updateToolBar
  */
 void qmdiActionGroupList::mergeGroupList(qmdiActionGroupList *group) {
-    foreach (qmdiActionGroup *i, group->actionGroups) {
-        qmdiActionGroup *mine = getActionGroup(i->getName());
+    foreach (auto i, group->actionGroups) {
+        auto mine = getActionGroup(i->getName());
         mine->mergeGroup(i);
     }
 }
@@ -136,8 +136,8 @@ void qmdiActionGroupList::mergeGroupList(qmdiActionGroupList *group) {
  * \see updateToolBar
  */
 void qmdiActionGroupList::unmergeGroupList(qmdiActionGroupList *group) {
-    foreach (qmdiActionGroup *i, group->actionGroups) {
-        qmdiActionGroup *mine = getActionGroup(i->getName());
+    foreach (auto i, group->actionGroups) {
+        auto mine = getActionGroup(i->getName());
         mine->unmergeGroup(i);
     }
 }
@@ -163,29 +163,14 @@ QMenuBar *qmdiActionGroupList::updateMenuBar(QMenuBar *menubar) {
         menubar = new QMenuBar(menubar);
     }
 
-    foreach (qmdiActionGroup *i, actionGroups) {
-        QMenu *m = i->updateMenu();
-
+    foreach (auto i, actionGroups) {
+        auto m = i->updateMenu();
         if (m) {
             menubar->addMenu(m);
         }
     }
 
     return menubar;
-}
-
-/**
- * \brief Deprecated - use updateMenuBar()
- * \param menubar the menubar to be updated
- * \return an updated menubar (same as the one passed as a parameter)
- *
- *
- * This method is deprecated, please use updateMenuBar() instead.
- */
-QMenuBar *qmdiActionGroupList::updateMenu(QMenuBar *menubar) {
-    qWarning("This qmdiActionGroupList::updateMenu() is deprecated, please use "
-             "qmdiActionGroupList::updateMenuBar() instead");
-    return updateMenuBar(menubar);
 }
 
 /**
@@ -208,9 +193,8 @@ QMenu *qmdiActionGroupList::updatePopMenu(QMenu *popupMenu) {
         popupMenu = new QMenu(popupMenu);
     }
 
-    foreach (qmdiActionGroup *i, actionGroups) {
-        QMenu *m = i->updateMenu();
-
+    foreach (auto i, actionGroups) {
+        auto m = i->updateMenu();
         if (m) {
             popupMenu->addMenu(m);
         }
@@ -242,12 +226,12 @@ QList<QToolBar *> *qmdiActionGroupList::updateToolBar(QList<QToolBar *> *toolbar
         toolbars = new QList<QToolBar *>;
     }
 
-    foreach (qmdiActionGroup *i, actionGroups) {
+    foreach (auto i, actionGroups) {
         QToolBar *tb = nullptr;
-        QString actionName = i->getName();
+        auto actionName = i->getName();
 
         // find the correct toolbar
-        foreach (QToolBar *b, *toolbars) {
+        foreach (auto b, *toolbars) {
             if (b->windowTitle() == actionName) {
                 tb = b;
                 break;

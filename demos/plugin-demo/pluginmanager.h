@@ -44,7 +44,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void setNativeSettingsManager(const QString &organization = QString(),
                                   const QString &application = QString());
   public slots:
-    void setFileSettingsManager(const QString &fileName = QString());
+    void setFileSettingsManager(const QString &fileName);
+
     void restoreSettings();
     void saveSettings();
     void updateActionsStatus();

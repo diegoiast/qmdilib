@@ -194,7 +194,7 @@ void qmdiHost::mergeClient(qmdiClient *client) {
         toolbars.mergeGroupList(&client->toolbars);
     }
 
-    QWidget *w = dynamic_cast<QWidget *>(client);
+    auto w = dynamic_cast<QWidget *>(client);
     if (!w) {
         return;
     }
@@ -240,7 +240,7 @@ void qmdiHost::unmergeClient(qmdiClient *client) {
     }
     client->on_client_unmerged(this);
 
-    QWidget *w = dynamic_cast<QWidget *>(client);
+    auto w = dynamic_cast<QWidget *>(client);
     if (!w) {
         return;
     }
@@ -262,9 +262,9 @@ void qmdiHost::unmergeClient(qmdiClient *client) {
  * \see QWidget::addAction
  */
 void qmdiHost::addActionsToWidget(qmdiActionGroupList &agl, QWidget *w) {
-    foreach (qmdiActionGroup *g, agl.actionGroups) {
-        foreach (QObject *o, g->actionGroupItems) {
-            QAction *a = qobject_cast<QAction *>(o);
+    foreach (auto g, agl.actionGroups) {
+        foreach (auto o, g->actionGroupItems) {
+            auto a = qobject_cast<QAction *>(o);
             if (!a) {
                 continue;
             }
@@ -291,9 +291,9 @@ void qmdiHost::addActionsToWidget(qmdiActionGroupList &agl, QWidget *w) {
  * \see QWidget::addAction
  */
 void qmdiHost::removeActionsFromWidget(qmdiActionGroupList &agl, QWidget *w) {
-    foreach (qmdiActionGroup *g, agl.actionGroups) {
-        foreach (QObject *o, g->actionGroupItems) {
-            QAction *a = qobject_cast<QAction *>(o);
+    foreach (auto g, agl.actionGroups) {
+        foreach (auto o, g->actionGroupItems) {
+            auto a = qobject_cast<QAction *>(o);
             if (!a) {
                 continue;
             }

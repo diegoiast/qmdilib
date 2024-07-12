@@ -42,14 +42,14 @@
  */
 ConfigDialog::ConfigDialog(QWidget *owner) : QDialog(owner) {
 
-    pluginManager = NULL;
-    pluginModel = NULL;
+    pluginManager = nullptr;
+    pluginModel = nullptr;
 
     pluginListUi.setupUi(this);
 }
 
 ConfigDialog::~ConfigDialog() {
-    pluginManager = NULL;
+    pluginManager = nullptr;
     delete pluginModel;
 }
 
@@ -108,7 +108,6 @@ void ConfigDialog::on_pluginEnabled_toggled(bool enabled) {
 
 void ConfigDialog::updateInfo(int pluginNumber) {
     IPlugin *p = pluginManager->plugins[pluginNumber];
-    QWidget *w = p->getConfigDialog();
 
     pluginListUi.pluginName->setText(p->getName());
     pluginListUi.pluginName->setCursorPosition(0);
@@ -124,7 +123,8 @@ void ConfigDialog::updateInfo(int pluginNumber) {
     pluginListUi.pluginEnabled->setEnabled(p->canDisable());
     pluginListUi.pluginEnabled->blockSignals(false);
 
-    //	pluginListUi.configurePluginButton->setEnabled( w != NULL );
+    // QWidget *w = p->getConfigDialog();
+    //	pluginListUi.configurePluginButton->setEnabled( w != nullptr );
 }
 
 bool ConfigDialog::execDialog(QWidget *w) {
@@ -146,7 +146,7 @@ bool ConfigDialog::execDialog(QWidget *w) {
 
     // don't destroy the plugin's widget
     l->removeWidget(w);
-    w->setParent(NULL);
+    w->setParent(nullptr);
 
     // .. but do delete the temp dialog...
     delete d;

@@ -248,7 +248,7 @@ void IPlugin::showAbout() {}
  *
  *
  */
-QWidget *IPlugin::getConfigDialog() { return NULL; }
+QWidget *IPlugin::getConfigDialog() { return nullptr; }
 
 void IPlugin::getData() {}
 
@@ -291,7 +291,7 @@ void IPlugin::saveConfig(QSettings &settings) { Q_UNUSED(settings); }
  * The plugin manager will ask this plugin which kind of "new files" it can
  * generate. The returned list should be a QActionGroup containing QActions.
  * Each QAction should be connected to a slot in the derived class to create
- * a "new file". By default returns NULL.
+ * a "new file". By default returns nullptr.
  *
  * The actions and the action group will be deleted only by the desctructor of
  * your new plugin. This can be done by creating the action group and parenting
@@ -344,7 +344,7 @@ void IPlugin::saveConfig(QSettings &settings) { Q_UNUSED(settings); }
  */
 QActionGroup *IPlugin::newFileActions() {
     // by default plugins cannot create any files
-    return NULL;
+    return nullptr;
 }
 
 /**

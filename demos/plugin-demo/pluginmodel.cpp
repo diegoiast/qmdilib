@@ -6,7 +6,6 @@
  * \see PluginModel
  */
 
-// $Id$
 
 #include "pluginmodel.h"
 #include "iplugin.h"
@@ -22,10 +21,10 @@ PluginModel::PluginModel(PluginManager *manager, QObject *parent) : QAbstractIte
     pluginManager = manager;
 }
 
-PluginModel::~PluginModel() { pluginManager = NULL; }
+PluginModel::~PluginModel() { pluginManager = nullptr; }
 
 QModelIndex PluginModel::index(int row, int col, const QModelIndex &parent) const {
-    return createIndex(row, col, (quintptr)NULL);
+    return createIndex(row, col, (quintptr) nullptr);
 
     Q_UNUSED(parent);
 }
@@ -36,7 +35,7 @@ QModelIndex PluginModel::parent(const QModelIndex &child) const {
 }
 
 int PluginModel::rowCount(const QModelIndex &parent) const {
-    if (pluginManager == NULL) {
+    if (pluginManager == nullptr) {
         return 0;
     } else {
         return pluginManager->plugins.count();

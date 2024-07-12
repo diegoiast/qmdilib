@@ -17,6 +17,7 @@
 #include <QSettings>
 #include <QStandardItemModel>
 #include <QTabWidget>
+#include <QToolBar>
 #include <QToolButton>
 
 #include "ui_pluginwindow.h"
@@ -178,18 +179,18 @@
  * Builds a plugin manager. Creates the actions needed for the "File" menu,
  * the "New" sub-menu, action for loading files, moving tabs etc.
  *
- * Sets the settingsManager to NULL, which means by default there is no option
+ * Sets the settingsManager to nullptr, which means by default nullptrptr is no option
  * to restore the state of the application.
  *
- * The config dialog is set to NULL - and will be created on demand.
+ * The config dialog is set to nullptr - and will be created on demand.
  *
  * Eventually will call initGUI() to create the main GUI.
  *
  * \see initGUI()
  */
 PluginManager::PluginManager() {
-    configDialog = NULL;
-    settingsManager = NULL;
+    configDialog = nullptr;
+    settingsManager = nullptr;
 
     newFilePopup = new QMenu(tr("New..."), this);
     actionOpen = new QAction(tr("Open..."), this);
@@ -221,13 +222,9 @@ PluginManager::PluginManager() {
     actionPrevTab->setIcon(QIcon::fromTheme("go-previous"));
 
     //	actionOpen->setIcon(
-    // QIcon(":/trolltech/styles/commonstyle/images/diropen-32.png") );
     actionOpen->setIcon(QIcon::fromTheme("document-open"));
     actionOpen->setShortcut(QKeySequence("Ctrl+O"));
 
-    //	actionClose->setIcon(
-    // QIcon(":/trolltech/styles/commonstyle/images/standardbutton-cancel-32.png")
-    //);
     actionClose->setIcon(QIcon::fromTheme("window-close"));
     actionClose->setShortcut(QKeySequence("Ctrl+w"));
 
@@ -245,7 +242,7 @@ PluginManager::PluginManager() {
 
     initGUI();
 
-    for (int i = 0; i < 8; ++i) {
+    for (auto i = 0; i < 8; ++i) {
         auto tabSelectShortcut = new QAction(this);
         auto key = static_cast<Qt::Key>(Qt::Key_1 + i);
         tabSelectShortcut->setShortcut(QKeySequence(Qt::AltModifier | key));
@@ -357,8 +354,8 @@ int PluginManager::tabForFileName(QString fileName) {
         return -1;
     }
 
-    for (int i = 0; i < tabWidget->count(); i++) {
-        qmdiClient *c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
+    for (auto i = 0; i < tabWidget->count(); i++) {
+        auto c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
         if (!c) {
             continue;
         }
@@ -513,11 +510,11 @@ void PluginManager::restoreSettings() {
 
     // restore opened files
     settingsManager->beginGroup("files");
-    foreach (QString s, settingsManager->childKeys()) {
+    foreach (auto s, settingsManager->childKeys()) {
         if (!s.startsWith("file")) {
             continue;
         }
-        QString fileName = settingsManager->value(s).toString();
+        auto fileName = settingsManager->value(s).toString();
         QApplication::processEvents();
         openFile(fileName);
     }
@@ -542,7 +539,7 @@ void PluginManager::restoreSettings() {
  *
  * This method stores the state of the window (size, position, etc) to the
  * settings manager. It will save the list of qmdiClients available on the tab
- * widget. If in one of the tabs there is a non mdi client instead of the
+ * widget. If in one of the tabs nullptrptr is a non mdi client instead of the
  * filename, in that the configuration file will save "@".
  *
  * This method will also call each one of the plugins and ask them to store
@@ -573,10 +570,10 @@ void PluginManager::saveSettings() {
     // store saved files
     settingsManager->remove("files"); // remove all old loaded files
     if (tabWidget->count() != 0) {
-        QString s;
-        qmdiClient *c = NULL;
+        qmdiClient *c = nullptr;
+        auto s = QString();
         settingsManager->beginGroup("files");
-        for (int i = 0; i < tabWidget->count(); i++) {
+        for (auto i = 0; i < tabWidget->count(); i++) {
             c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
             if (!c) {
                 continue;
@@ -603,7 +600,7 @@ void PluginManager::saveSettings() {
     settingsManager->endGroup();
 
     // let each ones of the plugins save it's state
-    foreach (IPlugin *p, plugins) {
+    foreach (auto p, plugins) {
         p->saveConfig(*settingsManager);
     }
 
@@ -617,7 +614,7 @@ void PluginManager::saveSettings() {
  * window.
  */
 void PluginManager::updateActionsStatus() {
-    int widgetsCount = tabWidget->count();
+    auto widgetsCount = tabWidget->count();
     actionClose->setEnabled(widgetsCount != 0);
     actionNextTab->setEnabled(widgetsCount > 1);
     actionPrevTab->setEnabled(widgetsCount > 1);
@@ -649,16 +646,15 @@ void PluginManager::updateActionsStatus() {
 bool PluginManager::openFile(QString fileName, int x, int y, int z) {
 
     // see which plugin is the most suited for openning this file
-    IPlugin *bestPlugin = NULL;
+    IPlugin *bestPlugin = nullptr;
     int highestScore = -1;
-    foreach (auto *p, plugins) {
+    foreach (auto p, plugins) {
         if (!p->enabled) {
             continue;
         }
 
         // is this plugin better then the selected?
         auto i = p->canOpenFile(fileName);
-
         if (i > highestScore) {
             bestPlugin = p;
             highestScore = i; // bestPlugin->canOpenFile(fileName);
@@ -668,8 +664,8 @@ bool PluginManager::openFile(QString fileName, int x, int y, int z) {
     int i = tabForFileName(fileName);
     // see if it's already open
     if (i != -1) {
-        tabWidget->setCurrentIndex(i);
         auto client = tabWidget->getClient(i);
+        tabWidget->setCurrentIndex(i);
         bestPlugin->navigateFile(client, x, y, x);
         return true;
     }
@@ -678,7 +674,7 @@ bool PluginManager::openFile(QString fileName, int x, int y, int z) {
 
     // ask best plugin to open the file
     if (bestPlugin) {
-        bool fileOpened = bestPlugin->openFile(fileName, x, y, z);
+        auto fileOpened = bestPlugin->openFile(fileName, x, y, z);
         if (fileOpened) {
             updateActionsStatus();
         }
@@ -703,8 +699,8 @@ bool PluginManager::openFile(QString fileName, int x, int y, int z) {
  * \todo how does a developer know why the loading of one of the files failed?
  */
 bool PluginManager::openFiles(QStringList fileNames) {
-    QString s;
-    bool b = true;
+    auto s = QString();
+    auto b = true;
     foreach (s, fileNames) {
         b = b && openFile(s);
         QApplication::processEvents();
@@ -739,7 +735,7 @@ void PluginManager::hidePanel(Panels p) {
         break;
     }
     assert(panel != nullptr);
-    for (int i = 0; i < panel->count(); ++i) {
+    for (auto i = 0; i < panel->count(); ++i) {
         panel->widget(i)->setVisible(false);
     }
 
@@ -767,7 +763,7 @@ void PluginManager::showPanel(Panels p, int index) {
     }
     assert(panel != nullptr);
     panel->setFocus();
-    for (int i = 0; i < panel->count(); ++i) {
+    for (auto i = 0; i < panel->count(); ++i) {
         panel->setCurrentIndex(index);
         panel->widget(index)->show();
         panel->widget(index)->focusWidget();
@@ -908,14 +904,13 @@ void PluginManager::enablePlugin(IPlugin *plugin) {
         mergeClient(plugin);
     }
 
-    QAction *a;
     QActionGroup *ag;
     ag = plugin->newFileActions();
     if (!ag) {
         return;
     }
 
-    foreach (a, ag->actions()) {
+    foreach (auto a, ag->actions()) {
         newFilePopup->addAction(a);
     }
 }
@@ -984,7 +979,7 @@ void PluginManager::disablePlugin(IPlugin *plugin) {
  *  - Help
  *
  * Menus which do not contain any actions will not be displayed on screen. In
- * future versions of this library there will be an option to add and remove
+ * future versions of this library nullptrptr will be an option to add and remove
  * menus more freely.
  *
  * \todo add methods for adding/removing menus in a more sane way
@@ -1018,23 +1013,18 @@ void PluginManager::initGUI() {
 
     this->ui = new Ui::PluginManagedWindow;
     this->ui->setupUi(this);
-    //    this->ui->splitter->setStretchFactor(0, 1);
-    //    this->ui->splitter->setStretchFactor(1, 1);
-    //    this->ui->splitter->setStretchFactor(2, 1);
     this->ui->splitter->setSizes(QList<int>({1, 2, 1}));
     tabWidget = this->ui->mdiTabWidget;
 
-    QToolButton *tabCloseBtn = new QToolButton(tabWidget);
+    auto tabCloseBtn = new QToolButton(tabWidget);
     connect(tabCloseBtn, SIGNAL(clicked()), this, SLOT(closeClient()));
     tabCloseBtn->setAutoRaise(true);
-    //	tabCloseBtn->setIcon(QIcon(":images/closetab.png"));
     tabCloseBtn->setIcon(QIcon::fromTheme("window-close"));
     tabWidget->setCornerWidget(tabCloseBtn, Qt::TopRightCorner);
 
-    QToolButton *addNewMdiClient = new QToolButton(tabWidget);
+    auto addNewMdiClient = new QToolButton(tabWidget);
     connect(addNewMdiClient, SIGNAL(clicked()), addNewMdiClient, SLOT(showMenu()));
     addNewMdiClient->setAutoRaise(true);
-    //	addNewMdiClient->setIcon(QIcon(":images/closetab.png"));
     addNewMdiClient->setIcon(QIcon::fromTheme("document-new"));
     addNewMdiClient->setMenu(newFilePopup);
     // tabWidget->setCornerWidget(addNewMdiClient, Qt::TopLeftCorner);
@@ -1053,8 +1043,8 @@ void PluginManager::initGUI() {
  * it will just delete the widget by calling QObject::deleteLater()
  */
 void PluginManager::closeClient() {
-    qmdiClient *client = dynamic_cast<qmdiClient *>(tabWidget->currentWidget());
-    if (client == NULL) {
+    auto client = dynamic_cast<qmdiClient *>(tabWidget->currentWidget());
+    if (client == nullptr) {
         tabWidget->currentWidget()->deleteLater();
     } else {
         client->closeClient();
@@ -1101,17 +1091,17 @@ void PluginManager::on_actionOpen_triggered() {
         extensAvailable << p->myExtensions();
     }
 
-    int j = extensAvailable.size();
-    for (int i = 0; i < j; ++i) {
-        QString s = extensAvailable.at(i);
+    auto j = extensAvailable.size();
+    for (auto i = 0; i < j; ++i) {
+        auto s = extensAvailable.at(i);
         extens += s;
         if (i < j - 1) {
             extens += ";;";
         }
 
-        QRegularExpression regexp("\\((.*)\\)");
+        auto regexp = QRegularExpression("\\((.*)\\)");
         auto m = regexp.match(s);
-        QString s1 = m.captured(1).simplified();
+        auto s1 = m.captured(1).simplified();
         if (!s1.isEmpty()) {
             s1.remove("*.*");
             s1.remove(QRegularExpression("\\b*\\b"));
@@ -1125,12 +1115,10 @@ void PluginManager::on_actionOpen_triggered() {
     // 	extens = extens + ";;" + tr("All files") + " (*.*)";
     // 	qDebug("all extensions: %s", qPrintable(allExtens) );
 
-    QStringList s = QFileDialog::getOpenFileNames(NULL, tr("Choose a file"), workingDir, extens);
-
+    auto s = QFileDialog::getOpenFileNames(nullptr, tr("Choose a file"), workingDir, extens);
     if (s.isEmpty()) {
         return;
     }
-
     openFiles(s);
 }
 
@@ -1198,7 +1186,7 @@ void PluginManager::on_actionConfigure_triggered() {
  * \see PluginManager::actionPrevTab
  */
 void PluginManager::on_actionPrev_triggered() {
-    int i = tabWidget->currentIndex();
+    auto i = tabWidget->currentIndex();
     if (i == 0) {
         return;
     }
@@ -1221,7 +1209,7 @@ void PluginManager::on_actionPrev_triggered() {
  * \see PluginManager::actionNextTab
  */
 void PluginManager::on_actionNext_triggered() {
-    int i = tabWidget->currentIndex();
+    auto i = tabWidget->currentIndex();
     if (i == tabWidget->count()) {
         return;
     }
@@ -1243,11 +1231,11 @@ void PluginManager::on_actionHideGUI_changed() {
     updateMenusAndToolBars = !actionHideGUI->isChecked();
     setUpdatesEnabled(false);
     menuBar()->setVisible(!actionHideGUI->isChecked());
-    foreach (QToolBar *b, findChildren<QToolBar *>()) {
+    foreach (auto b, findChildren<QToolBar *>()) {
         b->setVisible(!actionHideGUI->isChecked());
     }
 
-    foreach (QDockWidget *d, findChildren<QDockWidget *>()) {
+    foreach (auto d, findChildren<QDockWidget *>()) {
         if (!actionHideGUI->isChecked()) {
             d->setFeatures(d->features() | QDockWidget::DockWidgetMovable |
                            QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);

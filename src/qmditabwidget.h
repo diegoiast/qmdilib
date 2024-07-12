@@ -8,7 +8,6 @@
  * \see qmdiServer, QTabWidget
  */
 
-#include <QTabBar>
 #include <QTabWidget>
 
 #include "qmdiserver.h"
