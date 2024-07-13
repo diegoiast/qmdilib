@@ -8,7 +8,9 @@
  * \see IPlugin
  */
 
+#include "pluginmanager.h"
 #include "qmdiclient.h"
+#include "qmdiserver.h"
 #include <QObject>
 
 class QString;
@@ -50,6 +52,13 @@ class IPlugin : public QObject, public qmdiClient {
     QString getAuthor();
     QString getsVersion();
     int getiVersion();
+
+    PluginManager *getManager() const {
+        if (!mdiServer || !mdiServer->mdiHost) {
+            return nullptr;
+        }
+        return dynamic_cast<PluginManager *>(mdiServer->mdiHost);
+    }
 
   protected:
     QString name;
