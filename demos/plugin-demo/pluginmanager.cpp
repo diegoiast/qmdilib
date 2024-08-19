@@ -266,38 +266,30 @@ PluginManager::PluginManager() {
         tabWidget->addAction(tabSelectShortcut);
     }
 
-    auto tabClickHandler = [this](PanelState &state, int index) {
-        if (ui->westPanel->currentIndex() == index) {
-            if (ui->westPanel->widget(index)->isVisible()) {
-                auto maxWidth = ui->westPanel->tabBar()->width();
-
-                hidePanel(Panels::West);
-                state.isMinimized = true;
-                ui->westPanel->setMaximumWidth(maxWidth);
+    auto tabClickHandler = [this](Panels panelType, PanelState &state, int index) {
+        if (state.panel->currentIndex() == index) {
+            if (state.isMinimized) {
+                showPanel(panelType, index);
             } else {
-                showPanel(Panels::West, index);
-                if (state.isMinimized) {
-                    ui->westPanel->setMaximumWidth(state.savedSize.width());
-                    state.isMinimized = false;
-                }
+                hidePanel(panelType);
             }
         } else {
-            if (state.isMinimized) {
-                ui->westPanel->setMaximumWidth(state.savedSize.width());
-                state.isMinimized = false;
-            }
+            showPanel(panelType, index);
         }
     };
 
     eastState.panel = ui->eastPanel;
     westState.panel = ui->westPanel;
     southState.panel = ui->southPanel;
-    connect(ui->westPanel, &QTabWidget::tabBarClicked,
-            [this, tabClickHandler](int index) { tabClickHandler(this->westState, index); });
-    connect(ui->eastPanel, &QTabWidget::tabBarClicked,
-            [this, tabClickHandler](int index) { tabClickHandler(this->eastState, index); });
-    connect(ui->southPanel, &QTabWidget::tabBarClicked,
-            [this, tabClickHandler](int index) { tabClickHandler(this->southState, index); });
+    connect(ui->westPanel, &QTabWidget::tabBarClicked, [this, tabClickHandler](int index) {
+        tabClickHandler(Panels::West, this->westState, index);
+    });
+    connect(ui->eastPanel, &QTabWidget::tabBarClicked, [this, tabClickHandler](int index) {
+        tabClickHandler(Panels::East, this->eastState, index);
+    });
+    connect(ui->southPanel, &QTabWidget::tabBarClicked, [this, tabClickHandler](int index) {
+        tabClickHandler(Panels::South, this->southState, index);
+    });
 
     restoreSettings();
 }
@@ -742,9 +734,27 @@ void PluginManager::hidePanel(Panels p) {
     if (panel->tabBar()->count() == 0) {
         panel->hide();
     } else {
-        this->westState.savedSize = ui->westPanel->size();
-        auto tabSize = panel->tabBar()->sizeHint().width();
-        panel->setMaximumWidth(tabSize);
+        auto tabSize = 0;
+        switch (p) {
+        case Panels::East:
+            this->eastState.savedSize = ui->eastPanel->size();
+            this->eastState.isMinimized = true;
+            tabSize = panel->tabBar()->sizeHint().width();
+            panel->setMaximumWidth(tabSize);
+            break;
+        case Panels::West:
+            this->westState.savedSize = ui->westPanel->size();
+            this->westState.isMinimized = true;
+            tabSize = panel->tabBar()->sizeHint().width();
+            panel->setMaximumWidth(tabSize);
+            break;
+        case Panels::South:
+            this->southState.savedSize = ui->southPanel->size();
+            this->southState.isMinimized = true;
+            tabSize = panel->tabBar()->sizeHint().height();
+            panel->setMaximumHeight(tabSize);
+            break;
+        }
     }
 }
 
@@ -752,13 +762,25 @@ void PluginManager::showPanel(Panels p, int index) {
     QTabWidget *panel = nullptr;
     switch (p) {
     case Panels::East:
+        eastState.isMinimized = false;
         panel = this->ui->eastPanel;
+        if (eastState.savedSize.width() > 0) {
+            panel->setMaximumWidth(eastState.savedSize.width());
+        }
         break;
     case Panels::West:
+        westState.isMinimized = false;
         panel = this->ui->westPanel;
+        if (westState.savedSize.width() > 0) {
+            panel->setMaximumWidth(westState.savedSize.width());
+        }
         break;
     case Panels::South:
+        southState.isMinimized = false;
         panel = this->ui->southPanel;
+        if (southState.savedSize.height() > 0) {
+            panel->setMaximumHeight(southState.savedSize.height());
+        }
         break;
     }
     assert(panel != nullptr);
