@@ -19,12 +19,15 @@
 #include <QTabWidget>
 #include <QToolBar>
 #include <QToolButton>
+#include <qmdiglobalconfig.h>
+#include <qmdipluginconfig.h>
 
 #include "ui_pluginwindow.h"
 
 #include "configdialog.h"
 #include "iplugin.h"
 #include "pluginmanager.h"
+#include "qmdiconfigdialog.h"
 #include "qmdihost.h"
 #include "qmdiserver.h"
 #include "qmditabwidget.h"
@@ -1185,6 +1188,7 @@ void PluginManager::on_actionQuit_triggered() { this->close(); }
  * found in the \b Settings menu.
  */
 void PluginManager::on_actionConfigure_triggered() {
+#if 0
     if (!configDialog) {
         configDialog = new ConfigDialog(this);
         configDialog->setManager(this);
@@ -1192,6 +1196,40 @@ void PluginManager::on_actionConfigure_triggered() {
 
     configDialog->show();
     configDialog->setFocus();
+#else
+    qmdiGlobalConfig config(this); // = qmdiGlobalConfig();
+
+    // config.loadFromFile("config.json");
+
+    qmdiPluginConfig *networkPluginConfig = new qmdiPluginConfig();
+    networkPluginConfig->pluginName = "NetworkPlugin";
+    networkPluginConfig->description = "Configuration for network settings";
+    networkPluginConfig->configItems.push_back(
+        {"host", "string", "Host", "Network host address", "localhost"});
+    networkPluginConfig->configItems.push_back(
+        {"port", "number", "Port", "Network port number", 8080});
+    networkPluginConfig->configItems.push_back(
+        {"useSSL", "boolean", "Use SSL", "Whether to use SSL for the connection", true});
+    config.addPluginConfig(networkPluginConfig);
+
+    config.loadFromFile("diego.json");
+
+    {
+        auto host = networkPluginConfig->getVariable<QString>("host");
+        auto port = networkPluginConfig->getVariable<int>("port");
+        auto useSSL = networkPluginConfig->getVariable<bool>("useSSL");
+    }
+    {
+        auto host = config.getVariable<QString>("NetworkPlugin", "host");
+        auto port = config.getVariable<int>("NetworkPlugin", "port");
+        auto useSSL = config.getVariable<bool>("NetworkPlugin", "useSSL");
+    }
+
+    qmdiConfigDialog dialog(&config, this);
+    if (dialog.exec()) {
+        // config.saveToFile("diego.json");
+    }
+#endif
 }
 
 /**

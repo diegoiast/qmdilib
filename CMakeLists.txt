@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
+project(qmdilib VERSION 0.1.1 LANGUAGES CXX)
 
-project (qmdilib) 
-
-include(FetchContent)
-include(cmake/conan.cmake)
+# include(FetchContent)
+# include(cmake/conan.cmake)
 include(cmake/CPM.cmake)
-include(cmake/CreateResources.cmake)
+# include(cmake/CreateResources.cmake)
 include(cmake/mold-linker.cmake)
 
 cpmaddpackage(
@@ -24,11 +23,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QMDILIB_VERSION "0.1.0")
 set(QMDILIB_SOVERSION "0")
 
-
-
 option(QMDILIB_BUILD_EXAMPLES "Build examples for qmdilib" ON)
-
-find_package(Qt6 COMPONENTS Widgets PrintSupport)
+find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport)
 
 add_library(qmdilib 
     src/qmdiactiongroup.h
@@ -103,6 +99,13 @@ add_executable(pluginmanager
     demos/plugin-demo/plugins/richtext/richtext_plg.cpp
     demos/plugin-demo/plugins/richtext/richtext_plg.h
     demos/plugin-demo/plugins/richtext/richtextclient.h
+
+    src/qmdiconfigdialog.cpp
+    src/qmdiconfigdialog.h
+    src/qmdipluginconfig.cpp
+    src/qmdipluginconfig.h
+    src/qmdiglobalconfig.cpp
+    src/qmdiglobalconfig.h
 )
 set_property(TARGET pluginmanager PROPERTY AUTOMOC ON)
 set_property(TARGET pluginmanager PROPERTY AUTOUIC ON)
