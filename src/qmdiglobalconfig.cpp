@@ -157,6 +157,7 @@ bool qmdiGlobalConfig::saveToFile(const QString &filePath) {
             itemObject["key"] = item.key;
             itemObject["type"] = item.type;
             itemObject["displayName"] = item.displayName;
+            itemObject["value"] = item.value.toString();
             // itemObject["description"] = item.description;
             // itemObject["defaultValue"] = QJsonValue::fromVariant(item.defaultValue);
             configItemsArray.append(itemObject);

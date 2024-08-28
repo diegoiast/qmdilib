@@ -21,55 +21,44 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
       pluginListView(new QListView(this)), pluginModel(new QStringListModel(this)),
       buttonBox(new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this)),
       globalConfig(config) {
-    // Set up the main layout
     setLayout(mainLayout);
 
-    // Set up the plugin list view
     pluginListView->setModel(pluginModel);
-    mainLayout->addWidget(pluginListView, 1); // Stretch factor for the list view
+    mainLayout->addWidget(pluginListView, 1);
 
-    // Set up the configuration area
     QWidget *configContainer = new QWidget(this);
     QVBoxLayout *configAndButtonsLayout = new QVBoxLayout(configContainer);
 
     configContainer->setLayout(configAndButtonsLayout);
-    configAndButtonsLayout->addLayout(configLayout); // Add the config layout
+    configAndButtonsLayout->addLayout(configLayout);
 
-    // Add a spacer to push the buttons to the bottom
     QSpacerItem *spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     configAndButtonsLayout->addItem(spacer);
+    configAndButtonsLayout->addWidget(buttonBox);
+    mainLayout->addWidget(configContainer, 3);
 
-    // Set up the button box
-    configAndButtonsLayout->addWidget(buttonBox); // Add the button box below the config layout
-
-    mainLayout->addWidget(configContainer, 3); // Stretch factor for the config area
-
-    // Populate the list view with plugin names
     QStringList pluginNames;
     for (qmdiPluginConfig *pluginConfig : globalConfig->plugins) {
         pluginNames.append(pluginConfig->pluginName);
     }
     pluginModel->setStringList(pluginNames);
 
-    // Automatically select the first plugin if the list is not empty
     if (!pluginNames.isEmpty()) {
         pluginListView->selectionModel()->setCurrentIndex(pluginModel->index(0),
                                                           QItemSelectionModel::SelectCurrent);
         updateWidgetsForPlugin(pluginNames.first());
     }
 
-    // Connect the list view selection change signal
     connect(pluginListView->selectionModel(), &QItemSelectionModel::currentChanged, this,
             &qmdiConfigDialog::onPluginSelectionChanged);
 
-    // Connect buttons
     connect(buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this,
             &qmdiConfigDialog::cancelConfiguration);
     connect(buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this,
-            &qmdiConfigDialog::accept); // Close with Accept status
+            &qmdiConfigDialog::acceptChanges);
 }
 
-qmdiConfigDialog::~qmdiConfigDialog() {}
+qmdiConfigDialog::~qmdiConfigDialog() { qDeleteAll(widgetMap); }
 
 void qmdiConfigDialog::updateWidgetsForPlugin(const QString &pluginName) {
     const qmdiPluginConfig *pluginConfig = globalConfig->getPluginConfig(pluginName);
@@ -81,10 +70,11 @@ void qmdiConfigDialog::updateWidgetsForPlugin(const QString &pluginName) {
 void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginConfig) {
     // Clear existing widgets in layout
     QLayoutItem *item;
-    while ((item = configLayout->takeAt(0)) != nullptr) {
+    while ((item = configLayout->takeAt(0))) {
         delete item->widget();
         delete item;
     }
+    widgetMap.clear();
 
     for (const qmdiConfigItem &item : pluginConfig->configItems) {
         QLabel *label = new QLabel(item.displayName, this);
@@ -99,6 +89,7 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
             static_cast<QCheckBox *>(widget)->setChecked(item.value.toBool());
         } else if (item.type == "number") {
             widget = new QSpinBox(this);
+            static_cast<QSpinBox *>(widget)->setMaximum(0xffff);
             static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
         } else if (item.type == "float") {
             widget = new QDoubleSpinBox(this);
@@ -107,6 +98,7 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
 
         if (widget) {
             configLayout->addWidget(widget);
+            widgetMap[item.key] = widget; // Store the widget in the map
         }
     }
 }
@@ -116,6 +108,34 @@ void qmdiConfigDialog::onPluginSelectionChanged(const QModelIndex &index) {
     updateWidgetsForPlugin(selectedPlugin);
 }
 
-void qmdiConfigDialog::cancelConfiguration() {
-    reject(); // Close the dialog with Cancel status
+void qmdiConfigDialog::cancelConfiguration() { reject(); }
+
+void qmdiConfigDialog::acceptChanges() {
+    QString selectedPlugin =
+        pluginModel->data(pluginListView->selectionModel()->currentIndex(), Qt::DisplayRole)
+            .toString();
+
+    qmdiPluginConfig *pluginConfig = globalConfig->getPluginConfig(selectedPlugin);
+    if (!pluginConfig) {
+        qWarning() << "No plugin config found for:" << selectedPlugin;
+        reject();
+        return;
+    }
+
+    for (qmdiConfigItem &configItem : pluginConfig->configItems) {
+        if (widgetMap.contains(configItem.key)) {
+            QWidget *widget = widgetMap[configItem.key];
+            if (configItem.type == "string") {
+                configItem.value = static_cast<QLineEdit *>(widget)->text();
+            } else if (configItem.type == "boolean") {
+                configItem.value = static_cast<QCheckBox *>(widget)->isChecked();
+            } else if (configItem.type == "number") {
+                configItem.value = static_cast<QSpinBox *>(widget)->value();
+            } else if (configItem.type == "float") {
+                configItem.value = static_cast<QDoubleSpinBox *>(widget)->value();
+            }
+        }
+    }
+
+    accept();
 }

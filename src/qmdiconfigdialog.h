@@ -1,16 +1,18 @@
 #pragma once
 
 #include <QDialog>
+#include <QDialogButtonBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QListView>
+#include <QMap>
+#include <QStringListModel>
+#include <QVBoxLayout>
+#include <QWidget>
 
 class qmdiGlobalConfig;
 class qmdiPluginConfig;
-
-class QDialogButtonBox;
-class QVBoxLayout;
-class QHBoxLayout;
-class QStringListModel;
-class QListView;
-class QLabel;
+class qmdiConfigItem;
 
 class qmdiConfigDialog : public QDialog {
     Q_OBJECT
@@ -21,7 +23,8 @@ class qmdiConfigDialog : public QDialog {
 
   private slots:
     void onPluginSelectionChanged(const QModelIndex &index);
-    void cancelConfiguration(); // No save method here
+    void cancelConfiguration();
+    void acceptChanges();
 
   private:
     void updateWidgetsForPlugin(const QString &pluginName);
@@ -32,5 +35,7 @@ class qmdiConfigDialog : public QDialog {
     QListView *pluginListView;
     QStringListModel *pluginModel;
     QDialogButtonBox *buttonBox;
-    qmdiGlobalConfig *globalConfig; // Ensure this is declared correctly
+
+    qmdiGlobalConfig *globalConfig;
+    QMap<QString, QWidget *> widgetMap;
 };
