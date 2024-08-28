@@ -4,14 +4,34 @@
 #include <QString>
 #include <QVariant>
 
-class qmdiConfigItem {
-  public:
+struct qmdiConfigItem {
+    qmdiConfigItem();
     QString key;
     QString type;
     QString displayName;
     QString description;
     QVariant defaultValue;
     QVariant value;
+
+    // Nested builder class
+    struct Builder {
+        Builder &setKey(const QString &key);
+        Builder &setType(const QString &type);
+        Builder &setDisplayName(const QString &displayName);
+        Builder &setDescription(const QString &description);
+        Builder &setDefaultValue(const QVariant &defaultValue);
+        Builder &setValue(const QVariant &value);
+
+        qmdiConfigItem build() const;
+
+      private:
+        QString key;
+        QString type;
+        QString displayName;
+        QString description;
+        QVariant defaultValue;
+        QVariant value;
+    };
 };
 
 class qmdiPluginConfig {
