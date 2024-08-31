@@ -48,7 +48,7 @@ bool qmdiGlobalConfig::loadFromFile2(const QString &filePath) {
             qmdiConfigItem item;
 
             item.key = itemObject["key"].toString();
-            item.type = itemObject["type"].toString();
+            item.type = qmdiConfigItem::typeFromString(itemObject["type"].toString());
             item.displayName = itemObject["displayName"].toString();
             item.description = itemObject["description"].toString();
 
@@ -155,7 +155,7 @@ bool qmdiGlobalConfig::saveToFile(const QString &filePath) {
         for (const qmdiConfigItem &item : pluginConfig->configItems) {
             QJsonObject itemObject;
             itemObject["key"] = item.key;
-            itemObject["type"] = item.type;
+            itemObject["type"] = qmdiConfigItem::typeToString(item.type);
             itemObject["displayName"] = item.displayName;
             itemObject["value"] = item.value.toString();
             // itemObject["description"] = item.description;
