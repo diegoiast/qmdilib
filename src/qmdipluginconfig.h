@@ -5,9 +5,27 @@
 #include <QVariant>
 
 struct qmdiConfigItem {
+    enum ClassType {
+        String,
+        Bool,
+        Int8,
+        Int16,
+        Int32,
+        Int64,
+        UInt8,
+        UInt16,
+        UInt32,
+        UInt64,
+        Float,
+        Double
+    };
+
+    static ClassType typeFromString(const QString &typeStr);
+    static QString typeToString(ClassType type);
+
     qmdiConfigItem();
     QString key;
-    QString type;
+    ClassType type;
     QString displayName;
     QString description;
     QVariant defaultValue;
@@ -16,7 +34,7 @@ struct qmdiConfigItem {
     // Nested builder class
     struct Builder {
         Builder &setKey(const QString &key);
-        Builder &setType(const QString &type);
+        Builder &setType(const ClassType type);
         Builder &setDisplayName(const QString &displayName);
         Builder &setDescription(const QString &description);
         Builder &setDefaultValue(const QVariant &defaultValue);
@@ -26,7 +44,7 @@ struct qmdiConfigItem {
 
       private:
         QString key;
-        QString type;
+        ClassType type;
         QString displayName;
         QString description;
         QVariant defaultValue;

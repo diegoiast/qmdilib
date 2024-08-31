@@ -1206,14 +1206,14 @@ void PluginManager::on_actionConfigure_triggered() {
     networkPluginConfig->description = "Configuration for network settings";
     networkPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
                                                    .setKey("host")
-                                                   .setType("string")
+                                                   .setType(qmdiConfigItem::String)
                                                    .setDisplayName("Host")
                                                    .setDescription("Network host address")
                                                    .setDefaultValue("localhost")
                                                    .build());
     networkPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
                                                    .setKey("port")
-                                                   .setType("number")
+                                                   .setType(qmdiConfigItem::UInt16)
                                                    .setDisplayName("Port")
                                                    .setDescription("Network port number")
                                                    .setDefaultValue(8080)
@@ -1221,7 +1221,7 @@ void PluginManager::on_actionConfigure_triggered() {
     networkPluginConfig->configItems.push_back(
         qmdiConfigItem::Builder()
             .setKey("useSSL")
-            .setType("boolean")
+            .setType(qmdiConfigItem::Bool)
             .setDisplayName("Use ssl")
             .setDescription("Whether to use SSL for the connection")
             .setValue(true)

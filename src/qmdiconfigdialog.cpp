@@ -81,17 +81,17 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
         configLayout->addWidget(label);
 
         QWidget *widget = nullptr;
-        if (item.type == "string") {
+        if (item.type == qmdiConfigItem::String) {
             widget = new QLineEdit(this);
             static_cast<QLineEdit *>(widget)->setText(item.value.toString());
-        } else if (item.type == "boolean") {
+        } else if (item.type == qmdiConfigItem::Bool) {
             widget = new QCheckBox(this);
             static_cast<QCheckBox *>(widget)->setChecked(item.value.toBool());
-        } else if (item.type == "number") {
+        } else if (item.type == qmdiConfigItem::UInt16) {
             widget = new QSpinBox(this);
-            static_cast<QSpinBox *>(widget)->setMaximum(0xffff);
+            static_cast<QSpinBox *>(widget)->setMaximum(UINT16_MAX);
             static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
-        } else if (item.type == "float") {
+        } else if (item.type == qmdiConfigItem::Double) {
             widget = new QDoubleSpinBox(this);
             static_cast<QDoubleSpinBox *>(widget)->setValue(item.value.toDouble());
         }
@@ -125,13 +125,13 @@ void qmdiConfigDialog::acceptChanges() {
     for (qmdiConfigItem &configItem : pluginConfig->configItems) {
         if (widgetMap.contains(configItem.key)) {
             QWidget *widget = widgetMap[configItem.key];
-            if (configItem.type == "string") {
+            if (configItem.type == qmdiConfigItem::String) {
                 configItem.value = static_cast<QLineEdit *>(widget)->text();
-            } else if (configItem.type == "boolean") {
+            } else if (configItem.type == qmdiConfigItem::Bool) {
                 configItem.value = static_cast<QCheckBox *>(widget)->isChecked();
-            } else if (configItem.type == "number") {
+            } else if (configItem.type == qmdiConfigItem::UInt16) {
                 configItem.value = static_cast<QSpinBox *>(widget)->value();
-            } else if (configItem.type == "float") {
+            } else if (configItem.type == qmdiConfigItem::Float) {
                 configItem.value = static_cast<QDoubleSpinBox *>(widget)->value();
             }
         }
