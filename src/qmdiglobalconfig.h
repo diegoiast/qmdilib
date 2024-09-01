@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qmdipluginconfig.h"
+#include <QJsonObject>
 #include <QMap>
 #include <QObject>
 
@@ -11,6 +12,9 @@ class qmdiGlobalConfig : public QObject {
     void setDefaults();
     bool loadFromFile(const QString &filePath);
     bool saveToFile(const QString &filePath);
+
+    QJsonObject asJson() const;
+    void fromJson(QJsonObject o);
 
     qmdiPluginConfig *getPluginConfig(const QString &pluginName) const;
     void addPluginConfig(qmdiPluginConfig *pluginConfig);
