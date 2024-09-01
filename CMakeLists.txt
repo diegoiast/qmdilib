@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
 project(qmdilib VERSION 0.1.1 LANGUAGES CXX)
 
-# include(FetchContent)
-# include(cmake/conan.cmake)
+option(QMDILIB_BUILD_EXAMPLES "Build examples for qmdilib" ON)
+option(QMDILIB_USE_MOLD "Link using mold, if available" ON)
+
 include(cmake/CPM.cmake)
-# include(cmake/CreateResources.cmake)
 include(cmake/mold-linker.cmake)
 
 cpmaddpackage(
@@ -23,7 +23,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QMDILIB_VERSION "0.1.0")
 set(QMDILIB_SOVERSION "0")
 
-option(QMDILIB_BUILD_EXAMPLES "Build examples for qmdilib" ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport)
 
 add_library(qmdilib 
