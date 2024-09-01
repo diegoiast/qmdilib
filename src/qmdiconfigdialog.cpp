@@ -68,7 +68,6 @@ void qmdiConfigDialog::updateWidgetsForPlugin(const QString &pluginName) {
 }
 
 void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginConfig) {
-    // Clear existing widgets in layout
     QLayoutItem *item;
     while ((item = configLayout->takeAt(0))) {
         delete item->widget();
@@ -81,24 +80,64 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
         configLayout->addWidget(label);
 
         QWidget *widget = nullptr;
-        if (item.type == qmdiConfigItem::String) {
+        switch (item.type) {
+        case qmdiConfigItem::String:
             widget = new QLineEdit(this);
             static_cast<QLineEdit *>(widget)->setText(item.value.toString());
-        } else if (item.type == qmdiConfigItem::Bool) {
+            break;
+        case qmdiConfigItem::Bool:
             widget = new QCheckBox(this);
             static_cast<QCheckBox *>(widget)->setChecked(item.value.toBool());
-        } else if (item.type == qmdiConfigItem::UInt16) {
+            break;
+        case qmdiConfigItem::Int8:
             widget = new QSpinBox(this);
+            static_cast<QSpinBox *>(widget)->setMinimum(INT8_MIN);
+            static_cast<QSpinBox *>(widget)->setMaximum(INT8_MAX);
+            static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
+            break;
+        case qmdiConfigItem::Int16:
+            widget = new QSpinBox(this);
+            static_cast<QSpinBox *>(widget)->setMinimum(INT16_MIN);
+            static_cast<QSpinBox *>(widget)->setMaximum(INT16_MAX);
+            static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
+            break;
+        case qmdiConfigItem::Int32:
+            widget = new QSpinBox(this);
+            static_cast<QSpinBox *>(widget)->setMinimum(INT32_MIN);
+            static_cast<QSpinBox *>(widget)->setMaximum(INT32_MAX);
+            static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
+            break;
+        case qmdiConfigItem::UInt8:
+            widget = new QSpinBox(this);
+            static_cast<QSpinBox *>(widget)->setMinimum(0);
+            static_cast<QSpinBox *>(widget)->setMaximum(UINT8_MAX);
+            static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
+            break;
+        case qmdiConfigItem::UInt16:
+            widget = new QSpinBox(this);
+            static_cast<QSpinBox *>(widget)->setMinimum(0);
             static_cast<QSpinBox *>(widget)->setMaximum(UINT16_MAX);
             static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
-        } else if (item.type == qmdiConfigItem::Double) {
+            break;
+        case qmdiConfigItem::UInt32:
+            widget = new QSpinBox(this);
+            static_cast<QSpinBox *>(widget)->setMinimum(0);
+            static_cast<QSpinBox *>(widget)->setMaximum(UINT32_MAX);
+            static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
+            break;
+        case qmdiConfigItem::Float:
+            widget = new QDoubleSpinBox(this);
+            static_cast<QDoubleSpinBox *>(widget)->setValue(item.value.toFloat());
+            break;
+        case qmdiConfigItem::Double:
             widget = new QDoubleSpinBox(this);
             static_cast<QDoubleSpinBox *>(widget)->setValue(item.value.toDouble());
+            break;
         }
 
         if (widget) {
             configLayout->addWidget(widget);
-            widgetMap[item.key] = widget; // Store the widget in the map
+            widgetMap[item.key] = widget;
         }
     }
 }
