@@ -50,6 +50,7 @@ struct qmdiConfigItem {
         QVariant defaultValue;
         QVariant value;
     };
+    void setDefault();
 };
 
 class qmdiPluginConfig {

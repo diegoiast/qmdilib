@@ -7,77 +7,33 @@
 
 qmdiGlobalConfig::qmdiGlobalConfig(QObject *parent) : QObject(parent) {}
 
-bool qmdiGlobalConfig::loadFromFile2(const QString &filePath) {
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Unable to open file" << filePath << "for reading.";
-        return false;
-    }
+void qmdiGlobalConfig::setDefaults() {
+    for (auto it = pluginMap.begin(); it != pluginMap.end(); ++it) {
+        const qmdiPluginConfig *pluginConfig = it.value();
 
-    QByteArray data = file.readAll();
-    file.close();
-
-    QJsonParseError parseError;
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(data, &parseError);
-
-    if (parseError.error != QJsonParseError::NoError) {
-        qWarning() << "JSON parse error:" << parseError.errorString();
-        return false;
-    }
-
-    QJsonObject jsonObject = jsonDoc.object();
-    QJsonArray pluginsArray = jsonObject["plugins"].toArray();
-
-    // Clear existing plugins
-    qDeleteAll(plugins);
-    plugins.clear();
-    pluginMap.clear();
-
-    for (const QJsonValue &value : pluginsArray) {
-        QJsonObject pluginObject = value.toObject();
-        qmdiPluginConfig *pluginConfig = new qmdiPluginConfig();
-
-        pluginConfig->pluginName = pluginObject["pluginName"].toString();
-        pluginConfig->description = pluginObject["description"].toString();
-
-        QJsonArray configItemsArray = pluginObject["configItems"].toArray();
-        pluginConfig->configItems.clear();
-
-        for (const QJsonValue &itemValue : configItemsArray) {
-            QJsonObject itemObject = itemValue.toObject();
-            qmdiConfigItem item;
-
-            item.key = itemObject["key"].toString();
-            item.type = qmdiConfigItem::typeFromString(itemObject["type"].toString());
-            item.displayName = itemObject["displayName"].toString();
-            item.description = itemObject["description"].toString();
-
-            QJsonValue defaultValue = itemObject["defaultValue"];
-            if (defaultValue.isString()) {
-                item.defaultValue = defaultValue.toString();
-            } else if (defaultValue.isBool()) {
-                item.defaultValue = defaultValue.toBool();
-            } else if (defaultValue.isDouble()) {
-                item.defaultValue = defaultValue.toDouble();
-            } else if (defaultValue.isDouble()) {
-                item.defaultValue = defaultValue.toInt();
-            } else {
-                qWarning() << "Unsupported default value type.";
-                delete pluginConfig;
-                return false;
-            }
-
-            pluginConfig->configItems.append(item);
+        for (auto config : pluginConfig->configItems) {
+            config.setDefault();
         }
-
-        pluginMap[pluginConfig->pluginName] = pluginConfig;
-        plugins.append(pluginConfig); // Append pointer to QList<qmdiPluginConfig*>
     }
-
-    return true;
 }
 
 bool qmdiGlobalConfig::loadFromFile(const QString &filePath) {
+    auto findKey = [](auto array, auto key) -> QJsonObject {
+        for (const QJsonValue &itemValue : array) {
+            if (!itemValue.isObject()) {
+                continue;
+            }
+            const QJsonObject configItemObj = itemValue.toObject();
+            if (configItemObj.contains("key") && configItemObj["key"].isString()) {
+                const QString k = configItemObj["key"].toString();
+                if (k == key) {
+                    return configItemObj;
+                }
+            }
+        }
+        return {};
+    };
+
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Failed to open file:" << filePath;
@@ -92,13 +48,10 @@ bool qmdiGlobalConfig::loadFromFile(const QString &filePath) {
     }
 
     QJsonObject jsonObj = jsonDoc.object();
-
-    // Iterate over each plugin in the JSON object
     for (auto it = jsonObj.constBegin(); it != jsonObj.constEnd(); ++it) {
         const QString pluginName = it.key();
         const QJsonObject pluginObj = it.value().toObject();
 
-        qDebug() << "Processing plugin:" << pluginName;
         auto pluginConfig = pluginMap.value(pluginName, nullptr);
         if (!pluginConfig) {
             continue;
@@ -111,26 +64,8 @@ bool qmdiGlobalConfig::loadFromFile(const QString &filePath) {
         }
 
         const QJsonArray configItemsArray = pluginObj["configItems"].toArray();
-        auto findKey = [configItemsArray](auto key) -> QJsonObject {
-            for (const QJsonValue &itemValue : configItemsArray) {
-                if (!itemValue.isObject()) {
-                    continue;
-                }
-                const QJsonObject configItemObj = itemValue.toObject();
-                if (configItemObj.contains("key") && configItemObj["key"].isString()) {
-                    const QString k = configItemObj["key"].toString();
-                    // const QString v = configItemObj["values"].toString();
-                    // qDebug() << "Config item key:" << key;
-                    if (k == key) {
-                        return configItemObj;
-                    }
-                }
-            }
-            return {};
-        };
-
         for (auto &p : pluginConfig->configItems) {
-            auto savedConfig = findKey(p.key);
+            auto savedConfig = findKey(configItemsArray, p.key);
             if (savedConfig.empty()) {
                 p.value = p.defaultValue;
             } else {
@@ -145,32 +80,21 @@ bool qmdiGlobalConfig::loadFromFile(const QString &filePath) {
 bool qmdiGlobalConfig::saveToFile(const QString &filePath) {
     QJsonObject jsonObject;
 
-    // Iterate over all plugins and convert their configuration to JSON
     for (auto it = pluginMap.begin(); it != pluginMap.end(); ++it) {
         const qmdiPluginConfig *pluginConfig = it.value();
         QJsonObject pluginObject;
-        pluginObject["description"] = pluginConfig->description;
-
         QJsonArray configItemsArray;
-        for (const qmdiConfigItem &item : pluginConfig->configItems) {
+        for (const qmdiConfigItem &item : std::as_const(pluginConfig->configItems)) {
             QJsonObject itemObject;
             itemObject["key"] = item.key;
-            itemObject["type"] = qmdiConfigItem::typeToString(item.type);
-            itemObject["displayName"] = item.displayName;
             itemObject["value"] = item.value.toString();
-            // itemObject["description"] = item.description;
-            // itemObject["defaultValue"] = QJsonValue::fromVariant(item.defaultValue);
             configItemsArray.append(itemObject);
         }
-
         pluginObject["configItems"] = configItemsArray;
         jsonObject[pluginConfig->pluginName] = pluginObject;
     }
 
-    // Convert QJsonObject to QJsonDocument
     QJsonDocument jsonDoc(jsonObject);
-
-    // Write JSON document to file
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly)) {
         qDebug() << "Error opening file for writing:" << file.errorString();
