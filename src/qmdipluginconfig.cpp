@@ -1,4 +1,4 @@
-#include "qmdiPluginConfig.h"
+#include "qmdipluginconfig.h"
 
 qmdiConfigItem::qmdiConfigItem() {}
 
