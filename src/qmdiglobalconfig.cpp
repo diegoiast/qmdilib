@@ -18,6 +18,59 @@ void qmdiGlobalConfig::setDefaults() {
 }
 
 bool qmdiGlobalConfig::loadFromFile(const QString &filePath) {
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open file:" << filePath;
+        return false;
+    }
+
+    QByteArray fileData = file.readAll();
+    QJsonDocument jsonDoc(QJsonDocument::fromJson(fileData));
+    if (jsonDoc.isNull() || !jsonDoc.isObject()) {
+        qWarning() << "Failed to parse JSON or JSON is not an object.";
+        return false;
+    }
+
+    QJsonObject jsonObj = jsonDoc.object();
+    fromJson(jsonObj);
+    return true;
+}
+
+bool qmdiGlobalConfig::saveToFile(const QString &filePath) {
+    QJsonObject jsonObject = asJson();
+    QJsonDocument jsonDoc(jsonObject);
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "Error opening file for writing:" << file.errorString();
+        return false;
+    }
+
+    file.write(jsonDoc.toJson());
+    file.close();
+    return true;
+}
+
+QJsonObject qmdiGlobalConfig::asJson() const {
+    QJsonObject jsonObject;
+
+    for (auto it = pluginMap.begin(); it != pluginMap.end(); ++it) {
+        const qmdiPluginConfig *pluginConfig = it.value();
+        QJsonObject pluginObject;
+        QJsonArray configItemsArray;
+        for (const qmdiConfigItem &item : std::as_const(pluginConfig->configItems)) {
+            QJsonObject itemObject;
+            itemObject["key"] = item.key;
+            itemObject["value"] = item.value.toString();
+            configItemsArray.append(itemObject);
+        }
+        pluginObject["configItems"] = configItemsArray;
+        jsonObject[pluginConfig->pluginName] = pluginObject;
+    }
+
+    return jsonObject;
+}
+
+void qmdiGlobalConfig::fromJson(QJsonObject jsonObj) {
     auto findKey = [](auto array, auto key) -> QJsonObject {
         for (const QJsonValue &itemValue : array) {
             if (!itemValue.isObject()) {
@@ -34,20 +87,6 @@ bool qmdiGlobalConfig::loadFromFile(const QString &filePath) {
         return {};
     };
 
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Failed to open file:" << filePath;
-        return false;
-    }
-
-    QByteArray fileData = file.readAll();
-    QJsonDocument jsonDoc(QJsonDocument::fromJson(fileData));
-    if (jsonDoc.isNull() || !jsonDoc.isObject()) {
-        qWarning() << "Failed to parse JSON or JSON is not an object.";
-        return false;
-    }
-
-    QJsonObject jsonObj = jsonDoc.object();
     for (auto it = jsonObj.constBegin(); it != jsonObj.constEnd(); ++it) {
         const QString pluginName = it.key();
         const QJsonObject pluginObj = it.value().toObject();
@@ -74,36 +113,6 @@ bool qmdiGlobalConfig::loadFromFile(const QString &filePath) {
             }
         }
     }
-    return true;
-}
-
-bool qmdiGlobalConfig::saveToFile(const QString &filePath) {
-    QJsonObject jsonObject;
-
-    for (auto it = pluginMap.begin(); it != pluginMap.end(); ++it) {
-        const qmdiPluginConfig *pluginConfig = it.value();
-        QJsonObject pluginObject;
-        QJsonArray configItemsArray;
-        for (const qmdiConfigItem &item : std::as_const(pluginConfig->configItems)) {
-            QJsonObject itemObject;
-            itemObject["key"] = item.key;
-            itemObject["value"] = item.value.toString();
-            configItemsArray.append(itemObject);
-        }
-        pluginObject["configItems"] = configItemsArray;
-        jsonObject[pluginConfig->pluginName] = pluginObject;
-    }
-
-    QJsonDocument jsonDoc(jsonObject);
-    QFile file(filePath);
-    if (!file.open(QIODevice::WriteOnly)) {
-        qDebug() << "Error opening file for writing:" << file.errorString();
-        return false;
-    }
-
-    file.write(jsonDoc.toJson());
-    file.close();
-    return true;
 }
 
 qmdiPluginConfig *qmdiGlobalConfig::getPluginConfig(const QString &pluginName) const {
