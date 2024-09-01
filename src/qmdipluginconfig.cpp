@@ -16,16 +16,12 @@ qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr)
         return Int16;
     } else if (lower == "int32") {
         return Int32;
-    } else if (lower == "int64") {
-        return Int64;
     } else if (lower == "uint8") {
         return UInt8;
     } else if (lower == "uint16" || lower == "number") {
         return UInt16;
     } else if (lower == "uint32") {
         return UInt32;
-    } else if (lower == "uint64") {
-        return UInt64;
     } else if (lower == "float") {
         return Float;
     } else if (lower == "fouble") {
@@ -47,16 +43,12 @@ QString qmdiConfigItem::typeToString(ClassType type) {
         return "Int16";
     case Int32:
         return "Int32";
-    case Int64:
-        return "Int64";
     case UInt8:
         return "UInt8";
     case UInt16:
         return "UInt16";
     case UInt32:
         return "UInt32";
-    case UInt64:
-        return "UInt64";
     case Float:
         return "Float";
     case Double:
