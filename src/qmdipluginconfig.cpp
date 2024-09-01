@@ -2,6 +2,8 @@
 
 qmdiConfigItem::qmdiConfigItem() {}
 
+void qmdiConfigItem::setDefault() { this->value = this->defaultValue; }
+
 qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr) {
     auto lower = typeStr.toLower();
     if (lower == "string") {

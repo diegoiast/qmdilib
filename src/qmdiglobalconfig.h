@@ -8,7 +8,7 @@ class qmdiGlobalConfig : public QObject {
 
   public:
     explicit qmdiGlobalConfig(QObject *parent = nullptr);
-    bool loadFromFile2(const QString &filePath);
+    void setDefaults();
     bool loadFromFile(const QString &filePath);
     bool saveToFile(const QString &filePath);
 

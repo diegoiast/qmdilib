@@ -39,7 +39,15 @@ add_library(qmdilib
     src/qmdiserver.cpp
     src/qmditabwidget.h
     src/qmditabwidget.cpp
+
+    src/qmdiconfigdialog.cpp
+    src/qmdiconfigdialog.h
+    src/qmdipluginconfig.cpp
+    src/qmdipluginconfig.h
+    src/qmdiglobalconfig.cpp
+    src/qmdiglobalconfig.h
 )
+
 target_link_libraries(qmdilib Qt::Widgets)
 target_include_directories(qmdilib PUBLIC src)
 set_property(TARGET qmdilib PROPERTY AUTOMOC ON)
@@ -65,6 +73,13 @@ add_executable(demo2
 set_property(TARGET demo2 PROPERTY AUTOMOC ON)
 target_link_libraries(demo2 qmdilib)
 target_include_directories(demo2 PRIVATE demos/common)
+
+
+add_executable(demo3
+    demos/demo3/main3.cpp
+)
+set_property(TARGET demo3 PROPERTY AUTOMOC ON)
+target_link_libraries(demo3 qmdilib)
 
 add_executable(pluginmanager
     demos/common/qexeditor.cpp
@@ -99,13 +114,6 @@ add_executable(pluginmanager
     demos/plugin-demo/plugins/richtext/richtext_plg.cpp
     demos/plugin-demo/plugins/richtext/richtext_plg.h
     demos/plugin-demo/plugins/richtext/richtextclient.h
-
-    src/qmdiconfigdialog.cpp
-    src/qmdiconfigdialog.h
-    src/qmdipluginconfig.cpp
-    src/qmdipluginconfig.h
-    src/qmdiglobalconfig.cpp
-    src/qmdiglobalconfig.h
 )
 set_property(TARGET pluginmanager PROPERTY AUTOMOC ON)
 set_property(TARGET pluginmanager PROPERTY AUTOUIC ON)
