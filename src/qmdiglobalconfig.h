@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qmdiPluginConfig.h"
+#include "qmdipluginconfig.h"
 #include <QMap>
 #include <QObject>
 

@@ -1,4 +1,4 @@
-#include "qmdiConfigDialog.h"
+#include "qmdiconfigdialog.h"
 #include "qmdiglobalconfig.h"
 #include "qmdipluginconfig.h"
 

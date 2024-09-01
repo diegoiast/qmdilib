@@ -1,4 +1,4 @@
-#include "qmdiGlobalConfig.h"
+#include "qmdiglobalconfig.h"
 #include <QDebug>
 #include <QFile>
 #include <QJsonArray>
