@@ -81,4 +81,35 @@ class qmdiPluginConfig {
         }
         return {};
     }
+
+    class Builder {
+      public:
+        Builder &setPluginName(const QString &name) {
+            pluginName = name;
+            return *this;
+        }
+
+        Builder &setDescription(const QString &desc) {
+            description = desc;
+            return *this;
+        }
+
+        Builder &addConfigItem(const qmdiConfigItem &item) {
+            configItems.append(item);
+            return *this;
+        }
+
+        qmdiPluginConfig build() const {
+            qmdiPluginConfig pluginConfig;
+            pluginConfig.pluginName = this->pluginName;
+            pluginConfig.description = this->description;
+            pluginConfig.configItems = this->configItems;
+            return pluginConfig;
+        }
+
+      private:
+        QString pluginName;
+        QString description;
+        QList<qmdiConfigItem> configItems;
+    };
 };
