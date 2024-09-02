@@ -250,7 +250,7 @@ QList<QToolBar *> *qmdiActionGroupList::updateToolBar(QList<QToolBar *> *toolbar
         }
 
         // merge it with the corresponding group list
-        tb = i->updateToolBar(tb);
+        i->updateToolBar(tb);
     }
 
     return toolbars;
