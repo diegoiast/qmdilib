@@ -24,7 +24,7 @@ qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr)
         return UInt32;
     } else if (lower == "float") {
         return Float;
-    } else if (lower == "fouble") {
+    } else if (lower == "double") {
         return Double;
     } else {
         return String;
@@ -97,4 +97,10 @@ qmdiConfigItem qmdiConfigItem::Builder::build() const {
     item.defaultValue = defaultValue;
     item.value = value.isNull() ? defaultValue : value;
     return item;
+}
+
+void qmdiPluginConfig::setDefault() {
+    for (auto &item : configItems) {
+        item.setDefault();
+    }
 }

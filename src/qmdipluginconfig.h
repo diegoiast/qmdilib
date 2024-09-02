@@ -15,7 +15,7 @@ struct qmdiConfigItem {
         UInt16,
         UInt32,
         Float,
-        Double
+        Double,
     };
 
     static ClassType typeFromString(const QString &typeStr);
@@ -58,6 +58,16 @@ class qmdiPluginConfig {
     QList<qmdiConfigItem> configItems;
 
     qmdiPluginConfig() = default;
+    void setDefault();
+
+    template <typename T> void setVariable(const QString &key, T value) {
+        for (auto &item : configItems) {
+            if (item.key != key) {
+                continue;
+            }
+            item.value = value;
+        }
+    }
 
     template <typename T> T getVariable(const QString &key) const {
         for (const auto &item : configItems) {

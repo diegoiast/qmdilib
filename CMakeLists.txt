@@ -4,6 +4,7 @@ project(qmdilib VERSION 0.1.1 LANGUAGES CXX)
 
 option(QMDILIB_BUILD_EXAMPLES "Build examples for qmdilib" ON)
 option(QMDILIB_USE_MOLD "Link using mold, if available" ON)
+option(QMDILIB_TESTS "Build and run tests for qmdilib" ON)
 
 include(FetchContent)
 include(cmake/CPM.cmake)
@@ -25,7 +26,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QMDILIB_VERSION "0.1.0")
 set(QMDILIB_SOVERSION "0")
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport)
+find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport Test)
 
 add_library(qmdilib 
     src/qmdiactiongroup.h
@@ -121,5 +122,20 @@ set_property(TARGET pluginmanager PROPERTY AUTOUIC ON)
 set_property(TARGET pluginmanager PROPERTY AUTORCC ON)
 target_include_directories(pluginmanager PRIVATE demos/common demos/plugin-demo/)
 target_link_libraries(pluginmanager qmdilib)
+endif()
+
+if (QMDILIB_TESTS)
+enable_testing()
+
+add_executable(configItemTests tests/configItemTests.cpp)
+target_link_libraries(configItemTests qmdilib Qt6::Test)
+set_property(TARGET configItemTests PROPERTY AUTOMOC ON)
+add_test(NAME qmdiConfigItemTest COMMAND configItemTests)
+
+add_executable(pluginConfigTests tests/pluginConfigTests.cpp)
+target_link_libraries(pluginConfigTests qmdilib Qt6::Test)
+set_property(TARGET pluginConfigTests PROPERTY AUTOMOC ON)
+add_test(NAME qmdiPluginConfigTests COMMAND pluginConfigTests)
+
 
 endif()
