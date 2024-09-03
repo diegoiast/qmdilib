@@ -10,7 +10,13 @@ class qmdiGlobalConfig : public QObject {
   public:
     explicit qmdiGlobalConfig(QObject *parent = nullptr);
     void setDefaults();
+    bool loadDefsFromFile(const QString &filePath);
+    bool loadDefsFromJson(const QJsonObject &jsonObject);
     bool loadFromFile(const QString &filePath);
+    bool loadFromJson(const QJsonObject &jsonObject) {
+        fromJson(jsonObject);
+        return true;
+    }
     bool saveToFile(const QString &filePath);
 
     QJsonObject asJson() const;
@@ -23,6 +29,14 @@ class qmdiGlobalConfig : public QObject {
         const qmdiPluginConfig *pluginConfig = getPluginConfig(pluginName);
         if (pluginConfig) {
             return pluginConfig->getVariable<T>(key);
+        }
+        throw std::runtime_error("Plugin not found or key not found");
+    }
+
+    template <typename T> void setVariable(const QString &pluginName, const QString &key, T value) {
+        qmdiPluginConfig *pluginConfig = getPluginConfig(pluginName);
+        if (pluginConfig) {
+            return pluginConfig->setVariable<T>(key, value);
         }
         throw std::runtime_error("Plugin not found or key not found");
     }

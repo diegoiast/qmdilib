@@ -9,6 +9,8 @@ class TestQmdiPluginConfig : public QObject {
     void testSetAndGetVariable();
     void testGetVariableWithDefault();
     void testRestoreDefault();
+
+    void testModifyAndDefault();
 };
 
 void TestQmdiPluginConfig::testDefaultConstruction() {
@@ -79,6 +81,25 @@ void TestQmdiPluginConfig::testRestoreDefault() {
     QCOMPARE(result, "defaultValue1");
     result = config.getVariable<QString>("exampleKey2");
     QCOMPARE(result, "defaultValue2");
+}
+
+void TestQmdiPluginConfig::testModifyAndDefault() {
+    qmdiPluginConfig *networkPluginConfig = new qmdiPluginConfig();
+    networkPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
+                                                   .setKey("useSSL")
+                                                   .setType(qmdiConfigItem::Bool)
+                                                   .setDisplayName("Use ssl")
+                                                   .setDescription("Use SSL for the connection?")
+                                                   .setDefaultValue(true)
+                                                   .setValue(true)
+                                                   .build());
+    QCOMPARE(networkPluginConfig->getVariable<bool>("useSSL"), true);
+
+    networkPluginConfig->setVariable("useSSL", false);
+    QCOMPARE(networkPluginConfig->getVariable<bool>("useSSL"), false);
+
+    networkPluginConfig->setDefault();
+    QCOMPARE(networkPluginConfig->getVariable<bool>("useSSL"), true);
 }
 
 QTEST_MAIN(TestQmdiPluginConfig)

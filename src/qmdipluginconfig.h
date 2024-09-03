@@ -66,6 +66,7 @@ class qmdiPluginConfig {
                 continue;
             }
             item.value = value;
+            return;
         }
     }
 

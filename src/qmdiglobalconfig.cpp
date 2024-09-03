@@ -9,12 +9,102 @@ qmdiGlobalConfig::qmdiGlobalConfig(QObject *parent) : QObject(parent) {}
 
 void qmdiGlobalConfig::setDefaults() {
     for (auto it = pluginMap.begin(); it != pluginMap.end(); ++it) {
-        const qmdiPluginConfig *pluginConfig = it.value();
-
-        for (auto config : pluginConfig->configItems) {
+        qmdiPluginConfig *pluginConfig = it.value();
+        for (auto &config : pluginConfig->configItems) {
             config.setDefault();
         }
     }
+}
+
+bool qmdiGlobalConfig::loadDefsFromFile(const QString &filePath) {
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Unable to open file" << filePath << "for reading.";
+        return false;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+    QJsonParseError parseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(data, &parseError);
+    if (parseError.error != QJsonParseError::NoError) {
+        qWarning() << "JSON parse error:" << parseError.errorString();
+        return false;
+    }
+
+    QJsonObject jsonObject = jsonDoc.object();
+    return loadDefsFromJson(jsonObject);
+}
+
+bool qmdiGlobalConfig::loadDefsFromJson(const QJsonObject &jsonObject) {
+    QJsonArray pluginsArray = jsonObject["plugins"].toArray();
+
+    qDeleteAll(plugins);
+    plugins.clear();
+    pluginMap.clear();
+    for (const QJsonValue &value : std::as_const(pluginsArray)) {
+        QJsonObject pluginObject = value.toObject();
+        qmdiPluginConfig *pluginConfig = new qmdiPluginConfig();
+
+        pluginConfig->pluginName = pluginObject["pluginName"].toString();
+        pluginConfig->description = pluginObject["description"].toString();
+
+        QJsonArray configItemsArray = pluginObject["configItems"].toArray();
+        pluginConfig->configItems.clear();
+
+        for (const QJsonValue &itemValue : std::as_const(configItemsArray)) {
+            QJsonObject itemObject = itemValue.toObject();
+            qmdiConfigItem item;
+
+            item.key = itemObject["key"].toString();
+            item.type = qmdiConfigItem::typeFromString(itemObject["type"].toString());
+            item.displayName = itemObject["displayName"].toString();
+            item.description = itemObject["description"].toString();
+
+            QJsonValue defaultValue = itemObject["defaultValue"];
+            switch (item.type) {
+            case qmdiConfigItem::String:
+                item.defaultValue = defaultValue.toString();
+                break;
+            case qmdiConfigItem::Bool:
+                item.defaultValue = defaultValue.toBool();
+                break;
+            case qmdiConfigItem::Int8:
+                item.defaultValue = defaultValue.toInt();
+                break;
+            case qmdiConfigItem::Int16:
+                item.defaultValue = defaultValue.toInt();
+                break;
+            case qmdiConfigItem::Int32:
+                item.defaultValue = defaultValue.toInt();
+                break;
+                break;
+            case qmdiConfigItem::UInt8:
+                item.defaultValue = defaultValue.toInt();
+                break;
+                break;
+            case qmdiConfigItem::UInt16:
+                item.defaultValue = defaultValue.toInt();
+                break;
+            case qmdiConfigItem::UInt32:
+                item.defaultValue = defaultValue.toInt();
+                break;
+            case qmdiConfigItem::Float:
+                item.defaultValue = defaultValue.toDouble();
+                break;
+            case qmdiConfigItem::Double:
+                item.defaultValue = defaultValue.toDouble();
+                break;
+            }
+
+            pluginConfig->configItems.append(item);
+        }
+
+        pluginMap[pluginConfig->pluginName] = pluginConfig;
+        plugins.append(pluginConfig);
+    }
+
+    return true;
 }
 
 bool qmdiGlobalConfig::loadFromFile(const QString &filePath) {

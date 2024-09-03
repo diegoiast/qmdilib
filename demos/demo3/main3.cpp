@@ -21,14 +21,14 @@ auto getNetworkConfig() -> qmdiPluginConfig * {
                                                    .setDescription("Network port number")
                                                    .setDefaultValue(8080)
                                                    .build());
-    networkPluginConfig->configItems.push_back(
-        qmdiConfigItem::Builder()
-            .setKey("useSSL")
-            .setType(qmdiConfigItem::Bool)
-            .setDisplayName("Use ssl")
-            .setDescription("Whether to use SSL for the connection")
-            .setValue(true)
-            .build());
+    networkPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
+                                                   .setKey("useSSL")
+                                                   .setType(qmdiConfigItem::Bool)
+                                                   .setDisplayName("Use ssl")
+                                                   .setDescription("Use SSL for the connection?")
+                                                   .setValue(true)
+                                                   .setDefaultValue(true)
+                                                   .build());
 
     return networkPluginConfig;
 }
