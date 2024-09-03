@@ -9,8 +9,8 @@ class TestQmdiPluginConfig : public QObject {
     void testSetAndGetVariable();
     void testGetVariableWithDefault();
     void testRestoreDefault();
-
     void testModifyAndDefault();
+    void testStringList();
 };
 
 void TestQmdiPluginConfig::testDefaultConstruction() {
@@ -100,6 +100,29 @@ void TestQmdiPluginConfig::testModifyAndDefault() {
 
     networkPluginConfig->setDefault();
     QCOMPARE(networkPluginConfig->getVariable<bool>("useSSL"), true);
+}
+
+void TestQmdiPluginConfig::testStringList() {
+    qmdiPluginConfig *networkPluginConfig = new qmdiPluginConfig();
+    networkPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
+                                                   .setKey("list")
+                                                   .setType(qmdiConfigItem::StringList)
+                                                   .setDisplayName("list")
+                                                   .setDescription("list")
+                                                   .setDefaultValue(QStringList() << "aaa")
+                                                   .setValue(QStringList() << "1"
+                                                                           << "2")
+                                                   .build());
+
+    auto l = networkPluginConfig->getVariable<QStringList>("list");
+    QCOMPARE(l.size(), 2);
+    QCOMPARE(l[0], "1");
+    QCOMPARE(l[1], "2");
+
+    networkPluginConfig->setDefault();
+    l = networkPluginConfig->getVariable<QStringList>("list");
+    QCOMPARE(l.size(), 1);
+    QCOMPARE(l[0], "aaa");
 }
 
 QTEST_MAIN(TestQmdiPluginConfig)

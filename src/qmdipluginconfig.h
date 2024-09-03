@@ -16,6 +16,7 @@ struct qmdiConfigItem {
         UInt32,
         Float,
         Double,
+        StringList,
     };
 
     static ClassType typeFromString(const QString &typeStr);

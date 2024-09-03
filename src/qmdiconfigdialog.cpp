@@ -3,18 +3,95 @@
 #include "qmdipluginconfig.h"
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
 #include <QHBoxLayout>
+#include <QInputDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
+#include <QListWidget>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QSpinBox>
 #include <QStringListModel>
 #include <QVBoxLayout>
+#include <QWidget>
+
+class StringListWidget : public QWidget {
+
+  public:
+    StringListWidget(QWidget *parent = nullptr) : QWidget(parent) {
+        comboBox = new QComboBox(this);
+        addButton = new QPushButton("Add", this);
+        deleteButton = new QPushButton("Delete", this);
+        modifyButton = new QPushButton("Modify", this);
+
+        QVBoxLayout *mainLayout = new QVBoxLayout(this);
+        QHBoxLayout *buttonLayout = new QHBoxLayout();
+
+        buttonLayout->addWidget(addButton);
+        buttonLayout->addWidget(deleteButton);
+        buttonLayout->addWidget(modifyButton);
+
+        mainLayout->addWidget(comboBox);
+        mainLayout->addLayout(buttonLayout);
+
+        mainLayout->setContentsMargins(0, mainLayout->contentsMargins().top(), 0,
+                                       mainLayout->contentsMargins().bottom());
+        buttonLayout->setContentsMargins(0, buttonLayout->contentsMargins().top(), 0,
+                                         buttonLayout->contentsMargins().bottom());
+
+        connect(addButton, &QPushButton::clicked, this, &StringListWidget::addItem);
+        connect(deleteButton, &QPushButton::clicked, this, &StringListWidget::deleteItem);
+        connect(modifyButton, &QPushButton::clicked, this, &StringListWidget::modifyItem);
+    }
+
+    void setList(const QStringList &items) {
+        comboBox->clear();
+        comboBox->addItems(items);
+    }
+
+  private slots:
+    void addItem() {
+        bool ok;
+        QString text = QInputDialog::getText(this, "Add Item", "Item:", QLineEdit::Normal, "", &ok);
+        if (ok && !text.isEmpty()) {
+            comboBox->addItem(text);
+        }
+    }
+
+    void deleteItem() {
+        int index = comboBox->currentIndex();
+        if (index != -1) {
+            comboBox->removeItem(index);
+        } else {
+            QMessageBox::warning(this, "Delete Item", "Please select an item to delete.");
+        }
+    }
+
+    void modifyItem() {
+        int index = comboBox->currentIndex();
+        if (index == -1) {
+            return;
+        }
+        bool ok;
+        QString text = QInputDialog::getText(this, "Modify Item", "Item:", QLineEdit::Normal,
+                                             comboBox->itemText(index), &ok);
+        if (ok && !text.isEmpty()) {
+            comboBox->setItemText(index, text);
+        }
+    }
+
+  private:
+    QComboBox *comboBox;
+    QPushButton *addButton;
+    QPushButton *deleteButton;
+    QPushButton *modifyButton;
+};
 
 qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
     : QDialog(parent), configLayout(new QVBoxLayout), mainLayout(new QHBoxLayout(this)),
@@ -132,6 +209,10 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
         case qmdiConfigItem::Double:
             widget = new QDoubleSpinBox(this);
             static_cast<QDoubleSpinBox *>(widget)->setValue(item.value.toDouble());
+            break;
+        case qmdiConfigItem::StringList:
+            widget = new StringListWidget(this);
+            static_cast<StringListWidget *>(widget)->setList(item.value.toStringList());
             break;
         }
 

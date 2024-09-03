@@ -26,6 +26,8 @@ qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr)
         return Float;
     } else if (lower == "double") {
         return Double;
+    } else if (lower == "stringlist") {
+        return StringList;
     } else {
         return String;
     }
@@ -53,6 +55,8 @@ QString qmdiConfigItem::typeToString(ClassType type) {
         return "Float";
     case Double:
         return "Double";
+    case StringList:
+        return "StringList";
     default:
         return "Unknown"; // Handle unknown or default case
     }

@@ -9,6 +9,7 @@ class TestQmdiConfigItem : public QObject {
     void typeFromString();
     void typeToString();
     void builderSetters();
+    void builderStringList();
     void configDefaults();
 };
 
@@ -23,6 +24,7 @@ void TestQmdiConfigItem::typeFromString() {
     QCOMPARE(qmdiConfigItem::typeFromString("UInt32"), qmdiConfigItem::UInt32);
     QCOMPARE(qmdiConfigItem::typeFromString("Float"), qmdiConfigItem::Float);
     QCOMPARE(qmdiConfigItem::typeFromString("Double"), qmdiConfigItem::Double);
+    QCOMPARE(qmdiConfigItem::typeFromString("StringList"), qmdiConfigItem::StringList);
 
     QCOMPARE(qmdiConfigItem::typeFromString("InvalidType"),
              qmdiConfigItem::String); // Assuming default is String
@@ -39,6 +41,7 @@ void TestQmdiConfigItem::typeToString() {
     QCOMPARE(qmdiConfigItem::typeToString(qmdiConfigItem::UInt32), "UInt32");
     QCOMPARE(qmdiConfigItem::typeToString(qmdiConfigItem::Float), "Float");
     QCOMPARE(qmdiConfigItem::typeToString(qmdiConfigItem::Double), "Double");
+    QCOMPARE(qmdiConfigItem::typeToString(qmdiConfigItem::StringList), "StringList");
 
     QCOMPARE(qmdiConfigItem::typeToString(static_cast<qmdiConfigItem::ClassType>(999)),
              "Unknown"); // Assuming default for unknown types
@@ -61,6 +64,21 @@ void TestQmdiConfigItem::builderSetters() {
     QCOMPARE(item.description, "Example Description");
     QCOMPARE(item.defaultValue.toInt(), 42);
     QCOMPARE(item.value.toInt(), 84);
+}
+
+void TestQmdiConfigItem::builderStringList() {
+    qmdiConfigItem item = qmdiConfigItem::Builder()
+                              .setKey("dns")
+                              .setType(qmdiConfigItem::StringList)
+                              .setDisplayName("DNS deny list")
+                              .setDescription("Where not to connect")
+                              .setValue(QStringList() << "www.yahoo.com"
+                                                      << "cnn.com"
+                                                      << "apple.com")
+                              .setDefaultValue(QStringList())
+                              .build();
+    auto l = item.value.toStringList();
+    QCOMPARE(l.size(), 3);
 }
 
 void TestQmdiConfigItem::configDefaults() {
