@@ -40,6 +40,7 @@ class TestQmdiGlobalConfig : public QObject {
     void testRestoreDefault();
     void testBasicSave();
     void testSaveLoad();
+    void testLoadSchema();
 };
 
 void TestQmdiGlobalConfig::testCodeConstruction() {
@@ -144,6 +145,105 @@ void TestQmdiGlobalConfig::testSaveLoad() {
     QCOMPARE(globalConfig.getVariable<int>("NetworkPlugin", "port"), 423);
     QCOMPARE(globalConfig.getVariable<QString>("NetworkPlugin", "host"), "google.com");
     QCOMPARE(globalConfig.getVariable<bool>("NetworkPlugin", "useSSL"), true);
+}
+
+void TestQmdiGlobalConfig::testLoadSchema() {
+    QString jsonString = R"(
+{
+    "plugins": [
+        {
+            "pluginName": "NetworkPlugin",
+            "description": "Handles network configurations",
+            "configItems": [
+                {
+                    "key": "host",
+                    "type": "String",
+                    "displayName": "Host",
+                    "description": "The network host",
+                    "defaultValue": "localhost"
+                },
+                {
+                    "key": "port",
+                    "type": "Int32",
+                    "displayName": "Port",
+                    "description": "The network port",
+                    "defaultValue": 8080
+                },
+                {
+                    "key": "useSSL",
+                    "type": "Bool",
+                    "displayName": "Use SSL",
+                    "description": "Enable SSL",
+                    "defaultValue": true
+                }
+            ]
+        },
+        {
+            "pluginName": "DatabasePlugin",
+            "description": "Handles database configurations",
+            "configItems": [
+                {
+                    "key": "dbHost",
+                    "type": "String",
+                    "displayName": "Database Host",
+                    "description": "The database host",
+                    "defaultValue": "localhost"
+                },
+                {
+                    "key": "dbPort",
+                    "type": "Int32",
+                    "displayName": "Database Port",
+                    "description": "The database port",
+                    "defaultValue": 5432
+                },
+                {
+                    "key": "useSSL",
+                    "type": "Bool",
+                    "displayName": "Use SSL",
+                    "description": "Enable SSL for database",
+                    "defaultValue": false
+                }
+            ]
+        }
+    ]
+}
+    )";
+    auto jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8());
+    auto globalConfig = qmdiGlobalConfig();
+    globalConfig.loadDefsFromJson(jsonDoc.object());
+    QCOMPARE(globalConfig.plugins.size(), 2);
+
+    QCOMPARE(globalConfig.plugins[0]->pluginName, "NetworkPlugin");
+    QCOMPARE(globalConfig.plugins[0]->description, "Handles network configurations");
+    QCOMPARE(globalConfig.plugins[0]->configItems.length(), 3);
+    QCOMPARE(globalConfig.plugins[0]->configItems[0].displayName, "Host");
+    QCOMPARE(globalConfig.plugins[0]->configItems[0].key, "host");
+    QCOMPARE(globalConfig.plugins[0]->configItems[0].defaultValue, "localhost");
+    QCOMPARE(globalConfig.getVariable<QString>("NetworkPlugin", "host"), "localhost");
+    QCOMPARE(globalConfig.plugins[0]->configItems[1].displayName, "Port");
+    QCOMPARE(globalConfig.plugins[0]->configItems[1].key, "port");
+    QCOMPARE(globalConfig.plugins[0]->configItems[1].defaultValue, 8080);
+    QCOMPARE(globalConfig.getVariable<int>("NetworkPlugin", "port"), 8080);
+    QCOMPARE(globalConfig.plugins[0]->configItems[2].displayName, "Use SSL");
+    QCOMPARE(globalConfig.plugins[0]->configItems[2].key, "useSSL");
+    QCOMPARE(globalConfig.plugins[0]->configItems[2].defaultValue, true);
+    QCOMPARE(globalConfig.getVariable<bool>("NetworkPlugin", "useSSL"), true);
+
+    QCOMPARE(globalConfig.plugins[1]->pluginName, "DatabasePlugin");
+    QCOMPARE(globalConfig.plugins[1]->description, "Handles database configurations");
+    QCOMPARE(globalConfig.plugins[1]->configItems.length(), 3);
+    QCOMPARE(globalConfig.plugins[1]->configItems[0].displayName, "Database Host");
+    QCOMPARE(globalConfig.plugins[1]->configItems[0].key, "dbHost");
+    QCOMPARE(globalConfig.plugins[1]->configItems[0].defaultValue, "localhost");
+    QCOMPARE(globalConfig.getVariable<QString>("DatabasePlugin", "dbHost"), "localhost");
+    QCOMPARE(globalConfig.plugins[1]->configItems[1].displayName, "Database Port");
+    QCOMPARE(globalConfig.plugins[1]->configItems[1].key, "dbPort");
+    QCOMPARE(globalConfig.plugins[1]->configItems[1].defaultValue, 5432);
+    QCOMPARE(globalConfig.getVariable<int>("DatabasePlugin", "dbPort"), 5432);
+    QCOMPARE(globalConfig.plugins[1]->configItems[2].displayName, "Use SSL");
+    QCOMPARE(globalConfig.plugins[1]->configItems[2].key, "useSSL");
+    QCOMPARE(globalConfig.plugins[1]->configItems[2].defaultValue, false);
+    QCOMPARE(globalConfig.getVariable<bool>("DatabasePlugin", "useSSL"), false);
 }
 
 QTEST_GUILESS_MAIN(TestQmdiGlobalConfig)
