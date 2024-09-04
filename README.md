@@ -23,21 +23,30 @@ include(cmake/CPM.cmake)
 
 # you probably don't need to build examples into your project
 set(QMDILIB_BUILD_EXAMPLES off)
-CPMAddPackage("gh:elcuco/qmdlib#main")
+CPMAddPackage("gh:diegoiast/qmdlib#main")
 add_executable(foo  ... )
 target_link_libraries(foo PRIVATE qmdlib)
 ```
 
-Then follow the exaple https://github.com/elcuco/qmdilib/blob/master/demos/demo1/mainwindow.cpp 
+Then follow the exaple https://github.com/diegoiast/qmdilib/blob/main/demos/demo1/mainwindow.cpp
 on how to merge clients on/off by demand. 
 
-See https://github.com/elcuco/qmdilib/blob/master/demos/demo2/mainwindow2.cpp 
+See https://github.com/diegoiast/qmdilib/blob/main/demos/demo2/mainwindow2.cpp
 for instrctions on adding different types of clients into a QTabWidget
 
 The dessign of this library can be shown in this UML:
 
 ![UML view](doc/qmdilib_basic_view.png)
 
+## Config
+
+A new feature added to this library, is a shared configuration with schema. Configuration
+is done per module (programmer defined), and you can query keys (values) from it. The user
+can choose to restore the configuration to the default values. UI for the configuration
+is done automatically (constructed from the schema provided).
+
+See https://github.com/diegoiast/qmdilib/blob/main/demos/demo3/main3.cpp for such example.
+Full API usage can be see in the unit tests.
 
 ## License
 The license of this library is LGPL version 2 or 3 as you need.
