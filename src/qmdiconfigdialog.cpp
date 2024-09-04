@@ -55,6 +55,14 @@ class StringListWidget : public QWidget {
         comboBox->addItems(items);
     }
 
+    QStringList getList() {
+        QStringList items;
+        for (int i = 0; i < comboBox->count(); ++i) {
+            items.append(comboBox->itemText(i));
+        }
+        return items;
+    }
+
   private slots:
     void addItem() {
         bool ok;
@@ -245,14 +253,31 @@ void qmdiConfigDialog::acceptChanges() {
     for (qmdiConfigItem &configItem : pluginConfig->configItems) {
         if (widgetMap.contains(configItem.key)) {
             QWidget *widget = widgetMap[configItem.key];
-            if (configItem.type == qmdiConfigItem::String) {
+
+            switch (configItem.type) {
+            case qmdiConfigItem::String:
+                break;
                 configItem.value = static_cast<QLineEdit *>(widget)->text();
-            } else if (configItem.type == qmdiConfigItem::Bool) {
+            case qmdiConfigItem::Bool:
                 configItem.value = static_cast<QCheckBox *>(widget)->isChecked();
-            } else if (configItem.type == qmdiConfigItem::UInt16) {
+                break;
+            case qmdiConfigItem::Int8:
+            case qmdiConfigItem::Int16:
+            case qmdiConfigItem::Int32:
                 configItem.value = static_cast<QSpinBox *>(widget)->value();
-            } else if (configItem.type == qmdiConfigItem::Float) {
+                break;
+            case qmdiConfigItem::UInt8:
+            case qmdiConfigItem::UInt16:
+            case qmdiConfigItem::UInt32:
+                configItem.value = static_cast<QSpinBox *>(widget)->value();
+                break;
+            case qmdiConfigItem::Float:
+            case qmdiConfigItem::Double:
                 configItem.value = static_cast<QDoubleSpinBox *>(widget)->value();
+                break;
+            case qmdiConfigItem::StringList:
+                configItem.value = static_cast<StringListWidget *>(widget)->getList();
+                break;
             }
         }
     }

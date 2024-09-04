@@ -150,7 +150,17 @@ QJsonObject qmdiGlobalConfig::asJson() const {
         for (const qmdiConfigItem &item : std::as_const(pluginConfig->configItems)) {
             QJsonObject itemObject;
             itemObject["key"] = item.key;
-            itemObject["value"] = item.value.toString();
+
+            if (item.value.typeId() == QMetaType::QStringList) {
+                QStringList stringList = item.value.value<QStringList>();
+                QJsonArray jsonArray;
+                for (const QString &str : std::as_const(stringList)) {
+                    jsonArray.append(str);
+                }
+                itemObject["value"] = jsonArray;
+            } else {
+                itemObject["value"] = item.value.toString();
+            }
             configItemsArray.append(itemObject);
         }
         pluginObject["configItems"] = configItemsArray;
@@ -195,11 +205,44 @@ void qmdiGlobalConfig::fromJson(QJsonObject jsonObj) {
         const QJsonArray configItemsArray = pluginObj["configItems"].toArray();
         for (auto &p : pluginConfig->configItems) {
             auto savedConfig = findKey(configItemsArray, p.key);
-            if (savedConfig.empty()) {
-                p.value = p.defaultValue;
-            } else {
-                // todo - port to the correct type
-                p.value = savedConfig.value("value").toString();
+            auto val = savedConfig.value("value");
+
+            switch (p.type) {
+            case qmdiConfigItem::StringList: {
+                QJsonArray jsonArray = val.toArray();
+                QStringList stringList;
+                for (const auto &item : std::as_const(jsonArray)) {
+                    if (item.isString()) {
+                        stringList.append(item.toString());
+                    }
+                }
+                p.value = stringList;
+                break;
+            }
+            case qmdiConfigItem::Bool:
+                p.value = val.toVariant().toBool();
+                break;
+
+            case qmdiConfigItem::Int8:
+            case qmdiConfigItem::Int16:
+            case qmdiConfigItem::Int32:
+                p.value = val.toInteger();
+                break;
+
+            case qmdiConfigItem::UInt8:
+            case qmdiConfigItem::UInt16:
+            case qmdiConfigItem::UInt32:
+                p.value = val.toVariant().toUInt();
+                break;
+
+            case qmdiConfigItem::Float:
+            case qmdiConfigItem::Double:
+                p.value = val.isDouble();
+                break;
+
+            case qmdiConfigItem::String:
+                p.value = val.toString();
+                break;
             }
         }
     }

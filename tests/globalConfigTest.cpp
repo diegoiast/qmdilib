@@ -41,6 +41,7 @@ class TestQmdiGlobalConfig : public QObject {
     void testBasicSave();
     void testSaveLoad();
     void testLoadSchema();
+    void testStringList();
 };
 
 void TestQmdiGlobalConfig::testCodeConstruction() {
@@ -77,7 +78,6 @@ void TestQmdiGlobalConfig::testBasicSave() {
     globalConfig.addPluginConfig(getNetworkConfig());
 
     auto json = globalConfig.asJson();
-
     QVERIFY(!json.isEmpty());
     QVERIFY(json["NetworkPlugin"].isObject());
     QVERIFY(json["NetworkPlugin"].toObject()["configItems"].isArray());
@@ -244,6 +244,39 @@ void TestQmdiGlobalConfig::testLoadSchema() {
     QCOMPARE(globalConfig.plugins[1]->configItems[2].key, "useSSL");
     QCOMPARE(globalConfig.plugins[1]->configItems[2].defaultValue, false);
     QCOMPARE(globalConfig.getVariable<bool>("DatabasePlugin", "useSSL"), false);
+}
+
+void TestQmdiGlobalConfig::testStringList() {
+    auto listConfig = new qmdiPluginConfig();
+    listConfig->pluginName = "list test";
+    listConfig->configItems.push_back(qmdiConfigItem::Builder()
+                                          .setKey("list")
+                                          .setType(qmdiConfigItem::StringList)
+                                          .setDisplayName("list")
+                                          .setDescription("list")
+                                          .setDefaultValue(QStringList() << "aaa")
+                                          .setValue(QStringList() << "1"
+                                                                  << "2")
+                                          .build());
+    auto globalConfig = qmdiGlobalConfig();
+    globalConfig.addPluginConfig(listConfig);
+
+    auto json = globalConfig.asJson();
+    QVERIFY(!json.isEmpty());
+    QVERIFY(json["list test"].isObject());
+    QVERIFY(!json["list test"].toObject().isEmpty());
+    QVERIFY(json["list test"].toObject()["configItems"].isArray());
+    QCOMPARE(json["list test"].toObject()["configItems"].toArray().size(), 1);
+    auto l = json["list test"].toObject()["configItems"].toArray()[0];
+    QVERIFY(l.isObject());
+    QCOMPARE(l.toObject()["key"].toString(), "list");
+    QVERIFY(l.toObject()["value"].isArray());
+    QCOMPARE(l.toObject()["value"].toArray()[0].toString(), "1");
+    QCOMPARE(l.toObject()["value"].toArray()[1].toString(), "2");
+
+    globalConfig.loadFromJson(json);
+    auto ll = globalConfig.getVariable<QStringList>("list test", "list");
+    QVERIFY(!ll.isEmpty());
 }
 
 QTEST_GUILESS_MAIN(TestQmdiGlobalConfig)
