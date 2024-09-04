@@ -1,3 +1,11 @@
+/**
+ * \file qmdiconfigdialog.cpp
+ * \brief Implementation config dialog
+ * \author Diego Iastrubni (diegoiast@gmail.com)
+ * SPDX-License-Identifier: LGPL 2 or 3
+ * \see qmdiActionGroup
+ */
+
 #include "qmdiconfigdialog.h"
 #include "qmdiglobalconfig.h"
 #include "qmdipluginconfig.h"

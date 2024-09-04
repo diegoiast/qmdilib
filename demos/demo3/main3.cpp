@@ -1,9 +1,15 @@
+/**
+ * \file main3.cpp
+ * \brief Configuration demo
+ * \author Diego Iastrubni (diegoiast@gmail.com)
+ * License GPL 2 or 3
+ */
+
 #include <QApplication>
 #include <qmdiconfigdialog.h>
 #include <qmdiglobalconfig.h>
 
 auto getNetworkConfig() -> qmdiPluginConfig * {
-
     qmdiPluginConfig *networkPluginConfig = new qmdiPluginConfig();
     networkPluginConfig->pluginName = "NetworkPlugin";
     networkPluginConfig->description = "Configuration for network settings";
@@ -77,7 +83,7 @@ int main(int argc, char **argv) {
 
     // We can store the config on files. Only the values are saved.
     // We will load the user modifications
-    // globalConfig.loadFromFile("demo3-config.json");
+    globalConfig.loadFromFile("demo3-config.json");
 
     QApplication app(argc, argv);
 
@@ -85,8 +91,7 @@ int main(int argc, char **argv) {
     // depending on the config defined by the plugins
     qmdiConfigDialog dialog(&globalConfig);
     if (dialog.exec()) {
-        // ... and oviously saved into a file. Load the app again
-        // to reload the config
+        // ... and oviously saved into a file. Load the app again to reload the config
         globalConfig.saveToFile("demo3-config.json");
     }
 }

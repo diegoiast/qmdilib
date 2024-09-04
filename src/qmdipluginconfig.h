@@ -1,3 +1,11 @@
+/**
+ * \file qmdipluginconfig.h
+ * \brief Definition of the plugin config
+ * \author Diego Iastrubni (diegoiast@gmail.com)
+ * SPDX-License-Identifier: LGPL 2 or 3
+ * \see qmdiActionGroup
+ */
+
 #pragma once
 
 #include <QList>
@@ -30,7 +38,6 @@ struct qmdiConfigItem {
     QVariant defaultValue;
     QVariant value;
 
-    // Nested builder class
     struct Builder {
         Builder &setKey(const QString &key);
         Builder &setType(const ClassType type);

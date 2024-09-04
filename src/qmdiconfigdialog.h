@@ -1,3 +1,11 @@
+/**
+ * \file qmdiconfigdialog.h
+ * \brief Definition config dialog
+ * \author Diego Iastrubni (diegoiast@gmail.com)
+ * SPDX-License-Identifier: LGPL 2 or 3
+ * \see qmdiActionGroup
+ */
+
 #pragma once
 
 #include <QDialog>
@@ -14,6 +22,16 @@ class qmdiGlobalConfig;
 class qmdiPluginConfig;
 class qmdiConfigItem;
 
+/**
+ * @brief A dialog which can modify a global configuration
+ *
+ * This class lets the user of your application the ability to modify configuraton.
+ *
+ * This class is stand alone, and its up to you, the developer, to intergrate it into
+ * you application, and adapt to the changes on the config (or even saving to disk).
+ *
+ * Seee \file main3.cpp as an example of usage.
+ */
 class qmdiConfigDialog : public QDialog {
     Q_OBJECT
 

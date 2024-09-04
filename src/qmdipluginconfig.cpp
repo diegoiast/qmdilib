@@ -1,3 +1,11 @@
+/**
+ * \file qmdipluginconfig.h
+ * \brief Implementation of the plugin config
+ * \author Diego Iastrubni (diegoiast@gmail.com)
+ * SPDX-License-Identifier: LGPL 2 or 3
+ * \see qmdiActionGroup
+ */
+
 #include "qmdipluginconfig.h"
 
 qmdiConfigItem::qmdiConfigItem() {}

@@ -1,3 +1,11 @@
+/**
+ * \file qmdipluginconfig.h
+ * \brief Implementation of the global config
+ * \author Diego Iastrubni (diegoiast@gmail.com)
+ * SPDX-License-Identifier: LGPL 2 or 3
+ * \see qmdiActionGroup
+ */
+
 #include "qmdiglobalconfig.h"
 #include <QDebug>
 #include <QFile>
