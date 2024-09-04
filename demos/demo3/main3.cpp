@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     auto networkPluginConfig = getNetworkConfig();
     globalConfig.addPluginConfig(networkPluginConfig);
 
-    // API for accsing config:
+    // API for accesing config:
     {
         // We can restore the defaults. When initializing the config
         // the values are set to defaults, so this is not strickly needed here.
