@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
-
-project (qmdilib) 
+project(qmdilib VERSION 0.1.1 LANGUAGES CXX)
 
 
 option(QMDILIB_BUILD_EXAMPLES "Build examples for qmdilib" ON)
 option(QMDILIB_USE_MOLD "Link using mold, if available" ON)
+option(QMDILIB_TESTS "Build and run tests for qmdilib" ON)
 
 include(FetchContent)
 include(cmake/CPM.cmake)
@@ -26,8 +26,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QMDILIB_VERSION "0.1.0")
 set(QMDILIB_SOVERSION "0")
 
-
-find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport)
+find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport Test)
 
 add_library(qmdilib 
     src/qmdiactiongroup.h
@@ -42,7 +41,15 @@ add_library(qmdilib
     src/qmdiserver.cpp
     src/qmditabwidget.h
     src/qmditabwidget.cpp
+
+    src/qmdiconfigdialog.cpp
+    src/qmdiconfigdialog.h
+    src/qmdipluginconfig.cpp
+    src/qmdipluginconfig.h
+    src/qmdiglobalconfig.cpp
+    src/qmdiglobalconfig.h
 )
+
 target_link_libraries(qmdilib Qt::Widgets)
 target_include_directories(qmdilib PUBLIC src)
 set_property(TARGET qmdilib PROPERTY AUTOMOC ON)
@@ -68,6 +75,13 @@ add_executable(demo2
 set_property(TARGET demo2 PROPERTY AUTOMOC ON)
 target_link_libraries(demo2 qmdilib)
 target_include_directories(demo2 PRIVATE demos/common)
+
+
+add_executable(demo3
+    demos/demo3/main3.cpp
+)
+set_property(TARGET demo3 PROPERTY AUTOMOC ON)
+target_link_libraries(demo3 qmdilib)
 
 add_executable(pluginmanager
     demos/common/qexeditor.cpp
@@ -108,5 +122,24 @@ set_property(TARGET pluginmanager PROPERTY AUTOUIC ON)
 set_property(TARGET pluginmanager PROPERTY AUTORCC ON)
 target_include_directories(pluginmanager PRIVATE demos/common demos/plugin-demo/)
 target_link_libraries(pluginmanager qmdilib)
+endif()
+
+if (QMDILIB_TESTS)
+enable_testing()
+
+add_executable(configItemTests tests/configItemTests.cpp)
+target_link_libraries(configItemTests qmdilib Qt6::Test)
+set_property(TARGET configItemTests PROPERTY AUTOMOC ON)
+add_test(NAME qmdiConfigItemTest COMMAND configItemTests)
+
+add_executable(pluginConfigTests tests/pluginConfigTests.cpp)
+target_link_libraries(pluginConfigTests qmdilib Qt6::Test)
+set_property(TARGET pluginConfigTests PROPERTY AUTOMOC ON)
+add_test(NAME qmdiPluginConfigTests COMMAND pluginConfigTests)
+
+add_executable(globalConfigTests tests/globalConfigTest.cpp)
+target_link_libraries(globalConfigTests qmdilib Qt6::Test)
+set_property(TARGET globalConfigTests PROPERTY AUTOMOC ON)
+add_test(NAME globalConfigTests COMMAND globalConfigTests)
 
 endif()
