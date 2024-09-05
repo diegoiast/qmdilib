@@ -10,6 +10,7 @@
 
 #include "pluginmanager.h"
 #include "qmdiclient.h"
+#include "qmdipluginconfig.h"
 #include "qmdiserver.h"
 #include <QObject>
 
@@ -59,6 +60,8 @@ class IPlugin : public QObject, public qmdiClient {
         }
         return dynamic_cast<PluginManager *>(mdiServer->mdiHost);
     }
+
+    qmdiPluginConfig config;
 
   protected:
     QString name;

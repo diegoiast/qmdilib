@@ -124,6 +124,7 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
 
     configContainer->setLayout(configAndButtonsLayout);
     configAndButtonsLayout->addLayout(configLayout);
+    configAndButtonsLayout->setContentsMargins(0, 0, 0, 0);
 
     QSpacerItem *spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     configAndButtonsLayout->addItem(spacer);
@@ -131,9 +132,10 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
     mainLayout->addWidget(configContainer, 3);
 
     QStringList pluginNames;
-    for (qmdiPluginConfig *pluginConfig : globalConfig->plugins) {
+    for (auto const pluginConfig : std::as_const(globalConfig->plugins)) {
         pluginNames.append(pluginConfig->pluginName);
     }
+    pluginListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     pluginModel->setStringList(pluginNames);
 
     if (!pluginNames.isEmpty()) {
@@ -169,69 +171,82 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
     widgetMap.clear();
 
     for (const qmdiConfigItem &item : pluginConfig->configItems) {
-        QLabel *label = new QLabel(item.displayName, this);
-        configLayout->addWidget(label);
-
+        QLabel *label = nullptr;
         QWidget *widget = nullptr;
+
         switch (item.type) {
         case qmdiConfigItem::String:
+            label = new QLabel(item.displayName, this);
             widget = new QLineEdit(this);
             static_cast<QLineEdit *>(widget)->setText(item.value.toString());
             break;
         case qmdiConfigItem::Bool:
             widget = new QCheckBox(this);
             static_cast<QCheckBox *>(widget)->setChecked(item.value.toBool());
+            static_cast<QCheckBox *>(widget)->setText(item.displayName);
             break;
         case qmdiConfigItem::Int8:
+            label = new QLabel(item.displayName, this);
             widget = new QSpinBox(this);
             static_cast<QSpinBox *>(widget)->setMinimum(INT8_MIN);
             static_cast<QSpinBox *>(widget)->setMaximum(INT8_MAX);
             static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
             break;
         case qmdiConfigItem::Int16:
+            label = new QLabel(item.displayName, this);
             widget = new QSpinBox(this);
             static_cast<QSpinBox *>(widget)->setMinimum(INT16_MIN);
             static_cast<QSpinBox *>(widget)->setMaximum(INT16_MAX);
             static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
             break;
         case qmdiConfigItem::Int32:
+            label = new QLabel(item.displayName, this);
             widget = new QSpinBox(this);
             static_cast<QSpinBox *>(widget)->setMinimum(INT32_MIN);
             static_cast<QSpinBox *>(widget)->setMaximum(INT32_MAX);
             static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
             break;
         case qmdiConfigItem::UInt8:
+            label = new QLabel(item.displayName, this);
             widget = new QSpinBox(this);
             static_cast<QSpinBox *>(widget)->setMinimum(0);
             static_cast<QSpinBox *>(widget)->setMaximum(UINT8_MAX);
             static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
             break;
         case qmdiConfigItem::UInt16:
+            label = new QLabel(item.displayName, this);
             widget = new QSpinBox(this);
             static_cast<QSpinBox *>(widget)->setMinimum(0);
             static_cast<QSpinBox *>(widget)->setMaximum(UINT16_MAX);
             static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
             break;
         case qmdiConfigItem::UInt32:
+            label = new QLabel(item.displayName, this);
             widget = new QSpinBox(this);
             static_cast<QSpinBox *>(widget)->setMinimum(0);
             static_cast<QSpinBox *>(widget)->setMaximum(UINT32_MAX);
             static_cast<QSpinBox *>(widget)->setValue(item.value.toInt());
             break;
         case qmdiConfigItem::Float:
+            label = new QLabel(item.displayName, this);
             widget = new QDoubleSpinBox(this);
             static_cast<QDoubleSpinBox *>(widget)->setValue(item.value.toFloat());
             break;
         case qmdiConfigItem::Double:
+            label = new QLabel(item.displayName, this);
             widget = new QDoubleSpinBox(this);
             static_cast<QDoubleSpinBox *>(widget)->setValue(item.value.toDouble());
             break;
         case qmdiConfigItem::StringList:
+            label = new QLabel(item.displayName, this);
             widget = new StringListWidget(this);
             static_cast<StringListWidget *>(widget)->setList(item.value.toStringList());
             break;
         }
 
+        if (label) {
+            configLayout->addWidget(label);
+        }
         if (widget) {
             configLayout->addWidget(widget);
             widgetMap[item.key] = widget;

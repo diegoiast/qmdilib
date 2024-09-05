@@ -8,6 +8,7 @@
  * \see PluginManager
  */
 
+#include "qmdiglobalconfig.h"
 #include "qmdihost.h"
 #include <QMainWindow>
 
@@ -84,6 +85,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void initGUI();
     QList<IPlugin *> plugins;
     qmdiTabWidget *tabWidget;
+    qmdiGlobalConfig config;
     ConfigDialog *configDialog;
     QSettings *settingsManager;
     Ui::PluginManagedWindow *ui;

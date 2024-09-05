@@ -864,6 +864,9 @@ void PluginManager::addPlugin(IPlugin *newplugin) {
 
     if (newplugin->enabled) {
         enablePlugin(newplugin);
+        if (!newplugin->config.configItems.isEmpty()) {
+            config.addPluginConfig(&newplugin->config);
+        }
     }
 
     if (settingsManager) {
@@ -1104,7 +1107,7 @@ void PluginManager::focusCenter() {
  */
 void PluginManager::on_actionOpen_triggered() {
     static QString workingDir;
-    QString extens, e, allExtens;
+    QString extens, allExtens;
     QStringList extensAvailable;
     IPlugin *p;
 
@@ -1124,12 +1127,13 @@ void PluginManager::on_actionOpen_triggered() {
             extens += ";;";
         }
 
-        auto regexp = QRegularExpression("\\((.*)\\)");
+        auto static regexp = QRegularExpression("\\((.*)\\)");
+        auto static regexp2 = QRegularExpression("\\b*\\b");
         auto m = regexp.match(s);
         auto s1 = m.captured(1).simplified();
         if (!s1.isEmpty()) {
             s1.remove("*.*");
-            s1.remove(QRegularExpression("\\b*\\b"));
+            s1.remove(regexp2);
             allExtens += " " + s1;
         }
     }
@@ -1197,58 +1201,10 @@ void PluginManager::on_actionConfigure_triggered() {
     configDialog->show();
     configDialog->setFocus();
 #else
-    qmdiGlobalConfig config(this); // = qmdiGlobalConfig();
-
-    // config.loadFromFile("config.json");
-
-    qmdiPluginConfig *networkPluginConfig = new qmdiPluginConfig();
-    networkPluginConfig->pluginName = "NetworkPlugin";
-    networkPluginConfig->description = "Configuration for network settings";
-    networkPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
-                                                   .setKey("host")
-                                                   .setType(qmdiConfigItem::String)
-                                                   .setDisplayName("Host")
-                                                   .setDescription("Network host address")
-                                                   .setDefaultValue("localhost")
-                                                   .build());
-    networkPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
-                                                   .setKey("port")
-                                                   .setType(qmdiConfigItem::UInt16)
-                                                   .setDisplayName("Port")
-                                                   .setDescription("Network port number")
-                                                   .setDefaultValue(8080)
-                                                   .build());
-    networkPluginConfig->configItems.push_back(
-        qmdiConfigItem::Builder()
-            .setKey("useSSL")
-            .setType(qmdiConfigItem::Bool)
-            .setDisplayName("Use ssl")
-            .setDescription("Whether to use SSL for the connection")
-            .setValue(true)
-            .build());
-    config.addPluginConfig(networkPluginConfig);
-
-    // static auto first = true;
-
-    // if (!first) {
-    config.loadFromFile("diego.json");
-    // first = false;
-    // }
-
-    {
-        auto host = networkPluginConfig->getVariable<QString>("host");
-        auto port = networkPluginConfig->getVariable<int>("port");
-        auto useSSL = networkPluginConfig->getVariable<bool>("useSSL");
-    }
-    {
-        auto host = config.getVariable<QString>("NetworkPlugin", "host");
-        auto port = config.getVariable<int>("NetworkPlugin", "port");
-        auto useSSL = config.getVariable<bool>("NetworkPlugin", "useSSL");
-    }
-
+    // config.loadFromFile("diego.json");
     qmdiConfigDialog dialog(&config, this);
     if (dialog.exec()) {
-        config.saveToFile("diego.json");
+        // config.saveToFile("diego.json");
     }
 #endif
 }
