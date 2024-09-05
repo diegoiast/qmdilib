@@ -63,6 +63,9 @@ class IPlugin : public QObject, public qmdiClient {
 
     qmdiPluginConfig config;
 
+  public slots:
+    virtual void configurationHasBeenModified() {}
+
   protected:
     QString name;
     QString author;

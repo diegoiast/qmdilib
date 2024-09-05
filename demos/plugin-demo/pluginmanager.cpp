@@ -873,6 +873,9 @@ void PluginManager::addPlugin(IPlugin *newplugin) {
     if (settingsManager) {
         newplugin->loadConfig(*settingsManager);
     }
+
+    connect(this, &PluginManager::configurationUpdated, newplugin,
+            &IPlugin::configurationHasBeenModified);
 }
 
 /**
@@ -1209,6 +1212,8 @@ void PluginManager::on_actionConfigure_triggered() {
         auto configFilePath = filePath + "/qtedit4.conf";
         config.saveToFile(configFilePath);
     }
+
+    emit configurationUpdated();
 #endif
 }
 

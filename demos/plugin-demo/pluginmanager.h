@@ -81,6 +81,9 @@ class PluginManager : public QMainWindow, public qmdiHost {
 
     void loadConfig(const QString &fileName);
 
+  signals:
+    void configurationUpdated();
+
   protected:
     PanelState westState, eastState, southState;
 
