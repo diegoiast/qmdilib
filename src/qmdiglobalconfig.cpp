@@ -86,10 +86,8 @@ bool qmdiGlobalConfig::loadDefsFromJson(const QJsonObject &jsonObject) {
             case qmdiConfigItem::Int32:
                 item.defaultValue = defaultValue.toInt();
                 break;
-                break;
             case qmdiConfigItem::UInt8:
                 item.defaultValue = defaultValue.toInt();
-                break;
                 break;
             case qmdiConfigItem::UInt16:
                 item.defaultValue = defaultValue.toInt();
@@ -102,6 +100,9 @@ bool qmdiGlobalConfig::loadDefsFromJson(const QJsonObject &jsonObject) {
                 break;
             case qmdiConfigItem::Double:
                 item.defaultValue = defaultValue.toDouble();
+                break;
+            case qmdiConfigItem::StringList:
+                item.defaultValue = defaultValue.toVariant().toStringList();
                 break;
             }
 
