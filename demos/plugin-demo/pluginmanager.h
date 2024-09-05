@@ -79,6 +79,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
 
     size_t visibleTabs() const;
 
+    void loadConfig(const QString &fileName);
+
   protected:
     PanelState westState, eastState, southState;
 

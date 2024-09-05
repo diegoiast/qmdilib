@@ -16,6 +16,7 @@
 #include <QMenuBar>
 #include <QSettings>
 #include <QStandardItemModel>
+#include <QStandardPaths>
 #include <QTabWidget>
 #include <QToolBar>
 #include <QToolButton>
@@ -1204,7 +1205,9 @@ void PluginManager::on_actionConfigure_triggered() {
     // config.loadFromFile("diego.json");
     qmdiConfigDialog dialog(&config, this);
     if (dialog.exec()) {
-        // config.saveToFile("diego.json");
+        auto filePath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+        auto configFilePath = filePath + "/qtedit4.conf";
+        config.saveToFile(configFilePath);
     }
 #endif
 }
@@ -1291,3 +1294,5 @@ void PluginManager::on_actionHideGUI_changed() {
 }
 
 size_t PluginManager::visibleTabs() const { return tabWidget->count(); }
+
+void PluginManager::loadConfig(const QString &fileName) { config.loadFromFile(fileName); }
