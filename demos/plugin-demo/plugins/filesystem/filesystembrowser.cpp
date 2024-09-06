@@ -249,6 +249,25 @@ FileSystemBrowserPlugin::FileSystemBrowserPlugin() {
     sVersion = "0.0.1";
     autoEnabled = true;
     alwaysEnabled = false;
+
+    config.pluginName = "FileBrowserPlugin";
+    config.configItems.push_back(qmdiConfigItem::Builder()
+                                     .setKey(Config::DisplayTreeKey)
+                                     .setUserEditable(false)
+                                     .setType(qmdiConfigItem::Bool)
+                                     .build());
+    config.configItems.push_back(qmdiConfigItem::Builder()
+                                     .setKey(Config::DirectoryKey)
+                                     .setDefaultValue("")
+                                     .setType(qmdiConfigItem::String)
+                                     .setUserEditable(false)
+                                     .build());
+    config.configItems.push_back(qmdiConfigItem::Builder()
+                                     .setKey(Config::FilterKey)
+                                     .setDefaultValue("")
+                                     .setType(qmdiConfigItem::String)
+                                     .setUserEditable(false)
+                                     .build());
 }
 
 FileSystemBrowserPlugin::~FileSystemBrowserPlugin() {}
@@ -271,19 +290,16 @@ void FileSystemBrowserPlugin::on_client_unmerged(qmdiHost *host) {
 }
 
 void FileSystemBrowserPlugin::loadConfig(QSettings &settings) {
-    settings.beginGroup("FileBrowserPlugin");
-    auto savedFilter = settings.value("filter", "").toString();
-    auto savedDir = settings.value("directory", QDir::homePath()).toString();
-    auto isTreeVisible = settings.value("display-tree", true).toBool();
-    
+    IPlugin::loadConfig(settings);
+    auto savedDir = getConfig().getDirectory();
+    auto savedFilter = getConfig().getFilter();
+    auto isTreeVisible = getConfig().getDisplayTree();
+    auto indexPath = this->panel->model->index(savedDir);
+
     this->panel->filterEdit->setText(savedFilter);
     this->panel->rootPathEdit->setText(savedDir);
-    settings.endGroup();
-
-    auto indexPath = this->panel->model->index(savedDir);
     this->panel->treeView->setRootIndex(indexPath);
     this->panel->iconView->setRootIndex(indexPath);
-    
     if (isTreeVisible) {
         this->panel->showTreeView();
     } else {
@@ -292,11 +308,10 @@ void FileSystemBrowserPlugin::loadConfig(QSettings &settings) {
 }
 
 void FileSystemBrowserPlugin::saveConfig(QSettings &settings) {
-    settings.beginGroup("FileBrowserPlugin");
-    settings.setValue("filter", this->panel->filterEdit->text());
-    settings.setValue("directory", this->panel->rootPathEdit->text());
-    settings.setValue("display-tree", this->panel->isTreeVisible);
-    settings.endGroup();
+    config.setVariable(Config::DisplayTreeKey, this->panel->isTreeVisible);
+    config.setVariable(Config::DirectoryKey, this->panel->rootPathEdit->text());
+    config.setVariable(Config::DisplayTreeKey, this->panel->isTreeVisible);
+    IPlugin::saveConfig(settings);
 }
 
 #include "filesystembrowser.moc"

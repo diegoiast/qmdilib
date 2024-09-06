@@ -37,6 +37,7 @@ struct qmdiConfigItem {
     QString description;
     QVariant defaultValue;
     QVariant value;
+    bool userEditable;
 
     struct Builder {
         Builder &setKey(const QString &key);
@@ -45,6 +46,7 @@ struct qmdiConfigItem {
         Builder &setDescription(const QString &description);
         Builder &setDefaultValue(const QVariant &defaultValue);
         Builder &setValue(const QVariant &value);
+        Builder &setUserEditable(const bool value);
 
         qmdiConfigItem build() const;
 
@@ -55,6 +57,7 @@ struct qmdiConfigItem {
         QString description;
         QVariant defaultValue;
         QVariant value;
+        bool userEditable = true;
     };
     void setDefault();
 };
@@ -67,6 +70,7 @@ class qmdiPluginConfig {
 
     qmdiPluginConfig() = default;
     void setDefault();
+    int editableConfigs() const;
 
     template <typename T> void setVariable(const QString &key, T value) {
         for (auto &item : configItems) {

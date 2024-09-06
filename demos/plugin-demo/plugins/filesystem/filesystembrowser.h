@@ -14,6 +14,17 @@ class FileSystemWidget;
 
 class FileSystemBrowserPlugin : public IPlugin {
   public:
+    struct Config {
+        CONFIG_DEFINE(DisplayTree, bool);
+        CONFIG_DEFINE(Filter, QString);
+        CONFIG_DEFINE(Directory, QString);
+        qmdiPluginConfig *config;
+    };
+    Config &getConfig() {
+        static Config configObject{&this->config};
+        return configObject;
+    }
+
     FileSystemBrowserPlugin();
     ~FileSystemBrowserPlugin();
     virtual void on_client_merged(qmdiHost *host) override;

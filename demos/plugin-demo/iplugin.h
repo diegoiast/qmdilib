@@ -21,6 +21,18 @@ class QAction;
 class QActionGroup;
 class QIcon;
 
+// Used to help building config
+// clang-format off
+#define CONFIG_DEFINE(key, type) \
+    static constexpr auto key##Key = #key; \
+    type get##key() const { \
+        return config->getVariable<type>(key##Key); \
+    } \
+    void set##key(const type &value) { \
+        config->setVariable<type>(key##Key, value); \
+    }
+// clang-format on
+
 QAction *new_action(QIcon icon, QString name, QObject *obj, QString shortcut, QString status_tip,
                     const char *slot);
 

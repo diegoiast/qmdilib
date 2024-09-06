@@ -267,7 +267,13 @@ void IPlugin::setData() {}
  *
  * \see IPlugin::saveConfig()
  */
-void IPlugin::loadConfig(QSettings &settings) { Q_UNUSED(settings); }
+void IPlugin::loadConfig(QSettings &settings) {
+    settings.beginGroup(config.pluginName);
+    for (auto &i : config.configItems) {
+        i.value = settings.value(i.key);
+    }
+    settings.endGroup();
+}
 
 /**
  * \brief save the state of the plugin to the settings manager
@@ -282,7 +288,13 @@ void IPlugin::loadConfig(QSettings &settings) { Q_UNUSED(settings); }
  *
  * \see IPlugin::loadConfig()
  */
-void IPlugin::saveConfig(QSettings &settings) { Q_UNUSED(settings); }
+void IPlugin::saveConfig(QSettings &settings) {
+    settings.beginGroup(config.pluginName);
+    for (const auto &i : std::as_const(config.configItems)) {
+        settings.setValue(i.key, i.value);
+    }
+    settings.endGroup();
+}
 
 /**
  * \brief define the "new actions" supported by this plugin

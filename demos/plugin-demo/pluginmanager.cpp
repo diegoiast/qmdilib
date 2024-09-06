@@ -291,7 +291,7 @@ PluginManager::PluginManager() {
     connect(ui->eastPanel, &QTabWidget::tabBarClicked, [this, tabClickHandler](int index) {
         tabClickHandler(Panels::East, this->eastState, index);
     });
-    connect(ui->southPanel, &QTabWidget::tabBarClicked, [this, tabClickHandler](int index) {
+    connect(ui->southPanel, &QTabWidget::tabBarClicked, this, [this, tabClickHandler](int index) {
         tabClickHandler(Panels::South, this->southState, index);
     });
 
@@ -436,6 +436,7 @@ void PluginManager::restoreSettings() {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QApplication::processEvents();
 
+    // TODO - use the global config API
     // restore window location
     settingsManager->beginGroup("mainwindow");
 #if 0
@@ -553,6 +554,7 @@ void PluginManager::saveSettings() {
         return;
     }
 
+    // TODO - port to the plugin config system
     // main window state
     settingsManager->beginGroup("mainwindow");
     settingsManager->setValue("size", size());
@@ -1205,14 +1207,10 @@ void PluginManager::on_actionConfigure_triggered() {
     configDialog->show();
     configDialog->setFocus();
 #else
-    // config.loadFromFile("diego.json");
     qmdiConfigDialog dialog(&config, this);
     if (dialog.exec()) {
-        auto filePath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-        auto configFilePath = filePath + "/qtedit4.conf";
-        config.saveToFile(configFilePath);
+        saveSettings();
     }
-
     emit configurationUpdated();
 #endif
 }

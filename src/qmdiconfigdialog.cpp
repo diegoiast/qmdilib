@@ -133,6 +133,9 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
 
     QStringList pluginNames;
     for (auto const pluginConfig : std::as_const(globalConfig->plugins)) {
+        if (pluginConfig->editableConfigs() == 0) {
+            continue;
+        }
         pluginNames.append(pluginConfig->pluginName);
     }
     pluginListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -173,6 +176,10 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
     for (const qmdiConfigItem &item : pluginConfig->configItems) {
         QLabel *label = nullptr;
         QWidget *widget = nullptr;
+
+        if (!item.userEditable) {
+            continue;
+        }
 
         switch (item.type) {
         case qmdiConfigItem::String:
@@ -275,6 +282,9 @@ void qmdiConfigDialog::acceptChanges() {
 
     for (qmdiConfigItem &configItem : pluginConfig->configItems) {
         if (widgetMap.contains(configItem.key)) {
+            if (!configItem.userEditable) {
+                continue;
+            }
             QWidget *widget = widgetMap[configItem.key];
 
             switch (configItem.type) {

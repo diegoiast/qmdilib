@@ -8,7 +8,7 @@
 
 #include "qmdipluginconfig.h"
 
-qmdiConfigItem::qmdiConfigItem() {}
+qmdiConfigItem::qmdiConfigItem() { userEditable = true; }
 
 void qmdiConfigItem::setDefault() { this->value = this->defaultValue; }
 
@@ -95,6 +95,11 @@ qmdiConfigItem::Builder &qmdiConfigItem::Builder::setDefaultValue(const QVariant
     return *this;
 }
 
+qmdiConfigItem::Builder &qmdiConfigItem::Builder::setUserEditable(const bool value) {
+    this->userEditable = value;
+    return *this;
+}
+
 qmdiConfigItem::Builder &qmdiConfigItem::Builder::setValue(const QVariant &value) {
     this->value = value;
     return *this;
@@ -108,6 +113,7 @@ qmdiConfigItem qmdiConfigItem::Builder::build() const {
     item.description = description;
     item.defaultValue = defaultValue;
     item.value = value.isNull() ? defaultValue : value;
+    item.userEditable = userEditable;
     return item;
 }
 
@@ -115,4 +121,14 @@ void qmdiPluginConfig::setDefault() {
     for (auto &item : configItems) {
         item.setDefault();
     }
+}
+
+int qmdiPluginConfig::editableConfigs() const {
+    auto editable = 0;
+    for (auto &item : configItems) {
+        if (item.userEditable) {
+            editable++;
+        }
+    }
+    return editable;
 }
