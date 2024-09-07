@@ -35,14 +35,10 @@ EditorPlugin::EditorPlugin() {
     _newFileActions = new QActionGroup(this);
     _newFileActions->addAction(actionNew);
 
-    configUI = new QWidget;
-    ui.setupUi(configUI);
-
     makeBackups = false;
     showLineNumbers = true;
     makeCurrentLine = true;
     wordWrap = true;
-    setData();
 }
 
 EditorPlugin::~EditorPlugin() { delete actionNew; }
@@ -51,8 +47,6 @@ void EditorPlugin::showAbout() {
     QMessageBox::about(NULL, tr("Text Editor plugin"),
                        tr("This plugin brings text editing capabilities to the application"));
 }
-
-QWidget *EditorPlugin::getConfigDialog() { return configUI; }
 
 QActionGroup *EditorPlugin::newFileActions() { return _newFileActions; }
 
@@ -64,23 +58,6 @@ QStringList EditorPlugin::myExtensions() {
     s << tr("All files", "EditorPlugin::myExtensions") + " (*.*)";
 
     return s;
-}
-
-void EditorPlugin::getData() {
-    makeBackups = ui.cbMakeBackup->isChecked();
-    showLineNumbers = ui.cbShowLineNumbers->isChecked();
-    makeCurrentLine = ui.cbMarkCurrentLine->isChecked();
-    wordWrap = ui.cbWorkWrap->isChecked();
-}
-
-void EditorPlugin::setData() {
-    ui.cbMakeBackup->setChecked(makeBackups);
-    ui.cbShowLineNumbers->setChecked(showLineNumbers);
-    ui.cbMarkCurrentLine->setChecked(makeCurrentLine);
-    ui.cbWorkWrap->setChecked(wordWrap);
-
-    // emit a signal and notify all editors
-    // about the new settings
 }
 
 void EditorPlugin::loadConfig(QSettings &settings) {

@@ -44,10 +44,6 @@ class IPlugin : public QObject, public qmdiClient {
     virtual ~IPlugin();
 
     virtual void showAbout();
-    virtual QWidget *getConfigDialog();
-    virtual void getData();
-    virtual void setData();
-
     virtual void loadConfig(QSettings &settings);
     virtual void saveConfig(QSettings &settings);
 

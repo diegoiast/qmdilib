@@ -244,17 +244,6 @@ IPlugin::~IPlugin() {}
 void IPlugin::showAbout() {}
 
 /**
- * \brief get the configuration dialog of this plugin
- *
- *
- */
-QWidget *IPlugin::getConfigDialog() { return nullptr; }
-
-void IPlugin::getData() {}
-
-void IPlugin::setData() {}
-
-/**
  * \brief restore the state of the plugin from the settings manager
  * \param settings the QSettings to load configuration from
  *

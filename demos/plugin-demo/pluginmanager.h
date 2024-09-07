@@ -93,7 +93,6 @@ class PluginManager : public QMainWindow, public qmdiHost {
     QList<IPlugin *> plugins;
     qmdiTabWidget *tabWidget;
     qmdiGlobalConfig config;
-    ConfigDialog *configDialog;
     QSettings *settingsManager;
     Ui::PluginManagedWindow *ui;
 

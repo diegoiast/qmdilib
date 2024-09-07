@@ -89,8 +89,6 @@ add_executable(pluginmanager
     demos/common/helpbrowse.cpp
     demos/common/helpbrowse.h
 
-    demos/plugin-demo/configdialog.cpp
-    demos/plugin-demo/configdialog.h
     demos/plugin-demo/iplugin.cpp
     demos/plugin-demo/iplugin.h
     demos/plugin-demo/main6.cpp
@@ -102,14 +100,12 @@ add_executable(pluginmanager
     demos/plugin-demo/pluginmodel.h
     demos/plugin-demo/plugins/editor/editor_plg.cpp
     demos/plugin-demo/plugins/editor/editor_plg.h
-    demos/plugin-demo/plugins/editor/editor_cfg.ui
     demos/plugin-demo/plugins/editor/qexeditor2.cpp
     demos/plugin-demo/plugins/editor/qexeditor2.h
     demos/plugin-demo/plugins/filesystem/filesystembrowser.cpp
     demos/plugin-demo/plugins/filesystem/filesystembrowser.h
     demos/plugin-demo/plugins/help/help_plg.cpp
     demos/plugin-demo/plugins/help/help_plg.h
-    demos/plugin-demo/plugins/help/help_cfg.ui
     demos/plugin-demo/plugins/richtext/richtextwidget.cpp
     demos/plugin-demo/plugins/richtext/richtextwidget.h
     demos/plugin-demo/plugins/richtext/richtextclient.cpp
