@@ -1265,15 +1265,6 @@ void PluginManager::on_actionNext_triggered() {
 }
 
 void PluginManager::on_actionHideGUI_changed() {
-    qmdiClient *currentClient = dynamic_cast<qmdiClient *>(tabWidget->currentWidget());
-
-    // if GUI disabled, unmerge the current item, else merge it
-    // this way when enabling back you don't see some actions twice
-    if (currentClient && actionHideGUI->isChecked()) {
-        unmergeClient(currentClient);
-        updateGUI();
-    }
-
     updateMenusAndToolBars = !actionHideGUI->isChecked();
     setUpdatesEnabled(false);
     menuBar()->setVisible(!actionHideGUI->isChecked());
@@ -1289,11 +1280,6 @@ void PluginManager::on_actionHideGUI_changed() {
             d->setFeatures(d->features() & ~QDockWidget::DockWidgetMovable &
                            ~QDockWidget::DockWidgetClosable & ~QDockWidget::DockWidgetFloatable);
         }
-    }
-
-    if (currentClient && !actionHideGUI->isChecked()) {
-        mergeClient(currentClient);
-        updateGUI();
     }
 
     setUpdatesEnabled(true);
