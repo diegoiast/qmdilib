@@ -44,6 +44,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     int tabForFileName(QString fileName);
     void setNativeSettingsManager(const QString &organization = QString(),
                                   const QString &application = QString());
+    virtual void closeEvent(QCloseEvent *event) override;
+
   public slots:
     void setFileSettingsManager(const QString &fileName);
 

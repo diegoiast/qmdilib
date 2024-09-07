@@ -9,6 +9,7 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
+#include <QCloseEvent>
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QMainWindow>
@@ -384,6 +385,21 @@ void PluginManager::setNativeSettingsManager(const QString &organization,
         delete settingsManager;
     }
     settingsManager = new QSettings(organization, application);
+}
+
+void PluginManager::closeEvent(QCloseEvent *event) {
+    for (auto i = 0; i < tabWidget->count(); i++) {
+        auto client = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
+        if (!client) {
+            continue;
+        }
+        if (!client->canCloseClient()) {
+            event->ignore();
+            return;
+        }
+    }
+
+    event->accept();
 }
 
 /**
