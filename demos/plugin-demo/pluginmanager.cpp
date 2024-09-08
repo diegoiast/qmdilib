@@ -18,6 +18,7 @@
 #include <QSettings>
 #include <QStandardItemModel>
 #include <QStandardPaths>
+#include <QString>
 #include <QTabWidget>
 #include <QToolBar>
 #include <QToolButton>
@@ -27,10 +28,11 @@
 #include <qmdipluginconfig.h>
 #include <qmdiserver.h>
 #include <qmditabwidget.h>
+#include <tuple>
 
-#include "ui_pluginwindow.h"
 #include "iplugin.h"
 #include "pluginmanager.h"
+#include "ui_pluginwindow.h"
 
 /**
  * \class PluginManager
@@ -176,31 +178,33 @@
  * A simple pointer to a QSettings variable.
  */
 
-// When reading a file from the config file, it might have line/row/col it needs to be splitted
-// format is "{string}#{int},{int]". First string is mandatory, all other optional
-std::tuple<QString, int, int> parseFilname(const QString &input) {
+// When reading a file from the config file, it might have line/row/col/zoom it needs to be splitted
+// format is "{string}#{int},{int},{int}". First string is mandatory, all other optional
+std::tuple<QString, int, int, int> parseFilename(const QString &input) {
     auto hashPos = input.indexOf('#');
     if (hashPos == -1) {
-        return std::make_tuple(input, 0, 0);
+        return std::make_tuple(input, 0, 0, 0);
     }
+
     auto filename = input.left(hashPos);
-    auto coords = input.mid(hashPos + 1);
-    auto commaPos = coords.indexOf(',');
-    if (commaPos == -1) {
-        return std::make_tuple(filename, 0, 0);
+    auto extraData = input.mid(hashPos + 1).toStdString();
+    auto row = 0;
+    auto col = 0;
+    auto zoom = 0;
+
+    std::istringstream iss(extraData);
+    std::string rowStr, colStr, zoomStr;
+
+    if (std::getline(iss, rowStr, ',')) {
+        std::istringstream(rowStr) >> row;
+        if (std::getline(iss, colStr, ',')) {
+            std::istringstream(colStr) >> col;
+            if (std::getline(iss, zoomStr)) {
+                std::istringstream(zoomStr) >> zoom;
+            }
+        }
     }
-    auto rowStr = coords.left(commaPos);
-    auto colStr = coords.mid(commaPos + 1);
-    auto rowOk = false, colOk = false;
-    auto row = rowStr.toInt(&rowOk);
-    int col = colStr.toInt(&colOk);
-    if (!rowOk) {
-        row = 0;
-    }
-    if (!colOk) {
-        col = 0;
-    }
-    return std::make_tuple(filename, row, col);
+    return std::make_tuple(filename, row, col, zoom);
 }
 
 /**
@@ -552,9 +556,9 @@ void PluginManager::restoreSettings() {
             continue;
         }
         auto fileNameDetails = settingsManager->value(s).toString();
-        auto [fileName, row, col] = parseFilname(fileNameDetails);
+        auto [fileName, row, col, zoom] = parseFilename(fileNameDetails);
         QApplication::processEvents();
-        openFile(fileName, row, col);
+        openFile(fileName, row, col, zoom);
     }
 
     // re-select the current tab
@@ -621,9 +625,10 @@ void PluginManager::saveSettings() {
             if (!s.isEmpty()) {
                 auto data = c->get_coordinates();
                 if (data.has_value()) {
-                    auto [col, row, extra] = data.value();
-                    settingsManager->setValue(QString("file%1").arg(i),
-                                              QString("%1#%2,%3").arg(s).arg(col).arg(row));
+                    auto [col, row, zoom] = data.value();
+                    settingsManager->setValue(
+                        QString("file%1").arg(i),
+                        QString("%1#%2,%3,%4").arg(s).arg(col).arg(row).arg(zoom));
                 } else {
                     settingsManager->setValue(QString("file%1").arg(i), s);
                 }
