@@ -176,6 +176,33 @@
  * A simple pointer to a QSettings variable.
  */
 
+// When reading a file from the config file, it might have line/row/col it needs to be splitted
+// format is "{string}#{int},{int]". First string is mandatory, all other optional
+std::tuple<QString, int, int> parseFilname(const QString &input) {
+    auto hashPos = input.indexOf('#');
+    if (hashPos == -1) {
+        return std::make_tuple(input, 0, 0);
+    }
+    auto filename = input.left(hashPos);
+    auto coords = input.mid(hashPos + 1);
+    auto commaPos = coords.indexOf(',');
+    if (commaPos == -1) {
+        return std::make_tuple(filename, 0, 0);
+    }
+    auto rowStr = coords.left(commaPos);
+    auto colStr = coords.mid(commaPos + 1);
+    auto rowOk = false, colOk = false;
+    auto row = rowStr.toInt(&rowOk);
+    int col = colStr.toInt(&colOk);
+    if (!rowOk) {
+        row = 0;
+    }
+    if (!colOk) {
+        col = 0;
+    }
+    return std::make_tuple(filename, row, col);
+}
+
 /**
  * \brief default constructor
  *
@@ -283,10 +310,10 @@ PluginManager::PluginManager() {
     eastState.panel = ui->eastPanel;
     westState.panel = ui->westPanel;
     southState.panel = ui->southPanel;
-    connect(ui->westPanel, &QTabWidget::tabBarClicked, [this, tabClickHandler](int index) {
+    connect(ui->westPanel, &QTabWidget::tabBarClicked, this, [this, tabClickHandler](int index) {
         tabClickHandler(Panels::West, this->westState, index);
     });
-    connect(ui->eastPanel, &QTabWidget::tabBarClicked, [this, tabClickHandler](int index) {
+    connect(ui->eastPanel, &QTabWidget::tabBarClicked, this, [this, tabClickHandler](int index) {
         tabClickHandler(Panels::East, this->eastState, index);
     });
     connect(ui->southPanel, &QTabWidget::tabBarClicked, this, [this, tabClickHandler](int index) {
@@ -524,9 +551,10 @@ void PluginManager::restoreSettings() {
         if (!s.startsWith("file")) {
             continue;
         }
-        auto fileName = settingsManager->value(s).toString();
+        auto fileNameDetails = settingsManager->value(s).toString();
+        auto [fileName, row, col] = parseFilname(fileNameDetails);
         QApplication::processEvents();
-        openFile(fileName);
+        openFile(fileName, row, col);
     }
 
     // re-select the current tab
@@ -591,7 +619,15 @@ void PluginManager::saveSettings() {
             }
             s = c->mdiClientFileName();
             if (!s.isEmpty()) {
-                settingsManager->setValue(QString("file%1").arg(i), s);
+                auto data = c->get_coordinates();
+                if (data.has_value()) {
+                    auto [col, row, extra] = data.value();
+                    settingsManager->setValue(QString("file%1").arg(i),
+                                              QString("%1#%2,%3").arg(s).arg(col).arg(row));
+                } else {
+                    settingsManager->setValue(QString("file%1").arg(i), s);
+                }
+
             } else {
                 settingsManager->setValue(QString("file%1").arg(i), "");
             }

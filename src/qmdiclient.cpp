@@ -262,3 +262,20 @@ void qmdiClient::on_client_merged(qmdiHost *host) { Q_UNUSED(host); }
  * \since 0.0.5
  */
 void qmdiClient::on_client_unmerged(qmdiHost *host) { Q_UNUSED(host); }
+
+/**
+ * @brief Return internal state
+ *
+ * When you request a PluginManager to add a new client, you pass 2 ints. Those ints have no special
+ * meaning, and it up to the client to use them. In text editors, this can be used to save
+ * determinate the column/row of the cursor position.
+ *
+ * This function is the exact oposite - it queries the client for those 3 intergers. This logic
+ * is not enforced by the library, and its up to the developer to use as he needs.
+ *
+ * Default implementation returns an invalid optional.
+ *
+ * \see PluginManager::openFile()
+ * \since 0.1.1
+ */
+std::optional<std::tuple<int, int, int>> qmdiClient::get_coordinates() const { return {}; }

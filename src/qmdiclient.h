@@ -29,6 +29,7 @@ class qmdiClient {
 
     virtual void on_client_merged(qmdiHost *host);
     virtual void on_client_unmerged(qmdiHost *host);
+    virtual std::optional<std::tuple<int, int, int>> get_coordinates() const;
 
     qmdiActionGroupList menus;
     qmdiActionGroupList toolbars;
