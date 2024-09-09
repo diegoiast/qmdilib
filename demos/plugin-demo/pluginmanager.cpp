@@ -28,6 +28,7 @@
 #include <qmdipluginconfig.h>
 #include <qmdiserver.h>
 #include <qmditabwidget.h>
+#include <sstream>
 #include <tuple>
 
 #include "iplugin.h"
