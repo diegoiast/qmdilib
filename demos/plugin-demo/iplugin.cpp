@@ -259,7 +259,11 @@ void IPlugin::showAbout() {}
 void IPlugin::loadConfig(QSettings &settings) {
     settings.beginGroup(config.pluginName);
     for (auto &i : config.configItems) {
-        i.value = settings.value(i.key);
+        if (settings.contains(i.key)) {
+            i.value = settings.value(i.key) ;
+        } else {
+            i.value = i.defaultValue;
+        }
     }
     settings.endGroup();
 }
