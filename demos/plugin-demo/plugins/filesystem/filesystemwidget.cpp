@@ -17,13 +17,22 @@
 #include <QPushButton>
 
 #if defined(WIN32)
+// clang-format off
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <shellapi.h>
+// clang-format on
+
 void showFileProperties(const QFileInfo &fileInfo) {
     // Convert QString to LPCWSTR (wide string)
     auto filePath = fileInfo.absoluteFilePath();
-    std::wstring wFilePath = filePath.toStdWString();
-    ShellExecute(NULL, L"properties", wFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+    SHELLEXECUTEINFO sei = {};
+    sei.cbSize = sizeof(sei);
+    sei.lpVerb = L"properties";
+    sei.lpFile = reinterpret_cast<LPCWSTR>(filePath.utf16());
+    sei.nShow = SW_SHOW;
+    sei.fMask = SEE_MASK_INVOKEIDLIST;
+    ShellExecuteEx(&sei);
 }
 #elif defined(Q_OS_MAC)
 void showFileProperties(const QFileInfo &fileInfo) {
