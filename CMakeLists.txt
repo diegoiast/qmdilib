@@ -104,6 +104,8 @@ add_executable(pluginmanager
     demos/plugin-demo/plugins/editor/qexeditor2.h
     demos/plugin-demo/plugins/filesystem/filesystembrowser.cpp
     demos/plugin-demo/plugins/filesystem/filesystembrowser.h
+    demos/plugin-demo/plugins/filesystem/filesystemwidget.cpp
+    demos/plugin-demo/plugins/filesystem/filesystemwidget.h
     demos/plugin-demo/plugins/help/help_plg.cpp
     demos/plugin-demo/plugins/help/help_plg.h
     demos/plugin-demo/plugins/richtext/richtextwidget.cpp
