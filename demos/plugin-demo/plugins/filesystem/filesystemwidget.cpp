@@ -12,7 +12,71 @@
 #include <QListView>
 #include <QMenu>
 #include <QMessageBox>
+#include <QProcess>
 #include <QPushButton>
+
+#if defined(WIN32)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+void showFileProperties(const QFileInfo &fileInfo) {
+    // Convert QString to LPCWSTR (wide string)
+    auto filePath = fileInfo.absoluteFilePath();
+    std::wstring wFilePath = filePath.toStdWString();
+    ShellExecute(NULL, L"properties", wFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+}
+#elif defined(Q_OS_MAC)
+void showFileProperties(const QFileInfo &fileInfo) {
+    auto filePath = fileInfo.absoluteFilePath();
+    // macOS: Use 'open -R' to reveal the file in Finder, then show the info window
+    QProcess::startDetached("open", QStringList() << "-R" << filePath);
+}
+#else
+void showFileProperties(const QFileInfo &fileInfo) {
+    if (!fileInfo.exists()) {
+        qWarning() << "File does not exist:" << fileInfo.absoluteFilePath();
+        return;
+    }
+
+    // Detect the desktop environment
+    QString desktopEnv;
+    QString envDesktop = qgetenv("XDG_CURRENT_DESKTOP").toUpper();
+    if (envDesktop.contains("GNOME")) {
+        desktopEnv = "GNOME";
+    } else if (envDesktop.contains("KDE") || envDesktop.contains("KWIN")) {
+        desktopEnv = "KDE";
+    } else if (envDesktop.contains("XFCE") || envDesktop.contains("Xfce")) {
+        desktopEnv = "Xfce";
+    } else {
+        desktopEnv = "Unknown";
+    }
+
+    QStringList args;
+    if (desktopEnv == "GNOME") {
+        args << "--properties" << fileInfo.absoluteFilePath();
+        QProcess::startDetached("nautilus", args);
+    } else if (desktopEnv == "KDE") {
+        args << "openProperties" << fileInfo.absoluteFilePath();
+        QProcess::startDetached("kioclient", args);
+    } else if (desktopEnv == "Xfce") {
+        args << "--properties" << fileInfo.absoluteFilePath();
+        QProcess::startDetached("thunar", args);
+    } else {
+        QString properties =
+            QCoreApplication::translate("showFileProperties",
+                                        "Path: %1\nSize: %2 bytes\nType: %3\nLast Modified: %4")
+                .arg(fileInfo.absoluteFilePath())
+                .arg(fileInfo.size())
+                .arg(fileInfo.isDir()
+                         ? QCoreApplication::translate("showFileProperties", "Directory")
+                         : QCoreApplication::translate("showFileProperties", "File"))
+                .arg(fileInfo.lastModified().toString());
+
+        QMessageBox::information(
+            nullptr, QCoreApplication::translate("showFileProperties", "File Properties"),
+            properties);
+    }
+}
+#endif
 
 FileSystemWidget::FileSystemWidget(QWidget *parent) : QWidget(parent) {
     QString homePath = QDir::homePath();
@@ -244,15 +308,11 @@ void FileSystemWidget::deleteFile() {
 }
 
 void FileSystemWidget::showProperties() {
+
     auto selectedFilePath = model->fileInfo(selectedFileIndex).absoluteFilePath();
     if (!selectedFilePath.isEmpty()) {
         QFileInfo fileInfo(selectedFilePath);
-        QString properties = tr("Path: %1\nSize: %2 bytes\nType: %3\nLast Modified: %4")
-                                 .arg(fileInfo.absoluteFilePath())
-                                 .arg(fileInfo.size())
-                                 .arg(fileInfo.isDir() ? tr("Directory") : tr("File"))
-                                 .arg(fileInfo.lastModified().toString());
-        QMessageBox::information(this, tr("File Properties"), properties);
+        showFileProperties(fileInfo);
     }
 }
 
