@@ -12,6 +12,7 @@
 #include <QListView>
 #include <QMenu>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QProcess>
 #include <QPushButton>
 
@@ -268,19 +269,52 @@ void FileSystemWidget::copyFile() {
     auto selectedFilePath = model->fileInfo(selectedFileIndex).absoluteFilePath();
     if (!selectedFilePath.isEmpty()) {
         QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText(selectedFilePath);
+        QMimeData *mimeData = new QMimeData();
+        mimeData->setUrls(QList<QUrl>() << QUrl::fromLocalFile(selectedFilePath));
+        clipboard->setMimeData(mimeData);
     }
 }
 
 void FileSystemWidget::pasteFile() {
-    QClipboard *clipboard = QApplication::clipboard();
-    QString copiedFilePath = clipboard->text();
-    if (QFileInfo::exists(copiedFilePath)) {
-        QString destinationPath = QFileDialog::getExistingDirectory(this, tr("Paste File"));
-        if (!destinationPath.isEmpty()) {
-            QFile::copy(copiedFilePath,
-                        destinationPath + "/" + QFileInfo(copiedFilePath).fileName());
-            navigateTo(destinationPath);
+    auto destinationInfo = model->fileInfo(selectedFileIndex);
+    auto clipboard = QApplication::clipboard();
+    auto mimeData = clipboard->mimeData();
+
+    if (!mimeData->hasUrls()) {
+        return;
+    }
+
+    auto urls = mimeData->urls();
+    if (urls.isEmpty()) {
+        return;
+    }
+
+    auto destinationPath = destinationInfo.absoluteFilePath();
+    auto targetDirPath = QString();
+    if (destinationInfo.isDir()) {
+        targetDirPath = destinationPath;
+    } else if (destinationInfo.isFile()) {
+        targetDirPath = QFileInfo(destinationPath).absolutePath();
+    } else {
+        qWarning() << "Destination is neither a file nor a directory:" << destinationPath;
+        return;
+    }
+
+    auto targetDir = QDir(targetDirPath);
+    if (!targetDir.exists()) {
+        qWarning() << "Target directory does not exist:" << targetDirPath;
+        QMessageBox::warning(nullptr, "Paste", "Target directory does not exist.");
+        return;
+    }
+
+    for (const QUrl &url : urls) {
+        auto srcFilePath = url.toLocalFile();
+        auto srcFileInfo = QFileInfo(srcFilePath);
+        if (srcFileInfo.exists() && srcFileInfo.isFile()) {
+            QString dstFilePath = targetDir.filePath(srcFileInfo.fileName());
+            if (!QFile::copy(srcFilePath, dstFilePath)) {
+                qWarning() << "Failed to copy file from" << srcFilePath << "to" << dstFilePath;
+            }
         }
     }
 }
