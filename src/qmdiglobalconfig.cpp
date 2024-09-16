@@ -246,7 +246,7 @@ void qmdiGlobalConfig::fromJson(QJsonObject jsonObj) {
 
             case qmdiConfigItem::Float:
             case qmdiConfigItem::Double:
-                p.value = val.isDouble();
+                p.value = val.toDouble();
                 break;
 
             case qmdiConfigItem::String:
