@@ -249,6 +249,12 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
             widget = new StringListWidget(this);
             static_cast<StringListWidget *>(widget)->setList(item.value.toStringList());
             break;
+        case qmdiConfigItem::OneOf:
+            label = new QLabel(item.displayName, this);
+            widget = new QComboBox(this);
+            static_cast<QComboBox *>(widget)->addItems(item.possibleValue.toStringList());
+            static_cast<QComboBox *>(widget)->setCurrentIndex(item.value.toInt());
+            break;
         }
 
         if (label) {
@@ -310,6 +316,9 @@ void qmdiConfigDialog::acceptChanges() {
                 break;
             case qmdiConfigItem::StringList:
                 configItem.value = static_cast<StringListWidget *>(widget)->getList();
+                break;
+            case qmdiConfigItem::OneOf:
+                configItem.value = static_cast<QComboBox *>(widget)->currentIndex();
                 break;
             }
         }

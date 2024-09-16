@@ -104,6 +104,8 @@ bool qmdiGlobalConfig::loadDefsFromJson(const QJsonObject &jsonObject) {
             case qmdiConfigItem::StringList:
                 item.defaultValue = defaultValue.toVariant().toStringList();
                 break;
+            case qmdiConfigItem::OneOf:
+                item.defaultValue = defaultValue.toVariant();
             }
 
             pluginConfig->configItems.append(item);
@@ -231,27 +233,30 @@ void qmdiGlobalConfig::fromJson(QJsonObject jsonObj) {
             case qmdiConfigItem::Bool:
                 p.value = val.toVariant().toBool();
                 break;
-
             case qmdiConfigItem::Int8:
             case qmdiConfigItem::Int16:
             case qmdiConfigItem::Int32:
                 p.value = val.toInteger();
                 break;
-
             case qmdiConfigItem::UInt8:
             case qmdiConfigItem::UInt16:
             case qmdiConfigItem::UInt32:
                 p.value = val.toVariant().toUInt();
                 break;
-
             case qmdiConfigItem::Float:
             case qmdiConfigItem::Double:
                 p.value = val.toDouble();
                 break;
-
             case qmdiConfigItem::String:
                 p.value = val.toString();
                 break;
+            case qmdiConfigItem::OneOf: {
+                auto i = val.toInt();
+                if (i > p.possibleValue.toStringList().size()) {
+                    i = p.defaultValue.toInt();
+                }
+                p.value = i;
+            }
             }
         }
     }

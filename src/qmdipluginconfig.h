@@ -25,6 +25,7 @@ struct qmdiConfigItem {
         Float,
         Double,
         StringList,
+        OneOf
     };
 
     static ClassType typeFromString(const QString &typeStr);
@@ -38,15 +39,17 @@ struct qmdiConfigItem {
     QVariant defaultValue;
     QVariant value;
     bool userEditable;
+    QVariant possibleValue;
 
     struct Builder {
         Builder &setKey(const QString &key);
         Builder &setType(const ClassType type);
         Builder &setDisplayName(const QString &displayName);
         Builder &setDescription(const QString &description);
-        Builder &setDefaultValue(const QVariant &defaultValue);
+        Builder &setDefaultValue(const QVariant defaultValue);
         Builder &setValue(const QVariant &value);
         Builder &setUserEditable(const bool value);
+        Builder &setPossibleValue(const QVariant &value);
 
         qmdiConfigItem build() const;
 
@@ -58,6 +61,7 @@ struct qmdiConfigItem {
         QVariant defaultValue;
         QVariant value;
         bool userEditable = true;
+        QVariant possibleValue;
     };
     void setDefault();
 };

@@ -36,6 +36,8 @@ qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr)
         return Double;
     } else if (lower == "stringlist") {
         return StringList;
+    } else if (lower == "oneof") {
+        return OneOf;
     } else {
         return String;
     }
@@ -65,9 +67,11 @@ QString qmdiConfigItem::typeToString(ClassType type) {
         return "Double";
     case StringList:
         return "StringList";
-    default:
-        return "Unknown"; // Handle unknown or default case
+    case OneOf:
+        return "OneOf";
+        break;
     }
+    return "Unknown";
 }
 
 qmdiConfigItem::Builder &qmdiConfigItem::Builder::setKey(const QString &key) {
@@ -90,13 +94,18 @@ qmdiConfigItem::Builder &qmdiConfigItem::Builder::setDescription(const QString &
     return *this;
 }
 
-qmdiConfigItem::Builder &qmdiConfigItem::Builder::setDefaultValue(const QVariant &defaultValue) {
+qmdiConfigItem::Builder &qmdiConfigItem::Builder::setDefaultValue(const QVariant defaultValue) {
     this->defaultValue = defaultValue;
     return *this;
 }
 
 qmdiConfigItem::Builder &qmdiConfigItem::Builder::setUserEditable(const bool value) {
     this->userEditable = value;
+    return *this;
+}
+
+qmdiConfigItem::Builder &qmdiConfigItem::Builder::setPossibleValue(const QVariant &value) {
+    this->possibleValue = value;
     return *this;
 }
 
@@ -114,6 +123,7 @@ qmdiConfigItem qmdiConfigItem::Builder::build() const {
     item.defaultValue = defaultValue;
     item.value = value.isNull() ? defaultValue : value;
     item.userEditable = userEditable;
+    item.possibleValue = possibleValue;
     return item;
 }
 

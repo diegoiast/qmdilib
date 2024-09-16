@@ -48,10 +48,42 @@ auto getNetworkConfig() -> qmdiPluginConfig * {
     return networkPluginConfig;
 }
 
+auto getEditorConfig() -> qmdiPluginConfig * {
+    qmdiPluginConfig *editorPluginConfig = new qmdiPluginConfig();
+    editorPluginConfig->pluginName = "Editor";
+    editorPluginConfig->description = "Configuration for text ediotr";
+    editorPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
+                                                  .setKey("wraplines")
+                                                  .setType(qmdiConfigItem::Bool)
+                                                  .setDisplayName("Wrap long lines")
+                                                  .setDefaultValue(true)
+                                                  .build());
+    editorPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
+                                                  .setKey("margin")
+                                                  .setType(qmdiConfigItem::UInt16)
+                                                  .setDisplayName("Margin line")
+                                                  .setDefaultValue(80)
+                                                  .build());
+    editorPluginConfig->configItems.append(qmdiConfigItem::Builder()
+                                               .setKey("lineendig")
+                                               .setType(qmdiConfigItem::OneOf)
+                                               .setDisplayName("Line ending style")
+                                               .setValue(1)
+                                               .setDefaultValue(2)
+                                               .setPossibleValue(QStringList() << "Unix (cr)"
+                                                                               << "Windows (cr+ln)"
+                                                                               << "Keep original")
+                                               .build());
+
+    return editorPluginConfig;
+}
+
 int main(int argc, char **argv) {
     auto globalConfig = qmdiGlobalConfig();
     auto networkPluginConfig = getNetworkConfig();
+    auto editorPluginConfig = getEditorConfig();
     globalConfig.addPluginConfig(networkPluginConfig);
+    globalConfig.addPluginConfig(editorPluginConfig);
 
     // API for accesing config:
     {
