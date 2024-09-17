@@ -257,6 +257,9 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
             break;
         }
 
+        if (!item.description.isEmpty()) {
+            widget->setToolTip(item.description);
+        }
         if (label) {
             configLayout->addWidget(label);
         }
