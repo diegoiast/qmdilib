@@ -33,6 +33,7 @@ class qmdiClient {
 
     qmdiActionGroupList menus;
     qmdiActionGroupList toolbars;
+    qmdiActionGroup contextMenu;
     qmdiServer *mdiServer;
     QString mdiClientName;
 

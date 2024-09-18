@@ -142,6 +142,11 @@ void QexTextEdit::initInterface(bool singleToolbar) {
     toolbars[toolbarEdit]->addSeparator();
     toolbars[toolbarEdit]->addAction(actionUndo);
     toolbars[toolbarEdit]->addAction(actionRedo);
+
+    contextMenu.addSeparator();
+    contextMenu.addAction(actionSave);
+    contextMenu.addAction(actionUndo);
+    contextMenu.addAction(actionRedo);
 }
 
 bool QexTextEdit::openFile(QString newFile) {

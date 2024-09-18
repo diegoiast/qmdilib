@@ -23,6 +23,7 @@ class qmdiActionGroup {
 
   public:
     qmdiActionGroup(QString name);
+    qmdiActionGroup();
     ~qmdiActionGroup();
 
     void setName(const QString &newName);

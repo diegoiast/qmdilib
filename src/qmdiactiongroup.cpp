@@ -128,6 +128,8 @@ qmdiActionGroup::qmdiActionGroup(QString name) {
     mergeLocation = -1;
 }
 
+qmdiActionGroup::qmdiActionGroup() : qmdiActionGroup(QString()) {}
+
 /**
  * Empty destructor. Destroys the object.
  */

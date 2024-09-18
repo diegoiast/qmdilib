@@ -249,36 +249,44 @@ void qmdiServer::tryCloseAllClients() {
  * \param i the mouse button that has been pressed
  * \param p the location of the mouse click
  *
- * This function shuold be called when a user presses the right mouse
+ * This function will be called when a user presses the right mouse
  * button on the tab bar of the tab widget. The coordinates of the
  * click are passed on the parameter \b p , while the
  * mouse button which has been pressed is passed on the
  * parameter \b p .
  *
- * This function used to be part of qmdiTabWidget, but it was ported
- * down to this abstract interface at version 0.0.4.
+ * The context menus of the client will be merged to the context menu
+ * at the end. Local menus contain
+ *   - Close this window
+ *   - Close other windows
+ *   - Close all windows
  *
  * \since 0.0.4
  * \see qmdiTabBar
  */
 void qmdiServer::showClientMenu(int i, QPoint p) {
-    auto menu = new QMenu;
+    auto w = dynamic_cast<QWidget *>(this);
+    auto menu = new QMenu(w);
+    auto mdiClient = getClient(i);
+    auto actionGroupContext = qmdiActionGroup(menu->tr("Local actions"));
     auto closeThis = new QAction(menu->tr("Close this window"), menu);
     auto closeOthers = new QAction(menu->tr("Close other windows"), menu);
     auto closeAll = new QAction(menu->tr("Close all windows"), menu);
 
-    menu->setTitle(menu->tr("Local actions"));
-    menu->addAction(closeThis);
-    menu->addAction(closeOthers);
-    menu->addAction(closeAll);
+    actionGroupContext.addAction(closeThis);
+    actionGroupContext.addAction(closeOthers);
+    actionGroupContext.addAction(closeAll);
 
-    // ugly code, but I don't know a better way of doying this
-    auto w = dynamic_cast<QWidget *>(this);
+    if (mdiClient) {
+        actionGroupContext.mergeGroup(&mdiClient->contextMenu);
+    }
+    menu = actionGroupContext.updateMenu(menu);
+
     if (w) {
         p = w->mapToGlobal(p);
     }
-    auto q = menu->exec(p);
 
+    auto q = menu->exec(p);
     if (q == closeThis) {
         tryCloseClient(i);
     } else if (q == closeOthers) {
