@@ -8,6 +8,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDir>
 #include <QLibraryInfo>
 #include <QMainWindow>
 #include <QMessageBox>
@@ -31,6 +32,9 @@
  * This example demostrates how to use qmdiTabWidget, and
  * define different qmdiClient. It also shows what happens when
  * you insert a non mdi client into a qmdiTabWidget.
+ *
+ * You should run this from the source of the code, not the build directory.
+ * Inside QtCreator - in the Projects/Build Run/Run - in the "Working directory" type "%{sourceDir}"
  */
 
 MainWindow2::MainWindow2(QWidget *owner) : QMainWindow(owner) {
@@ -76,7 +80,7 @@ void MainWindow2::init_gui() {
     updateGUI();
 
     // make the tab widget
-    tabWidget = new QTabWidget;
+    tabWidget = new qmdiTabWidget;
     tabNewBtn = new QToolButton(tabWidget);
     tabNewBtn->setAutoRaise(true);
     connect(tabNewBtn, SIGNAL(clicked()), this, SLOT(fileNew()));
@@ -95,15 +99,14 @@ void MainWindow2::init_gui() {
     // non mdi client, and will add no new menus nor toolbars
     QTextBrowser *browser = new QTextBrowser;
     browser->setObjectName("welcome_tab");
-    browser->setSource(
-        QUrl::fromLocalFile(QApplication::applicationDirPath() + "/../demo2/mdi-tab.html"));
+    browser->setSource(QUrl::fromLocalFile(QDir::currentPath() + "/demos/demo2/mdi-tab.html"));
     browser->setFrameStyle(QFrame::NoFrame);
     browser->setContentsMargins(0, 0, 0, 0);
     tabWidget->addTab(browser, "Welcome");
 }
 
 void MainWindow2::about() {
-    QMessageBox::about(NULL, "About Program",
+    QMessageBox::about(this, "About Program",
                        "This demo is part of the qmdi library.\nDiego Iasturbni "
                        "<diegoiast@gmail.com> - LGPL");
 }
@@ -127,8 +130,11 @@ void MainWindow2::fileClose() {
 }
 
 void MainWindow2::helpQtTopics() {
-    QString helpFile =
-        QLibraryInfo::path(QLibraryInfo::DocumentationPath) + QLatin1String("/html/index.html");
+    auto lib = QLibraryInfo::path(QLibraryInfo::DocumentationPath);
+    QString helpFile = lib + "/html/index.html";
+    if (!QFile::exists(helpFile)) {
+        helpFile = lib + "/../../../Tools/QtCreator/share/doc/qtcreator/qtcreator/index.html";
+    }
     QexHelpBrowser *browser = new QexHelpBrowser(QUrl::fromLocalFile(helpFile), SINGLE_TOOLBAR);
     browser->hide();
     tabWidget->addTab(browser, "Qt help");

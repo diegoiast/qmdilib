@@ -1,5 +1,4 @@
-#ifndef __MAIN_WIN_H__
-#define __MAIN_WIN_H__
+#pragma once
 
 /**
  * \file mainwindow2.h
@@ -8,8 +7,6 @@
  * License GPL 2 or 3
  * \see MainWindow
  */
-
-// $Id$
 
 #include "qmdiclient.h"
 #include "qmdihost.h"
@@ -45,5 +42,3 @@ class MainWindow2 : public QMainWindow, public qmdiHost {
     QToolButton *tabCloseBtn;
     QToolButton *tabNewBtn;
 };
-
-#endif // __MAIN_WIN_H__
