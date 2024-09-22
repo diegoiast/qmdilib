@@ -206,10 +206,10 @@ void FileSystemWidget::handleFileDoubleClick(const QString &filePath) {
 
 void FileSystemWidget::showContextMenu(const QPoint &pos) {
     QModelIndex index;
-    if (QTreeView *view = qobject_cast<QTreeView *>(sender())) {
-        index = view->indexAt(pos);
-    } else if (QListView *view = qobject_cast<QListView *>(sender())) {
-        index = view->indexAt(pos);
+    if (auto treeview1 = qobject_cast<QTreeView *>(sender())) {
+        index = treeview1->indexAt(pos);
+    } else if (auto listview1 = qobject_cast<QListView *>(sender())) {
+        index = listview1->indexAt(pos);
     }
     QFileInfo fileInfo = model->fileInfo(index);
 

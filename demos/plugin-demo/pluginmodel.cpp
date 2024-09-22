@@ -6,7 +6,6 @@
  * \see PluginModel
  */
 
-
 #include "pluginmodel.h"
 #include "iplugin.h"
 #include "pluginmanager.h"
@@ -44,12 +43,7 @@ int PluginModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
 }
 
-int PluginModel::columnCount(const QModelIndex &parent) const {
-    return 1;
-
-    // shut up gcc warnings
-    parent.data();
-}
+int PluginModel::columnCount(const QModelIndex &) const { return 1; }
 
 QVariant PluginModel::data(const QModelIndex &index, int roles) const {
     if (!index.isValid()) {

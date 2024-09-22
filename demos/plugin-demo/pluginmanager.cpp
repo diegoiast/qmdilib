@@ -624,9 +624,9 @@ void PluginManager::saveSettings() {
             }
             s = c->mdiClientFileName();
             if (!s.isEmpty()) {
-                auto data = c->get_coordinates();
-                if (data.has_value()) {
-                    auto [col, row, zoom] = data.value();
+                auto coords = c->get_coordinates();
+                if (coords.has_value()) {
+                    auto [col, row, zoom] = coords.value();
                     settingsManager->setValue(
                         QString("file%1").arg(i),
                         QString("%1#%2,%3,%4").arg(s).arg(col).arg(row).arg(zoom));
