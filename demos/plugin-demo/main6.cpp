@@ -22,8 +22,9 @@ int main(int argc, char *argv[]) {
     pluginManager.setFileSettingsManager("plugin-demo.ini");
 
     // load a set of default plugins
+    auto e = new EditorPlugin;
     pluginManager.addPlugin(new HelpPlugin);
-    pluginManager.addPlugin(new EditorPlugin);
+    pluginManager.addPlugin(e);
     pluginManager.addPlugin(new RichTextPlugin);
     pluginManager.addPlugin(new FileSystemBrowserPlugin);
     pluginManager.updateGUI();
@@ -35,9 +36,11 @@ int main(int argc, char *argv[]) {
         QT_TR_NOOP("Welcome - feel free to configure the GUI to your needs"), 5000);
     pluginManager.show();
 
+    pluginManager.connect(&pluginManager, &PluginManager::newFileRequested,
+                          [e]() { e->fileNew(); });
     auto l = pluginManager.visibleTabs();
-    if (pluginManager.visibleTabs() < 2) {
-        pluginManager.newFilePopup->actions().first()->activate(QAction::Trigger);
+    if (pluginManager.visibleTabs() < 1) {
+        e->fileNew();
     }
     return app.exec();
 }

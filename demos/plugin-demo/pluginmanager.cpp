@@ -226,7 +226,7 @@ std::tuple<QString, int, int, int> parseFilename(const QString &input) {
 PluginManager::PluginManager() {
     settingsManager = nullptr;
 
-    newFilePopup = new QMenu(tr("New..."), this);
+    actionNewFile = new QAction(tr("New..."), this);
     actionOpen = new QAction(tr("Open..."), this);
     actionClose = new QAction(tr("Close"), this);
     actionQuit = new QAction(tr("Ex&it"), this);
@@ -239,7 +239,7 @@ PluginManager::PluginManager() {
     actionPrevTab->setEnabled(false);
     actionClose->setEnabled(false);
 
-    newFilePopup->setObjectName("newFilePopup");
+    actionNewFile->setObjectName("actionNewFile");
     actionOpen->setObjectName("actionOpen");
     actionClose->setObjectName("actionClose");
     actionQuit->setObjectName("actionQuit");
@@ -249,23 +249,27 @@ PluginManager::PluginManager() {
     actionHideGUI->setObjectName("actionHideGUI");
     actionHideGUI->setCheckable(true);
 
-    newFilePopup->setIcon(QIcon::fromTheme("document-new"));
     actionConfig->setIcon(QIcon::fromTheme("configure"));
     actionQuit->setIcon(QIcon::fromTheme("application-exit"));
     actionNextTab->setIcon(QIcon::fromTheme("go-next"));
     actionPrevTab->setIcon(QIcon::fromTheme("go-previous"));
 
-    //	actionOpen->setIcon(
-    actionOpen->setIcon(QIcon::fromTheme("document-open"));
-    actionOpen->setShortcut(QKeySequence("Ctrl+O"));
+    actionNewFile->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew));
+    actionNewFile->setShortcut(QKeySequence::New);
+    connect(actionNewFile, &QAction::triggered, this, &PluginManager::newFileRequested);
 
-    actionClose->setIcon(QIcon::fromTheme("window-close"));
-    actionClose->setShortcut(QKeySequence("Ctrl+w"));
+    actionOpen->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentOpen));
+    actionOpen->setShortcut(QKeySequence::Open);
 
-    actionNextTab->setShortcut(QKeySequence("Alt+Right"));
-    actionPrevTab->setShortcut(QKeySequence("Alt+Left"));
+    actionClose->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::WindowClose));
+    actionClose->setShortcut(QKeySequence::Close);
+
+    actionNextTab->setShortcuts({QKeySequence("Alt+Right"), QKeySequence::NextChild});
+    actionPrevTab->setShortcuts({QKeySequence("Alt+Left"), QKeySequence::PreviousChild});
+
     actionHideGUI->setShortcut(QKeySequence("Ctrl+M"));
 
+    addAction(actionNewFile);
     addAction(actionOpen);
     addAction(actionClose);
     addAction(actionQuit);
@@ -697,7 +701,6 @@ void PluginManager::updateActionsStatus() {
  * \todo how does a developer know why the loading of a file failed?
  */
 bool PluginManager::openFile(QString fileName, int x, int y, int z) {
-
     // see which plugin is the most suited for openning this file
     IPlugin *bestPlugin = nullptr;
     int highestScore = -1;
@@ -992,16 +995,6 @@ void PluginManager::enablePlugin(IPlugin *plugin) {
         plugin->setEnabled(true);
         mergeClient(plugin);
     }
-
-    QActionGroup *ag;
-    ag = plugin->newFileActions();
-    if (!ag) {
-        return;
-    }
-
-    foreach (auto a, ag->actions()) {
-        newFilePopup->addAction(a);
-    }
 }
 
 /**
@@ -1074,7 +1067,7 @@ void PluginManager::disablePlugin(IPlugin *plugin) {
  * \todo add methods for adding/removing menus in a more sane way
  */
 void PluginManager::initGUI() {
-    menus[tr("&File")]->addMenu(newFilePopup);
+    menus[tr("&File")]->addAction(actionNewFile);
     menus[tr("&File")]->addAction(actionOpen);
     menus[tr("&File")]->addSeparator();
     menus[tr("&File")]->setMergePoint();
@@ -1106,17 +1099,20 @@ void PluginManager::initGUI() {
     tabWidget = this->ui->mdiTabWidget;
 
     auto tabCloseBtn = new QToolButton(tabWidget);
-    connect(tabCloseBtn, SIGNAL(clicked()), this, SLOT(closeClient()));
+    // TODO - convert to document list
+    connect(tabCloseBtn, &QAbstractButton::clicked, this, &PluginManager::closeClient);
     tabCloseBtn->setAutoRaise(true);
     tabCloseBtn->setIcon(QIcon::fromTheme("window-close"));
     tabWidget->setCornerWidget(tabCloseBtn, Qt::TopRightCorner);
 
     auto addNewMdiClient = new QToolButton(tabWidget);
-    connect(addNewMdiClient, SIGNAL(clicked()), addNewMdiClient, SLOT(showMenu()));
+    connect(addNewMdiClient, &QAbstractButton::clicked, addNewMdiClient, [this]() {
+        // we are not dealing with this
+        emit newFileRequested();
+    });
     addNewMdiClient->setAutoRaise(true);
     addNewMdiClient->setIcon(QIcon::fromTheme("document-new"));
-    addNewMdiClient->setMenu(newFilePopup);
-    // tabWidget->setCornerWidget(addNewMdiClient, Qt::TopLeftCorner);
+    tabWidget->setCornerWidget(addNewMdiClient, Qt::TopLeftCorner);
 
     tabWidget->mdiHost = this;
     tabWidget->setDocumentMode(true);

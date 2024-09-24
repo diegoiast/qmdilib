@@ -47,7 +47,6 @@ class IPlugin : public QObject, public qmdiClient {
     virtual void loadConfig(QSettings &settings);
     virtual void saveConfig(QSettings &settings);
 
-    virtual QActionGroup *newFileActions();
     virtual QStringList myExtensions();
     virtual int canOpenFile(const QString fileName);
     virtual bool openFile(const QString fileName, int x = -1, int y = -1, int z = -1);

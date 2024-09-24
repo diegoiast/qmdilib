@@ -85,6 +85,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
 
   signals:
     void configurationUpdated();
+    void newFileRequested();
 
   protected:
     PanelState westState, eastState, southState;
@@ -97,7 +98,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     Ui::PluginManagedWindow *ui;
 
   public:
-    QMenu *newFilePopup;
+    QAction *actionNewFile;
     QAction *actionOpen;
     QAction *actionClose;
     QAction *actionQuit;

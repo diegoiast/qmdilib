@@ -260,7 +260,7 @@ void IPlugin::loadConfig(QSettings &settings) {
     settings.beginGroup(config.pluginName);
     for (auto &i : config.configItems) {
         if (settings.contains(i.key)) {
-            i.value = settings.value(i.key) ;
+            i.value = settings.value(i.key);
         } else {
             i.value = i.defaultValue;
         }
@@ -287,69 +287,6 @@ void IPlugin::saveConfig(QSettings &settings) {
         settings.setValue(i.key, i.value);
     }
     settings.endGroup();
-}
-
-/**
- * \brief define the "new actions" supported by this plugin
- * \return the list of new actions this plugin defines
- *
- * The plugin manager will ask this plugin which kind of "new files" it can
- * generate. The returned list should be a QActionGroup containing QActions.
- * Each QAction should be connected to a slot in the derived class to create
- * a "new file". By default returns nullptr.
- *
- * The actions and the action group will be deleted only by the desctructor of
- * your new plugin. This can be done by creating the action group and parenting
- * it to the plugin.
- *
- * The "new actions" will be displayed in the "File" menu of the plugin
- *manager's main window, as a sub menu, File->New-> (your actions). In this sub
- *menu the user will see all the "new actions" of all the available plugins. The
- *order of appearence in that sub menu is not deterministic - the first which
- *gets loaded is first to be displayed (this may change in future releases).
- *
- * Example
- *\code
- * newplugin::newplugin()
- * {
- *	// more code...
- * 	actionNew	= new QAction( this, tr("Create a new file") );
- * 	connect( actionNew, SIGNAL(triggered()), this, SLOT(fileNew()));
- *
- * 	_newFileActions = new QActionGroup(this);
- * 	_newFileActions->addAction( actionNew );
- *	// more code...
- * }
- *
- * QActionGroup* newplugin::newFileActions()
- * {
- * 	return _newFileActions;
- * }
- *
- * void newplugin::fileNew()
- * {
- *	// this example directly adds a new qmdiClient
- *	// but you may pop up a wizard menu to get feedback from the user and
- *	// then do something else.
- *
- * 	if (!mdiServer)
- * 	{
- * 		qDebug("%s - %d : warning no mdiServer defined", __FUNCTION__,
- *__LINE__ ); return;
- * 	}
- *
- * 	QexTextEdit *editor = new QexTextEdit(QString(), true);
- * 	editor->mdiClientName = tr("No name");
- * 	editor->setObjectName( editor->mdiClientName );
- * 	mdiServer->addClient( editor );
- *  }
- * \endcode
- *
- * \see myExtensions()
- */
-QActionGroup *IPlugin::newFileActions() {
-    // by default plugins cannot create any files
-    return nullptr;
 }
 
 /**
