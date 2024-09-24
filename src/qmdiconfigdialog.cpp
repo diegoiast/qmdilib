@@ -116,6 +116,7 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
       globalConfig(config) {
     setLayout(mainLayout);
 
+    setWindowTitle(tr("Config"));
     pluginListView->setModel(pluginModel);
     mainLayout->addWidget(pluginListView, 1);
 
