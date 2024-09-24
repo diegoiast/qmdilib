@@ -486,41 +486,20 @@ void PluginManager::restoreSettings() {
     QApplication::processEvents();
 
     // TODO - use the global config API
-    // restore window location
     settingsManager->beginGroup("mainwindow");
-#if 0
-	if (settingsManager->contains("maximized"))
-		if (settingsManager->value("maximized").toBool())
-			showMaximized();
-		else
-		{
-			if (settingsManager->contains("location"))
-				move( settingsManager->value("location").toPoint() );
-			if (settingsManager->contains("size"))
-				resize( settingsManager->value("size").toSize() );
-// 			showNormal();
-		}
-	show();
-#else
-    if (settingsManager->contains("state")) {
-        restoreState(settingsManager->value("state", saveState()).toByteArray());
+    if (settingsManager->contains("maximized")) {
+        if (settingsManager->value("maximized").toBool()) {
+            showMaximized();
+        } else {
+            if (settingsManager->contains("size")) {
+                resize(settingsManager->value("size").toSize());
+            }
+            if (settingsManager->contains("location")) {
+                move(settingsManager->value("location").toPoint());
+            }
+        }
     }
-    if (settingsManager->contains("geometry")) {
-        restoreGeometry(settingsManager->value("geometry", saveGeometry()).toByteArray());
-    }
-    if (settingsManager->value("maximized", false).toBool()) {
-        setWindowState(windowState() | Qt::WindowMaximized);
-    }
-    if (settingsManager->contains("size")) {
-        resize(settingsManager->value("size", size()).toSize());
-    }
-    if (settingsManager->contains("location")) {
-        move(settingsManager->value("location", pos()).toPoint());
-    }
-    if (settingsManager->contains("hidegui")) {
-        actionHideGUI->setChecked(settingsManager->value("hidegui", false).toBool());
-    }
-#endif
+    show();
     settingsManager->endGroup();
 
     settingsManager->beginGroup("ui");
