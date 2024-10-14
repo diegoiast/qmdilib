@@ -25,7 +25,8 @@ struct qmdiConfigItem {
         Float,
         Double,
         StringList,
-        OneOf
+        OneOf,
+        Font,
     };
 
     static ClassType typeFromString(const QString &typeStr);

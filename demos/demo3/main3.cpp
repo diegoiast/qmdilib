@@ -48,7 +48,7 @@ auto getNetworkConfig() -> qmdiPluginConfig * {
     return networkPluginConfig;
 }
 
-auto getEditorConfig() -> qmdiPluginConfig * {
+auto getEditorConfig(QFont defaultFont) -> qmdiPluginConfig * {
     qmdiPluginConfig *editorPluginConfig = new qmdiPluginConfig();
     editorPluginConfig->pluginName = "Editor";
     editorPluginConfig->description = "Configuration for text ediotr";
@@ -74,14 +74,23 @@ auto getEditorConfig() -> qmdiPluginConfig * {
                                                                                << "Windows (cr+ln)"
                                                                                << "Keep original")
                                                .build());
+    editorPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
+                                                  .setKey("font")
+                                                  .setType(qmdiConfigItem::Font)
+                                                  .setDisplayName("Display font")
+                                                  .setDefaultValue(defaultFont)
+                                                  .setValue(defaultFont)
+                                                  .build());
 
     return editorPluginConfig;
 }
 
 int main(int argc, char **argv) {
+    QApplication app(argc, argv);
+
     auto globalConfig = qmdiGlobalConfig();
     auto networkPluginConfig = getNetworkConfig();
-    auto editorPluginConfig = getEditorConfig();
+    auto editorPluginConfig = getEditorConfig(app.font());
     globalConfig.addPluginConfig(networkPluginConfig);
     globalConfig.addPluginConfig(editorPluginConfig);
 
@@ -116,8 +125,6 @@ int main(int argc, char **argv) {
     // We can store the config on files. Only the values are saved.
     // We will load the user modifications
     globalConfig.loadFromFile("demo3-config.json");
-
-    QApplication app(argc, argv);
 
     // We can ask users to modify th config. All the UI is auto generated
     // depending on the config defined by the plugins

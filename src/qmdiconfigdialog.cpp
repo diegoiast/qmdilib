@@ -15,6 +15,7 @@
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
+#include <QFontDialog>
 #include <QHBoxLayout>
 #include <QInputDialog>
 #include <QLabel>
@@ -22,6 +23,7 @@
 #include <QListView>
 #include <QListWidget>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QSpinBox>
@@ -256,6 +258,18 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
             static_cast<QComboBox *>(widget)->addItems(item.possibleValue.toStringList());
             static_cast<QComboBox *>(widget)->setCurrentIndex(item.value.toInt());
             break;
+        case qmdiConfigItem::Font:
+            label = new QLabel(item.displayName, this);
+            widget = new QLabel(this);
+            widget->installEventFilter(this);
+
+            auto font = label->font();
+            font.fromString(item.value.toString());
+            widget->setFont(font);
+            widget->setProperty("isFontWidget", true);
+            static_cast<QLabel *>(widget)->setFrameShape(QFrame::StyledPanel);
+            static_cast<QLabel *>(widget)->setText(item.value.toString());
+            break;
         }
 
         if (!item.description.isEmpty()) {
@@ -324,9 +338,27 @@ void qmdiConfigDialog::acceptChanges() {
             case qmdiConfigItem::OneOf:
                 configItem.value = static_cast<QComboBox *>(widget)->currentIndex();
                 break;
+            case qmdiConfigItem::Font:
+                configItem.value = widget->font().toString();
+                break;
             }
         }
     }
 
     accept();
+}
+
+bool qmdiConfigDialog::eventFilter(QObject *o, QEvent *e) {
+    if (o->property("isFontWidget").toBool()) {
+        auto w = qobject_cast<QWidget *>(o);
+        if (e->type() == QEvent::MouseButtonRelease) {
+            auto ok = false;
+            auto newFont = QFontDialog::getFont(&ok, w->font(), this);
+            if (ok) {
+                w->setFont(newFont);
+                static_cast<QLabel *>(w)->setText(newFont.toString());
+            }
+        }
+    }
+    return QDialog::eventFilter(o, e);
 }

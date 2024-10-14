@@ -9,6 +9,7 @@
 #include "qmdiglobalconfig.h"
 #include <QDebug>
 #include <QFile>
+#include <QFont>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -106,6 +107,10 @@ bool qmdiGlobalConfig::loadDefsFromJson(const QJsonObject &jsonObject) {
                 break;
             case qmdiConfigItem::OneOf:
                 item.defaultValue = defaultValue.toVariant();
+                break;
+            case qmdiConfigItem::Font:
+                item.defaultValue = defaultValue.toString();
+                break;
             }
 
             pluginConfig->configItems.append(item);
@@ -257,6 +262,9 @@ void qmdiGlobalConfig::fromJson(QJsonObject jsonObj) {
                 }
                 p.value = i;
             }
+            case qmdiConfigItem::Font:
+                p.value = val.toString();
+                break;
             }
         }
     }

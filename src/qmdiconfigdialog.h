@@ -20,7 +20,7 @@
 
 class qmdiGlobalConfig;
 class qmdiPluginConfig;
-class qmdiConfigItem;
+struct qmdiConfigItem;
 
 /**
  * @brief A dialog which can modify a global configuration
@@ -43,6 +43,9 @@ class qmdiConfigDialog : public QDialog {
     void onPluginSelectionChanged(const QModelIndex &index);
     void cancelConfiguration();
     void acceptChanges();
+
+  protected:
+    bool eventFilter(QObject *, QEvent *) override;
 
   private:
     void updateWidgetsForPlugin(const QString &pluginName);

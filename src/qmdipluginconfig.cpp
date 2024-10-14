@@ -38,6 +38,8 @@ qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr)
         return StringList;
     } else if (lower == "oneof") {
         return OneOf;
+    } else if (lower == "font") {
+        return Font;
     } else {
         return String;
     }
@@ -69,6 +71,9 @@ QString qmdiConfigItem::typeToString(ClassType type) {
         return "StringList";
     case OneOf:
         return "OneOf";
+        break;
+    case Font:
+        return "Font";
         break;
     }
     return "Unknown";
