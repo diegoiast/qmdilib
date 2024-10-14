@@ -60,30 +60,6 @@ QStringList EditorPlugin::myExtensions() {
     return s;
 }
 
-void EditorPlugin::loadConfig(QSettings &settings) {
-    settings.beginGroup("EditorPlugin");
-    makeBackups = settings.value("makeBackups", makeBackups).toBool();
-    showLineNumbers = settings.value("showLineNumbers", showLineNumbers).toBool();
-    makeCurrentLine = settings.value("makeCurrentLine", makeCurrentLine).toBool();
-    wordWrap = settings.value("wordWrap", wordWrap).toBool();
-    makeBackups = settings.value("makeBackups", makeBackups).toBool();
-    // editorFont = settings.value( "editorFont", editorFont ).;
-    endOfLine = settings.value("endOfLine", endOfLine).toInt();
-    settings.endGroup();
-}
-
-void EditorPlugin::saveConfig(QSettings &settings) {
-    settings.beginGroup("EditorPlugin");
-    settings.setValue("makeBackups", makeBackups);
-    settings.setValue("showLineNumbers", showLineNumbers);
-    settings.setValue("makeCurrentLine", makeCurrentLine);
-    settings.setValue("wordWrap", wordWrap);
-    settings.setValue("makeBackups", makeBackups);
-    settings.setValue("editorFont", editorFont);
-    settings.setValue("endOfLine", endOfLine);
-    settings.endGroup();
-}
-
 int EditorPlugin::canOpenFile(const QString fileName) {
     QUrl u(fileName);
 

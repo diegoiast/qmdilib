@@ -22,8 +22,6 @@ class EditorPlugin : public IPlugin {
     QStringList myExtensions();
     int canOpenFile(const QString fileName);
     bool openFile(const QString fileName, int x = -1, int y = -1, int z = -1);
-    void loadConfig(QSettings &settings);
-    void saveConfig(QSettings &settings);
 
   public slots:
     void fileNew();
