@@ -1062,6 +1062,7 @@ void PluginManager::initGUI() {
     menus[tr("&Navigation")];
     menus[tr("&Tools")];
     menus[tr("Se&ttings")]->addAction(actionConfig);
+    menus[tr("Se&ttings")]->setMergePoint();
     menus[tr("Se&ttings")]->addSeparator();
     menus[tr("Se&ttings")]->addAction(actionNextTab);
     menus[tr("Se&ttings")]->addAction(actionPrevTab);
