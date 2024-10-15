@@ -35,6 +35,7 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer {
     virtual void deleteClient(qmdiClient *client);
     virtual int getClientsCount();
     virtual qmdiClient *getClient(int i);
+    virtual qmdiClient *getCurrentClient();
 
   protected:
     void tabInserted(int index);

@@ -20,6 +20,7 @@ class qmdiServer {
     virtual void deleteClient(qmdiClient *); // see documentation of this method!
     virtual int getClientsCount() = 0;
     virtual qmdiClient *getClient(int i) = 0;
+    virtual qmdiClient *getCurrentClient() = 0;
 
     void tryCloseClient(int i);
     void tryCloseAllButClient(int i);

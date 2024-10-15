@@ -249,12 +249,23 @@ bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event) {
 /**
  * \brief return a specific MDI client
  * \param i the number of sub widget to return
- * \return and qmdiClinet pointer or nullptr
+ * \return a qmdiClient pointer or nullptr
  *
  * This method returns the MDI client found in tab number \b i , or \b nullptr
  * if that widget does not implement the qmdiClient interface.
  */
 qmdiClient *qmdiTabWidget::getClient(int i) { return dynamic_cast<qmdiClient *>(widget(i)); }
+
+/**
+ * @brief return the currently active MDI client
+ * @return a qmdiClinet pointer or nullptr
+ *
+ * This method wiil return te currently active, or \b nullptr when such is not available.
+ * This basically calls QTabWidget::currentWidget()
+ */
+qmdiClient *qmdiTabWidget::getCurrentClient() {
+    return dynamic_cast<qmdiClient *>(currentWidget());
+}
 
 /**
  * \brief return the number of sub clients in this server

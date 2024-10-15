@@ -867,6 +867,8 @@ QWidget *PluginManager::getPanel(Panels p, int index) {
     return t->widget(index);
 }
 
+qmdiClient *PluginManager::currentClient() { return tabWidget->getCurrentClient(); }
+
 /**
  * \brief add a new plugin to the plugin manager system
  * \param newplugin the plugin to add to the system

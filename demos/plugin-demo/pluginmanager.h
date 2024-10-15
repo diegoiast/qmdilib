@@ -62,6 +62,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
   public:
     int createNewPanel(Panels p, QString name, QWidget *widget);
     QWidget *getPanel(Panels p, int index);
+    qmdiClient *currentClient();
 
   public slots:
     void addPlugin(IPlugin *newplugin);
