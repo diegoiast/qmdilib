@@ -532,6 +532,9 @@ void PluginManager::restoreSettings() {
     show();
     QApplication::restoreOverrideCursor();
     QApplication::processEvents();
+    foreach (auto plugin, plugins) {
+        plugin->loadConfig(*settingsManager);
+    }
 
     // restore opened files
     settingsManager->beginGroup("files");
@@ -552,10 +555,6 @@ void PluginManager::restoreSettings() {
     }
 
     settingsManager->endGroup();
-
-    foreach (auto plugin, plugins) {
-        plugin->loadConfig(*settingsManager);
-    }
 
     updateActionsStatus();
 }
@@ -909,10 +908,6 @@ void PluginManager::addPlugin(IPlugin *newplugin) {
         if (!newplugin->config.configItems.isEmpty()) {
             config.addPluginConfig(&newplugin->config);
         }
-    }
-
-    if (settingsManager) {
-        newplugin->loadConfig(*settingsManager);
     }
 
     connect(this, &PluginManager::configurationUpdated, newplugin,
