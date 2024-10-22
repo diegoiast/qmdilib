@@ -69,7 +69,7 @@ void FileSystemBrowserPlugin::loadConfig(QSettings &settings) {
     auto indexPath = this->panel->model->index(savedDir);
 
     this->panel->filterEdit->setText(savedFilter);
-    this->panel->rootPathEdit->setText(savedDir);
+    this->panel->rootPathEdit->setText(QDir::toNativeSeparators(savedDir));
     this->panel->treeView->setRootIndex(indexPath);
     this->panel->iconView->setRootIndex(indexPath);
     if (isTreeVisible) {

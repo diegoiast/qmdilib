@@ -438,7 +438,7 @@ void FileSystemWidget::navigateTo(const QString &path) {
     }
     treeView->setRootIndex(model->index(path));
     iconView->setRootIndex(model->index(path));
-    rootPathEdit->setText(path);
+    rootPathEdit->setText(QDir::toNativeSeparators(path));
     QDir::setCurrent(path);
 
     if (historyStack.isEmpty() || historyStack.top() != path) {
