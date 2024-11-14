@@ -16,6 +16,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QSettings>
+#include <QStackedWidget>
 #include <QStandardItemModel>
 #include <QStandardPaths>
 #include <QString>
@@ -507,6 +508,7 @@ void PluginManager::restoreSettings() {
     settingsManager->beginGroup("ui");
     {
         auto panelNumber = 0;
+        auto panelMinimized = false;
         panelNumber = settingsManager->value("eastSelected", -1).toInt();
         if (panelNumber >= 0) {
             showPanel(Panels::East, panelNumber);
@@ -518,6 +520,19 @@ void PluginManager::restoreSettings() {
         panelNumber = settingsManager->value("southSelected", -1).toInt();
         if (panelNumber >= 0) {
             showPanel(Panels::South, panelNumber);
+        }
+
+        panelMinimized = settingsManager->value("eastMinimized", false).toBool();
+        if (panelMinimized) {
+            hidePanel(Panels::East);
+        }
+        panelMinimized = settingsManager->value("westMinimized", false).toBool();
+        if (panelMinimized) {
+            hidePanel(Panels::West);
+        }
+        panelMinimized = settingsManager->value("southMinimized", true).toBool();
+        if (panelMinimized) {
+            hidePanel(Panels::South);
         }
     }
     settingsManager->endGroup();
@@ -615,7 +630,7 @@ void PluginManager::saveSettings() {
             } else {
                 settingsManager->setValue(QString("file%1").arg(i), "");
             }
-        }        
+        }
         settingsManager->setValue("current", tabWidget->currentIndex());
     }
     settingsManager->endGroup();
@@ -773,25 +788,21 @@ void PluginManager::hidePanel(Panels p) {
     if (panel->tabBar()->count() == 0) {
         panel->hide();
     } else {
-        auto tabSize = 0;
+        // QWidget *w;
+        auto w = panel->findChild<QStackedWidget *>();
+        w->hide();
         switch (p) {
         case Panels::East:
-            this->eastState.savedSize = ui->eastPanel->size();
             this->eastState.isMinimized = true;
-            tabSize = panel->tabBar()->sizeHint().width();
-            panel->setMaximumWidth(tabSize);
+            panel->setFixedWidth(panel->tabBar()->width());
             break;
         case Panels::West:
-            this->westState.savedSize = ui->westPanel->size();
             this->westState.isMinimized = true;
-            tabSize = panel->tabBar()->sizeHint().width();
-            panel->setMaximumWidth(tabSize);
+            panel->setFixedWidth(panel->tabBar()->width());
             break;
         case Panels::South:
-            this->southState.savedSize = ui->southPanel->size();
             this->southState.isMinimized = true;
-            tabSize = panel->tabBar()->sizeHint().height();
-            panel->setMaximumHeight(tabSize);
+            panel->setFixedHeight(panel->tabBar()->height());
             break;
         }
     }
@@ -799,29 +810,32 @@ void PluginManager::hidePanel(Panels p) {
 
 void PluginManager::showPanel(Panels p, int index) {
     QTabWidget *panel = nullptr;
+    QWidget *w;
+
     switch (p) {
     case Panels::East:
         eastState.isMinimized = false;
         panel = this->ui->eastPanel;
-        if (eastState.savedSize.width() > 0) {
-            panel->setMaximumWidth(eastState.savedSize.width());
-        }
+        w = panel->findChild<QStackedWidget *>();
+        w->show();
+        panel->setFixedWidth(QWIDGETSIZE_MAX);
         break;
     case Panels::West:
         westState.isMinimized = false;
         panel = this->ui->westPanel;
-        if (westState.savedSize.width() > 0) {
-            panel->setMaximumWidth(westState.savedSize.width());
-        }
+        w = panel->findChild<QStackedWidget *>();
+        w->show();
+        panel->setFixedWidth(QWIDGETSIZE_MAX);
         break;
     case Panels::South:
         southState.isMinimized = false;
         panel = this->ui->southPanel;
-        if (southState.savedSize.height() > 0) {
-            panel->setMaximumHeight(southState.savedSize.height());
-        }
+        w = panel->findChild<QStackedWidget *>();
+        w->show();
+        panel->setFixedHeight(QWIDGETSIZE_MAX);
         break;
     }
+
     assert(panel != nullptr);
     panel->setFocus();
     for (auto i = 0; i < panel->count(); ++i) {

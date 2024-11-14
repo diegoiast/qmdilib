@@ -23,13 +23,12 @@ class PluginModel;
 
 namespace Ui {
 class PluginManagedWindow;
-};
+}
 
 enum class Panels { West, East, South };
 
 struct PanelState {
     bool isMinimized = false;
-    QSize savedSize;
     QTabWidget *panel;
 };
 
