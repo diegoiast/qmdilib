@@ -810,34 +810,36 @@ void PluginManager::hidePanel(Panels p) {
 
 void PluginManager::showPanel(Panels p, int index) {
     QTabWidget *panel = nullptr;
-    QWidget *w;
 
     switch (p) {
     case Panels::East:
         eastState.isMinimized = false;
         panel = this->ui->eastPanel;
-        w = panel->findChild<QStackedWidget *>();
-        w->show();
-        panel->setFixedWidth(QWIDGETSIZE_MAX);
         break;
     case Panels::West:
         westState.isMinimized = false;
         panel = this->ui->westPanel;
-        w = panel->findChild<QStackedWidget *>();
-        w->show();
-        panel->setFixedWidth(QWIDGETSIZE_MAX);
         break;
     case Panels::South:
         southState.isMinimized = false;
         panel = this->ui->southPanel;
-        w = panel->findChild<QStackedWidget *>();
-        w->show();
-        panel->setFixedHeight(QWIDGETSIZE_MAX);
         break;
     }
 
-    assert(panel != nullptr);
+    assert(panel);
+    auto w = panel->findChild<QStackedWidget *>();
+    assert(w);
+
     panel->setFocus();
+    w->show();
+    if (p == Panels::South) {
+        panel->setMaximumHeight(QWIDGETSIZE_MAX);
+    } else {
+        panel->setMaximumWidth(QWIDGETSIZE_MAX);
+    }
+
+    w->show();
+    panel->setMaximumWidth(QWIDGETSIZE_MAX);
     for (auto i = 0; i < panel->count(); ++i) {
         panel->setCurrentIndex(index);
         panel->widget(index)->show();
