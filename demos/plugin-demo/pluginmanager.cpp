@@ -487,45 +487,38 @@ void PluginManager::restoreSettings() {
 
     // TODO - use the global config API
     settingsManager->beginGroup("mainwindow");
-    if (settingsManager->contains("maximized")) {
-        if (settingsManager->value("maximized").toBool()) {
-            showMaximized();
-        } else {
-            if (settingsManager->contains("size")) {
-                resize(settingsManager->value("size").toSize());
-            }
-            if (settingsManager->contains("location")) {
-                move(settingsManager->value("location").toPoint());
+    {
+        if (settingsManager->contains("maximized")) {
+            if (settingsManager->value("maximized").toBool()) {
+                showMaximized();
+            } else {
+                if (settingsManager->contains("size")) {
+                    resize(settingsManager->value("size").toSize());
+                }
+                if (settingsManager->contains("location")) {
+                    move(settingsManager->value("location").toPoint());
+                }
             }
         }
+        show();
     }
-    show();
     settingsManager->endGroup();
 
     settingsManager->beginGroup("ui");
-#if 0
-    if (settingsManager->value("eastMinimized", false).toBool()) {
-        hidePanel(Panels::East);
-    }
-    if (settingsManager->value("westMinimized", false).toBool()) {
-        hidePanel(Panels::West);
-    }
-    if (settingsManager->value("southMinimized", false).toBool()) {
-        hidePanel(Panels::South);
-    }
-#endif
-    auto panelNumber = 0;
-    panelNumber = settingsManager->value("eastSelected", -1).toInt();
-    if (panelNumber >= 0) {
-        showPanel(Panels::East, panelNumber);
-    }
-    panelNumber = settingsManager->value("westSelected", -1).toInt();
-    if (panelNumber >= 0) {
-        showPanel(Panels::West, panelNumber);
-    }
-    panelNumber = settingsManager->value("southSelected", -1).toInt();
-    if (panelNumber >= 0) {
-        showPanel(Panels::South, panelNumber);
+    {
+        auto panelNumber = 0;
+        panelNumber = settingsManager->value("eastSelected", -1).toInt();
+        if (panelNumber >= 0) {
+            showPanel(Panels::East, panelNumber);
+        }
+        panelNumber = settingsManager->value("westSelected", -1).toInt();
+        if (panelNumber >= 0) {
+            showPanel(Panels::West, panelNumber);
+        }
+        panelNumber = settingsManager->value("southSelected", -1).toInt();
+        if (panelNumber >= 0) {
+            showPanel(Panels::South, panelNumber);
+        }
     }
     settingsManager->endGroup();
 
@@ -538,22 +531,23 @@ void PluginManager::restoreSettings() {
 
     // restore opened files
     settingsManager->beginGroup("files");
-    foreach (auto s, settingsManager->childKeys()) {
-        if (!s.startsWith("file")) {
-            continue;
+    {
+        foreach (auto s, settingsManager->childKeys()) {
+            if (!s.startsWith("file")) {
+                continue;
+            }
+            auto fileNameDetails = settingsManager->value(s).toString();
+            auto [fileName, row, col, zoom] = parseFilename(fileNameDetails);
+            QApplication::processEvents();
+            openFile(fileName, row, col, zoom);
         }
-        auto fileNameDetails = settingsManager->value(s).toString();
-        auto [fileName, row, col, zoom] = parseFilename(fileNameDetails);
-        QApplication::processEvents();
-        openFile(fileName, row, col, zoom);
-    }
 
-    // re-select the current tab
-    int current = settingsManager->value("current", -1).toInt();
-    if (current != -1) {
-        tabWidget->setCurrentIndex(current);
+        // re-select the current tab
+        int current = settingsManager->value("current", -1).toInt();
+        if (current != -1) {
+            tabWidget->setCurrentIndex(current);
+        }
     }
-
     settingsManager->endGroup();
 
     updateActionsStatus();
@@ -585,20 +579,22 @@ void PluginManager::saveSettings() {
     // TODO - port to the plugin config system
     // main window state
     settingsManager->beginGroup("mainwindow");
-    settingsManager->setValue("size", size());
-    settingsManager->setValue("location", pos());
-    settingsManager->setValue("maximized", isMaximized());
-    settingsManager->setValue("state", saveState());
-    settingsManager->setValue("geometry", saveGeometry());
-    settingsManager->setValue("hidegui", actionHideGUI->isChecked());
+    {
+        settingsManager->setValue("size", size());
+        settingsManager->setValue("location", pos());
+        settingsManager->setValue("maximized", isMaximized());
+        settingsManager->setValue("state", saveState());
+        settingsManager->setValue("geometry", saveGeometry());
+        settingsManager->setValue("hidegui", actionHideGUI->isChecked());
+    }
     settingsManager->endGroup();
 
     // store saved files
     settingsManager->remove("files"); // remove all old loaded files
+    settingsManager->beginGroup("files");
     if (tabWidget->count() != 0) {
         qmdiClient *c = nullptr;
         auto s = QString();
-        settingsManager->beginGroup("files");
         for (auto i = 0; i < tabWidget->count(); i++) {
             c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
             if (!c) {
@@ -619,19 +615,20 @@ void PluginManager::saveSettings() {
             } else {
                 settingsManager->setValue(QString("file%1").arg(i), "");
             }
-        }
-
+        }        
         settingsManager->setValue("current", tabWidget->currentIndex());
     }
     settingsManager->endGroup();
 
     settingsManager->beginGroup("ui");
-    settingsManager->setValue("eastMinimized", eastState.isMinimized);
-    settingsManager->setValue("eastSelected", eastState.panel->currentIndex());
-    settingsManager->setValue("westMinimized", westState.isMinimized);
-    settingsManager->setValue("westSelected", westState.panel->currentIndex());
-    settingsManager->setValue("southMinimized", southState.isMinimized);
-    settingsManager->setValue("southSelected", southState.panel->currentIndex());
+    {
+        settingsManager->setValue("eastMinimized", eastState.isMinimized);
+        settingsManager->setValue("eastSelected", eastState.panel->currentIndex());
+        settingsManager->setValue("westMinimized", westState.isMinimized);
+        settingsManager->setValue("westSelected", westState.panel->currentIndex());
+        settingsManager->setValue("southMinimized", southState.isMinimized);
+        settingsManager->setValue("southSelected", southState.panel->currentIndex());
+    }
     settingsManager->endGroup();
 
     // let each ones of the plugins save it's state
