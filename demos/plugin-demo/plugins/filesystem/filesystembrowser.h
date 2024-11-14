@@ -15,9 +15,9 @@ class FileSystemWidget;
 class FileSystemBrowserPlugin : public IPlugin {
   public:
     struct Config {
-        CONFIG_DEFINE(DisplayTree, bool);
-        CONFIG_DEFINE(Filter, QString);
-        CONFIG_DEFINE(Directory, QString);
+        CONFIG_DEFINE(DisplayTree, bool)
+        CONFIG_DEFINE(Filter, QString)
+        CONFIG_DEFINE(Directory, QString)
         qmdiPluginConfig *config;
     };
     Config &getConfig() {
@@ -33,5 +33,5 @@ class FileSystemBrowserPlugin : public IPlugin {
     virtual void saveConfig(QSettings &settings) override;
 
   private:
-    FileSystemWidget *panel;
+    FileSystemWidget *panel = nullptr;
 };
