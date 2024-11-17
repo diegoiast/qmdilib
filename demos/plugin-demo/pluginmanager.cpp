@@ -564,6 +564,7 @@ void PluginManager::restoreSettings() {
         }
     }
     settingsManager->endGroup();
+    saveSettings();
 
     updateActionsStatus();
 }
