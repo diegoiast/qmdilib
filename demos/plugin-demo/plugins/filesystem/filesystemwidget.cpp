@@ -24,6 +24,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shellapi.h>
+#include <oleidl.h>
 // clang-format on
 
 void showFileProperties(const QFileInfo &fileInfo) {
