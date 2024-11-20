@@ -201,13 +201,27 @@ FileSystemWidget::FileSystemWidget(QWidget *parent) : QWidget(parent) {
 void FileSystemWidget::initContextMenu() {
     contextMenu = new qmdiActionGroup(tr("File actions"));
     editAction = new QAction(tr("Edit"), this);
-    auto openAction = new QAction(tr("&Open in OS"), this);
+    editAction->setObjectName("editAction");
     auto renameAction = new QAction(tr("&Rename"), this);
+
     auto copyAction = new QAction(tr("&Copy"), this);
     auto pasteAction = new QAction(tr("&Paste"), this);
     auto cutAction = new QAction(tr("Cu&t"), this);
     auto deleteAction = new QAction(tr("&Delete"), this);
+    auto openAction = new QAction(tr("&Open externally by OS..."), this);
+    auto actionCopyFileName = new QAction(tr("Copy filename to clipboard"), this);
+    auto actionCopyFilePath = new QAction(tr("Copy full path to clipboard"), this);
     auto propertiesAction = new QAction(tr("&Properties"), this);
+
+    renameAction->setObjectName("renameAction");
+    copyAction->setObjectName("copyAction");
+    pasteAction->setObjectName("pasteAction");
+    cutAction->setObjectName("cutAction");
+    deleteAction->setObjectName("deleteAction");
+    openAction->setObjectName("openAction");
+    actionCopyFileName->setObjectName("actionCopyFi");
+    actionCopyFilePath->setObjectName("actionCopyFi");
+    propertiesAction->setObjectName("propertiesAction");
 
     connect(openAction, &QAction::triggered, this, &FileSystemWidget::openFile);
     connect(editAction, &QAction::triggered, this, &FileSystemWidget::editFile);
@@ -217,6 +231,16 @@ void FileSystemWidget::initContextMenu() {
     connect(cutAction, &QAction::triggered, this, &FileSystemWidget::cutFile);
     connect(deleteAction, &QAction::triggered, this, &FileSystemWidget::deleteFile);
     connect(propertiesAction, &QAction::triggered, this, &FileSystemWidget::showProperties);
+    connect(actionCopyFileName, &QAction::triggered, this, [this]() {
+        auto c = QApplication::clipboard();
+        QFileInfo fileInfo = model->fileInfo(selectedFileIndex);
+        c->setText(fileInfo.fileName());
+    });
+    connect(actionCopyFilePath, &QAction::triggered, this, [this]() {
+        auto c = QApplication::clipboard();
+        QFileInfo fileInfo = model->fileInfo(selectedFileIndex);
+        c->setText(fileInfo.filePath());
+    });
 
     auto boldFont = editAction->font();
     boldFont.setBold(true);
@@ -231,6 +255,8 @@ void FileSystemWidget::initContextMenu() {
     contextMenu->addAction(deleteAction);
     contextMenu->addSeparator();
     contextMenu->setMergePoint();
+    contextMenu->addAction(actionCopyFileName);
+    contextMenu->addAction(actionCopyFilePath);
     contextMenu->addAction(openAction);
     contextMenu->addAction(propertiesAction);
 }
