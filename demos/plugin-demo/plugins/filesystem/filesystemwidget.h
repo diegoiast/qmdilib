@@ -13,10 +13,14 @@ class QPushButton;
 class QPushButton;
 class QPushButton;
 
+class qmdiActionGroup;
+
 class FileSystemWidget : public QWidget {
     Q_OBJECT
   public:
     FileSystemWidget(QWidget *parent = nullptr);
+
+    void initContextMenu();
 
   signals:
     void fileDoubleClicked(const QString &filePath);
@@ -46,19 +50,24 @@ class FileSystemWidget : public QWidget {
     void updateButtonStates();
 
   public:
+    qmdiActionGroup *contextMenu;
+
     QFileSystemModel *model;
     QTreeView *treeView;
     QListView *iconView;
+    QLineEdit *filterEdit;
+    QLineEdit *rootPathEdit;
+    bool isTreeVisible = true;
+
+  private:
     QPushButton *toggleButton;
     QPushButton *upButton;
-    QLineEdit *rootPathEdit;
-    QLineEdit *filterEdit;
     QPushButton *backButton;
     QPushButton *nextButton;
     QPushButton *homeButton;
-    bool isTreeVisible = true;
     QStack<QString> historyStack;
     int currentHistoryIndex;
 
+    QAction *editAction;
     QModelIndex selectedFileIndex;
 };

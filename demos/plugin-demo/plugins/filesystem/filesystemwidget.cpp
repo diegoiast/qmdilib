@@ -16,6 +16,8 @@
 #include <QProcess>
 #include <QPushButton>
 
+#include "qmdiactiongroup.h"
+
 #if defined(WIN32)
 // clang-format off
 #define WIN32_LEAN_AND_MEAN
@@ -185,6 +187,7 @@ FileSystemWidget::FileSystemWidget(QWidget *parent) : QWidget(parent) {
     currentHistoryIndex = 0;
 
     updateButtonStates();
+    initContextMenu();
 
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     iconView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -193,6 +196,43 @@ FileSystemWidget::FileSystemWidget(QWidget *parent) : QWidget(parent) {
             &FileSystemWidget::showContextMenu);
     connect(iconView, &QListView::customContextMenuRequested, this,
             &FileSystemWidget::showContextMenu);
+}
+
+void FileSystemWidget::initContextMenu() {
+    contextMenu = new qmdiActionGroup(tr("File actions"));
+    editAction = new QAction(tr("Edit"), this);
+    auto openAction = new QAction(tr("&Open in OS"), this);
+    auto renameAction = new QAction(tr("&Rename"), this);
+    auto copyAction = new QAction(tr("&Copy"), this);
+    auto pasteAction = new QAction(tr("&Paste"), this);
+    auto cutAction = new QAction(tr("Cu&t"), this);
+    auto deleteAction = new QAction(tr("&Delete"), this);
+    auto propertiesAction = new QAction(tr("&Properties"), this);
+
+    connect(openAction, &QAction::triggered, this, &FileSystemWidget::openFile);
+    connect(editAction, &QAction::triggered, this, &FileSystemWidget::editFile);
+    connect(renameAction, &QAction::triggered, this, &FileSystemWidget::renameFile);
+    connect(copyAction, &QAction::triggered, this, &FileSystemWidget::copyFile);
+    connect(pasteAction, &QAction::triggered, this, &FileSystemWidget::pasteFile);
+    connect(cutAction, &QAction::triggered, this, &FileSystemWidget::cutFile);
+    connect(deleteAction, &QAction::triggered, this, &FileSystemWidget::deleteFile);
+    connect(propertiesAction, &QAction::triggered, this, &FileSystemWidget::showProperties);
+
+    auto boldFont = editAction->font();
+    boldFont.setBold(true);
+    editAction->setFont(boldFont);
+
+    contextMenu = new qmdiActionGroup(tr("File actions"));
+    contextMenu->addAction(editAction);
+    contextMenu->addAction(renameAction);
+    contextMenu->addAction(copyAction);
+    contextMenu->addAction(pasteAction);
+    contextMenu->addAction(cutAction);
+    contextMenu->addAction(deleteAction);
+    contextMenu->addSeparator();
+    contextMenu->setMergePoint();
+    contextMenu->addAction(openAction);
+    contextMenu->addAction(propertiesAction);
 }
 
 void FileSystemWidget::handleFileDoubleClick(const QString &filePath) {
@@ -213,47 +253,16 @@ void FileSystemWidget::showContextMenu(const QPoint &pos) {
     } else if (auto listview1 = qobject_cast<QListView *>(sender())) {
         index = listview1->indexAt(pos);
     }
+    if (!index.isValid()) {
+        return;
+    }
+    selectedFileIndex = index;
+
     QFileInfo fileInfo = model->fileInfo(index);
+    editAction->setEnabled(fileInfo.isFile());
 
-    auto openAction = new QAction(tr("&Open in OS"), this);
-    auto renameAction = new QAction(tr("&Rename"), this);
-    auto copyAction = new QAction(tr("&Copy"), this);
-    auto pasteAction = new QAction(tr("&Paste"), this);
-    auto cutAction = new QAction(tr("Cu&t"), this);
-    auto deleteAction = new QAction(tr("&Delete"), this);
-    auto propertiesAction = new QAction(tr("&Properties"), this);
-
-    connect(openAction, &QAction::triggered, this, &FileSystemWidget::openFile);
-    connect(renameAction, &QAction::triggered, this, &FileSystemWidget::renameFile);
-    connect(copyAction, &QAction::triggered, this, &FileSystemWidget::copyFile);
-    connect(pasteAction, &QAction::triggered, this, &FileSystemWidget::pasteFile);
-    connect(cutAction, &QAction::triggered, this, &FileSystemWidget::cutFile);
-    connect(deleteAction, &QAction::triggered, this, &FileSystemWidget::deleteFile);
-    connect(propertiesAction, &QAction::triggered, this, &FileSystemWidget::showProperties);
-
-    auto contextMenu = new QMenu(this);
-    contextMenu->addAction(openAction);
-    if (fileInfo.isFile()) {
-        auto editAction = new QAction(tr("Edit"), this);
-        QFont boldFont = editAction->font();
-        boldFont.setBold(true);
-        editAction->setFont(boldFont);
-        connect(editAction, &QAction::triggered, this, &FileSystemWidget::editFile);
-        contextMenu->addAction(editAction);
-    }
-
-    contextMenu->addAction(renameAction);
-    contextMenu->addAction(copyAction);
-    contextMenu->addAction(pasteAction);
-    contextMenu->addAction(cutAction);
-    contextMenu->addAction(deleteAction);
-    contextMenu->addSeparator();
-    contextMenu->addAction(propertiesAction);
-
-    if (index.isValid()) {
-        selectedFileIndex = index;
-        contextMenu->exec(QCursor::pos());
-    }
+    auto menu = contextMenu->updateMenu(new QMenu(this));
+    menu->exec(QCursor::pos());
 }
 
 void FileSystemWidget::openFile() {
