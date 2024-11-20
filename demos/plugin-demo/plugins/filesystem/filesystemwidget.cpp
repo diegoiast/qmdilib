@@ -129,12 +129,14 @@ FileSystemWidget::FileSystemWidget(QWidget *parent) : QWidget(parent) {
     treeView->setModel(model);
     treeView->setRootIndex(model->index(homePath));
     treeView->expand(model->index(homePath));
+    treeView->setEditTriggers(QAbstractItemView::EditKeyPressed);
 
     iconView = new QListView(this);
     iconView->setModel(model);
     iconView->setRootIndex(model->index(homePath));
     iconView->setViewMode(QListView::IconMode);
     iconView->setIconSize(QSize(64, 64));
+    iconView->setEditTriggers(QAbstractItemView::EditKeyPressed);
 
     for (int i = 1; i < model->columnCount(); ++i) {
         if (i != 1) {
