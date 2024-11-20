@@ -380,22 +380,85 @@ void FileSystemWidget::pasteFile() {
 
 void FileSystemWidget::cutFile() {
     auto selectedFilePath = model->fileInfo(selectedFileIndex).absoluteFilePath();
-    if (!selectedFilePath.isEmpty()) {
-        QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText(selectedFilePath);
-        QFile::remove(selectedFilePath);
+    if (selectedFilePath.isEmpty()) {
+        qWarning() << "No file selected to cut.";
+        return;
     }
+
+#if defined(Q_OS_WIN)
+    const wchar_t *filePath = reinterpret_cast<const wchar_t *>(selectedFilePath.utf16());
+
+    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, (wcslen(filePath) + 1) * sizeof(wchar_t));
+    if (!hGlobal) {
+        qWarning() << "Failed to allocate global memory for clipboard.";
+        return;
+    }
+
+    void *globalLock = GlobalLock(hGlobal);
+    if (globalLock) {
+        memcpy(globalLock, filePath, (wcslen(filePath) + 1) * sizeof(wchar_t));
+        GlobalUnlock(hGlobal);
+    }
+
+    if (OpenClipboard(nullptr)) {
+        EmptyClipboard();
+        SetClipboardData(CF_HDROP, hGlobal);
+        UINT cutOperationFormat = RegisterClipboardFormat(L"Preferred DropEffect");
+        if (cutOperationFormat) {
+            HGLOBAL hDropEffect = GlobalAlloc(GMEM_MOVEABLE, sizeof(DWORD));
+            if (hDropEffect) {
+                DWORD *dropEffect = static_cast<DWORD *>(GlobalLock(hDropEffect));
+                if (dropEffect) {
+                    *dropEffect = DROPEFFECT_MOVE;
+                    GlobalUnlock(hDropEffect);
+                }
+                SetClipboardData(cutOperationFormat, hDropEffect);
+            }
+        }
+
+        CloseClipboard();
+    } else {
+        qWarning() << "Failed to open clipboard.";
+        GlobalFree(hGlobal);
+    }
+
+#elif defined(Q_OS_MAC) || defined(Q_OS_UNIX)
+    // Should catch: Q_OS_FREEBSD, Q_OS_NETBSD, Q_OS_OPENBSD, and Q_OS_LINUX
+    auto clipboard = QApplication::clipboard();
+    auto mimeData = new QMimeData();
+    auto urls = QList<QUrl>();
+
+    urls.append(QUrl::fromLocalFile(selectedFilePath));
+    mimeData->setUrls(urls);
+    mimeData->setData("application/x-cut-operation", QByteArray("true"));
+    clipboard->setMimeData(mimeData);
+#else
+    qWarning() << "Cut operation is not supported on this platform.";
+#endif
 }
 
 void FileSystemWidget::deleteFile() {
-    auto selectedFilePath = model->fileInfo(selectedFileIndex).absoluteFilePath();
+    auto fi = model->fileInfo(selectedFileIndex);
+    auto selectedFilePath = fi.absoluteFilePath();
     if (!selectedFilePath.isEmpty()) {
         if (QMessageBox::question(
                 this, tr("Confirm Delete"),
-                tr("Are you sure you want to delete %1?").arg(selectedFilePath)) ==
+                tr("Are you sure you want to delete <b>%1</b>?").arg(selectedFilePath)) ==
             QMessageBox::Yes) {
-            QFile::remove(selectedFilePath);
+
+            auto success = true;
+            if (fi.isFile()) {
+                success = QFile::remove(selectedFilePath);
+            } else if (fi.isDir()) {
+                auto dir = QDir(selectedFilePath);
+                success = dir.removeRecursively();
+            }
             navigateTo(QFileInfo(selectedFilePath).absolutePath());
+
+            if (!success) {
+                QMessageBox::warning(this, tr("Deletion Failed"),
+                                     tr("Failed to delete <b>%1</b>").arg(selectedFilePath));
+            }
         }
     }
 }
