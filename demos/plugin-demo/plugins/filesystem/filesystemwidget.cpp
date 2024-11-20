@@ -1,10 +1,10 @@
-#include "filesystemwidget.h"
-
 #include <QApplication>
 #include <QClipboard>
 #include <QCompleter>
+#include <QDebug>
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -16,6 +16,7 @@
 #include <QProcess>
 #include <QPushButton>
 
+#include "filesystemwidget.h"
 #include "qmdiactiongroup.h"
 
 #if defined(WIN32)
@@ -223,6 +224,18 @@ void FileSystemWidget::initContextMenu() {
     actionCopyFilePath->setObjectName("actionCopyFi");
     propertiesAction->setObjectName("propertiesAction");
 
+    editAction->setIcon(QIcon::fromTheme("document-open"));
+    renameAction->setIcon(QIcon::fromTheme("edit-rename"));
+    copyAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditCopy));
+    pasteAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditPaste));
+    cutAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditCut));
+    deleteAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditDelete));
+    openAction->setIcon(QIcon::fromTheme("gtk-execute"));
+    actionCopyFileName->setIcon(QIcon::fromTheme("edit-copy"));
+    actionCopyFilePath->setIcon(QIcon::fromTheme("edit-copy-path-symbolic"));
+    propertiesAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentProperties));
+
+    connect(openAction, &QAction::triggered, this, &FileSystemWidget::openFile);
     connect(openAction, &QAction::triggered, this, &FileSystemWidget::openFile);
     connect(editAction, &QAction::triggered, this, &FileSystemWidget::editFile);
     connect(renameAction, &QAction::triggered, this, &FileSystemWidget::renameFile);
