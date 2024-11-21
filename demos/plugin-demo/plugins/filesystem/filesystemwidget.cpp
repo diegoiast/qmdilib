@@ -205,8 +205,10 @@ void FileSystemWidget::initContextMenu() {
     contextMenu = new qmdiActionGroup(tr("File actions"));
     editAction = new QAction(tr("Edit"), this);
     editAction->setObjectName("editAction");
-    auto renameAction = new QAction(tr("&Rename"), this);
 
+    auto newFileAction = new QAction(tr("&New file.."), this);
+    auto newFolderAction = new QAction(tr("New &folder..."), this);
+    auto renameAction = new QAction(tr("&Rename"), this);
     auto copyAction = new QAction(tr("&Copy"), this);
     auto pasteAction = new QAction(tr("&Paste"), this);
     auto cutAction = new QAction(tr("Cu&t"), this);
@@ -216,6 +218,8 @@ void FileSystemWidget::initContextMenu() {
     auto actionCopyFilePath = new QAction(tr("Copy full path to clipboard"), this);
     auto propertiesAction = new QAction(tr("&Properties"), this);
 
+    newFileAction->setObjectName("newFileAction");
+    newFolderAction->setObjectName("newFolderAction");
     renameAction->setObjectName("renameAction");
     copyAction->setObjectName("copyAction");
     pasteAction->setObjectName("pasteAction");
@@ -227,6 +231,8 @@ void FileSystemWidget::initContextMenu() {
     propertiesAction->setObjectName("propertiesAction");
 
     editAction->setIcon(QIcon::fromTheme("document-open"));
+    newFileAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew));
+    newFolderAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::FolderNew));
     renameAction->setIcon(QIcon::fromTheme("edit-rename"));
     copyAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditCopy));
     pasteAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditPaste));
@@ -237,7 +243,8 @@ void FileSystemWidget::initContextMenu() {
     actionCopyFilePath->setIcon(QIcon::fromTheme("edit-copy-path-symbolic"));
     propertiesAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentProperties));
 
-    connect(openAction, &QAction::triggered, this, &FileSystemWidget::openFile);
+    connect(newFileAction, &QAction::triggered, this, &FileSystemWidget::newFile);
+    connect(newFolderAction, &QAction::triggered, this, &FileSystemWidget::newFolder);
     connect(openAction, &QAction::triggered, this, &FileSystemWidget::openFile);
     connect(editAction, &QAction::triggered, this, &FileSystemWidget::editFile);
     connect(renameAction, &QAction::triggered, this, &FileSystemWidget::renameFile);
@@ -268,6 +275,9 @@ void FileSystemWidget::initContextMenu() {
     contextMenu->addAction(pasteAction);
     contextMenu->addAction(cutAction);
     contextMenu->addAction(deleteAction);
+    contextMenu->addSeparator();
+    contextMenu->addAction(newFileAction);
+    contextMenu->addAction(newFolderAction);
     contextMenu->addSeparator();
     contextMenu->setMergePoint();
     contextMenu->addAction(actionCopyFileName);
@@ -308,6 +318,90 @@ void FileSystemWidget::showContextMenu(const QPoint &pos) {
     menu->insertAction(menu->actions().first(), nameAction);
     menu->exec(QCursor::pos());
 }
+
+std::tuple<QString, QString> findUniqueName(const QModelIndex &currentIndex,
+                                            const QString &baseName,
+                                            const QFileSystemModel &model) {
+    QString directoryPath = model.filePath(currentIndex);
+    QFileInfo fileInfo(baseName);
+    QString nameWithoutExtension = fileInfo.completeBaseName();
+    QString extension = fileInfo.suffix();
+    QString tempName = baseName;
+    QString fullPath = directoryPath + QDir::separator() + tempName;
+    int counter = 1;
+
+    // Increment the counter in the base name, not including the extension
+    while (QFileInfo(fullPath).exists()) {
+        if (extension.isEmpty()) {
+            tempName = QStringLiteral("%1 %2").arg(nameWithoutExtension).arg(counter++);
+        } else {
+            tempName =
+                QStringLiteral("%1 %2.%3").arg(nameWithoutExtension).arg(counter++).arg(extension);
+        }
+        fullPath = directoryPath + QDir::separator() + tempName;
+    }
+
+    return std::make_tuple(fullPath, tempName);
+}
+
+void FileSystemWidget::createNewItem(const QString &baseName, bool isDirectory) {
+    QModelIndex currentIndex = treeView->currentIndex();
+    if (!currentIndex.isValid()) {
+        currentIndex = model->index(QDir::homePath());
+    }
+
+    if (!model->isDir(currentIndex)) {
+        currentIndex = currentIndex.parent();
+    }
+
+    QString fullPath;
+    QString tempName;
+    std::tie(fullPath, tempName) = findUniqueName(currentIndex, baseName, *model);
+
+    QModelIndex newIndex;
+    if (isDirectory) {
+        newIndex = model->mkdir(currentIndex, tempName);
+    } else {
+        QFile file(fullPath);
+        if (file.open(QIODevice::WriteOnly)) {
+            file.close();
+            newIndex = model->index(fullPath);
+        }
+    }
+
+    if (!newIndex.isValid()) {
+        qDebug() << "Failed to create item:" << fullPath;
+        return;
+    }
+
+    auto tempConnectionManager = new QObject(this);
+    auto delegate = treeView->itemDelegate();
+    treeView->setCurrentIndex(newIndex);
+    treeView->edit(newIndex);
+
+    connect(delegate, &QAbstractItemDelegate::closeEditor, tempConnectionManager,
+            [=](QWidget *, QAbstractItemDelegate::EndEditHint hint) {
+                if (hint == QAbstractItemDelegate::RevertModelCache) {
+                    if (isDirectory) {
+                        QDir(fullPath).removeRecursively();
+                    } else {
+                        QFile::remove(fullPath);
+                    }
+                }
+                delete tempConnectionManager;
+            });
+
+    connect(model, &QAbstractItemModel::dataChanged, tempConnectionManager,
+            [=](const QModelIndex &topLeft, const QModelIndex &, const QVector<int> &) {
+                if (topLeft == newIndex) {
+                    delete tempConnectionManager;
+                }
+            });
+}
+
+void FileSystemWidget::newFile() { createNewItem(QStringLiteral("New File.txt"), false); }
+
+void FileSystemWidget::newFolder() { createNewItem(QStringLiteral("New Folder"), true); }
 
 void FileSystemWidget::openFile() {
     auto selectedFilePath = model->fileInfo(selectedFileIndex).absoluteFilePath();

@@ -28,6 +28,9 @@ class FileSystemWidget : public QWidget {
   public slots:
     void handleFileDoubleClick(const QString &filePath);
     void showContextMenu(const QPoint &pos);
+    void createNewItem(const QString &baseName, bool isDirectory);
+    void newFile();
+    void newFolder();
     void openFile();
     void editFile();
     void renameFile();
