@@ -303,6 +303,9 @@ void FileSystemWidget::showContextMenu(const QPoint &pos) {
     editAction->setEnabled(fileInfo.isFile());
 
     auto menu = contextMenu->updateMenu(new QMenu(this));
+    auto nameAction = new QAction(index.data().toString(), menu);
+    nameAction->setEnabled(false);
+    menu->insertAction(menu->actions().first(), nameAction);
     menu->exec(QCursor::pos());
 }
 
@@ -327,11 +330,35 @@ void FileSystemWidget::renameFile() {
 }
 
 void FileSystemWidget::copyFile() {
-    auto selectedFilePath = model->fileInfo(selectedFileIndex).absoluteFilePath();
-    if (!selectedFilePath.isEmpty()) {
+    QItemSelectionModel *selectionModel = nullptr;
+
+    if (auto treeview1 = qobject_cast<QTreeView *>(sender())) {
+        selectionModel = treeview1->selectionModel();
+    } else if (auto listview1 = qobject_cast<QListView *>(sender())) {
+        selectionModel = listview1->selectionModel();
+    }
+    if (!selectionModel) {
+        return;
+    }
+
+    auto selectedIndices = selectionModel->selectedIndexes();
+    if (selectedIndices.isEmpty()) {
+        qWarning() << "No files selected for copying.";
+        return;
+    }
+
+    QList<QUrl> fileUrls;
+    for (const QModelIndex &index : selectedIndices) {
+        QFileInfo fileInfo = model->fileInfo(index);
+        if (!fileInfo.absoluteFilePath().isEmpty()) {
+            fileUrls << QUrl::fromLocalFile(fileInfo.absoluteFilePath());
+        }
+    }
+
+    if (!fileUrls.isEmpty()) {
         QClipboard *clipboard = QApplication::clipboard();
         QMimeData *mimeData = new QMimeData();
-        mimeData->setUrls(QList<QUrl>() << QUrl::fromLocalFile(selectedFilePath));
+        mimeData->setUrls(fileUrls); // Add all file URLs
         clipboard->setMimeData(mimeData);
     }
 }
@@ -396,6 +423,11 @@ void FileSystemWidget::cutFile() {
 #if defined(Q_OS_MAC) || defined(Q_OS_UNIX) || defined(Q_OS_LINUX)
     // Should catch: Q_OS_FREEBSD, Q_OS_NETBSD, Q_OS_OPENBSD, and Q_OS_LINUX
     mimeData->setData("application/x-cut-operation", QByteArray("true"));
+
+    // https://stackoverflow.com/questions/32612779/how-to-copy-local-file-to-qclipboard-in-gnome
+    // QByteArray gnomeFormat =
+    //     QByteArray("cut\n").append(QUrl::fromLocalFile(selectedFilePath).toEncoded());
+    // mimeData->setData("x-special/gnome-copied-files", gnomeFormat);
 #elif defined(Q_OS_WIN)
     // 2 for cut and 5 for copy
     int dropEffect = 2;
