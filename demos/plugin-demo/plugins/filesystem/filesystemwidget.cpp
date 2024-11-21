@@ -1,10 +1,10 @@
-#include "filesystemwidget.h"
-
 #include <QApplication>
 #include <QClipboard>
 #include <QCompleter>
+#include <QDebug>
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -16,6 +16,7 @@
 #include <QProcess>
 #include <QPushButton>
 
+#include "filesystemwidget.h"
 #include "qmdiactiongroup.h"
 
 #if defined(WIN32)
@@ -24,6 +25,7 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <oleidl.h>
+#include <shlobj.h>
 // clang-format on
 
 void showFileProperties(const QFileInfo &fileInfo) {
@@ -224,6 +226,18 @@ void FileSystemWidget::initContextMenu() {
     actionCopyFilePath->setObjectName("actionCopyFi");
     propertiesAction->setObjectName("propertiesAction");
 
+    editAction->setIcon(QIcon::fromTheme("document-open"));
+    renameAction->setIcon(QIcon::fromTheme("edit-rename"));
+    copyAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditCopy));
+    pasteAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditPaste));
+    cutAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditCut));
+    deleteAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::EditDelete));
+    openAction->setIcon(QIcon::fromTheme("gtk-execute"));
+    actionCopyFileName->setIcon(QIcon::fromTheme("edit-copy"));
+    actionCopyFilePath->setIcon(QIcon::fromTheme("edit-copy-path-symbolic"));
+    propertiesAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentProperties));
+
+    connect(openAction, &QAction::triggered, this, &FileSystemWidget::openFile);
     connect(openAction, &QAction::triggered, this, &FileSystemWidget::openFile);
     connect(editAction, &QAction::triggered, this, &FileSystemWidget::editFile);
     connect(renameAction, &QAction::triggered, this, &FileSystemWidget::renameFile);
@@ -289,6 +303,9 @@ void FileSystemWidget::showContextMenu(const QPoint &pos) {
     editAction->setEnabled(fileInfo.isFile());
 
     auto menu = contextMenu->updateMenu(new QMenu(this));
+    auto nameAction = new QAction(index.data().toString(), menu);
+    nameAction->setEnabled(false);
+    menu->insertAction(menu->actions().first(), nameAction);
     menu->exec(QCursor::pos());
 }
 
@@ -313,11 +330,35 @@ void FileSystemWidget::renameFile() {
 }
 
 void FileSystemWidget::copyFile() {
-    auto selectedFilePath = model->fileInfo(selectedFileIndex).absoluteFilePath();
-    if (!selectedFilePath.isEmpty()) {
+    QItemSelectionModel *selectionModel = nullptr;
+
+    if (auto treeview1 = qobject_cast<QTreeView *>(sender())) {
+        selectionModel = treeview1->selectionModel();
+    } else if (auto listview1 = qobject_cast<QListView *>(sender())) {
+        selectionModel = listview1->selectionModel();
+    }
+    if (!selectionModel) {
+        return;
+    }
+
+    auto selectedIndices = selectionModel->selectedIndexes();
+    if (selectedIndices.isEmpty()) {
+        qWarning() << "No files selected for copying.";
+        return;
+    }
+
+    QList<QUrl> fileUrls;
+    for (const QModelIndex &index : selectedIndices) {
+        QFileInfo fileInfo = model->fileInfo(index);
+        if (!fileInfo.absoluteFilePath().isEmpty()) {
+            fileUrls << QUrl::fromLocalFile(fileInfo.absoluteFilePath());
+        }
+    }
+
+    if (!fileUrls.isEmpty()) {
         QClipboard *clipboard = QApplication::clipboard();
         QMimeData *mimeData = new QMimeData();
-        mimeData->setUrls(QList<QUrl>() << QUrl::fromLocalFile(selectedFilePath));
+        mimeData->setUrls(fileUrls); // Add all file URLs
         clipboard->setMimeData(mimeData);
     }
 }
@@ -368,22 +409,61 @@ void FileSystemWidget::pasteFile() {
 
 void FileSystemWidget::cutFile() {
     auto selectedFilePath = model->fileInfo(selectedFileIndex).absoluteFilePath();
-    if (!selectedFilePath.isEmpty()) {
-        QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText(selectedFilePath);
-        QFile::remove(selectedFilePath);
+    if (selectedFilePath.isEmpty()) {
+        qWarning() << "No file selected to cut.";
+        return;
     }
+
+    auto clipboard = QApplication::clipboard();
+    auto mimeData = new QMimeData();
+    auto urls = QList<QUrl>();
+
+    urls.append(QUrl::fromLocalFile(selectedFilePath));
+    mimeData->setUrls(urls);
+#if defined(Q_OS_MAC) || defined(Q_OS_UNIX) || defined(Q_OS_LINUX)
+    // Should catch: Q_OS_FREEBSD, Q_OS_NETBSD, Q_OS_OPENBSD, and Q_OS_LINUX
+    mimeData->setData("application/x-cut-operation", QByteArray("true"));
+
+    // https://stackoverflow.com/questions/32612779/how-to-copy-local-file-to-qclipboard-in-gnome
+    // QByteArray gnomeFormat =
+    //     QByteArray("cut\n").append(QUrl::fromLocalFile(selectedFilePath).toEncoded());
+    // mimeData->setData("x-special/gnome-copied-files", gnomeFormat);
+#elif defined(Q_OS_WIN)
+    // 2 for cut and 5 for copy
+    int dropEffect = 2;
+    QByteArray dataForClipboard;
+    QDataStream stream(&dataForClipboard, QIODevice::WriteOnly);
+    stream.setByteOrder(QDataStream::LittleEndian);
+    stream << dropEffect;
+    mimeData->setData("Preferred DropEffect", dataForClipboard);
+#else
+    qWarning() << "Cut operation is not supported on this platform.";
+#endif
+    clipboard->setMimeData(mimeData);
 }
 
 void FileSystemWidget::deleteFile() {
-    auto selectedFilePath = model->fileInfo(selectedFileIndex).absoluteFilePath();
+    auto fi = model->fileInfo(selectedFileIndex);
+    auto selectedFilePath = fi.absoluteFilePath();
     if (!selectedFilePath.isEmpty()) {
         if (QMessageBox::question(
                 this, tr("Confirm Delete"),
-                tr("Are you sure you want to delete %1?").arg(selectedFilePath)) ==
+                tr("Are you sure you want to delete <b>%1</b>?").arg(selectedFilePath)) ==
             QMessageBox::Yes) {
-            QFile::remove(selectedFilePath);
+
+            auto success = true;
+            if (fi.isFile()) {
+                success = QFile::remove(selectedFilePath);
+            } else if (fi.isDir()) {
+                auto dir = QDir(selectedFilePath);
+                success = dir.removeRecursively();
+            }
             navigateTo(QFileInfo(selectedFilePath).absolutePath());
+
+            if (!success) {
+                QMessageBox::warning(this, tr("Deletion Failed"),
+                                     tr("Failed to delete <b>%1</b>").arg(selectedFilePath));
+            }
         }
     }
 }
