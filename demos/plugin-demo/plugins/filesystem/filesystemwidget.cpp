@@ -387,16 +387,16 @@ void FileSystemWidget::cutFile() {
         return;
     }
 
-    // const wchar_t *filePath = reinterpret_cast<const wchar_t *>(selectedFilePath.utf16());
-    // auto filePathLen = sizeof(DROPFILES) + (wcslen(filePath) + 1) * sizeof(wchar_t);
-
     auto clipboard = QApplication::clipboard();
     auto mimeData = new QMimeData();
     auto urls = QList<QUrl>();
 
     urls.append(QUrl::fromLocalFile(selectedFilePath));
     mimeData->setUrls(urls);
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_MAC) || defined(Q_OS_UNIX) || defined(Q_OS_LINUX)
+    // Should catch: Q_OS_FREEBSD, Q_OS_NETBSD, Q_OS_OPENBSD, and Q_OS_LINUX
+    mimeData->setData("application/x-cut-operation", QByteArray("true"));
+#elif defined(Q_OS_WIN)
     // 2 for cut and 5 for copy
     int dropEffect = 2;
     QByteArray dataForClipboard;
@@ -404,9 +404,6 @@ void FileSystemWidget::cutFile() {
     stream.setByteOrder(QDataStream::LittleEndian);
     stream << dropEffect;
     mimeData->setData("Preferred DropEffect", dataForClipboard);
-#elif defined(Q_OS_MAC) || defined(Q_OS_UNIX)
-    // Should catch: Q_OS_FREEBSD, Q_OS_NETBSD, Q_OS_OPENBSD, and Q_OS_LINUX
-    mimeData->setData("application/x-cut-operation", QByteArray("true"));
 #else
     qWarning() << "Cut operation is not supported on this platform.";
 #endif
