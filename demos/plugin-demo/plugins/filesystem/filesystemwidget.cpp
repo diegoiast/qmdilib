@@ -25,6 +25,7 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <oleidl.h>
+#include <shlobj.h>
 // clang-format on
 
 void showFileProperties(const QFileInfo &fileInfo) {
@@ -386,56 +387,30 @@ void FileSystemWidget::cutFile() {
         return;
     }
 
-#if defined(Q_OS_WIN)
-    const wchar_t *filePath = reinterpret_cast<const wchar_t *>(selectedFilePath.utf16());
+    // const wchar_t *filePath = reinterpret_cast<const wchar_t *>(selectedFilePath.utf16());
+    // auto filePathLen = sizeof(DROPFILES) + (wcslen(filePath) + 1) * sizeof(wchar_t);
 
-    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, (wcslen(filePath) + 1) * sizeof(wchar_t));
-    if (!hGlobal) {
-        qWarning() << "Failed to allocate global memory for clipboard.";
-        return;
-    }
-
-    void *globalLock = GlobalLock(hGlobal);
-    if (globalLock) {
-        memcpy(globalLock, filePath, (wcslen(filePath) + 1) * sizeof(wchar_t));
-        GlobalUnlock(hGlobal);
-    }
-
-    if (OpenClipboard(nullptr)) {
-        EmptyClipboard();
-        SetClipboardData(CF_HDROP, hGlobal);
-        UINT cutOperationFormat = RegisterClipboardFormat(L"Preferred DropEffect");
-        if (cutOperationFormat) {
-            HGLOBAL hDropEffect = GlobalAlloc(GMEM_MOVEABLE, sizeof(DWORD));
-            if (hDropEffect) {
-                DWORD *dropEffect = static_cast<DWORD *>(GlobalLock(hDropEffect));
-                if (dropEffect) {
-                    *dropEffect = DROPEFFECT_MOVE;
-                    GlobalUnlock(hDropEffect);
-                }
-                SetClipboardData(cutOperationFormat, hDropEffect);
-            }
-        }
-
-        CloseClipboard();
-    } else {
-        qWarning() << "Failed to open clipboard.";
-        GlobalFree(hGlobal);
-    }
-
-#elif defined(Q_OS_MAC) || defined(Q_OS_UNIX)
-    // Should catch: Q_OS_FREEBSD, Q_OS_NETBSD, Q_OS_OPENBSD, and Q_OS_LINUX
     auto clipboard = QApplication::clipboard();
     auto mimeData = new QMimeData();
     auto urls = QList<QUrl>();
 
     urls.append(QUrl::fromLocalFile(selectedFilePath));
     mimeData->setUrls(urls);
+#if defined(Q_OS_WIN)
+    // 2 for cut and 5 for copy
+    int dropEffect = 2;
+    QByteArray dataForClipboard;
+    QDataStream stream(&dataForClipboard, QIODevice::WriteOnly);
+    stream.setByteOrder(QDataStream::LittleEndian);
+    stream << dropEffect;
+    mimeData->setData("Preferred DropEffect", dataForClipboard);
+#elif defined(Q_OS_MAC) || defined(Q_OS_UNIX)
+    // Should catch: Q_OS_FREEBSD, Q_OS_NETBSD, Q_OS_OPENBSD, and Q_OS_LINUX
     mimeData->setData("application/x-cut-operation", QByteArray("true"));
-    clipboard->setMimeData(mimeData);
 #else
     qWarning() << "Cut operation is not supported on this platform.";
 #endif
+    clipboard->setMimeData(mimeData);
 }
 
 void FileSystemWidget::deleteFile() {
