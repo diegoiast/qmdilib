@@ -345,13 +345,22 @@ std::tuple<QString, QString> findUniqueName(const QModelIndex &currentIndex,
 }
 
 void FileSystemWidget::createNewItem(const QString &baseName, bool isDirectory) {
-    QModelIndex currentIndex = treeView->currentIndex();
+    // FIXME: why this does not compile?
+    // QAbstractItemView *displayedList = isTreeVisible ? treeView : iconView;
+    QAbstractItemView *displayedList;
+    if (isTreeVisible) {
+        displayedList = treeView;
+    } else {
+        displayedList = iconView;
+    }
+    QModelIndex currentIndex = displayedList->currentIndex();
     if (!currentIndex.isValid()) {
-        currentIndex = model->index(QDir::homePath());
+        return;
     }
 
-    if (!model->isDir(currentIndex)) {
-        currentIndex = currentIndex.parent();
+    currentIndex = currentIndex.parent();
+    if (!currentIndex.isValid()) {
+        return;
     }
 
     QString fullPath;
@@ -375,9 +384,9 @@ void FileSystemWidget::createNewItem(const QString &baseName, bool isDirectory) 
     }
 
     auto tempConnectionManager = new QObject(this);
-    auto delegate = treeView->itemDelegate();
-    treeView->setCurrentIndex(newIndex);
-    treeView->edit(newIndex);
+    auto delegate = displayedList->itemDelegate();
+    displayedList->setCurrentIndex(newIndex);
+    displayedList->edit(newIndex);
 
     connect(delegate, &QAbstractItemDelegate::closeEditor, tempConnectionManager,
             [=](QWidget *, QAbstractItemDelegate::EndEditHint hint) {
