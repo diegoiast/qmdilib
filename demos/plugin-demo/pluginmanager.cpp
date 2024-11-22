@@ -1081,6 +1081,7 @@ void PluginManager::initGUI() {
     menus[tr("&Window")];
     menus[tr("&Help")];
 
+    toolbars[tr("main")]->addAction(actionNewFile);
     toolbars[tr("main")]->addAction(actionOpen);
     toolbars[tr("main")]->addAction(actionConfig);
 
