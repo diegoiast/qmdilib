@@ -227,6 +227,9 @@ std::tuple<QString, int, int, int> parseFilename(const QString &input) {
 PluginManager::PluginManager() {
     settingsManager = nullptr;
 
+    closedDocumentsMenu = new QMenu(this);
+    closedDocumentsMenu->menuAction()->setText(tr("Closed documents..."));
+
     actionNewFile = new QAction(tr("New..."), this);
     actionOpen = new QAction(tr("Open..."), this);
     actionClose = new QAction(tr("Close"), this);
@@ -269,15 +272,6 @@ PluginManager::PluginManager() {
     actionPrevTab->setShortcuts({QKeySequence("Alt+Left"), QKeySequence::PreviousChild});
 
     actionHideGUI->setShortcut(QKeySequence("Ctrl+M"));
-
-    addAction(actionNewFile);
-    addAction(actionOpen);
-    addAction(actionClose);
-    addAction(actionQuit);
-    addAction(actionConfig);
-    addAction(actionNextTab);
-    addAction(actionPrevTab);
-    addAction(actionHideGUI);
 
     initGUI();
 
@@ -1059,6 +1053,7 @@ void PluginManager::disablePlugin(IPlugin *plugin) {
 void PluginManager::initGUI() {
     menus[tr("&File")]->addAction(actionNewFile);
     menus[tr("&File")]->addAction(actionOpen);
+    menus[tr("&File")]->addMenu(closedDocumentsMenu);
     menus[tr("&File")]->addSeparator();
     menus[tr("&File")]->setMergePoint();
     menus[tr("&File")]->addAction(actionClose);

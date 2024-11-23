@@ -27,6 +27,60 @@ class PluginManagedWindow;
 
 enum class Panels { West, East, South };
 
+#include <QDebug>
+#include <QList>
+#include <QMenu>
+#include <QQueue>
+#include <QString>
+
+class ClosedDocuments {
+  public:
+    ClosedDocuments(int maxSize = 10) : maxSize(maxSize) {}
+
+    // Add a document to the closed list
+    void push(const QString &docName) {
+        if (closedDocuments.size() >= maxSize) {
+            closedDocuments.dequeue(); // Remove the oldest document
+        }
+        closedDocuments.enqueue(docName);
+    }
+
+    // Pop the last closed document
+    QString pop() {
+        if (closedDocuments.isEmpty()) {
+            return QString(); // Empty queue case
+        }
+        return closedDocuments.dequeue();
+    }
+
+    // Peek the next 'n' documents (default 5)
+    QList<QString> peekNext(int count = 5) {
+        QList<QString> nextItems;
+        int availableCount = qMin(count, closedDocuments.size());
+        for (int i = 0; i < availableCount; ++i) {
+            nextItems.append(closedDocuments[i]);
+        }
+        return nextItems;
+    }
+
+    // Check if there are closed documents
+    bool hasDocuments() const { return !closedDocuments.isEmpty(); }
+
+    void updateMenu(QMenu *menu, int count = 5) {
+        menu->clear();
+        QList<QString> nextItems = peekNext(count); // Get the next documents
+        for (const QString &doc : nextItems) {
+            qDebug() << "Adding  " << doc;
+            QAction *action = new QAction(doc, menu);
+            menu->addAction(action); // Add each document as an action in the menu
+        }
+    }
+
+  private:
+    QQueue<QString> closedDocuments;
+    int maxSize; // Maximum number of documents to store
+};
+
 struct PanelState {
     bool isMinimized = false;
     QTabWidget *panel;
@@ -97,7 +151,10 @@ class PluginManager : public QMainWindow, public qmdiHost {
     QSettings *settingsManager;
     Ui::PluginManagedWindow *ui;
 
-  public:
+    ClosedDocuments closedDocuments;
+    QMenu *closedDocumentsMenu;
+
+    // public:
     QAction *actionNewFile;
     QAction *actionOpen;
     QAction *actionClose;
