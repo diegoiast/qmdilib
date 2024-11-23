@@ -35,6 +35,7 @@ EditorPlugin::EditorPlugin() {
     _newFileActions = new QActionGroup(this);
     _newFileActions->addAction(actionNew);
 
+    toolbars["main"]->addAction(actionNew, 0);
     makeBackups = false;
     showLineNumbers = true;
     makeCurrentLine = true;
