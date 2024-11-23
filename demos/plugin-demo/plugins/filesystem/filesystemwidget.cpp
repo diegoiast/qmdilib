@@ -322,16 +322,16 @@ void FileSystemWidget::showContextMenu(const QPoint &pos) {
 std::tuple<QString, QString> findUniqueName(const QModelIndex &currentIndex,
                                             const QString &baseName,
                                             const QFileSystemModel &model) {
-    QString directoryPath = model.filePath(currentIndex);
-    QFileInfo fileInfo(baseName);
-    QString nameWithoutExtension = fileInfo.completeBaseName();
-    QString extension = fileInfo.suffix();
-    QString tempName = baseName;
-    QString fullPath = directoryPath + QDir::separator() + tempName;
-    int counter = 1;
+    auto directoryPath = model.filePath(currentIndex);
+    auto fileInfo = QFileInfo(baseName);
+    auto nameWithoutExtension = fileInfo.completeBaseName();
+    auto extension = fileInfo.suffix();
+    auto tempName = baseName;
+    auto fullPath = directoryPath + QDir::separator() + tempName;
+    auto counter = 1;
 
     // Increment the counter in the base name, not including the extension
-    while (QFileInfo(fullPath).exists()) {
+    while (QFileInfo::exists(fullPath)) {
         if (extension.isEmpty()) {
             tempName = QStringLiteral("%1 %2").arg(nameWithoutExtension).arg(counter++);
         } else {
@@ -427,18 +427,25 @@ void FileSystemWidget::editFile() {
 }
 
 void FileSystemWidget::renameFile() {
-    if (selectedFileIndex.isValid()) {
-        treeView->edit(selectedFileIndex);
+    if (!selectedFileIndex.isValid()) {
+        return;
+    }
+
+    auto fileNameIndex = selectedFileIndex.sibling(selectedFileIndex.row(), 0);
+    if (isTreeVisible) {
+        treeView->edit(fileNameIndex);
+    } else {
+        iconView->edit(fileNameIndex);
     }
 }
 
 void FileSystemWidget::copyFile() {
     QItemSelectionModel *selectionModel = nullptr;
 
-    if (auto treeview1 = qobject_cast<QTreeView *>(sender())) {
-        selectionModel = treeview1->selectionModel();
-    } else if (auto listview1 = qobject_cast<QListView *>(sender())) {
-        selectionModel = listview1->selectionModel();
+    if (isTreeVisible) {
+        selectionModel = treeView->selectionModel();
+    } else {
+        selectionModel = iconView->selectionModel();
     }
     if (!selectionModel) {
         return;
@@ -451,23 +458,56 @@ void FileSystemWidget::copyFile() {
     }
 
     QList<QUrl> fileUrls;
-    for (const QModelIndex &index : selectedIndices) {
+    for (const auto &index : selectedIndices) {
         QFileInfo fileInfo = model->fileInfo(index);
         if (!fileInfo.absoluteFilePath().isEmpty()) {
             fileUrls << QUrl::fromLocalFile(fileInfo.absoluteFilePath());
         }
     }
 
+    qDebug() << QString("Adding %1 files to the clipboard to copy").arg(fileUrls.size());
     if (!fileUrls.isEmpty()) {
-        QClipboard *clipboard = QApplication::clipboard();
-        QMimeData *mimeData = new QMimeData();
-        mimeData->setUrls(fileUrls); // Add all file URLs
+        auto clipboard = QApplication::clipboard();
+        auto mimeData = new QMimeData();
+        mimeData->setUrls(fileUrls);
         clipboard->setMimeData(mimeData);
     }
 }
 
+static auto copyDirectoryRecursively(const QString &srcPath, const QString &dstPath) -> bool {
+    auto srcDir = QDir(srcPath);
+    if (!srcDir.exists()) {
+        return false;
+    }
+
+    auto dstDir = QDir(dstPath);
+    if (!dstDir.exists()) {
+        if (!dstDir.mkpath(".")) {
+            return false;
+        }
+    }
+
+    auto filter = QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System;
+    foreach (const auto &dirItem, srcDir.entryList(filter)) {
+        auto srcItemPath = srcPath + "/" + dirItem;
+        auto dstItemPath = dstPath + "/" + dirItem;
+        auto srcItemInfo = QFileInfo(srcItemPath);
+
+        if (srcItemInfo.isDir()) {
+            if (!copyDirectoryRecursively(srcItemPath, dstItemPath)) {
+                return false;
+            }
+        } else if (srcItemInfo.isFile()) {
+            if (!QFile::copy(srcItemPath, dstItemPath)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 void FileSystemWidget::pasteFile() {
-    auto destinationInfo = model->fileInfo(selectedFileIndex);
+    auto destinationInfo = model->fileInfo(selectedFileIndex.parent());
     auto clipboard = QApplication::clipboard();
     auto mimeData = clipboard->mimeData();
 
@@ -499,12 +539,15 @@ void FileSystemWidget::pasteFile() {
     }
 
     for (const QUrl &url : urls) {
-        auto srcFilePath = url.toLocalFile();
-        auto srcFileInfo = QFileInfo(srcFilePath);
-        if (srcFileInfo.exists() && srcFileInfo.isFile()) {
-            QString dstFilePath = targetDir.filePath(srcFileInfo.fileName());
-            if (!QFile::copy(srcFilePath, dstFilePath)) {
-                qWarning() << "Failed to copy file from" << srcFilePath << "to" << dstFilePath;
+        auto srcPath = url.toLocalFile();
+        auto srcInfo = QFileInfo(srcPath);
+        auto dstPath = targetDir.filePath(srcInfo.fileName());
+
+        if (srcInfo.isDir()) {
+            copyDirectoryRecursively(srcPath, dstPath);
+        } else if (srcInfo.isFile()) {
+            if (!QFile::copy(srcPath, dstPath)) {
+                qWarning() << "Failed to copy file from" << srcPath << "to" << dstPath;
             }
         }
     }
@@ -525,12 +568,13 @@ void FileSystemWidget::cutFile() {
     mimeData->setUrls(urls);
 #if defined(Q_OS_MAC) || defined(Q_OS_UNIX) || defined(Q_OS_LINUX)
     // Should catch: Q_OS_FREEBSD, Q_OS_NETBSD, Q_OS_OPENBSD, and Q_OS_LINUX
-    mimeData->setData("application/x-cut-operation", QByteArray("true"));
+    // mimeData->setData("application/x-cut-operation", QByteArray("true"));
 
     // https://stackoverflow.com/questions/32612779/how-to-copy-local-file-to-qclipboard-in-gnome
-    // QByteArray gnomeFormat =
-    //     QByteArray("cut\n").append(QUrl::fromLocalFile(selectedFilePath).toEncoded());
-    // mimeData->setData("x-special/gnome-copied-files", gnomeFormat);
+    QByteArray gnomeFormat =
+        QByteArray("cut\n").append(QUrl::fromLocalFile(selectedFilePath).toEncoded());
+    mimeData->setData("x-special/gnome-copied-files", gnomeFormat);
+
 #elif defined(Q_OS_WIN)
     // 2 for cut and 5 for copy
     int dropEffect = 2;
