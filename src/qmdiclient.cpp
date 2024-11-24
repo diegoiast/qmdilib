@@ -87,6 +87,18 @@ qmdiClient::~qmdiClient() {
 }
 
 /**
+ * \function qmdiClient::nClientClosed(qmdiClient *client)
+ * \brief callback called when a client has been removed
+ *
+ * When a client is finally removed from an mdi host, this function
+ * is called. The goal is to notify the host about it (for example
+ * to store the list of closed documents).
+ *
+ * By default does nothing, implement in subclasses to add the needed
+ * functionality.
+ */
+
+/**
  * \var qmdiClient::mdiClientName
  * \brief The name of the MDI client
  *
@@ -167,6 +179,8 @@ qmdiClient::~qmdiClient() {
  *    will be deleted afterwards.
  *  - if cast failed or canCloseClient() returned false, a negative value
  *    is returned, and the object is not destructed.
+ *  - The mdi host is notified that this client has been finally closed
+ *    by calling onClientClosed()
  *
  * This means that for read only clients you can leave the default. On R/W
  * clients which derive QObject, you will have to override canCloseClient().
@@ -176,22 +190,21 @@ qmdiClient::~qmdiClient() {
  * \todo update documentation
  * \see canCloseClient()
  * \see QObject::deleteLater()
+ * \see qmdiHost::onClientClosed()
  */
 bool qmdiClient::closeClient() {
-    if (canCloseClient()) {
-        this->mdiServer->mdiHost->unmergeClient(this);
-        auto o = dynamic_cast<QObject *>(this);
-        if (o) {
-            auto w = qobject_cast<QWidget *>(o);
-            if (w) {
-                w->hide();
-            }
-            o->deleteLater();
-        }
-        return true;
-    } else {
+    if (!canCloseClient()) {
         return false;
     }
+    this->mdiServer->mdiHost->unmergeClient(this);
+    this->mdiServer->mdiHost->onClientClosed(this);
+    if (auto o = dynamic_cast<QObject *>(this)) {
+        if (auto w = qobject_cast<QWidget *>(o)) {
+            w->hide();
+        }
+        o->deleteLater();
+    }
+    return true;
 }
 
 /**
