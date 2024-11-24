@@ -36,6 +36,56 @@
 #include "pluginmanager.h"
 #include "ui_pluginwindow.h"
 
+void ClosedDocuments::push(const QString &docName) {
+    if (closedDocuments.size() >= maxSize) {
+        closedDocuments.dequeue();
+    }
+    closedDocuments.enqueue(docName);
+}
+
+QString ClosedDocuments::pop() {
+    if (closedDocuments.isEmpty()) {
+        return {};
+    }
+    return closedDocuments.dequeue();
+}
+
+void ClosedDocuments::remove(const QString &doc) { closedDocuments.removeAll(doc); }
+
+QList<QString> ClosedDocuments::peekNext(int count) {
+    QList<QString> nextItems;
+    auto availableCount = qMin(count, closedDocuments.size());
+    for (auto i = 0; i < availableCount; ++i) {
+        nextItems.append(closedDocuments[i]);
+    }
+    return nextItems;
+}
+
+void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count) {
+    menu->clear();
+    auto nextItems = peekNext(count);
+
+    for (auto i = 0; i < nextItems.size(); ++i) {
+        auto &doc = nextItems[i];
+        QAction *action;
+        if (i < 10) {
+            // for the first 10 items add a shortcut
+            action = new QAction(QString("&%1 %2").arg(i + 1).arg(doc), menu);
+        } else {
+            action = new QAction(QString("%1 %2").arg(i + 1).arg(doc), menu);
+        }
+        if (i == 0) {
+            action->setShortcut(QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_T));
+        }
+        QObject::connect(action, &QAction::triggered, action, [=]() {
+            this->remove(doc);
+            this->updateMenu(manager, menu, count);
+            manager->openFile(doc);
+        });
+        menu->addAction(action);
+    }
+}
+
 /**
  * \class PluginManager
  * \brief A class which manages a list of plugins and merges their menus and
@@ -875,6 +925,13 @@ QWidget *PluginManager::getPanel(Panels p, int index) {
 }
 
 qmdiClient *PluginManager::currentClient() { return tabWidget->getCurrentClient(); }
+
+void PluginManager::onClientClosed(qmdiClient *client) {
+    if (client && !client->mdiClientName.isEmpty()) {
+        closedDocuments.push(client->mdiClientFileName());
+        closedDocuments.updateMenu(this, closedDocumentsMenu);
+    }
+}
 
 /**
  * \brief add a new plugin to the plugin manager system
