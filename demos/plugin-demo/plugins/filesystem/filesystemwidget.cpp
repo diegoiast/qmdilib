@@ -308,6 +308,7 @@ void FileSystemWidget::showContextMenu(const QPoint &pos) {
         return;
     }
     selectedFileIndex = index;
+    index = selectedFileIndex.sibling(selectedFileIndex.row(), 0);
 
     QFileInfo fileInfo = model->fileInfo(index);
     editAction->setEnabled(fileInfo.isFile());
