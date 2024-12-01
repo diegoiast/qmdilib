@@ -303,10 +303,14 @@ PluginManager::PluginManager() {
     actionHideGUI->setObjectName("actionHideGUI");
     actionHideGUI->setCheckable(true);
 
+
     actionConfig->setIcon(QIcon::fromTheme("configure"));
-    actionQuit->setIcon(QIcon::fromTheme("application-exit"));
-    actionNextTab->setIcon(QIcon::fromTheme("go-next"));
-    actionPrevTab->setIcon(QIcon::fromTheme("go-previous"));
+    if (actionConfig->icon().isNull()) {
+        actionConfig->setIcon(QIcon::fromTheme("preferences-other-symbolic"));
+    }
+    actionQuit->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::ApplicationExit));
+    actionNextTab->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::GoNext));
+    actionPrevTab->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::GoPrevious));
 
     actionNewFile->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew));
     actionNewFile->setShortcut(QKeySequence::New);
