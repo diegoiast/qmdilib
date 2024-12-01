@@ -57,8 +57,7 @@ void FileSystemBrowserPlugin::on_client_merged(qmdiHost *host) {
     });
 }
 
-void FileSystemBrowserPlugin::on_client_unmerged(qmdiHost *host) {
-    // auto *pluginManager = dynamic_cast<PluginManager *>(host);
+void FileSystemBrowserPlugin::on_client_unmerged(qmdiHost *) {
 }
 
 void FileSystemBrowserPlugin::loadConfig(QSettings &settings) {
