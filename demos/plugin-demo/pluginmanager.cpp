@@ -1374,6 +1374,22 @@ void PluginManager::actionHideGUI_changed() {
     setUpdatesEnabled(true);
 }
 
+void PluginManager::keyPressEvent(QKeyEvent *event) {
+    QMainWindow::keyPressEvent(event);
+    if (event->isAccepted()) {
+        // return;
+    }
+
+    // nobody handeled it, lets deal with it
+    if (!southState.isMinimized) {
+        hidePanel(Panels::South);
+        event->setAccepted(true);
+    } else {
+        tabWidget->currentWidget()->focusWidget();
+        event->setAccepted(true);
+    }
+}
+
 void PluginManager::loadConfig(const QString &fileName) { config.loadFromFile(fileName); }
 
 size_t PluginManager::visibleTabs() const { return tabWidget->count(); }

@@ -107,9 +107,10 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void newFileRequested();
 
   protected:
-    PanelState westState, eastState, southState;
-
+    void keyPressEvent(QKeyEvent *event) override;
     void initGUI();
+
+    PanelState westState, eastState, southState;
     QList<IPlugin *> plugins;
     qmdiTabWidget *tabWidget;
     qmdiGlobalConfig config;
