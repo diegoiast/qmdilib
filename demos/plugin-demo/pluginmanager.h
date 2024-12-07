@@ -83,6 +83,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     qmdiClient *currentClient();
 
     virtual void onClientClosed(qmdiClient *client) override;
+    void loadConfig(const QString &fileName);
+    size_t visibleTabs() const;
 
   public slots:
     void addPlugin(IPlugin *newplugin);
@@ -92,17 +94,13 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void closeClient();
     void focusCenter();
 
-    void on_actionOpen_triggered();
-    void on_actionClose_triggered();
-    void on_actionConfigure_triggered();
-    void on_actionQuit_triggered();
-    void on_actionPrev_triggered();
-    void on_actionNext_triggered();
-    void on_actionHideGUI_changed();
-
-    size_t visibleTabs() const;
-
-    void loadConfig(const QString &fileName);
+    void actionOpen_triggered();
+    void actionClose_triggered();
+    void actionConfigure_triggered();
+    void actionQuit_triggered();
+    void actionPrev_triggered();
+    void actionNext_triggered();
+    void actionHideGUI_changed();
 
   signals:
     void configurationUpdated();

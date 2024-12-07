@@ -165,7 +165,7 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
  *
  * This action is the one added to the \b File menu, as the \b Open... command.
  *
- * \see on_actionOpen_triggered()
+ * \see actionOpen_triggered()
  */
 
 /**
@@ -174,7 +174,7 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
  *
  * This action is the one added to the \b File menu, as the \b Close command.
  *
- * \see on_actionClose_triggered()
+ * \see actionClose_triggered()
  */
 
 /**
@@ -183,7 +183,7 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
  *
  * This action is the one added to the \b File meun, as the quit command.
  *
- * \see on_actionQuit_triggered()
+ * \see actionQuit_triggered()
  */
 
 /**
@@ -193,7 +193,7 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
  * This action is the one added to the \b Settings menu, as the \b Configure
  * command.
  *
- * \see on_actionConfigure_triggered()
+ * \see actionConfigure_triggered()
  */
 
 /**
@@ -203,7 +203,7 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
  * This action is the one added to the \b Settings menu, as the \b Next \b Tab
  * command.
  *
- * \see on_actionNext_triggered()
+ * \see actionNext_triggered()
  */
 
 /**
@@ -213,7 +213,7 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
  * This action is the one added to the \b Settings menu, as the \b Previous
  * \b Tab command.
  *
- * \see on_actionPrev_triggered()
+ * \see actionPrev_triggered()
  */
 
 /**
@@ -298,15 +298,15 @@ PluginManager::PluginManager() {
     actionClose->setObjectName("actionClose");
     actionQuit->setObjectName("actionQuit");
     actionConfig->setObjectName("actionConfigure");
-    actionNextTab->setObjectName("actionNext");
     actionPrevTab->setObjectName("actionPrev");
+    actionNextTab->setObjectName("actionNext");
     actionHideGUI->setObjectName("actionHideGUI");
     actionHideGUI->setCheckable(true);
 
     actionConfig->setIcon(QIcon::fromTheme("configure"));
-    actionQuit->setIcon(QIcon::fromTheme("application-exit"));
-    actionNextTab->setIcon(QIcon::fromTheme("go-next"));
-    actionPrevTab->setIcon(QIcon::fromTheme("go-previous"));
+    actionQuit->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::ApplicationExit));
+    actionPrevTab->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::GoPrevious));
+    actionNextTab->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::GoNext));
 
     actionNewFile->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew));
     actionNewFile->setShortcut(QKeySequence::New);
@@ -324,6 +324,14 @@ PluginManager::PluginManager() {
     actionHideGUI->setShortcut(QKeySequence("Ctrl+M"));
 
     initGUI();
+
+    connect(actionOpen, &QAction::triggered, this, &PluginManager::actionOpen_triggered);
+    connect(actionClose, &QAction::triggered, this, &PluginManager::actionClose_triggered);
+    connect(actionConfig, &QAction::triggered, this, &PluginManager::actionConfigure_triggered);
+    connect(actionQuit, &QAction::triggered, this, &PluginManager::actionQuit_triggered);
+    connect(actionPrevTab, &QAction::triggered, this, &PluginManager::actionPrev_triggered);
+    connect(actionNextTab, &QAction::triggered, this, &PluginManager::actionNext_triggered);
+    connect(actionHideGUI, &QAction::triggered, this, &PluginManager::actionHideGUI_changed);
 
     for (auto i = 0; i < 8; ++i) {
         auto tabSelectShortcut = new QAction(this);
@@ -1081,12 +1089,12 @@ void PluginManager::disablePlugin(IPlugin *plugin) {
  *
  * The actions available are:
  *  - File / New (a pop up menu, see IPlugin::newFileActions )
- *  - File / Open (see on_actionOpen_triggered() )
+ *  - File / Open (see actionOpen_triggered() )
  *  - File / <- this is the merge point
  *  - File / Quit
- *  - Settings / Configure (see on_actionConfigure_triggered() )
- *  - Settings / Next tab (see on_actionConfigure_triggered() )
- *  - Settings / Previous tab (see on_actionConfigure_triggered() )
+ *  - Settings / Configure (see actionConfigure_triggered() )
+ *  - Settings / Next tab (see actionConfigure_triggered() )
+ *  - Settings / Previous tab (see actionConfigure_triggered() )
  *
  * The menus generated are (in this order)
  *  - File
@@ -1205,7 +1213,7 @@ void PluginManager::focusCenter() {
  * \see IPlugin::extensAvailable()
  * \see openFiles()
  */
-void PluginManager::on_actionOpen_triggered() {
+void PluginManager::actionOpen_triggered() {
     static QString workingDir;
     QString extens, allExtens;
     QStringList extensAvailable;
@@ -1264,7 +1272,7 @@ void PluginManager::on_actionOpen_triggered() {
  * \todo fix this to be calculated when tabs are open or closed, do this via a
  * signal from QTabWidget (qmdiServer?)
  */
-void PluginManager::on_actionClose_triggered() {
+void PluginManager::actionClose_triggered() {
     tabWidget->tryCloseClient(tabWidget->currentIndex());
 
     // TODO fix this to be calculated when tabs are open
@@ -1280,7 +1288,7 @@ void PluginManager::on_actionClose_triggered() {
  * This slot is auto connected. This slot is triggered by the actionQuit
  * found in the \b File menu.
  */
-void PluginManager::on_actionQuit_triggered() { this->close(); }
+void PluginManager::actionQuit_triggered() { this->close(); }
 
 /**
  * \brief configure the available plugins
@@ -1291,7 +1299,7 @@ void PluginManager::on_actionQuit_triggered() { this->close(); }
  * This slot is auto connected. This slot is triggered by the actionConfigure
  * found in the \b Settings menu.
  */
-void PluginManager::on_actionConfigure_triggered() {
+void PluginManager::actionConfigure_triggered() {
     qmdiConfigDialog dialog(&config, this);
     if (dialog.exec()) {
         saveSettings();
@@ -1309,10 +1317,10 @@ void PluginManager::on_actionConfigure_triggered() {
  * This slot is auto connected. This slot is triggered by the actionPrevTab
  * found in the \b Settings menu.
  *
- * \see on_actionNext_triggered()
+ * \see actionNext_triggered()
  * \see PluginManager::actionPrevTab
  */
-void PluginManager::on_actionPrev_triggered() {
+void PluginManager::actionPrev_triggered() {
     auto i = tabWidget->currentIndex();
     if (i == 0) {
         return;
@@ -1332,10 +1340,10 @@ void PluginManager::on_actionPrev_triggered() {
  * This slot is auto connected. This slot is triggered by the actionNextTab
  * found in the \b Settings menu.
  *
- * \see on_actionPrev_triggered()
+ * \see actionPrev_triggered()
  * \see PluginManager::actionNextTab
  */
-void PluginManager::on_actionNext_triggered() {
+void PluginManager::actionNext_triggered() {
     auto i = tabWidget->currentIndex();
     if (i == tabWidget->count()) {
         return;
@@ -1345,7 +1353,7 @@ void PluginManager::on_actionNext_triggered() {
     tabWidget->setCurrentIndex(i);
 }
 
-void PluginManager::on_actionHideGUI_changed() {
+void PluginManager::actionHideGUI_changed() {
     updateMenusAndToolBars = !actionHideGUI->isChecked();
     setUpdatesEnabled(false);
     menuBar()->setVisible(!actionHideGUI->isChecked());
@@ -1366,6 +1374,6 @@ void PluginManager::on_actionHideGUI_changed() {
     setUpdatesEnabled(true);
 }
 
-size_t PluginManager::visibleTabs() const { return tabWidget->count(); }
-
 void PluginManager::loadConfig(const QString &fileName) { config.loadFromFile(fileName); }
+
+size_t PluginManager::visibleTabs() const { return tabWidget->count(); }
