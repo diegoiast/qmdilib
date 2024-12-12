@@ -86,8 +86,6 @@ qmdiTabWidget::qmdiTabWidget(QWidget *parent, qmdiHost *host) : QTabWidget(paren
     tabBar()->installEventFilter(this);
 }
 
-qmdiTabWidget::~qmdiTabWidget() {}
-
 /**
  * \brief callback function for modifying the menu structure
  * \param i the number of the new widget
@@ -348,9 +346,6 @@ void qmdiTabWidget::tabInserted(int index) {
  * un-merge itself - the MDI server has no way of knowing why object has been
  * deleted.
  *
- * This function will also hide the tabbar, if the number of tabs is less then
- * 2 (new functionality since version 0.0.5)
- *
  * \see QTabWidget::tabRemoved( int )
  * \see QTabWidget::tabBar()
  */
@@ -366,6 +361,5 @@ void qmdiTabWidget::tabRemoved(int index) {
         // the deletion of menus and toolbars is made by qmdiClient itself
         mdiHost->updateGUI(dynamic_cast<QMainWindow *>(mdiHost));
     }
-    tabBar()->setVisible(c > 1);
     Q_UNUSED(index);
 }
