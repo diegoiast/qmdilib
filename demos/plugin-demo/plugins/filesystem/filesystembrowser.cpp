@@ -47,7 +47,7 @@ FileSystemBrowserPlugin::FileSystemBrowserPlugin() {
 void FileSystemBrowserPlugin::on_client_merged(qmdiHost *host) {
     auto *pluginManager = dynamic_cast<PluginManager *>(host);
     panel = new FileSystemWidget;
-    pluginManager->createNewPanel(Panels::West, tr("File system"), panel);
+    pluginManager->createNewPanel(Panels::West, "filesystem", tr("File system"), panel);
 
     connect(panel, &FileSystemWidget::fileDoubleClicked, [this](const QString &filePath) {
         PluginManager *pluginManager = dynamic_cast<PluginManager *>(mdiServer->mdiHost);

@@ -353,31 +353,11 @@ PluginManager::PluginManager() {
         tabWidget->addAction(tabSelectShortcut);
     }
 
-    auto tabClickHandler = [this](Panels panelType, PanelState &state, int index) {
-        if (state.panel->currentIndex() == index) {
-            if (state.isMinimized) {
-                showPanel(panelType, index);
-            } else {
-                hidePanel(panelType);
-            }
-        } else {
-            showPanel(panelType, index);
-        }
-    };
-
-    eastState.panel = ui->eastPanel;
-    westState.panel = ui->westPanel;
-    southState.panel = ui->southPanel;
-    connect(ui->westPanel, &QTabWidget::tabBarClicked, this, [this, tabClickHandler](int index) {
-        tabClickHandler(Panels::West, this->westState, index);
-    });
-    connect(ui->eastPanel, &QTabWidget::tabBarClicked, this, [this, tabClickHandler](int index) {
-        tabClickHandler(Panels::East, this->eastState, index);
-    });
-    connect(ui->southPanel, &QTabWidget::tabBarClicked, this, [this, tabClickHandler](int index) {
-        tabClickHandler(Panels::South, this->southState, index);
-    });
-
+    setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+    setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+    setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::TabPosition::West);
+    setTabPosition(Qt::RightDockWidgetArea, QTabWidget::TabPosition::East);
+    
     restoreSettings();
 }
 
@@ -553,38 +533,21 @@ void PluginManager::restoreSettings() {
     }
     settingsManager->endGroup();
 
+/*
     settingsManager->beginGroup("ui");
     {
         auto panelNumber = 0;
         auto panelMinimized = false;
         panelNumber = settingsManager->value("eastSelected", -1).toInt();
-        if (panelNumber >= 0) {
-            showPanel(Panels::East, panelNumber);
-        }
         panelNumber = settingsManager->value("westSelected", -1).toInt();
-        if (panelNumber >= 0) {
-            showPanel(Panels::West, panelNumber);
-        }
         panelNumber = settingsManager->value("southSelected", -1).toInt();
-        if (panelNumber >= 0) {
-            showPanel(Panels::South, panelNumber);
-        }
 
         panelMinimized = settingsManager->value("eastMinimized", false).toBool();
-        if (panelMinimized) {
-            hidePanel(Panels::East);
-        }
         panelMinimized = settingsManager->value("westMinimized", false).toBool();
-        if (panelMinimized) {
-            hidePanel(Panels::West);
-        }
         panelMinimized = settingsManager->value("southMinimized", true).toBool();
-        if (panelMinimized) {
-            hidePanel(Panels::South);
-        }
     }
     settingsManager->endGroup();
-
+*/
     show();
     QApplication::restoreOverrideCursor();
     QApplication::processEvents();
@@ -684,6 +647,7 @@ void PluginManager::saveSettings() {
     }
     settingsManager->endGroup();
 
+/*
     settingsManager->beginGroup("ui");
     {
         settingsManager->setValue("eastMinimized", eastState.isMinimized);
@@ -694,7 +658,7 @@ void PluginManager::saveSettings() {
         settingsManager->setValue("southSelected", southState.panel->currentIndex());
     }
     settingsManager->endGroup();
-
+*/
     // let each ones of the plugins save it's state
     foreach (auto p, plugins) {
         p->saveConfig(*settingsManager);
@@ -804,128 +768,58 @@ bool PluginManager::openFiles(const QStringList &fileNames) {
     return b;
 }
 
-void PluginManager::hideUnusedPanels() {
-    if (ui->westPanel->tabBar()->count() == 0) {
-        ui->westPanel->hide();
-    }
-    if (ui->eastPanel->tabBar()->count() == 0) {
-        ui->eastPanel->hide();
-    }
-    if (ui->southPanel->tabBar()->count() == 0) {
-        ui->southPanel->hide();
-    }
-}
-
-void PluginManager::hidePanel(Panels p) {
-    QTabWidget *panel = nullptr;
-    switch (p) {
-    case Panels::East:
-        panel = this->ui->eastPanel;
-        break;
-    case Panels::West:
-        panel = this->ui->westPanel;
-        break;
-    case Panels::South:
-        panel = this->ui->southPanel;
-        break;
-    }
-    assert(panel != nullptr);
-    for (auto i = 0; i < panel->count(); ++i) {
-        panel->widget(i)->setVisible(false);
-    }
-
-    if (panel->tabBar()->count() == 0) {
-        panel->hide();
-    } else {
-        // QWidget *w;
-        auto w = panel->findChild<QStackedWidget *>();
-        w->hide();
-        switch (p) {
-        case Panels::East:
-            this->eastState.isMinimized = true;
-            panel->setFixedWidth(panel->tabBar()->width());
-            break;
-        case Panels::West:
-            this->westState.isMinimized = true;
-            panel->setFixedWidth(panel->tabBar()->width());
-            break;
-        case Panels::South:
-            this->southState.isMinimized = true;
-            panel->setFixedHeight(panel->tabBar()->height());
-            break;
+auto static findFirstDockWidget(QMainWindow* mainWindow, Qt::DockWidgetArea dockArea) -> QDockWidget* 
+{
+    for (QWidget* widget : mainWindow->findChildren<QWidget*>()){
+        if (QDockWidget* dockWidget = qobject_cast<QDockWidget*>(widget)) {
+            if (mainWindow->dockWidgetArea(dockWidget) == dockArea) {
+                return dockWidget;
+            }
         }
     }
+    return nullptr;
 }
 
-void PluginManager::showPanel(Panels p, int index) {
-    QTabWidget *panel = nullptr;
 
+QDockWidget* PluginManager::createNewPanel(Panels p, const QString &name, const QString &title, QWidget *widget) {
+    auto const dock = new QDockWidget(this);
+    dock->setWidget(widget);
+    dock->setWindowTitle(title);
+    dock->setObjectName(name);
+
+    auto dockArea = Qt::NoDockWidgetArea;
+    auto features = dock->features();
+    dock->setFeatures(features 
+        & ~QDockWidget::DockWidgetFloatable
+    );
+    // & ~QDockWidget::DockWidgetClosable
+    // & ~QDockWidget::DockWidgetMovable
+    
     switch (p) {
     case Panels::East:
-        eastState.isMinimized = false;
-        panel = this->ui->eastPanel;
+        dockArea = Qt::RightDockWidgetArea;
+        // dock->setFeatures(features | QDockWidget::DockWidgetVerticalTitleBar);
         break;
     case Panels::West:
-        westState.isMinimized = false;
-        panel = this->ui->westPanel;
+        // t = this->ui->westPanel;
+        dockArea = Qt::LeftDockWidgetArea;
+        // dock->setFeatures(features | QDockWidget::DockWidgetVerticalTitleBar);
         break;
     case Panels::South:
-        southState.isMinimized = false;
-        panel = this->ui->southPanel;
+        // t = this->ui->southPanel;
+        dockArea = Qt::BottomDockWidgetArea;
         break;
     }
-
-    assert(panel);
-    auto w = panel->findChild<QStackedWidget *>();
-    assert(w);
-
-    panel->setFocus();
-    w->show();
-    if (p == Panels::South) {
-        panel->setMaximumHeight(QWIDGETSIZE_MAX);
+    // return t->addTab(widget, name);
+    
+    auto currentDock = findFirstDockWidget(this, dockArea);
+    if (currentDock) {
+        tabifyDockWidget(currentDock, dock);
     } else {
-        panel->setMaximumWidth(QWIDGETSIZE_MAX);
+        addDockWidget(dockArea, dock);
     }
-
-    w->show();
-    panel->setMaximumWidth(QWIDGETSIZE_MAX);
-    for (auto i = 0; i < panel->count(); ++i) {
-        panel->setCurrentIndex(index);
-        panel->widget(index)->show();
-        panel->widget(index)->focusWidget();
-    }
-}
-
-int PluginManager::createNewPanel(Panels p, QString name, QWidget *widget) {
-    QTabWidget *t = nullptr;
-    switch (p) {
-    case Panels::East:
-        t = this->ui->eastPanel;
-        break;
-    case Panels::West:
-        t = this->ui->westPanel;
-        break;
-    case Panels::South:
-        t = this->ui->southPanel;
-        break;
-    }
-    return t->addTab(widget, name);
-}
-
-QWidget *PluginManager::getPanel(Panels p, int index) {
-    QTabWidget *t = nullptr;
-    switch (p) {
-    case Panels::East:
-        t = this->ui->eastPanel;
-        break;
-    case Panels::West:
-        t = this->ui->westPanel;
-        break;
-    case Panels::South:
-        t = this->ui->southPanel;
-        break;
-    }
-    return t->widget(index);
+    
+    return dock;
 }
 
 qmdiClient *PluginManager::currentClient() { return tabWidget->getCurrentClient(); }
@@ -1143,7 +1037,6 @@ void PluginManager::initGUI() {
 
     this->ui = new Ui::PluginManagedWindow;
     this->ui->setupUi(this);
-    this->ui->splitter->setSizes(QList<int>({1, 2, 1}));
     tabWidget = this->ui->mdiTabWidget;
 
     auto tabCloseBtn = new QToolButton(tabWidget);

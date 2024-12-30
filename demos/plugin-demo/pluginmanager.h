@@ -46,11 +46,6 @@ class ClosedDocuments {
     int maxSize;
 };
 
-struct PanelState {
-    bool isMinimized = false;
-    QTabWidget *panel;
-};
-
 class PluginManager : public QMainWindow, public qmdiHost {
     Q_OBJECT
     friend class PluginModel;
@@ -73,17 +68,12 @@ class PluginManager : public QMainWindow, public qmdiHost {
     bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
     bool openFiles(const QStringList &fileNames);
 
-    void hideUnusedPanels();
-    void hidePanel(Panels p);
-    void showPanel(Panels p, int index);
-
   public:
-    int createNewPanel(Panels p, QString name, QWidget *widget);
-    QWidget *getPanel(Panels p, int index);
+    QDockWidget *createNewPanel(Panels p, const QString &name, const QString &title, QWidget *widget);
     qmdiClient *currentClient();
-
+    
     virtual void onClientClosed(qmdiClient *client) override;
-
+    
   public slots:
     void addPlugin(IPlugin *newplugin);
     void removePlugin(IPlugin *oldplugin);
@@ -109,8 +99,6 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void newFileRequested();
 
   protected:
-    PanelState westState, eastState, southState;
-
     void initGUI();
     QList<IPlugin *> plugins;
     qmdiTabWidget *tabWidget;
