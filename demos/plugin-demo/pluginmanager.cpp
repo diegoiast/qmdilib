@@ -428,7 +428,7 @@ PluginManager::~PluginManager() {
  *
  * \see openFile()
  */
-int PluginManager::tabForFileName(QString fileName) {
+int PluginManager::tabForFileName(const QString &fileName) {
     if (fileName.isEmpty()) {
         return -1;
     }
@@ -739,7 +739,7 @@ void PluginManager::updateActionsStatus() {
  * \see IPlugin::openFile()
  * \todo how does a developer know why the loading of a file failed?
  */
-bool PluginManager::openFile(QString fileName, int x, int y, int z) {
+bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
     // see which plugin is the most suited for openning this file
     IPlugin *bestPlugin = nullptr;
     int highestScore = -1;
@@ -793,7 +793,7 @@ bool PluginManager::openFile(QString fileName, int x, int y, int z) {
  * \see openFile()
  * \todo how does a developer know why the loading of one of the files failed?
  */
-bool PluginManager::openFiles(QStringList fileNames) {
+bool PluginManager::openFiles(const QStringList &fileNames) {
     auto s = QString();
     auto b = true;
     foreach (s, fileNames) {

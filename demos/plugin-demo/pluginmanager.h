@@ -59,7 +59,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
   public:
     PluginManager();
     virtual ~PluginManager();
-    int tabForFileName(QString fileName);
+    int tabForFileName(const QString &fileName);
     void setNativeSettingsManager(const QString &organization = QString(),
                                   const QString &application = QString());
     virtual void closeEvent(QCloseEvent *event) override;
@@ -70,8 +70,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void restoreSettings();
     void saveSettings();
     void updateActionsStatus();
-    bool openFile(QString fileName, int x = -1, int y = -1, int z = -1);
-    bool openFiles(QStringList fileNames);
+    bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
+    bool openFiles(const QStringList &fileNames);
 
     void hideUnusedPanels();
     void hidePanel(Panels p);
