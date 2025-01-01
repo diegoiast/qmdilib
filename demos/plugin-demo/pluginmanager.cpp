@@ -357,8 +357,6 @@ PluginManager::PluginManager() {
     setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
     setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::TabPosition::West);
     setTabPosition(Qt::RightDockWidgetArea, QTabWidget::TabPosition::East);
-    
-    restoreSettings();
 }
 
 /**
@@ -507,50 +505,28 @@ void PluginManager::setFileSettingsManager(const QString &fileName) {
  * \see updateActionsStatus()
  */
 void PluginManager::restoreSettings() {
+    // TODO - no idea why I need to do this. Sometimes, the docking areas get borked
+    //        unless I re-do this now (first time is in the constructor).
+    setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+    setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+    setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::TabPosition::West);
+    setTabPosition(Qt::RightDockWidgetArea, QTabWidget::TabPosition::East);    
+
     if (!settingsManager) {
         return;
     }
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    QApplication::processEvents();
-
     // TODO - use the global config API
+    
+    // main window state
     settingsManager->beginGroup("mainwindow");
     {
-        if (settingsManager->contains("maximized")) {
-            if (settingsManager->value("maximized").toBool()) {
-                showMaximized();
-            } else {
-                if (settingsManager->contains("size")) {
-                    resize(settingsManager->value("size").toSize());
-                }
-                if (settingsManager->contains("location")) {
-                    move(settingsManager->value("location").toPoint());
-                }
-            }
-        }
-        show();
+        restoreState(settingsManager->value("state").toByteArray());
+        restoreGeometry(settingsManager->value("geometry").toByteArray());
+        // actionHideGUI->setChecked(settingsManager->value("hidegui").toBool());
     }
     settingsManager->endGroup();
 
-/*
-    settingsManager->beginGroup("ui");
-    {
-        auto panelNumber = 0;
-        auto panelMinimized = false;
-        panelNumber = settingsManager->value("eastSelected", -1).toInt();
-        panelNumber = settingsManager->value("westSelected", -1).toInt();
-        panelNumber = settingsManager->value("southSelected", -1).toInt();
-
-        panelMinimized = settingsManager->value("eastMinimized", false).toBool();
-        panelMinimized = settingsManager->value("westMinimized", false).toBool();
-        panelMinimized = settingsManager->value("southMinimized", true).toBool();
-    }
-    settingsManager->endGroup();
-*/
-    show();
-    QApplication::restoreOverrideCursor();
-    QApplication::processEvents();
     foreach (auto plugin, plugins) {
         plugin->loadConfig(*settingsManager);
     }
@@ -575,8 +551,6 @@ void PluginManager::restoreSettings() {
         }
     }
     settingsManager->endGroup();
-    saveSettings();
-
     updateActionsStatus();
 }
 
@@ -604,12 +578,10 @@ void PluginManager::saveSettings() {
     }
 
     // TODO - port to the plugin config system
+
     // main window state
     settingsManager->beginGroup("mainwindow");
     {
-        settingsManager->setValue("size", size());
-        settingsManager->setValue("location", pos());
-        settingsManager->setValue("maximized", isMaximized());
         settingsManager->setValue("state", saveState());
         settingsManager->setValue("geometry", saveGeometry());
         settingsManager->setValue("hidegui", actionHideGUI->isChecked());
@@ -647,18 +619,6 @@ void PluginManager::saveSettings() {
     }
     settingsManager->endGroup();
 
-/*
-    settingsManager->beginGroup("ui");
-    {
-        settingsManager->setValue("eastMinimized", eastState.isMinimized);
-        settingsManager->setValue("eastSelected", eastState.panel->currentIndex());
-        settingsManager->setValue("westMinimized", westState.isMinimized);
-        settingsManager->setValue("westSelected", westState.panel->currentIndex());
-        settingsManager->setValue("southMinimized", southState.isMinimized);
-        settingsManager->setValue("southSelected", southState.panel->currentIndex());
-    }
-    settingsManager->endGroup();
-*/
     // let each ones of the plugins save it's state
     foreach (auto p, plugins) {
         p->saveConfig(*settingsManager);
