@@ -70,6 +70,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
 
   public:
     QDockWidget *createNewPanel(Panels p, const QString &name, const QString &title, QWidget *widget);
+    void hidePanels(Qt::DockWidgetArea area);
+    void showPanels(Qt::DockWidgetArea area);
     qmdiClient *currentClient();
     
     virtual void onClientClosed(qmdiClient *client) override;

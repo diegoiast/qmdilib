@@ -822,6 +822,24 @@ QDockWidget* PluginManager::createNewPanel(Panels p, const QString &name, const 
     return dock;
 }
 
+void PluginManager::hidePanels(Qt::DockWidgetArea area)
+{
+    for (QDockWidget* dockWidget : findChildren<QDockWidget*>()) {
+        if (dockWidgetArea(dockWidget) == area) {
+            dockWidget->hide();
+        }
+    }
+}
+
+void PluginManager::showPanels(Qt::DockWidgetArea area)
+{
+    for (QDockWidget* dockWidget : findChildren<QDockWidget*>()) {
+        if (dockWidgetArea(dockWidget) == area) {
+            dockWidget->show();
+        }
+    }
+}
+
 qmdiClient *PluginManager::currentClient() { return tabWidget->getCurrentClient(); }
 
 void PluginManager::onClientClosed(qmdiClient *client) {
