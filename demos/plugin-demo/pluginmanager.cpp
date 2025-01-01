@@ -303,8 +303,8 @@ PluginManager::PluginManager() {
     actionHideGUI->setObjectName("actionHideGUI");
     actionHideGUI->setCheckable(true);
 
-
     actionConfig->setIcon(QIcon::fromTheme("configure"));
+    actionConfig->setShortcut(QKeySequence::Preferences);
     if (actionConfig->icon().isNull()) {
         actionConfig->setIcon(QIcon::fromTheme("preferences-other-symbolic"));
     }
