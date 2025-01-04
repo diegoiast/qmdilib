@@ -911,6 +911,8 @@ void PluginManager::enablePlugin(IPlugin *plugin) {
     if (plugin->enabled) {
         plugin->setEnabled(true);
         mergeClient(plugin);
+        plugin->menus.addActionsToWidget(this);
+        plugin->toolbars.addActionsToWidget(this);
     }
 }
 
@@ -924,8 +926,6 @@ void PluginManager::enablePlugin(IPlugin *plugin) {
  *
  * \note this method works only on plugins available in the system, please use
  * PluginManager::addPlugin() before enabling a plugin.
- *
- * \todo remove new actions
  *
  * \see addPlugin()
  * \see enablePlugin()
@@ -1021,7 +1021,7 @@ void PluginManager::initGUI() {
     // TODO - convert to document list
     connect(tabCloseBtn, &QAbstractButton::clicked, this, &PluginManager::closeClient);
     tabCloseBtn->setAutoRaise(true);
-    tabCloseBtn->setIcon(QIcon::fromTheme("window-close"));
+    tabCloseBtn->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::WindowClose));
     tabWidget->setCornerWidget(tabCloseBtn, Qt::TopRightCorner);
 
     auto addNewMdiClient = new QToolButton(tabWidget);
@@ -1030,12 +1030,15 @@ void PluginManager::initGUI() {
         emit newFileRequested();
     });
     addNewMdiClient->setAutoRaise(true);
-    addNewMdiClient->setIcon(QIcon::fromTheme("document-new"));
+    addNewMdiClient->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew));
     tabWidget->setCornerWidget(addNewMdiClient, Qt::TopLeftCorner);
 
     tabWidget->mdiHost = this;
     tabWidget->setDocumentMode(true);
     tabWidget->setMovable(true);
+    
+    menus.addActionsToWidget(this);
+    toolbars.addActionsToWidget(this);
     updateGUI();
 }
 
@@ -1224,6 +1227,15 @@ void PluginManager::on_actionNext_triggered() {
 void PluginManager::on_actionHideGUI_changed() {
     updateMenusAndToolBars = !actionHideGUI->isChecked();
     setUpdatesEnabled(false);
+    
+    // TODO - no idea why I need to do this. Sometimes, the docking areas get borked
+    //        unless I re-do this now (first time is in the constructor).
+    setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+    setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+    setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::TabPosition::West);
+    setTabPosition(Qt::RightDockWidgetArea, QTabWidget::TabPosition::East);    
+
+
     menuBar()->setVisible(!actionHideGUI->isChecked());
     foreach (auto b, findChildren<QToolBar *>()) {
         b->setVisible(!actionHideGUI->isChecked());

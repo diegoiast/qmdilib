@@ -255,3 +255,17 @@ QList<QToolBar *> *qmdiActionGroupList::updateToolBar(QList<QToolBar *> *toolbar
 
     return toolbars;
 }
+
+void qmdiActionGroupList::addActionsToWidget(QWidget *widget)
+{
+    for (auto i : actionGroups) {
+        i->addActionsToWidget(widget);
+    }   
+}
+
+void qmdiActionGroupList::removeActionsFromWidget(QWidget *widget)
+{
+    for (auto i : actionGroups) {
+        i->removeActionsFromWidget(widget);
+    } 
+}

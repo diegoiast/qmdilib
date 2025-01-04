@@ -252,13 +252,18 @@ QString qmdiClient::mdiClientFileName() { return QString(); }
  * to announce that this client has been merged at the
  * host passed as a parameter.
  *
- * By default this function does nothing, and it's left
- * for derived implementation to do whatever they need to do.
+ * This function adds adds all menu/toolbar actions to the host. Please do call this method 
+ * when re-implementing.
  *
  * \see qmdiHost::mergeClient()
  * \since 0.0.5
  */
-void qmdiClient::on_client_merged(qmdiHost *host) { Q_UNUSED(host); }
+void qmdiClient::on_client_merged(qmdiHost *host) { 
+    if (auto w = dynamic_cast<QWidget*>(host)) {
+        menus.addActionsToWidget(w);
+        toolbars.addActionsToWidget(w);
+    }
+}
 
 /**
  * \brief Callback function to announce that the client has been unmerged
@@ -268,13 +273,18 @@ void qmdiClient::on_client_merged(qmdiHost *host) { Q_UNUSED(host); }
  * to announce that this client has been merged at the
  * host passed as a parameter.
  *
- * By default this function does nothing, and it's left
- * for derived implementation to do whatever they need to do.
+ * This function adds removes all menu/toolbar actions to the host. Please do call this method 
+ * when re-implementing.
  *
  * \see qmdiHost::unmergeClient()
  * \since 0.0.5
  */
-void qmdiClient::on_client_unmerged(qmdiHost *host) { Q_UNUSED(host); }
+void qmdiClient::on_client_unmerged(qmdiHost *host) { 
+    if (auto w = dynamic_cast<QWidget*>(host)) {
+        menus.removeActionsFromWidget(w);
+        toolbars.removeActionsFromWidget(w);
+    }
+}
 
 /**
  * @brief Return internal state

@@ -45,6 +45,7 @@ FileSystemBrowserPlugin::FileSystemBrowserPlugin() {
 }
 
 void FileSystemBrowserPlugin::on_client_merged(qmdiHost *host) {
+    IPlugin::on_client_merged(host);
     auto *pluginManager = dynamic_cast<PluginManager *>(host);
     panel = new FileSystemWidget;
     pluginManager->createNewPanel(Panels::West, "filesystem", tr("File system"), panel);
@@ -55,9 +56,6 @@ void FileSystemBrowserPlugin::on_client_merged(qmdiHost *host) {
             pluginManager->openFile(filePath);
         }
     });
-}
-
-void FileSystemBrowserPlugin::on_client_unmerged(qmdiHost *) {
 }
 
 void FileSystemBrowserPlugin::loadConfig(QSettings &settings) {
