@@ -81,8 +81,7 @@ qmdiTabWidget::qmdiTabWidget(QWidget *parent, qmdiHost *host) : QTabWidget(paren
 
     activeWidget = nullptr;
     setDocumentMode(true);
-    setTabBarAutoHide(true);
-    connect(this, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+    connect(this, &QTabWidget::currentChanged, this, &qmdiTabWidget::tabChanged);
     tabBar()->installEventFilter(this);
 }
 
