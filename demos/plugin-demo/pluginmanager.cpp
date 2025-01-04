@@ -551,7 +551,6 @@ void PluginManager::restoreSettings() {
         }
     }
     settingsManager->endGroup();
-    updateActionsStatus();
 }
 
 /**
@@ -694,9 +693,6 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
     // ask best plugin to open the file
     if (bestPlugin) {
         auto fileOpened = bestPlugin->openFile(fileName, x, y, z);
-        if (fileOpened) {
-            updateActionsStatus();
-        }
         return fileOpened;
     } else {
         // no plugin can handle this file,
@@ -1030,6 +1026,8 @@ void PluginManager::initGUI() {
     
     menus.addActionsToWidget(this);
     toolbars.addActionsToWidget(this);
+    
+    connect(tabWidget, &QTabWidget::currentChanged, this, &PluginManager::updateActionsStatus);
     updateGUI();
 }
 
@@ -1131,15 +1129,9 @@ void PluginManager::on_actionOpen_triggered() {
  * in the \b File menu.
  *
  * \see qmdiTabWidget::tryCloseClient()
- * \todo fix this to be calculated when tabs are open or closed, do this via a
- * signal from QTabWidget (qmdiServer?)
  */
 void PluginManager::on_actionClose_triggered() {
     tabWidget->tryCloseClient(tabWidget->currentIndex());
-
-    // TODO fix this to be calculated when tabs are open
-    //      or closed, do this via a signal from QTabWidget (qmdiServer?)
-    updateActionsStatus();
 }
 
 /**
