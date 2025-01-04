@@ -523,7 +523,7 @@ void PluginManager::restoreSettings() {
     {
         restoreState(settingsManager->value("state").toByteArray());
         restoreGeometry(settingsManager->value("geometry").toByteArray());
-        // actionHideGUI->setChecked(settingsManager->value("hidegui").toBool());
+        actionHideGUI->setChecked(settingsManager->value("hidegui").toBool());
     }
     settingsManager->endGroup();
 
@@ -749,28 +749,19 @@ QDockWidget* PluginManager::createNewPanel(Panels p, const QString &name, const 
 
     auto dockArea = Qt::NoDockWidgetArea;
     auto features = dock->features();
-    dock->setFeatures(features 
-        & ~QDockWidget::DockWidgetFloatable
-    );
-    // & ~QDockWidget::DockWidgetClosable
-    // & ~QDockWidget::DockWidgetMovable
+    dock->setFeatures(features & ~QDockWidget::DockWidgetFloatable);
     
     switch (p) {
     case Panels::East:
         dockArea = Qt::RightDockWidgetArea;
-        // dock->setFeatures(features | QDockWidget::DockWidgetVerticalTitleBar);
         break;
     case Panels::West:
-        // t = this->ui->westPanel;
         dockArea = Qt::LeftDockWidgetArea;
-        // dock->setFeatures(features | QDockWidget::DockWidgetVerticalTitleBar);
         break;
     case Panels::South:
-        // t = this->ui->southPanel;
         dockArea = Qt::BottomDockWidgetArea;
         break;
     }
-    // return t->addTab(widget, name);
     
     auto currentDock = findFirstDockWidget(this, dockArea);
     if (currentDock) {
