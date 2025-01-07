@@ -56,10 +56,9 @@ qmdiActionGroupList::~qmdiActionGroupList() { actionGroups.clear(); }
  *
  * This is just an overloaded function which calls getActionGroup().
  *
- * \todo why not "const QSting&" ?
  * \see getActionGroup()
  */
-qmdiActionGroup *qmdiActionGroupList::operator[](const QString name) {
+qmdiActionGroup *qmdiActionGroupList::operator[](const QString &name) {
     return getActionGroup(name);
 }
 

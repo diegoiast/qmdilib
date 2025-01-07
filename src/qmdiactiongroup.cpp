@@ -120,7 +120,7 @@
  * \todo How about localization? maybe we need to differentiate between name and
  * title?
  */
-qmdiActionGroup::qmdiActionGroup(QString name) {
+qmdiActionGroup::qmdiActionGroup(const QString &name) {
     this->name = name;
 
     breakAfter = false;
@@ -659,12 +659,10 @@ void qmdiActionGroup::addActionsToWidget(QWidget *widget)
     for (auto const a: actionGroupItems) {
         if (auto action = qobject_cast<QAction*>(a)) {
             widget->addAction(action);
-            qDebug() << "Adding " << action->text() << "to " << widget;
         }
         else if (auto actionGroup = qobject_cast<QActionGroup*>(a)) {
             for (auto group : actionGroup->actions()) {
                 widget->addAction(action);
-                qDebug() << "Adding " << action->text() << "to " << widget;
             }
         }
     }

@@ -34,7 +34,6 @@
  * is registered.
  *
  * \copydoc read_only_property
- * \todo make it protected maybe?
  */
 
 /**

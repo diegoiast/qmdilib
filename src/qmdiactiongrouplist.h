@@ -26,8 +26,8 @@ class qmdiActionGroupList {
   public:
     qmdiActionGroupList();
     ~qmdiActionGroupList();
-
-    qmdiActionGroup *operator[](const QString name);
+    
+    qmdiActionGroup *operator[](const QString &name);
     qmdiActionGroup *getActionGroup(const QString &name);
     void mergeGroupList(qmdiActionGroupList *group);
     void unmergeGroupList(qmdiActionGroupList *group);

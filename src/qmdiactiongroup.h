@@ -22,7 +22,7 @@ class qmdiActionGroup {
     friend class qmdiHost;
 
   public:
-    qmdiActionGroup(QString name);
+    qmdiActionGroup(const QString &name);
     qmdiActionGroup();
     ~qmdiActionGroup();
 

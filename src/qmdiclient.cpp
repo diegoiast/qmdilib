@@ -63,9 +63,8 @@
  * Builds a new client assigning it an mdi client name of newName and assigning
  * a nullptr mdiServer.
  *
- * \todo how about using "const QString&"?
  */
-qmdiClient::qmdiClient(const QString newName) {
+qmdiClient::qmdiClient(const QString &newName) {
     mdiServer = nullptr;
     mdiClientName = newName;
 }
@@ -187,7 +186,6 @@ qmdiClient::~qmdiClient() {
  * If your derived class does not derive QObject, you will need to overide this
  * function as well.
  *
- * \todo update documentation
  * \see canCloseClient()
  * \see QObject::deleteLater()
  * \see qmdiHost::onClientClosed()
