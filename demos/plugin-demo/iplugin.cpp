@@ -437,17 +437,6 @@ void IPlugin::setEnabled(bool enable) { enabled = enable; }
 bool IPlugin::canDisable() { return !alwaysEnabled; }
 
 /**
- * \brief the icon displayed in the plugin manager configuration dialog
- *
- * This is the icon representing the plugin the plugin manager configuration
- * dialog.
- *
- * \todo what is the size of the icon?
- * \todo what about caching the icon?
- */
-QIcon IPlugin::getIcon() { return QIcon("images/config.png"); }
-
-/**
  * \brief return the name of this plugin
  * \return the name of this plugin
  *

@@ -55,7 +55,6 @@ class IPlugin : public QObject, public qmdiClient {
     bool isEnabled();
     void setEnabled(bool enable);
     bool canDisable();
-    QIcon getIcon();
     QString getName();
     QString getAuthor();
     QString getsVersion();
