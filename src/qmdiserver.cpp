@@ -99,26 +99,7 @@ qmdiServer::~qmdiServer() {}
  *
  * This means that the qmdiClient needs to know the MDI server (usually a
  * qmdiTabWidget) and ask to be removed before it gets destructed.
- *
- * Why this function is not pure virtual?
- *  - Since I found that it gives you warnings, about calling a pure virtual
- *    function, lame excuse, which I would like to get rid of :)
- *  - For some reason when an mdi client wants to contact it's qmdiServer,
- *    it reaches this nullptr function insted of the overriden one (like
- *    qmdiTabWidget::deleteClient) this makes the application die, since it's
- *    calling a pure virtual function. Definetly a bug, but this a nice
- *    workaround.
- *  - On some rare implementations the MDI server implemented, would like
- *    to ignore those events. I prefer that the dummy functions be implemented
- *    by the library, and not the end clients.
- *
- * \note Even tough this is not a  pure virtual, you must implement this on
- * derived classes.
  */
-void qmdiServer::deleteClient(qmdiClient *) {
-    // stub function
-    // If not added, the function had to be pure virtual
-}
 
 /**
  * \fn qmdiServer::getClientsCount()
