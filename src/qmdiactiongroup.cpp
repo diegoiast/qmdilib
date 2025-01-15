@@ -651,16 +651,14 @@ QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
     return toolbar;
 }
 
-void qmdiActionGroup::addActionsToWidget(QWidget *widget)
-{
-    for (auto a: actionGroups) {
+void qmdiActionGroup::addActionsToWidget(QWidget *widget) {
+    for (auto a : actionGroups) {
         a->addActionsToWidget(widget);
     }
-    for (auto const a: actionGroupItems) {
-        if (auto action = qobject_cast<QAction*>(a)) {
+    for (auto const a : actionGroupItems) {
+        if (auto action = qobject_cast<QAction *>(a)) {
             widget->addAction(action);
-        }
-        else if (auto actionGroup = qobject_cast<QActionGroup*>(a)) {
+        } else if (auto actionGroup = qobject_cast<QActionGroup *>(a)) {
             for (auto group : actionGroup->actions()) {
                 widget->addAction(action);
             }
@@ -668,20 +666,17 @@ void qmdiActionGroup::addActionsToWidget(QWidget *widget)
     }
 }
 
-void qmdiActionGroup::removeActionsFromWidget(QWidget *widget)
-{
-    for (auto a: actionGroups) {
+void qmdiActionGroup::removeActionsFromWidget(QWidget *widget) {
+    for (auto a : actionGroups) {
         a->removeActionsFromWidget(widget);
     }
-    for (auto const a: actionGroupItems) {
-        if (auto action = qobject_cast<QAction*>(a)) {
+    for (auto const a : actionGroupItems) {
+        if (auto action = qobject_cast<QAction *>(a)) {
             widget->removeAction(action);
-        }
-        else if (auto actionGroup = qobject_cast<QActionGroup*>(a)) {
+        } else if (auto actionGroup = qobject_cast<QActionGroup *>(a)) {
             for (auto group : actionGroup->actions()) {
                 widget->removeAction(action);
             }
         }
-    }    
+    }
 }
-

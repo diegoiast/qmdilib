@@ -48,8 +48,9 @@ class qmdiActionGroup {
     QToolBar *updateToolBar(QToolBar *toolbar);
     void addActionsToWidget(QWidget *widget);
     void removeActionsFromWidget(QWidget *widget);
-    
+
     bool breakAfter;
+
   private:
     QString name;
     QList<QObject *> actionGroupItems;

@@ -26,7 +26,7 @@ class qmdiActionGroupList {
   public:
     qmdiActionGroupList();
     ~qmdiActionGroupList();
-    
+
     qmdiActionGroup *operator[](const QString &name);
     qmdiActionGroup *getActionGroup(const QString &name);
     void mergeGroupList(qmdiActionGroupList *group);
@@ -35,9 +35,9 @@ class qmdiActionGroupList {
     QMenuBar *updateMenuBar(QMenuBar *menubar);
     QMenu *updatePopMenu(QMenu *popupMenu);
     QList<QToolBar *> *updateToolBar(QList<QToolBar *> *toolbars, QMainWindow *window);
-    
-    void addActionsToWidget(QWidget* widget);
-    void removeActionsFromWidget(QWidget* widget);
+
+    void addActionsToWidget(QWidget *widget);
+    void removeActionsFromWidget(QWidget *widget);
 
   private:
     QList<qmdiActionGroup *> actionGroups;

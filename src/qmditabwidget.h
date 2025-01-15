@@ -28,7 +28,7 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer {
     void tabChanged(int i);
     void on_middleMouse_pressed(int, QPoint);
     void on_rightMouse_pressed(int, QPoint);
-  
+
   public:
     bool eventFilter(QObject *obj, QEvent *event) override;
     virtual void addClient(qmdiClient *client) override;
