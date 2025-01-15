@@ -77,9 +77,10 @@ qmdiServer::~qmdiServer() {}
  * \see qmdiTabWidget
  */
 // pure virtual method
-// void qmdiServer::addClient( qmdiClient *client );
+// void qmdiServer::addClient( qmdiClient *client ) = 0;
 
 /**
+ * \fn qmdiServer::deleteClient(qmdiClient *client) = 0;
  * \brief callback to get alarm of deleted object
  *
  * This function gets called on the destructor of qmdiClient,
@@ -100,6 +101,8 @@ qmdiServer::~qmdiServer() {}
  * This means that the qmdiClient needs to know the MDI server (usually a
  * qmdiTabWidget) and ask to be removed before it gets destructed.
  */
+// pure virtual method
+// void qmdiServer::deleteClient(qmdiClient *client) = 0
 
 /**
  * \fn qmdiServer::getClientsCount()
@@ -115,7 +118,7 @@ qmdiServer::~qmdiServer() {}
  * \see getClient
  */
 // pure virtual method
-// int		qmdiServer::getClientsCount() = 0;
+// int qmdiServer::getClientsCount() = 0;
 
 /**
  * \fn  qmdiClient *qmdiServer::getClient( int i )
@@ -134,7 +137,7 @@ qmdiServer::~qmdiServer() {}
  * \see getClientsCount
  */
 // pure virtual method
-// qmdiClient	*qmdiServer::getClient( int i ) = 0;
+// qmdiClient *qmdiServer::getClient( int i ) = 0;
 
 /**
  * \brief request an MDI client to be closed
