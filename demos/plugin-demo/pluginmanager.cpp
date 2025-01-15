@@ -406,7 +406,7 @@ PluginManager::~PluginManager() {
  *
  * \see openFile()
  */
-int PluginManager::tabForFileName(const QString &fileName) {
+int PluginManager::tabForFileName(const QString &fileName) const {
     if (fileName.isEmpty()) {
         return -1;
     }
@@ -422,6 +422,20 @@ int PluginManager::tabForFileName(const QString &fileName) {
         }
     }
     return -1;
+}
+
+qmdiClient *PluginManager::clientForFileName(const QString &fileName) const {
+    if (fileName.isEmpty()) {
+        return nullptr;
+    }
+
+    for (auto i = 0; i < tabWidget->count(); i++) {
+        auto c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
+        if (c) {
+            return c;
+        }
+    }
+    return nullptr;
 }
 
 /**
@@ -510,14 +524,14 @@ void PluginManager::restoreSettings() {
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
     setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
     setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::TabPosition::West);
-    setTabPosition(Qt::RightDockWidgetArea, QTabWidget::TabPosition::East);    
+    setTabPosition(Qt::RightDockWidgetArea, QTabWidget::TabPosition::East);
 
     if (!settingsManager) {
         return;
     }
 
     // TODO - use the global config API
-    
+
     // main window state
     settingsManager->beginGroup("mainwindow");
     {
@@ -724,10 +738,10 @@ bool PluginManager::openFiles(const QStringList &fileNames) {
     return b;
 }
 
-auto static findFirstDockWidget(QMainWindow* mainWindow, Qt::DockWidgetArea dockArea) -> QDockWidget* 
-{
-    for (QWidget* widget : mainWindow->findChildren<QWidget*>()){
-        if (QDockWidget* dockWidget = qobject_cast<QDockWidget*>(widget)) {
+auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
+    -> QDockWidget * {
+    for (QWidget *widget : mainWindow->findChildren<QWidget *>()) {
+        if (QDockWidget *dockWidget = qobject_cast<QDockWidget *>(widget)) {
             if (mainWindow->dockWidgetArea(dockWidget) == dockArea) {
                 return dockWidget;
             }
@@ -736,8 +750,8 @@ auto static findFirstDockWidget(QMainWindow* mainWindow, Qt::DockWidgetArea dock
     return nullptr;
 }
 
-
-QDockWidget* PluginManager::createNewPanel(Panels p, const QString &name, const QString &title, QWidget *widget) {
+QDockWidget *PluginManager::createNewPanel(Panels p, const QString &name, const QString &title,
+                                           QWidget *widget) {
     auto const dock = new QDockWidget(this);
     dock->setWidget(widget);
     dock->setWindowTitle(title);
@@ -746,7 +760,7 @@ QDockWidget* PluginManager::createNewPanel(Panels p, const QString &name, const 
     auto dockArea = Qt::NoDockWidgetArea;
     auto features = dock->features();
     dock->setFeatures(features & ~QDockWidget::DockWidgetFloatable);
-    
+
     switch (p) {
     case Panels::East:
         dockArea = Qt::RightDockWidgetArea;
@@ -758,29 +772,27 @@ QDockWidget* PluginManager::createNewPanel(Panels p, const QString &name, const 
         dockArea = Qt::BottomDockWidgetArea;
         break;
     }
-    
+
     auto currentDock = findFirstDockWidget(this, dockArea);
     if (currentDock) {
         tabifyDockWidget(currentDock, dock);
     } else {
         addDockWidget(dockArea, dock);
     }
-    
+
     return dock;
 }
 
-void PluginManager::hidePanels(Qt::DockWidgetArea area)
-{
-    for (QDockWidget* dockWidget : findChildren<QDockWidget*>()) {
+void PluginManager::hidePanels(Qt::DockWidgetArea area) {
+    for (QDockWidget *dockWidget : findChildren<QDockWidget *>()) {
         if (dockWidgetArea(dockWidget) == area) {
             dockWidget->hide();
         }
     }
 }
 
-void PluginManager::showPanels(Qt::DockWidgetArea area)
-{
-    for (QDockWidget* dockWidget : findChildren<QDockWidget*>()) {
+void PluginManager::showPanels(Qt::DockWidgetArea area) {
+    for (QDockWidget *dockWidget : findChildren<QDockWidget *>()) {
         if (dockWidgetArea(dockWidget) == area) {
             dockWidget->show();
         }
@@ -1023,10 +1035,10 @@ void PluginManager::initGUI() {
     tabWidget->mdiHost = this;
     tabWidget->setDocumentMode(true);
     tabWidget->setMovable(true);
-    
+
     menus.addActionsToWidget(this);
     toolbars.addActionsToWidget(this);
-    
+
     connect(tabWidget, &QTabWidget::currentChanged, this, &PluginManager::updateActionsStatus);
     updateGUI();
 }
@@ -1210,14 +1222,13 @@ void PluginManager::on_actionNext_triggered() {
 void PluginManager::on_actionHideGUI_changed() {
     updateMenusAndToolBars = !actionHideGUI->isChecked();
     setUpdatesEnabled(false);
-    
+
     // TODO - no idea why I need to do this. Sometimes, the docking areas get borked
     //        unless I re-do this now (first time is in the constructor).
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
     setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
     setTabPosition(Qt::LeftDockWidgetArea, QTabWidget::TabPosition::West);
-    setTabPosition(Qt::RightDockWidgetArea, QTabWidget::TabPosition::East);    
-
+    setTabPosition(Qt::RightDockWidgetArea, QTabWidget::TabPosition::East);
 
     menuBar()->setVisible(!actionHideGUI->isChecked());
     foreach (auto b, findChildren<QToolBar *>()) {
@@ -1238,5 +1249,7 @@ void PluginManager::on_actionHideGUI_changed() {
 }
 
 size_t PluginManager::visibleTabs() const { return tabWidget->count(); }
+
+qmdiClient *PluginManager::getMdiClient(int i) const { return tabWidget->getClient(i); }
 
 void PluginManager::loadConfig(const QString &fileName) { config.loadFromFile(fileName); }

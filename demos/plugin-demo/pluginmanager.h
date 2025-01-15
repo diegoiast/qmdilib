@@ -54,7 +54,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
   public:
     PluginManager();
     virtual ~PluginManager();
-    int tabForFileName(const QString &fileName);
+    int tabForFileName(const QString &fileName) const;
+    qmdiClient *clientForFileName(const QString &fileName) const;
     void setNativeSettingsManager(const QString &organization = QString(),
                                   const QString &application = QString());
     virtual void closeEvent(QCloseEvent *event) override;
@@ -69,13 +70,14 @@ class PluginManager : public QMainWindow, public qmdiHost {
     bool openFiles(const QStringList &fileNames);
 
   public:
-    QDockWidget *createNewPanel(Panels p, const QString &name, const QString &title, QWidget *widget);
+    QDockWidget *createNewPanel(Panels p, const QString &name, const QString &title,
+                                QWidget *widget);
     void hidePanels(Qt::DockWidgetArea area);
     void showPanels(Qt::DockWidgetArea area);
     qmdiClient *currentClient();
-    
+
     virtual void onClientClosed(qmdiClient *client) override;
-    
+
   public slots:
     void addPlugin(IPlugin *newplugin);
     void removePlugin(IPlugin *oldplugin);
@@ -93,6 +95,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void on_actionHideGUI_changed();
 
     size_t visibleTabs() const;
+    qmdiClient *getMdiClient(int i) const;
 
     void loadConfig(const QString &fileName);
 
