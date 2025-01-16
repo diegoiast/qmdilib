@@ -432,7 +432,9 @@ qmdiClient *PluginManager::clientForFileName(const QString &fileName) const {
     for (auto i = 0; i < tabWidget->count(); i++) {
         auto c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
         if (c) {
-            return c;
+            if (c->mdiClientFileName() == fileName) {
+                return c;
+            }
         }
     }
     return nullptr;
@@ -728,9 +730,8 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
  * \todo how does a developer know why the loading of one of the files failed?
  */
 bool PluginManager::openFiles(const QStringList &fileNames) {
-    auto s = QString();
     auto b = true;
-    foreach (s, fileNames) {
+    foreach (auto &s, fileNames) {
         b = b && openFile(s);
         QApplication::processEvents();
     }
@@ -740,8 +741,8 @@ bool PluginManager::openFiles(const QStringList &fileNames) {
 
 auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
     -> QDockWidget * {
-    for (QWidget *widget : mainWindow->findChildren<QWidget *>()) {
-        if (QDockWidget *dockWidget = qobject_cast<QDockWidget *>(widget)) {
+    for (auto widget : mainWindow->findChildren<QWidget *>()) {
+        if (auto dockWidget = qobject_cast<QDockWidget *>(widget)) {
             if (mainWindow->dockWidgetArea(dockWidget) == dockArea) {
                 return dockWidget;
             }
@@ -784,7 +785,7 @@ QDockWidget *PluginManager::createNewPanel(Panels p, const QString &name, const 
 }
 
 void PluginManager::hidePanels(Qt::DockWidgetArea area) {
-    for (QDockWidget *dockWidget : findChildren<QDockWidget *>()) {
+    for (auto dockWidget : findChildren<QDockWidget *>()) {
         if (dockWidgetArea(dockWidget) == area) {
             dockWidget->hide();
         }
@@ -792,7 +793,7 @@ void PluginManager::hidePanels(Qt::DockWidgetArea area) {
 }
 
 void PluginManager::showPanels(Qt::DockWidgetArea area) {
-    for (QDockWidget *dockWidget : findChildren<QDockWidget *>()) {
+    for (auto dockWidget : findChildren<QDockWidget *>()) {
         if (dockWidgetArea(dockWidget) == area) {
             dockWidget->show();
         }
@@ -1015,7 +1016,8 @@ void PluginManager::initGUI() {
     this->ui = new Ui::PluginManagedWindow;
     this->ui->setupUi(this);
     tabWidget = this->ui->mdiTabWidget;
-
+    connect(tabWidget, &qmdiTabWidget::newClientAdded, this, &PluginManager::newClientAdded);
+    
     auto tabCloseBtn = new QToolButton(tabWidget);
     // TODO - convert to document list
     connect(tabCloseBtn, &QAbstractButton::clicked, this, &PluginManager::closeClient);

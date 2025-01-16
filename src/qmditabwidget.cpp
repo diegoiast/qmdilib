@@ -328,6 +328,7 @@ void qmdiTabWidget::tabInserted(int index) {
     }
     if (client) {
         client->mdiServer = this;
+        emit newClientAdded(client);
     }
 }
 

@@ -102,6 +102,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
   signals:
     void configurationUpdated();
     void newFileRequested();
+    void newClientAdded(qmdiClient *);
 
   protected:
     void initGUI();
