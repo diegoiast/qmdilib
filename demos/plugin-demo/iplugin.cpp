@@ -352,7 +352,7 @@ QStringList IPlugin::myExtensions() {
  * wild card. On some applications, you may assume that is the fileName has no
  * scheme - it's a file (as demostrated in one of the demos).
  */
-int IPlugin::canOpenFile(const QString fileName) {
+int IPlugin::canOpenFile(const QString &fileName) {
     // can't open no file
     return -1;
     Q_UNUSED(fileName);
@@ -388,7 +388,7 @@ int IPlugin::canOpenFile(const QString fileName) {
  *
  * \see IPlugin::newFileActions()
  */
-bool IPlugin::openFile(QString fileName, int x, int y, int z) {
+bool IPlugin::openFile(const QString &fileName, int x, int y, int z) {
     // refuse to open any file
     return false;
     Q_UNUSED(fileName);

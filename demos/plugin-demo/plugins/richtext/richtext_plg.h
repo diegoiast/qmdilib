@@ -22,9 +22,9 @@ class RichTextPlugin : public IPlugin {
     QWidget *getConfigDialog();
     QActionGroup *newFileActions();
     QStringList myExtensions();
-    int canOpenFile(const QString fileName);
+    virtual int canOpenFile(const QString &fileName) override;
     bool canCloseClient();
-    bool openFile(const QString fileName, int x = -1, int y = -1, int z = -1);
+    virtual bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1) override;
     void getData();
     void setData();
 

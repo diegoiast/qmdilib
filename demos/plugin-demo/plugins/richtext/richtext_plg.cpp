@@ -72,7 +72,7 @@ void RichTextPlugin::getData() {}
 
 void RichTextPlugin::setData() {}
 
-int RichTextPlugin::canOpenFile(const QString fileName) {
+int RichTextPlugin::canOpenFile(const QString &fileName) {
     QUrl u(fileName);
 
     /*
@@ -119,7 +119,7 @@ bool RichTextPlugin::canCloseClient() {
  * without any problems.
  *
  */
-bool RichTextPlugin::openFile(const QString fileName, int x, int y, int z) {
+bool RichTextPlugin::openFile(const QString &fileName, int x, int y, int z) {
     RichTextClient *editor = new RichTextClient(fileName, dynamic_cast<QMainWindow *>(mdiServer));
     //	editor-setMDIclientName( tr("RichText") );
     editor->hide();

@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     pluginManager.addPlugin(new RichTextPlugin);
     pluginManager.addPlugin(new FileSystemBrowserPlugin);
     pluginManager.updateGUI();
-    pluginManager.hideUnusedPanels();
+    pluginManager.hidePanels(Qt::BottomDockWidgetArea);
 
     // start the application
     pluginManager.restoreSettings();

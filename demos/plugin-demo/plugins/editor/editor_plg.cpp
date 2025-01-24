@@ -61,7 +61,7 @@ QStringList EditorPlugin::myExtensions() {
     return s;
 }
 
-int EditorPlugin::canOpenFile(const QString fileName) {
+int EditorPlugin::canOpenFile(const QString &fileName) {
     QUrl u(fileName);
 
     /*	this code fails on win32
@@ -118,7 +118,7 @@ int EditorPlugin::canOpenFile(const QString fileName) {
  * without any problems.
  *
  */
-bool EditorPlugin::openFile(const QString fileName, int x, int y, int z) {
+bool EditorPlugin::openFile(const QString &fileName, int x, int y, int z) {
     QexTextEdit *editor = new QexTextEdit2(fileName, true, dynamic_cast<QMainWindow *>(mdiServer));
     editor->hide();
     mdiServer->addClient(editor);

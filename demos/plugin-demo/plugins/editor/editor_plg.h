@@ -20,8 +20,8 @@ class EditorPlugin : public IPlugin {
     void showAbout();
     QActionGroup *newFileActions();
     QStringList myExtensions();
-    int canOpenFile(const QString fileName);
-    bool openFile(const QString fileName, int x = -1, int y = -1, int z = -1);
+    virtual int canOpenFile(const QString &fileName) override;
+    virtual bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1) override;
 
   public slots:
     void fileNew();
