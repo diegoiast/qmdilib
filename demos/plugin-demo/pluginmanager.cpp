@@ -77,7 +77,7 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
         if (i == 0) {
             action->setShortcut(QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_T));
         }
-        QObject::connect(action, &QAction::triggered, action, [=]() {
+        QObject::connect(action, &QAction::triggered, action, [this, doc, menu, manager, count]() {
             this->remove(doc);
             this->updateMenu(manager, menu, count);
             manager->openFile(doc);
@@ -335,7 +335,7 @@ PluginManager::PluginManager() {
         tabSelectShortcut->setShortcut(QKeySequence(Qt::AltModifier | key));
         tabSelectShortcut->setShortcutContext(Qt::ApplicationShortcut);
         connect(tabSelectShortcut, &QAction::triggered, this,
-                [=]() { tabWidget->setCurrentIndex(i); });
+                [this, i]() { tabWidget->setCurrentIndex(i); });
         tabWidget->addAction(tabSelectShortcut);
     }
 
@@ -344,7 +344,7 @@ PluginManager::PluginManager() {
         auto tabSelectShortcut = new QAction(this);
         tabSelectShortcut->setShortcut(QKeySequence(Qt::AltModifier | Qt::Key_9));
         tabSelectShortcut->setShortcutContext(Qt::ApplicationShortcut);
-        connect(tabSelectShortcut, &QAction::triggered, this, [=]() {
+        connect(tabSelectShortcut, &QAction::triggered, this, [this]() {
             auto size = tabWidget->count();
             if (size > 0) {
                 tabWidget->setCurrentIndex(size - 1);
@@ -1017,7 +1017,7 @@ void PluginManager::initGUI() {
     this->ui->setupUi(this);
     tabWidget = this->ui->mdiTabWidget;
     connect(tabWidget, &qmdiTabWidget::newClientAdded, this, &PluginManager::newClientAdded);
-    
+
     auto tabCloseBtn = new QToolButton(tabWidget);
     // TODO - convert to document list
     connect(tabCloseBtn, &QAbstractButton::clicked, this, &PluginManager::closeClient);
