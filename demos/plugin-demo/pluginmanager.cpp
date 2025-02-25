@@ -1247,6 +1247,13 @@ void PluginManager::on_actionHideGUI_changed() {
         }
     }
 
+    if (updateMenusAndToolBars) {
+        mergeClient(currentClient());
+    } else {
+        unmergeClient(currentClient());
+    }
+    updateGUI();
+
     setUpdatesEnabled(true);
 }
 
