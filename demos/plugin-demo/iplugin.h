@@ -52,13 +52,13 @@ class IPlugin : public QObject, public qmdiClient {
     virtual bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
     virtual void navigateFile(qmdiClient *client, int x, int y, int z);
 
-    bool isEnabled();
+    bool isEnabled() const;
     void setEnabled(bool enable);
-    bool canDisable();
-    QString getName();
-    QString getAuthor();
-    QString getsVersion();
-    int getiVersion();
+    bool canDisable() const;
+    QString getName() const;
+    QString getAuthor() const;
+    QString getsVersion() const;
+    int getiVersion() const;
 
     PluginManager *getManager() const {
         if (!mdiServer || !mdiServer->mdiHost) {

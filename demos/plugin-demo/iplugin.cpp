@@ -413,7 +413,7 @@ void IPlugin::navigateFile(qmdiClient *client, int x, int y, int z) {
  *
  * \see IPlugin::enabled
  */
-bool IPlugin::isEnabled() { return enabled; }
+bool IPlugin::isEnabled() const { return enabled; }
 
 /**
  * \brief set the status of this plugin
@@ -434,7 +434,7 @@ void IPlugin::setEnabled(bool enable) { enabled = enable; }
  *
  * \see IPlugin::alwaysEnabled
  */
-bool IPlugin::canDisable() { return !alwaysEnabled; }
+bool IPlugin::canDisable() const { return !alwaysEnabled; }
 
 /**
  * \brief return the name of this plugin
@@ -445,7 +445,7 @@ bool IPlugin::canDisable() { return !alwaysEnabled; }
  *
  * \see IPlugin::name
  */
-QString IPlugin::getName() { return name; }
+QString IPlugin::getName() const { return name; }
 
 /**
  * \brief return the author of this plugin
@@ -456,7 +456,7 @@ QString IPlugin::getName() { return name; }
  *
  * \see IPlugin::author
  */
-QString IPlugin::getAuthor() { return author; }
+QString IPlugin::getAuthor() const { return author; }
 
 /**
  * \brief return the string version of this plugin
@@ -467,7 +467,7 @@ QString IPlugin::getAuthor() { return author; }
  *
  * \see IPlugin::sVersion
  */
-QString IPlugin::getsVersion() { return sVersion; }
+QString IPlugin::getsVersion() const { return sVersion; }
 
 /**
  * \brief return the integer version of this plugin
@@ -478,4 +478,4 @@ QString IPlugin::getsVersion() { return sVersion; }
  *
  * \see IPlugin::iVersion
  */
-int IPlugin::getiVersion() { return iVersion; }
+int IPlugin::getiVersion() const { return iVersion; }
