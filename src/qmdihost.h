@@ -28,11 +28,11 @@ class qmdiHost {
     virtual void updateGUI(QMainWindow *window = nullptr);
     void mergeClient(qmdiClient *client);
     void unmergeClient(qmdiClient *client);
-    virtual void onClientClosed(qmdiClient *client) {}
+    virtual void onClientClosed(qmdiClient *client) { Q_UNUSED(client); }
 
   protected:
     QList<QToolBar *> *toolBarList;
-    void addActionsToWidget(qmdiActionGroupList &agl, QWidget *w);
-    void removeActionsFromWidget(qmdiActionGroupList &agl, QWidget *w);
+    void addActionsToWidget(const qmdiActionGroupList &agl, QWidget *w);
+    void removeActionsFromWidget(const qmdiActionGroupList &agl, QWidget *w);
     bool updateMenusAndToolBars;
 };

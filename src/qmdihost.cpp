@@ -261,14 +261,13 @@ void qmdiHost::unmergeClient(qmdiClient *client) {
  * \see mergeClient
  * \see QWidget::addAction
  */
-void qmdiHost::addActionsToWidget(qmdiActionGroupList &agl, QWidget *w) {
-    foreach (auto g, agl.actionGroups) {
+void qmdiHost::addActionsToWidget(const qmdiActionGroupList &agl, QWidget *w) {
+    foreach (auto const g, agl.actionGroups) {
         foreach (auto o, g->actionGroupItems) {
             auto a = qobject_cast<QAction *>(o);
             if (!a) {
                 continue;
             }
-
             if (w->actions().contains(a)) {
                 continue;
             }
@@ -290,14 +289,13 @@ void qmdiHost::addActionsToWidget(qmdiActionGroupList &agl, QWidget *w) {
  * \see unmergeClient
  * \see QWidget::addAction
  */
-void qmdiHost::removeActionsFromWidget(qmdiActionGroupList &agl, QWidget *w) {
-    foreach (auto g, agl.actionGroups) {
+void qmdiHost::removeActionsFromWidget(const qmdiActionGroupList &agl, QWidget *w) {
+    foreach (auto const g, agl.actionGroups) {
         foreach (auto o, g->actionGroupItems) {
             auto a = qobject_cast<QAction *>(o);
             if (!a) {
                 continue;
             }
-
             if (!w->actions().contains(a)) {
                 continue;
             }
