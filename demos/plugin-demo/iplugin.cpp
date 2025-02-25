@@ -195,13 +195,12 @@
  * shortcut. Then connect the \b triggered() signal to the slot passed as a
  * parameter.
  */
-QAction *new_action(QIcon icon, QString name, QObject *obj, QString shortcut, QString status_tip,
-                    const char *slot) {
-    QAction *a = new QAction(icon, name, obj);
+QAction *new_action(QIcon icon, const QString &name, QObject *obj, const QString &shortcut,
+                    const QString &status_tip, const char *slot) {
+    auto a = new QAction(icon, name, obj);
     a->setShortcut(shortcut);
     a->setStatusTip(status_tip);
     a->connect(a, SIGNAL(triggered()), obj, slot);
-
     return a;
 }
 
@@ -213,6 +212,7 @@ QAction *new_action(QIcon icon, QString name, QObject *obj, QString shortcut, QS
  * sVersion fileds - otherwise the behaviour of this plugin is not defined.
  */
 IPlugin::IPlugin() {
+    iVersion = 0;
     alwaysEnabled = false;
     autoEnabled = false;
     enabled = false;
@@ -353,9 +353,9 @@ QStringList IPlugin::myExtensions() {
  * scheme - it's a file (as demostrated in one of the demos).
  */
 int IPlugin::canOpenFile(const QString &fileName) {
-    // can't open no file
-    return -1;
     Q_UNUSED(fileName);
+    // can't open any file
+    return -1;
 }
 
 /**
@@ -389,12 +389,12 @@ int IPlugin::canOpenFile(const QString &fileName) {
  * \see IPlugin::newFileActions()
  */
 bool IPlugin::openFile(const QString &fileName, int x, int y, int z) {
-    // refuse to open any file
-    return false;
     Q_UNUSED(fileName);
     Q_UNUSED(x);
     Q_UNUSED(y);
     Q_UNUSED(z);
+    // refuse to open any file
+    return false;
 }
 
 void IPlugin::navigateFile(qmdiClient *client, int x, int y, int z) {

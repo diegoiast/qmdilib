@@ -33,8 +33,8 @@ class QIcon;
     }
 // clang-format on
 
-QAction *new_action(QIcon icon, QString name, QObject *obj, QString shortcut, QString status_tip,
-                    const char *slot);
+QAction *new_action(QIcon icon, const QString &name, QObject *obj, const QString &shortcut,
+                    const QString &status_tip, const char *slot);
 
 class IPlugin : public QObject, public qmdiClient {
     friend class PluginManager;
