@@ -592,7 +592,7 @@ void FileSystemWidget::cutFile() {
 
 void FileSystemWidget::deleteFile() {
     auto fi = model->fileInfo(selectedFileIndex);
-    auto selectedFilePath = fi.absoluteFilePath();
+    auto selectedFilePath = QDir::toNativeSeparators(fi.absoluteFilePath());
     if (!selectedFilePath.isEmpty()) {
         if (QMessageBox::question(
                 this, tr("Confirm Delete"),
@@ -680,8 +680,9 @@ void FileSystemWidget::onRootPathEdited() {
 }
 
 void FileSystemWidget::onFilterChanged() {
-    QString filterText = filterEdit->text().trimmed();
-    QStringList filters = filterText.split(QRegularExpression("[,;]"), Qt::SkipEmptyParts);
+    auto static FilterRegex = QRegularExpression("[,;]");
+    auto filterText = filterEdit->text().trimmed();
+    auto filters = filterText.split(FilterRegex, Qt::SkipEmptyParts);
     filters.replaceInStrings(QRegularExpression("^\\s+|\\s+$"), "");
     model->setNameFilters(filters);
 }

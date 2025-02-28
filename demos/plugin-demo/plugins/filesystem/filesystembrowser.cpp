@@ -50,11 +50,9 @@ void FileSystemBrowserPlugin::on_client_merged(qmdiHost *host) {
     panel = new FileSystemWidget;
     pluginManager->createNewPanel(Panels::West, "filesystem", tr("File system"), panel);
 
-    connect(panel, &FileSystemWidget::fileDoubleClicked, [this](const QString &filePath) {
-        PluginManager *pluginManager = dynamic_cast<PluginManager *>(mdiServer->mdiHost);
-        if (pluginManager) {
-            pluginManager->openFile(filePath);
-        }
+    connect(panel, &FileSystemWidget::fileDoubleClicked, this, [this](const QString &filePath) {
+        auto pluginManager = getManager();
+        pluginManager->openFile(QDir::toNativeSeparators(filePath));
     });
 }
 
