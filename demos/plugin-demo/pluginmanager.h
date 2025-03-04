@@ -14,10 +14,12 @@
 #include "qmdiglobalconfig.h"
 #include "qmdihost.h"
 
+class qmdiHost;
+class qmdiServer;
+class qmdiTabWidget;
+
 class QPopupMenu;
 class QSettings;
-class qmdiHost;
-class qmdiTabWidget;
 class IPlugin;
 class ConfigDialog;
 class PluginModel;
@@ -56,8 +58,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     virtual ~PluginManager();
     int tabForFileName(const QString &fileName) const;
     qmdiClient *clientForFileName(const QString &fileName) const;
-    void setNativeSettingsManager(const QString &organization = QString(),
-                                  const QString &application = QString());
+    void setNativeSettingsManager(const QString &organization = {},
+                                  const QString &application = {});
     virtual void closeEvent(QCloseEvent *event) override;
 
   public slots:
@@ -74,7 +76,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
                                 QWidget *widget);
     void hidePanels(Qt::DockWidgetArea area);
     void showPanels(Qt::DockWidgetArea area);
-    qmdiClient *currentClient();
+    qmdiClient *currentClient() const;
+    void replaceMdiServer(qmdiServer *newServer);
 
     virtual void onClientClosed(qmdiClient *client) override;
 
@@ -106,16 +109,12 @@ class PluginManager : public QMainWindow, public qmdiHost {
 
   protected:
     void initGUI();
-    QList<IPlugin *> plugins;
-    qmdiTabWidget *tabWidget;
-    qmdiGlobalConfig config;
-    QSettings *settingsManager;
-    Ui::PluginManagedWindow *ui;
 
+    Ui::PluginManagedWindow *ui;
+    QSettings *settingsManager;
     ClosedDocuments closedDocuments;
     QMenu *closedDocumentsMenu;
 
-    // public:
     QAction *actionNewFile;
     QAction *actionOpen;
     QAction *actionClose;
@@ -124,4 +123,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     QAction *actionNextTab;
     QAction *actionPrevTab;
     QAction *actionHideGUI;
+
+    QList<IPlugin *> plugins;
+    qmdiServer *mdiServer;
+    qmdiGlobalConfig config;
 };

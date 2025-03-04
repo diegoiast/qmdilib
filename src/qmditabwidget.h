@@ -31,14 +31,17 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer {
 
   signals:
     void newClientAdded(qmdiClient *);
-      
+
   public:
     bool eventFilter(QObject *obj, QEvent *event) override;
     virtual void addClient(qmdiClient *client) override;
     virtual void deleteClient(qmdiClient *client) override;
-    virtual int getClientsCount() override;
-    virtual qmdiClient *getClient(int i) override;
-    virtual qmdiClient *getCurrentClient() override;
+    virtual int getClientsCount() const override;
+
+    virtual qmdiClient *getClient(int i) const override;
+    virtual qmdiClient *getCurrentClient() const override;
+    virtual void setCurrentClientIndex(int i) override;
+    virtual int getCurrentClientIndex() const override;
 
   protected:
     void tabInserted(int index) override;

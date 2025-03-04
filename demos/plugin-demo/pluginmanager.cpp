@@ -329,13 +329,14 @@ PluginManager::PluginManager() {
 
     initGUI();
 
+    auto tabWidget = ui->mdiTabWidget;
     for (auto i = 0; i < 8; ++i) {
         auto tabSelectShortcut = new QAction(this);
         auto key = static_cast<Qt::Key>(Qt::Key_1 + i);
         tabSelectShortcut->setShortcut(QKeySequence(Qt::AltModifier | key));
         tabSelectShortcut->setShortcutContext(Qt::ApplicationShortcut);
         connect(tabSelectShortcut, &QAction::triggered, this,
-                [this, i]() { tabWidget->setCurrentIndex(i); });
+                [this, i]() { mdiServer->setCurrentClientIndex(i); });
         tabWidget->addAction(tabSelectShortcut);
     }
 
@@ -345,9 +346,9 @@ PluginManager::PluginManager() {
         tabSelectShortcut->setShortcut(QKeySequence(Qt::AltModifier | Qt::Key_9));
         tabSelectShortcut->setShortcutContext(Qt::ApplicationShortcut);
         connect(tabSelectShortcut, &QAction::triggered, this, [this]() {
-            auto size = tabWidget->count();
+            auto size = mdiServer->getClientsCount();
             if (size > 0) {
-                tabWidget->setCurrentIndex(size - 1);
+                mdiServer->setCurrentClientIndex(size - 1);
             }
         });
         tabWidget->addAction(tabSelectShortcut);
@@ -411,8 +412,8 @@ int PluginManager::tabForFileName(const QString &fileName) const {
         return -1;
     }
 
-    for (auto i = 0; i < tabWidget->count(); i++) {
-        auto c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
+    for (auto i = 0; i < mdiServer->getClientsCount(); i++) {
+        auto c = mdiServer->getClient(i);
         if (!c) {
             continue;
         }
@@ -429,8 +430,8 @@ qmdiClient *PluginManager::clientForFileName(const QString &fileName) const {
         return nullptr;
     }
 
-    for (auto i = 0; i < tabWidget->count(); i++) {
-        auto c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
+    for (auto i = 0; i < mdiServer->getClientsCount(); i++) {
+        auto c = mdiServer->getClient(i);
         if (c) {
             if (c->mdiClientFileName() == fileName) {
                 return c;
@@ -464,8 +465,8 @@ void PluginManager::setNativeSettingsManager(const QString &organization,
 }
 
 void PluginManager::closeEvent(QCloseEvent *event) {
-    for (auto i = 0; i < tabWidget->count(); i++) {
-        auto client = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
+    for (auto i = 0; i < mdiServer->getClientsCount(); i++) {
+        auto client = mdiServer->getClient(i);
         if (!client) {
             continue;
         }
@@ -563,7 +564,7 @@ void PluginManager::restoreSettings() {
         // re-select the current tab
         int current = settingsManager->value("current", -1).toInt();
         if (current != -1) {
-            tabWidget->setCurrentIndex(current);
+            mdiServer->setCurrentClientIndex(current);
         }
     }
     settingsManager->endGroup();
@@ -606,11 +607,11 @@ void PluginManager::saveSettings() {
     // store saved files
     settingsManager->remove("files"); // remove all old loaded files
     settingsManager->beginGroup("files");
-    if (tabWidget->count() != 0) {
+    if (mdiServer->getClientsCount() != 0) {
         qmdiClient *c = nullptr;
-        auto s = QString();
-        for (auto i = 0; i < tabWidget->count(); i++) {
-            c = dynamic_cast<qmdiClient *>(tabWidget->widget(i));
+        auto s = QString{};
+        for (auto i = 0; i < mdiServer->getClientsCount(); i++) {
+            c = mdiServer->getClient(i);
             if (!c) {
                 continue;
             }
@@ -630,7 +631,7 @@ void PluginManager::saveSettings() {
                 settingsManager->setValue(QString("file%1").arg(i), "");
             }
         }
-        settingsManager->setValue("current", tabWidget->currentIndex());
+        settingsManager->setValue("current", mdiServer->getCurrentClientIndex());
     }
     settingsManager->endGroup();
 
@@ -649,7 +650,7 @@ void PluginManager::saveSettings() {
  * window.
  */
 void PluginManager::updateActionsStatus() {
-    auto widgetsCount = tabWidget->count();
+    auto widgetsCount = mdiServer->getClientsCount();
     actionClose->setEnabled(widgetsCount != 0);
     actionNextTab->setEnabled(widgetsCount > 1);
     actionPrevTab->setEnabled(widgetsCount > 1);
@@ -698,8 +699,8 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
     int i = tabForFileName(fileName);
     // see if it's already open
     if (i != -1) {
-        auto client = tabWidget->getClient(i);
-        tabWidget->setCurrentIndex(i);
+        auto client = mdiServer->getClient(i);
+        mdiServer->setCurrentClientIndex(i);
         bestPlugin->navigateFile(client, x, y, x);
         return true;
     }
@@ -800,7 +801,21 @@ void PluginManager::showPanels(Qt::DockWidgetArea area) {
     }
 }
 
-qmdiClient *PluginManager::currentClient() { return tabWidget->getCurrentClient(); }
+qmdiClient *PluginManager::currentClient() const { return mdiServer->getCurrentClient(); }
+
+void PluginManager::replaceMdiServer(qmdiServer *newServer) {
+    auto w = dynamic_cast<QWidget *>(newServer);
+    if (!w) {
+        // this is not a widget
+        return;
+    }
+
+    auto oldMdiServer = mdiServer;
+    setCentralWidget(w);
+    mdiServer = newServer;
+    mdiServer->mdiHost = this;
+    delete oldMdiServer;
+}
 
 void PluginManager::onClientClosed(qmdiClient *client) {
     if (client && !client->mdiClientName.isEmpty()) {
@@ -835,7 +850,7 @@ void PluginManager::addPlugin(IPlugin *newplugin) {
         return;
     }
 
-    newplugin->mdiServer = dynamic_cast<qmdiServer *>(tabWidget);
+    newplugin->mdiServer = mdiServer;
     if (newplugin->alwaysEnabled) {
         newplugin->autoEnabled = true;
     }
@@ -1015,7 +1030,8 @@ void PluginManager::initGUI() {
 
     this->ui = new Ui::PluginManagedWindow;
     this->ui->setupUi(this);
-    tabWidget = this->ui->mdiTabWidget;
+    auto tabWidget = this->ui->mdiTabWidget;
+    mdiServer = tabWidget;
     connect(tabWidget, &qmdiTabWidget::newClientAdded, this, &PluginManager::newClientAdded);
 
     auto tabCloseBtn = new QToolButton(tabWidget);
@@ -1041,6 +1057,7 @@ void PluginManager::initGUI() {
     menus.addActionsToWidget(this);
     toolbars.addActionsToWidget(this);
 
+    // TODO - can we have a singal from qmdiHost?
     connect(tabWidget, &QTabWidget::currentChanged, this, &PluginManager::updateActionsStatus);
     updateGUI();
 }
@@ -1053,9 +1070,11 @@ void PluginManager::initGUI() {
  * it will just delete the widget by calling QObject::deleteLater()
  */
 void PluginManager::closeClient() {
-    auto client = dynamic_cast<qmdiClient *>(tabWidget->currentWidget());
+    auto client = mdiServer->getCurrentClient();
     if (client == nullptr) {
-        tabWidget->currentWidget()->deleteLater();
+        if (ui->mdiTabWidget) {
+            ui->mdiTabWidget->currentWidget()->deleteLater();
+        }
     } else {
         client->closeClient();
     }
@@ -1068,8 +1087,11 @@ void PluginManager::closeClient() {
  * current tab.
  */
 void PluginManager::focusCenter() {
-    tabWidget->setFocus();
-    tabWidget->currentWidget()->setFocus();
+    if (!ui->mdiTabWidget) {
+        return;
+    }
+    ui->mdiTabWidget->setFocus();
+    ui->mdiTabWidget->currentWidget()->setFocus();
 }
 
 /**
@@ -1145,7 +1167,7 @@ void PluginManager::on_actionOpen_triggered() {
  * \see qmdiTabWidget::tryCloseClient()
  */
 void PluginManager::on_actionClose_triggered() {
-    tabWidget->tryCloseClient(tabWidget->currentIndex());
+    mdiServer->tryCloseClient(mdiServer->getCurrentClientIndex());
 }
 
 /**
@@ -1189,13 +1211,13 @@ void PluginManager::on_actionConfigure_triggered() {
  * \see PluginManager::actionPrevTab
  */
 void PluginManager::on_actionPrev_triggered() {
-    auto i = tabWidget->currentIndex();
+    auto i = mdiServer->getCurrentClientIndex();
     if (i == 0) {
         return;
     }
 
     i--;
-    tabWidget->setCurrentIndex(i);
+    mdiServer->setCurrentClientIndex(i);
 }
 
 /**
@@ -1212,13 +1234,13 @@ void PluginManager::on_actionPrev_triggered() {
  * \see PluginManager::actionNextTab
  */
 void PluginManager::on_actionNext_triggered() {
-    auto i = tabWidget->currentIndex();
-    if (i == tabWidget->count()) {
+    auto i = mdiServer->getCurrentClientIndex();
+    if (i == mdiServer->getClientsCount()) {
         return;
     }
 
     i++;
-    tabWidget->setCurrentIndex(i);
+    mdiServer->setCurrentClientIndex(i);
 }
 
 void PluginManager::on_actionHideGUI_changed() {
@@ -1257,8 +1279,8 @@ void PluginManager::on_actionHideGUI_changed() {
     setUpdatesEnabled(true);
 }
 
-size_t PluginManager::visibleTabs() const { return tabWidget->count(); }
+size_t PluginManager::visibleTabs() const { return mdiServer->getClientsCount(); }
 
-qmdiClient *PluginManager::getMdiClient(int i) const { return tabWidget->getClient(i); }
+qmdiClient *PluginManager::getMdiClient(int i) const { return mdiServer->getClient(i); }
 
 void PluginManager::loadConfig(const QString &fileName) { config.loadFromFile(fileName); }

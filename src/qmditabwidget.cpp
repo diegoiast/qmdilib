@@ -251,7 +251,7 @@ bool qmdiTabWidget::eventFilter(QObject *obj, QEvent *event) {
  * This method returns the MDI client found in tab number \b i , or \b nullptr
  * if that widget does not implement the qmdiClient interface.
  */
-qmdiClient *qmdiTabWidget::getClient(int i) { return dynamic_cast<qmdiClient *>(widget(i)); }
+qmdiClient *qmdiTabWidget::getClient(int i) const { return dynamic_cast<qmdiClient *>(widget(i)); }
 
 /**
  * @brief return the currently active MDI client
@@ -260,9 +260,13 @@ qmdiClient *qmdiTabWidget::getClient(int i) { return dynamic_cast<qmdiClient *>(
  * This method wiil return te currently active, or \b nullptr when such is not available.
  * This basically calls QTabWidget::currentWidget()
  */
-qmdiClient *qmdiTabWidget::getCurrentClient() {
+qmdiClient *qmdiTabWidget::getCurrentClient() const {
     return dynamic_cast<qmdiClient *>(currentWidget());
 }
+
+void qmdiTabWidget::setCurrentClientIndex(int i) { this->setCurrentIndex(i); }
+
+int qmdiTabWidget::getCurrentClientIndex() const { return this->currentIndex(); }
 
 /**
  * \brief return the number of sub clients in this server
@@ -273,7 +277,7 @@ qmdiClient *qmdiTabWidget::getCurrentClient() {
  *
  * This function returns the value of QTabWidget::count()
  */
-int qmdiTabWidget::getClientsCount() { return count(); }
+int qmdiTabWidget::getClientsCount() const { return count(); }
 
 /**
  * \brief callback to get alarm of deleted object

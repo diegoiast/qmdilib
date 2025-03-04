@@ -38,6 +38,7 @@ class qmdiActionGroupList {
 
     void addActionsToWidget(QWidget *widget);
     void removeActionsFromWidget(QWidget *widget);
+    int size() const { return actionGroups.size(); }
 
   private:
     QList<qmdiActionGroup *> actionGroups;
