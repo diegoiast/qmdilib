@@ -203,8 +203,8 @@ void qmdiHost::mergeClient(qmdiClient *client) {
 }
 
 /**
- * \brief merge the toolbars and menus of another MDI client
- * \param client the client to be merged
+ * \brief unmerge the toolbars and menus of another MDI client
+ * \param client the client to be unmerged
  *
  * This function is used to un-merge the toolbars and contents
  * of the MDI client to be un-merged into this client. The menus
