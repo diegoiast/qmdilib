@@ -282,7 +282,7 @@ PluginManager::PluginManager() {
 
     actionNewFile = new QAction(tr("New..."), this);
     actionOpen = new QAction(tr("Open..."), this);
-    actionClose = new QAction(tr("Close"), this);
+    actionClose = new QAction(tr("C&lose"), this);
     actionQuit = new QAction(tr("Ex&it"), this);
     actionConfig = new QAction(tr("&Config"), this);
     actionNextTab = new QAction(tr("&Next tab"), this);
@@ -814,6 +814,7 @@ void PluginManager::replaceMdiServer(qmdiServer *newServer) {
     setCentralWidget(w);
     mdiServer = newServer;
     mdiServer->mdiHost = this;
+    mdiServer->setOnMdiSelected([this](qmdiClient *, int) { updateActionsStatus(); });
     delete oldMdiServer;
 }
 
@@ -1057,8 +1058,7 @@ void PluginManager::initGUI() {
     menus.addActionsToWidget(this);
     toolbars.addActionsToWidget(this);
 
-    // TODO - can we have a singal from qmdiHost?
-    connect(tabWidget, &QTabWidget::currentChanged, this, &PluginManager::updateActionsStatus);
+    mdiServer->setOnMdiSelected([this](qmdiClient *, int) { updateActionsStatus(); });
     updateGUI();
 }
 

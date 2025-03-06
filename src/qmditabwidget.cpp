@@ -113,19 +113,21 @@ void qmdiTabWidget::tabChanged(int i) {
     if (w == activeWidget) {
         return;
     }
-
-    if (activeWidget) {
-        mdiHost->unmergeClient(dynamic_cast<qmdiClient *>(activeWidget));
+    auto client = dynamic_cast<qmdiClient *>(activeWidget);
+    if (client) {
+        mdiHost->unmergeClient(client);
     }
 
     activeWidget = w;
 
+    client = dynamic_cast<qmdiClient *>(activeWidget);
     if (activeWidget) {
-        mdiHost->mergeClient(dynamic_cast<qmdiClient *>(activeWidget));
+        mdiHost->mergeClient(client);
     }
 
     auto m = dynamic_cast<QMainWindow *>(mdiHost);
     mdiHost->updateGUI(m);
+    mdiSelected(client, i);
 }
 
 /**
@@ -366,4 +368,10 @@ void qmdiTabWidget::tabRemoved(int index) {
         mdiHost->updateGUI(dynamic_cast<QMainWindow *>(mdiHost));
     }
     Q_UNUSED(index);
+}
+
+void qmdiTabWidget::mdiSelected(qmdiClient *client, int index) const {
+    if (onMdiSelected) {
+        onMdiSelected(client, index);
+    }
 }

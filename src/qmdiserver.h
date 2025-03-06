@@ -8,6 +8,8 @@
  * \see qmdiServer
  */
 
+#include <functional>
+
 class QPoint;
 class qmdiClient;
 class qmdiHost;
@@ -28,6 +30,13 @@ class qmdiServer {
     void tryCloseAllButClient(int i);
     void tryCloseAllClients();
     void showClientMenu(int i, QPoint p);
+    void setOnMdiSelected(std::function<void(qmdiClient *, int)> &&callback) {
+        onMdiSelected = std::move(callback);
+    }
 
     qmdiHost *mdiHost;
+
+  protected:
+    std::function<void(qmdiClient *, int)> onMdiSelected;
+    virtual void mdiSelected(qmdiClient *client, int index) const = 0;
 };
