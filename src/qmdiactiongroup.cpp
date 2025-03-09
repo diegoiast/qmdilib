@@ -626,11 +626,11 @@ QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
     toolbar->clear();
     int i = 0;
     foreach (auto o, actionGroupItems) {
-        auto a = qobject_cast<QAction *>(o);
+        auto a = dynamic_cast<QAction *>(o);
         if (a) {
             toolbar->addAction(a);
         } else {
-            auto w = qobject_cast<QWidget *>(o);
+            auto w = dynamic_cast<QWidget *>(o);
             if (w) {
                 // don't even try to add menus to toolbars, this just does not work
                 if (!w->inherits("QMenu")) {
