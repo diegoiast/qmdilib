@@ -43,10 +43,11 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer {
     virtual void setCurrentClientIndex(int i) override;
     virtual int getCurrentClientIndex() const override;
 
+    virtual void mdiSelected(qmdiClient *client, int index) const override;
+
   protected:
     virtual void tabInserted(int index) override;
     virtual void tabRemoved(int index) override;
-    virtual void mdiSelected(qmdiClient *client, int index) const override;
 
   private:
     QWidget *activeWidget;

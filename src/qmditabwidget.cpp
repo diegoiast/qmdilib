@@ -375,7 +375,7 @@ void qmdiTabWidget::mdiSelected(qmdiClient *client, int index) const {
     auto w = window();
     if (w) {
         if (client && !client->mdiClientFileName().isEmpty()) {
-            w->setWindowTitle(QApplication::applicationName() + ": " + client->mdiClientFileName());
+            w->setWindowTitle(QApplication::applicationName() + ": " + client->mdiClientName);
         } else {
             w->setWindowTitle(QApplication::applicationName());
         }

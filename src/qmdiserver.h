@@ -33,10 +33,10 @@ class qmdiServer {
     void setOnMdiSelected(std::function<void(qmdiClient *, int)> &&callback) {
         onMdiSelected = std::move(callback);
     }
+    virtual void mdiSelected(qmdiClient *client, int index) const = 0;
 
     qmdiHost *mdiHost;
 
   protected:
     std::function<void(qmdiClient *, int)> onMdiSelected;
-    virtual void mdiSelected(qmdiClient *client, int index) const = 0;
 };
