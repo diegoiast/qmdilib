@@ -171,7 +171,7 @@ FileSystemWidget::FileSystemWidget(QWidget *parent) : QWidget(parent) {
 
     showTreeView();
 
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    auto layout = new QVBoxLayout(this);
     layout->addLayout(buttonLayout);
     layout->addWidget(rootPathEdit);
     layout->addWidget(treeView);
@@ -242,6 +242,52 @@ void FileSystemWidget::initContextMenu() {
     actionCopyFileName->setIcon(QIcon::fromTheme("edit-copy"));
     actionCopyFilePath->setIcon(QIcon::fromTheme("edit-copy-path-symbolic"));
     propertiesAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentProperties));
+
+    newFileAction->setShortcut(QKeySequence::New);
+    renameAction->setShortcut(QKeySequence(Qt::Key_F2));
+    copyAction->setShortcut(QKeySequence::Copy);
+    pasteAction->setShortcut(QKeySequence::Paste);
+    cutAction->setShortcut(QKeySequence::Cut);
+    deleteAction->setShortcut(QKeySequence::Delete);
+    openAction->setShortcuts({QKeySequence(Qt::Key_Enter), QKeySequence(Qt::Key_Enter)});
+    propertiesAction->setShortcuts(
+        {QKeySequence(Qt::ALT | Qt::Key_Return), QKeySequence(Qt::ALT | Qt::Key_Enter)});
+
+    newFileAction->setEnabled(true);
+    newFolderAction->setEnabled(true);
+    renameAction->setEnabled(true);
+    copyAction->setEnabled(true);
+    pasteAction->setEnabled(true);
+    cutAction->setEnabled(true);
+    deleteAction->setEnabled(true);
+    openAction->setEnabled(true);
+    actionCopyFileName->setEnabled(true);
+    actionCopyFilePath->setEnabled(true);
+    propertiesAction->setEnabled(true);
+
+    addAction(newFileAction);
+    addAction(newFolderAction);
+    addAction(renameAction);
+    addAction(copyAction);
+    addAction(pasteAction);
+    addAction(cutAction);
+    addAction(deleteAction);
+    addAction(openAction);
+    addAction(actionCopyFileName);
+    addAction(actionCopyFilePath);
+    addAction(propertiesAction);
+
+    newFileAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    newFolderAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    renameAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    copyAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    pasteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    cutAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    deleteAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    openAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    actionCopyFileName->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    actionCopyFilePath->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    propertiesAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
     connect(newFileAction, &QAction::triggered, this, &FileSystemWidget::newFile);
     connect(newFolderAction, &QAction::triggered, this, &FileSystemWidget::newFolder);
