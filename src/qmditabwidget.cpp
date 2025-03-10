@@ -7,6 +7,7 @@
  */
 
 #include <QAction>
+#include <QApplication>
 #include <QEvent>
 #include <QMainWindow>
 #include <QMenu>
@@ -371,6 +372,15 @@ void qmdiTabWidget::tabRemoved(int index) {
 }
 
 void qmdiTabWidget::mdiSelected(qmdiClient *client, int index) const {
+    auto w = window();
+    if (w) {
+        if (client && !client->mdiClientFileName().isEmpty()) {
+            w->setWindowTitle(QApplication::applicationName() + ": " + client->mdiClientFileName());
+        } else {
+            w->setWindowTitle(QApplication::applicationName());
+        }
+    }
+
     if (onMdiSelected) {
         onMdiSelected(client, index);
     }
