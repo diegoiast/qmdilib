@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     pluginManager.connect(&pluginManager, &PluginManager::newFileRequested,
                           [e]() { e->fileNew(); });
     auto l = pluginManager.visibleTabs();
-    if (pluginManager.visibleTabs() < 1) {
+    if (l < 1) {
         e->fileNew();
     }
     return app.exec();

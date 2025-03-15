@@ -46,7 +46,6 @@ RichTextPlugin::RichTextPlugin() {
     showLineNumbers = true;
     makeCurrentLine = true;
     wordWrap = true;
-    setData();
 }
 
 RichTextPlugin::~RichTextPlugin() {}
@@ -59,18 +58,12 @@ void RichTextPlugin::showAbout() {
 
 QWidget *RichTextPlugin::getConfigDialog() { return NULL; }
 
-QActionGroup *RichTextPlugin::newFileActions() { return _newFileActions; }
-
 QStringList RichTextPlugin::myExtensions() {
     QStringList s;
     s << tr("HTML files", "RichTextPlugin::fileOpen: open HTML files") + " (*.html *.html *.xhtml)";
 
     return s;
 }
-
-void RichTextPlugin::getData() {}
-
-void RichTextPlugin::setData() {}
 
 int RichTextPlugin::canOpenFile(const QString &fileName) {
     QUrl u(fileName);

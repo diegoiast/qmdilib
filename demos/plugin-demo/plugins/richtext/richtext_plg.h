@@ -18,15 +18,12 @@ class RichTextPlugin : public IPlugin {
     RichTextPlugin();
     ~RichTextPlugin();
 
-    void showAbout();
+    virtual void showAbout() override;
     QWidget *getConfigDialog();
-    QActionGroup *newFileActions();
-    QStringList myExtensions();
+    virtual QStringList myExtensions() override;
     virtual int canOpenFile(const QString &fileName) override;
-    bool canCloseClient();
+    virtual bool canCloseClient() override;
     virtual bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1) override;
-    void getData();
-    void setData();
 
   public slots:
     void fileNew();

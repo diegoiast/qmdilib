@@ -17,9 +17,8 @@ class EditorPlugin : public IPlugin {
     EditorPlugin();
     ~EditorPlugin();
 
-    void showAbout();
-    QActionGroup *newFileActions();
-    QStringList myExtensions();
+    virtual void showAbout() override;
+    virtual QStringList myExtensions() override;
     virtual int canOpenFile(const QString &fileName) override;
     virtual bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1) override;
 

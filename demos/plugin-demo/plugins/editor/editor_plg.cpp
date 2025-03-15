@@ -49,8 +49,6 @@ void EditorPlugin::showAbout() {
                        tr("This plugin brings text editing capabilities to the application"));
 }
 
-QActionGroup *EditorPlugin::newFileActions() { return _newFileActions; }
-
 QStringList EditorPlugin::myExtensions() {
     QStringList s;
     s << tr("Sources", "EditorPlugin::myExtensions") + " (*.c *.cpp *.cxx *.h *.hpp *.hxx *.inc)";
