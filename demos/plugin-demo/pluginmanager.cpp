@@ -280,8 +280,8 @@ PluginManager::PluginManager() {
     closedDocumentsMenu = new QMenu(this);
     closedDocumentsMenu->menuAction()->setText(tr("Closed documents..."));
 
-    actionNewFile = new QAction(tr("New..."), this);
-    actionOpen = new QAction(tr("Open..."), this);
+    actionNewFile = new QAction(tr("&New..."), this);
+    actionOpen = new QAction(tr("&Open..."), this);
     actionClose = new QAction(tr("C&lose"), this);
     actionQuit = new QAction(tr("Ex&it"), this);
     actionConfig = new QAction(tr("&Config"), this);
