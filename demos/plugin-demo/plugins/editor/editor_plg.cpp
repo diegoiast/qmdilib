@@ -11,6 +11,7 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QFileDialog>
+#include <QFontDatabase>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QSettings>
@@ -21,6 +22,9 @@
 #include "qexeditor.h"
 #include "qexeditor2.h"
 #include "qmdiserver.h"
+
+#define CONFIG_KEY_FONT "Font"
+#define CONFIG_KEY_WRAP_TEXT "WrapText"
 
 EditorPlugin::EditorPlugin() {
     name = tr("Text editor plugin");
@@ -40,6 +44,21 @@ EditorPlugin::EditorPlugin() {
     showLineNumbers = true;
     makeCurrentLine = true;
     wordWrap = true;
+
+    auto monospacedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    config.pluginName = tr("Editor");
+    config.configItems.push_back(qmdiConfigItem::Builder()
+                                                  .setDisplayName(tr("Editor font"))
+                                                  .setKey(CONFIG_KEY_FONT)
+                                                  .setType(qmdiConfigItem::Font)
+                                                  .setDefaultValue(monospacedFont)
+                                                  .build());
+    config.configItems.push_back(qmdiConfigItem::Builder()
+                                                  .setDisplayName(tr("Wrap text"))
+                                                  .setKey(CONFIG_KEY_WRAP_TEXT)
+                                                  .setDefaultValue(true)
+                                                  .setType(qmdiConfigItem::Bool)
+                                                  .build());
 }
 
 EditorPlugin::~EditorPlugin() { delete actionNew; }
@@ -66,7 +85,7 @@ int EditorPlugin::canOpenFile(const QString &fileName) {
             for example: c:\windows
             scheme = "c:\"
      */
-    // if the scheme is a single line, lets assume this is a windows drive
+    // if the scheme is a single character, lets assume this is a windows drive
     if (u.scheme().length() != 1) {
         if ((u.scheme().toLower() != "file") && (!u.scheme().isEmpty())) {
             return -2;
@@ -117,8 +136,17 @@ int EditorPlugin::canOpenFile(const QString &fileName) {
  *
  */
 bool EditorPlugin::openFile(const QString &fileName, int x, int y, int z) {
-    QexTextEdit *editor = new QexTextEdit2(fileName, true, dynamic_cast<QMainWindow *>(mdiServer));
-    editor->hide();
+    auto editor = new QexTextEdit2(fileName, true, dynamic_cast<QMainWindow *>(mdiServer));
+    auto fontName = config.getVariable<QString>(CONFIG_KEY_FONT);
+    auto newFont = QFont();
+    newFont.fromString(fontName);
+    editor->setFont(newFont);
+
+    if (config.getVariable<bool>(CONFIG_KEY_WRAP_TEXT)) {
+        editor->setLineWrapMode(QTextEdit::FixedColumnWidth);
+    } else {
+        editor->setLineWrapMode(QTextEdit::NoWrap);
+    }
     mdiServer->addClient(editor);
 
     // TODO
@@ -136,8 +164,22 @@ void EditorPlugin::fileNew() {
         return;
     }
 
-    QexTextEdit *editor = new QexTextEdit2(QString(), true);
+    auto editor = new QexTextEdit2(QString(), true);
+    auto fontName = config.getVariable<QString>(CONFIG_KEY_FONT);
+    auto newFont = QFont();
+    newFont.fromString(fontName);
+    editor->setFont(newFont);
+
     editor->mdiClientName = tr("No name");
     editor->setObjectName(editor->mdiClientName);
     mdiServer->addClient(editor);
+}
+
+void EditorPlugin::configurationHasBeenModified() {
+    // Note:
+    // This example only applies the configturation to newly added editors.
+    // in your application, you could emit a signal and all editors should
+    // connect to it, and update their configuration.
+    // Another option - use `configurationHasBeenModified()` - and modify all existing
+    // editors.
 }

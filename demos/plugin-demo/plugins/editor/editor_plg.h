@@ -24,6 +24,7 @@ class EditorPlugin : public IPlugin {
 
   public slots:
     void fileNew();
+    virtual void configurationHasBeenModified() override;
 
   private:
     QAction *actionNew;

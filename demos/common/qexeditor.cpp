@@ -80,9 +80,7 @@ QexTextEdit::QexTextEdit(QString file, bool singleToolbar, QWidget *parent) : QT
     openFile(file);
 }
 
-QexTextEdit::~QexTextEdit() {
-    // TODO
-}
+QexTextEdit::~QexTextEdit() {}
 
 bool QexTextEdit::canCloseClient() {
     if (!document()->isModified()) {

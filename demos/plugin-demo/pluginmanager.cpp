@@ -887,6 +887,7 @@ void PluginManager::removePlugin(IPlugin *oldplugin) {
     }
 
     disablePlugin(oldplugin);
+    oldplugin->mdiServer = nullptr;
 
     if (plugins.removeAll(oldplugin) == 1) {
         delete oldplugin;
@@ -994,7 +995,7 @@ void PluginManager::disablePlugin(IPlugin *plugin) {
  *  - Help
  *
  * Menus which do not contain any actions will not be displayed on screen. In
- * future versions of this library nullptrptr will be an option to add and remove
+ * future versions of this library will be an option to add and remove
  * menus more freely.
  *
  * \todo add methods for adding/removing menus in a more sane way

@@ -22,10 +22,10 @@ class QexTextEdit : public QTextEdit, public qmdiClient {
     Q_OBJECT
   public:
     QexTextEdit(QString file = QString(), bool singleToolbar = false, QWidget *parent = 0);
-    ~QexTextEdit();
+    virtual ~QexTextEdit() override;
 
-    bool canCloseClient();
-    QString mdiClientFileName();
+    virtual bool canCloseClient() override;
+    virtual QString mdiClientFileName() override;
 
     void initInterface(bool singleToolbar = false);
     bool openFile(QString newFile);

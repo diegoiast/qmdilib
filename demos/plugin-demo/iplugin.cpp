@@ -479,3 +479,11 @@ QString IPlugin::getsVersion() const { return sVersion; }
  * \see IPlugin::iVersion
  */
 int IPlugin::getiVersion() const { return iVersion; }
+
+/**
+ * \brief IPlugin::configurationHasBeenModified Called when the configuration has been changed
+ *
+ * When the user opens the PluginManager's configuration, and modifies this
+ * each of the plugins has this function called. You should then find all the clients
+ * you created, and apply this configuration on them.
+ */

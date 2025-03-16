@@ -44,7 +44,53 @@ HelpPlugin::HelpPlugin() : IPlugin() {
     menus["&Help"]->addAction(actionAbout);
     menus["&Help"]->addAction(actionAboutQt);
 
+    config.pluginName = "HelpPlugin";
+    config.description = tr("Configuration for the help system");
     // 	externalBrowser = "/opt/kde3/bin/konqueror";
+
+    config.configItems.push_back(qmdiConfigItem::Builder()
+                                     .setKey("externalBrowser")
+                                     .setType(qmdiConfigItem::String)
+                                     .setDisplayName(tr("External internet browser"))
+                                     .setDescription(tr("Where is firefox is intalled?"))
+                                     .setDefaultValue(QString{})
+                                     .build());
+
+    // As an example, we define a random configuration for network. Not
+    // used by this application at all.
+    // config.pluginName = "NetworkPlugin";
+    // config.description = tr("Configuration for network settings");
+    config.configItems.push_back(qmdiConfigItem::Builder()
+                                     .setKey("host")
+                                     .setType(qmdiConfigItem::String)
+                                     .setDisplayName(tr("Host"))
+                                     .setDescription(tr("Network host address"))
+                                     .setDefaultValue("localhost")
+                                     .build());
+    config.configItems.push_back(qmdiConfigItem::Builder()
+                                     .setKey("port")
+                                     .setType(qmdiConfigItem::UInt16)
+                                     .setDisplayName(tr("Port"))
+                                     .setDescription(tr("Network port number"))
+                                     .setDefaultValue(8080)
+                                     .build());
+    config.configItems.push_back(qmdiConfigItem::Builder()
+                                     .setKey("useSSL")
+                                     .setType(qmdiConfigItem::Bool)
+                                     .setDisplayName(tr("Use ssl"))
+                                     .setDescription(tr("Use SSL for the connection?"))
+                                     .setValue(true)
+                                     .setDefaultValue(true)
+                                     .build());
+    config.configItems.append(qmdiConfigItem::Builder()
+                                  .setKey("dns")
+                                  .setType(qmdiConfigItem::StringList)
+                                  .setDisplayName(tr("DNS deny list"))
+                                  .setDescription(tr("Where not to connect"))
+                                  .setDefaultValue(QStringList() << "www.yahoo.com"
+                                                                 << "cnn.com"
+                                                                 << "apple.com")
+                                  .build());
 }
 
 HelpPlugin::~HelpPlugin() {
