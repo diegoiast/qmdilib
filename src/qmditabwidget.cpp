@@ -13,6 +13,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QTabBar>
+#include <QToolTip>
 
 #include "qmdiclient.h"
 #include "qmdihost.h"
@@ -270,6 +271,15 @@ qmdiClient *qmdiTabWidget::getCurrentClient() const {
 void qmdiTabWidget::setCurrentClientIndex(int i) { this->setCurrentIndex(i); }
 
 int qmdiTabWidget::getCurrentClientIndex() const { return this->currentIndex(); }
+
+void qmdiTabWidget::updateClientName(const qmdiClient *client) {
+    auto w = dynamic_cast<const QWidget *>(client);
+    if (!w) {
+        return;
+    }
+    auto i = indexOf(w);
+    setTabText(i, client->mdiClientName);
+}
 
 /**
  * \brief return the number of sub clients in this server
