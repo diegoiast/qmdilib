@@ -201,6 +201,11 @@ FileSystemWidget::FileSystemWidget(QWidget *parent) : QWidget(parent) {
             &FileSystemWidget::showContextMenu);
 }
 
+FileSystemWidget::~FileSystemWidget() {
+    delete contextMenu;
+    contextMenu = nullptr;
+}
+
 void FileSystemWidget::initContextMenu() {
     contextMenu = new qmdiActionGroup(tr("File actions"));
     editAction = new QAction(tr("Edit"), this);

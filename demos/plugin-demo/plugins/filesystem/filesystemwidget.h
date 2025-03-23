@@ -19,6 +19,7 @@ class FileSystemWidget : public QWidget {
     Q_OBJECT
   public:
     FileSystemWidget(QWidget *parent = nullptr);
+    ~FileSystemWidget() override;
 
     void initContextMenu();
 
