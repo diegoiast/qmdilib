@@ -248,6 +248,7 @@ void qmdiServer::tryCloseAllClients() {
  * \see qmdiTabBar
  */
 void qmdiServer::showClientMenu(int i, QPoint p) {
+    auto client = getClient(i);
     auto w = dynamic_cast<QWidget *>(this);
     auto menu = new QMenu(w);
     auto mdiClient = getClient(i);
@@ -256,6 +257,11 @@ void qmdiServer::showClientMenu(int i, QPoint p) {
     auto closeOthers = new QAction(menu->tr("Close other windows"), menu);
     auto closeAll = new QAction(menu->tr("Close all windows"), menu);
 
+    if (clientMenuShowsName) {
+        auto name = new QAction(client->mdiClientName, menu);
+        name->setEnabled(false);
+        actionGroupContext.addAction(name);
+    }
     actionGroupContext.addAction(closeThis);
     actionGroupContext.addAction(closeOthers);
     actionGroupContext.addAction(closeAll);

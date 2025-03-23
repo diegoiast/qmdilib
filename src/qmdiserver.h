@@ -37,6 +37,7 @@ class qmdiServer {
     virtual void mdiSelected(qmdiClient *client, int index) const = 0;
 
     qmdiHost *mdiHost;
+    bool clientMenuShowsName = true;
 
   protected:
     std::function<void(qmdiClient *, int)> onMdiSelected;
