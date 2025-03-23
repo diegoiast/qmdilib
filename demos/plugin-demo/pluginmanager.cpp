@@ -329,7 +329,6 @@ PluginManager::PluginManager() {
 
     initGUI();
 
-    auto tabWidget = ui->mdiTabWidget;
     for (auto i = 0; i < 8; ++i) {
         auto tabSelectShortcut = new QAction(this);
         auto key = static_cast<Qt::Key>(Qt::Key_1 + i);
@@ -337,7 +336,7 @@ PluginManager::PluginManager() {
         tabSelectShortcut->setShortcutContext(Qt::ApplicationShortcut);
         connect(tabSelectShortcut, &QAction::triggered, this,
                 [this, i]() { mdiServer->setCurrentClientIndex(i); });
-        tabWidget->addAction(tabSelectShortcut);
+        addAction(tabSelectShortcut);
     }
 
     // alt+9 will always send you to the last
@@ -351,7 +350,7 @@ PluginManager::PluginManager() {
                 mdiServer->setCurrentClientIndex(size - 1);
             }
         });
-        tabWidget->addAction(tabSelectShortcut);
+        addAction(tabSelectShortcut);
     }
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
