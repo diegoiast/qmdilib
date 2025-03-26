@@ -248,7 +248,8 @@ void FileSystemWidget::initContextMenu() {
     actionCopyFilePath->setIcon(QIcon::fromTheme("edit-copy-path-symbolic"));
     propertiesAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentProperties));
 
-    newFileAction->setShortcut(QKeySequence::New);
+    // newFileAction->setShortcut(QKeySequence::New);
+    newFileAction->setShortcutContext(Qt::WidgetShortcut);
     renameAction->setShortcut(QKeySequence(Qt::Key_F2));
     copyAction->setShortcut(QKeySequence::Copy);
     pasteAction->setShortcut(QKeySequence::Paste);
