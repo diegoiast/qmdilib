@@ -499,6 +499,16 @@ void PluginManager::setFileSettingsManager(const QString &fileName) {
     settingsManager = new QSettings(fileName, QSettings::IniFormat);
 }
 
+void PluginManager::removeBuiltinActions() {
+    menus.removeActionsFromWidget(this);
+    toolbars.removeActionsFromWidget(this);
+}
+
+void PluginManager::addBuiltinActions() {
+    menus.addActionsToWidget(this);
+    toolbars.addActionsToWidget(this);
+}
+
 /**
  * \brief restore the state of the application
  *
@@ -1055,10 +1065,8 @@ void PluginManager::initGUI() {
     tabWidget->setDocumentMode(true);
     tabWidget->setMovable(true);
 
-    menus.addActionsToWidget(this);
-    toolbars.addActionsToWidget(this);
-
     mdiServer->setOnMdiSelected([this](qmdiClient *, int) { updateActionsStatus(); });
+    addBuiltinActions();
     updateGUI();
 }
 

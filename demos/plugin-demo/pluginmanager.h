@@ -65,6 +65,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
   public slots:
     void setFileSettingsManager(const QString &fileName);
 
+    void removeBuiltinActions();
+    void addBuiltinActions();
     void restoreSettings();
     void saveSettings();
     void updateActionsStatus();
