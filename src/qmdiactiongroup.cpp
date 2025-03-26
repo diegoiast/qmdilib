@@ -659,7 +659,7 @@ void qmdiActionGroup::addActionsToWidget(QWidget *widget) {
         if (auto action = qobject_cast<QAction *>(a)) {
             widget->addAction(action);
         } else if (auto actionGroup = qobject_cast<QActionGroup *>(a)) {
-            for (auto group : actionGroup->actions()) {
+            for (auto action : actionGroup->actions()) {
                 widget->addAction(action);
             }
         }
@@ -674,7 +674,7 @@ void qmdiActionGroup::removeActionsFromWidget(QWidget *widget) {
         if (auto action = qobject_cast<QAction *>(a)) {
             widget->removeAction(action);
         } else if (auto actionGroup = qobject_cast<QActionGroup *>(a)) {
-            for (auto group : actionGroup->actions()) {
+            for (auto action : actionGroup->actions()) {
                 widget->removeAction(action);
             }
         }
