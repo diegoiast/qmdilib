@@ -32,6 +32,8 @@ enum class Panels { West, East, South };
 
 class PluginManager;
 
+typedef QHash<QString, QVariant> CommandArgs;
+
 class ClosedDocuments {
   public:
     ClosedDocuments(int maxSize = 10) : maxSize(maxSize) {}
@@ -72,6 +74,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void updateActionsStatus();
     bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
     bool openFiles(const QStringList &fileNames);
+
+    CommandArgs handleCommand(const QString &command, const CommandArgs &args);
 
   public:
     QDockWidget *createNewPanel(Panels p, const QString &name, const QString &title,

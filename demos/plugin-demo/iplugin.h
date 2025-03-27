@@ -12,7 +12,6 @@
 #include "qmdiclient.h"
 #include "qmdipluginconfig.h"
 #include "qmdiserver.h"
-#include <QObject>
 
 class QString;
 class QWidget;
@@ -51,6 +50,9 @@ class IPlugin : public QObject, public qmdiClient {
     virtual int canOpenFile(const QString &fileName);
     virtual bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
     virtual void navigateFile(qmdiClient *client, int x, int y, int z);
+
+    virtual int canHandleCommand(const QString &command, const CommandArgs &args) const;
+    virtual CommandArgs handleCommand(const QString &command, const CommandArgs &args);
 
     bool isEnabled() const;
     void setEnabled(bool enable);

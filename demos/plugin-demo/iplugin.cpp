@@ -12,6 +12,7 @@
 #include <QSettings>
 
 #include "iplugin.h"
+#include "pluginmanager.h"
 
 /**
  * \class IPlugin
@@ -487,3 +488,7 @@ int IPlugin::getiVersion() const { return iVersion; }
  * each of the plugins has this function called. You should then find all the clients
  * you created, and apply this configuration on them.
  */
+
+int IPlugin::canHandleCommand(const QString &, const CommandArgs &) const { return 0; }
+
+CommandArgs IPlugin::handleCommand(const QString &, const CommandArgs &) { return {}; }

@@ -741,12 +741,34 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
  */
 bool PluginManager::openFiles(const QStringList &fileNames) {
     auto b = true;
-    foreach (auto &s, fileNames) {
+    foreach (auto const &s, fileNames) {
         b = b && openFile(s);
         QApplication::processEvents();
     }
 
     return b;
+}
+
+CommandArgs PluginManager::handleCommand(const QString &command, const CommandArgs &args) {
+    IPlugin *bestPlugin = nullptr;
+    auto highestScore = -1;
+
+    foreach (auto p, plugins) {
+        if (!p->enabled) {
+            continue;
+        }
+        auto i = p->canHandleCommand(command, args);
+        if (i > highestScore) {
+            bestPlugin = p;
+            highestScore = i;
+        }
+    }
+
+    if (bestPlugin) {
+        auto result = bestPlugin->handleCommand(command, args);
+        return result;
+    }
+    return {};
 }
 
 auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
