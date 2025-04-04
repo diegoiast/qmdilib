@@ -34,7 +34,7 @@ class qmdiClient {
     qmdiActionGroupList menus;
     qmdiActionGroupList toolbars;
     qmdiActionGroup contextMenu;
-    qmdiServer *mdiServer;
+    qmdiServer *mdiServer = nullptr;
     QString mdiClientName;
 
     friend class qmdiHost;

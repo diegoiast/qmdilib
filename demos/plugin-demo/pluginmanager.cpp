@@ -751,7 +751,7 @@ bool PluginManager::openFiles(const QStringList &fileNames) {
 
 CommandArgs PluginManager::handleCommand(const QString &command, const CommandArgs &args) {
     IPlugin *bestPlugin = nullptr;
-    auto highestScore = -1;
+    auto highestScore = 0;
 
     foreach (auto p, plugins) {
         if (!p->enabled) {

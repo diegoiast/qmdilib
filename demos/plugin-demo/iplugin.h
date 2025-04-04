@@ -32,6 +32,16 @@ class QIcon;
     }
 // clang-format on
 
+
+struct CommandPriority {
+    constexpr static int CannotHandle = -1;
+    constexpr static int NoPriority = 0;
+    constexpr static int LowPriority = 5;
+    constexpr static int MediumPriority = 50;
+    constexpr static int HighPriority = 100;
+    constexpr static int HighestPriority = 1000;
+};
+
 QAction *new_action(QIcon icon, const QString &name, QObject *obj, const QString &shortcut,
                     const QString &status_tip, const char *slot);
 
