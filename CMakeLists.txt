@@ -48,6 +48,10 @@ add_library(qmdilib
     src/qmdipluginconfig.h
     src/qmdiglobalconfig.cpp
     src/qmdiglobalconfig.h
+    src/qmdiconfigwidgetfactory.cpp
+    src/qmdiconfigwidgetfactory.h
+    src/stringlistwidget.cpp
+    src/stringlistwidget.h
 )
 
 target_link_libraries(qmdilib Qt::Widgets)

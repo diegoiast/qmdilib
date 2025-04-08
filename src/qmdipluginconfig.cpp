@@ -40,6 +40,8 @@ qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr)
         return OneOf;
     } else if (lower == "font") {
         return Font;
+    } else if (lower == "last") {
+        return Last;
     } else {
         return String;
     }
@@ -74,6 +76,9 @@ QString qmdiConfigItem::typeToString(ClassType type) {
         break;
     case Font:
         return "Font";
+        break;
+    case Last:
+        return "Last";
         break;
     }
     return "Unknown";

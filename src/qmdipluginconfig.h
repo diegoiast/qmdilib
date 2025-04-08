@@ -27,6 +27,7 @@ struct qmdiConfigItem {
         StringList,
         OneOf,
         Font,
+        Last = 100000
     };
 
     static ClassType typeFromString(const QString &typeStr);
@@ -43,6 +44,8 @@ struct qmdiConfigItem {
     QVariant possibleValue;
 
     struct Builder {
+        Builder() : type(String), userEditable(true) {}
+
         Builder &setKey(const QString &key);
         Builder &setType(const ClassType type);
         Builder &setDisplayName(const QString &displayName);
@@ -102,6 +105,8 @@ class qmdiPluginConfig {
 
     class Builder {
       public:
+        Builder() = default;
+
         Builder &setPluginName(const QString &name) {
             pluginName = name;
             return *this;
