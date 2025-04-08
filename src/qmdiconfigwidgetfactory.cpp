@@ -1,4 +1,5 @@
 #include "qmdiconfigwidgetfactory.h"
+#include "pathwidget.h"
 
 QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item, QWidget *parent) {
     QWidget *widget = nullptr;
@@ -75,6 +76,18 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
         label->setText(item.value.toString());
         widget = label;
     } break;
+    case qmdiConfigItem::Path: {
+        auto *pathWidget = new PathWidget(parent);
+        pathWidget->setPath(item.value.toString());
+        if (!item.possibleValue.isNull()) {
+            bool isFile = item.possibleValue.toBool();
+            pathWidget->setFileMode(isFile);
+            pathWidget->setValidateExistence(true);
+        }
+        widget = pathWidget;
+    } break;
+    case qmdiConfigItem::Last:
+        break;
     }
 
     if (widget && !item.description.isEmpty()) {
@@ -116,6 +129,9 @@ QVariant qmdiDefaultConfigWidgetFactory::getValue(QWidget *widget) {
             return label->font().toString();
         }
     }
+    if (auto *pathWidget = qobject_cast<PathWidget *>(widget)) {
+        return pathWidget->path();
+    }
     return {};
 }
 
@@ -139,6 +155,8 @@ void qmdiDefaultConfigWidgetFactory::setValue(QWidget *widget, const QVariant &v
             label->setFont(font);
             label->setText(value.toString());
         }
+    } else if (auto *pathWidget = qobject_cast<PathWidget *>(widget)) {
+        pathWidget->setPath(value.toString());
     }
 }
 
@@ -184,6 +202,7 @@ void qmdiConfigWidgetRegistry::ensureDefaultFactoriesRegistered() {
         registerDefault(qmdiConfigItem::StringList);
         registerDefault(qmdiConfigItem::OneOf);
         registerDefault(qmdiConfigItem::Font);
+        registerDefault(qmdiConfigItem::Path);
 
         defaultFactoriesRegistered = true;
     }

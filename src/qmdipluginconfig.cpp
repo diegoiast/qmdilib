@@ -8,7 +8,7 @@
 
 #include "qmdipluginconfig.h"
 
-qmdiConfigItem::qmdiConfigItem() { userEditable = true; }
+qmdiConfigItem::qmdiConfigItem() : type(String), userEditable(true) {}
 
 void qmdiConfigItem::setDefault() { this->value = this->defaultValue; }
 
@@ -40,6 +40,8 @@ qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr)
         return OneOf;
     } else if (lower == "font") {
         return Font;
+    } else if (lower == "path") {
+        return Path;
     } else if (lower == "last") {
         return Last;
     } else {
@@ -76,6 +78,9 @@ QString qmdiConfigItem::typeToString(ClassType type) {
         break;
     case Font:
         return "Font";
+        break;
+    case Path:
+        return "Path";
         break;
     case Last:
         return "Last";

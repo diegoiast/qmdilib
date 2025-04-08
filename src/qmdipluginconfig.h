@@ -27,6 +27,7 @@ struct qmdiConfigItem {
         StringList,
         OneOf,
         Font,
+        Path,
         Last = 100000
     };
 

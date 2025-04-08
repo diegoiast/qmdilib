@@ -52,6 +52,8 @@ add_library(qmdilib
     src/qmdiconfigwidgetfactory.h
     src/stringlistwidget.cpp
     src/stringlistwidget.h
+    src/pathwidget.cpp
+    src/pathwidget.h
 )
 
 target_link_libraries(qmdilib Qt::Widgets)
