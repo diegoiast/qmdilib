@@ -1,8 +1,9 @@
 #pragma once
 
-#include <QCompleter>
-#include <QFileSystemModel>
 #include <QLineEdit>
+
+class QCompleter;
+class QFileSystemModel;
 
 class PathWidget : public QLineEdit {
     Q_OBJECT

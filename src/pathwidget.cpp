@@ -1,9 +1,11 @@
 #include "pathwidget.h"
 
 #include <QApplication>
+#include <QCompleter>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QFileSystemModel>
 #include <QStyle>
 
 PathWidget::PathWidget(QWidget *parent)
