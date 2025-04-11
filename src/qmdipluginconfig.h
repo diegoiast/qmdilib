@@ -44,10 +44,11 @@ struct qmdiConfigItem {
     QVariant defaultValue;
     QVariant value;
     bool userEditable;
+    bool forceShow;
     QVariant possibleValue;
 
     struct Builder {
-        Builder() : type(String), userEditable(true) {}
+        Builder() : type(String), userEditable(true), forceShow(false) {}
 
         Builder &setKey(const QString &key);
         Builder &setType(const ClassType type);
@@ -57,6 +58,7 @@ struct qmdiConfigItem {
         Builder &setValue(const QVariant &value);
         Builder &setUserEditable(const bool value);
         Builder &setPossibleValue(const QVariant &value);
+        Builder &setForceShow(const bool value);
 
         qmdiConfigItem build() const;
 
@@ -68,6 +70,7 @@ struct qmdiConfigItem {
         QVariant defaultValue;
         QVariant value;
         bool userEditable = true;
+        bool forceShow = false;
         QVariant possibleValue;
     };
     void setDefault();

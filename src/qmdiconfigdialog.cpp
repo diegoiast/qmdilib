@@ -99,7 +99,7 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
     widgetMap.clear();
 
     for (const qmdiConfigItem &item : pluginConfig->configItems) {
-        if (!item.userEditable) {
+        if (!item.userEditable && !item.forceShow) {
             continue;
         }
 

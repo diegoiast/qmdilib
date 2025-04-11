@@ -285,7 +285,9 @@ void IPlugin::loadConfig(QSettings &settings) {
 void IPlugin::saveConfig(QSettings &settings) {
     settings.beginGroup(config.pluginName);
     for (const auto &i : std::as_const(config.configItems)) {
-        settings.setValue(i.key, i.value);
+        if (i.value.isValid()) {
+            settings.setValue(i.key, i.value);
+        }
     }
     settings.endGroup();
 }

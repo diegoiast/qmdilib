@@ -8,7 +8,7 @@
 
 #include "qmdipluginconfig.h"
 
-qmdiConfigItem::qmdiConfigItem() : type(String), userEditable(true) {}
+qmdiConfigItem::qmdiConfigItem() : type(String), userEditable(true), forceShow(false) {}
 
 void qmdiConfigItem::setDefault() { this->value = this->defaultValue; }
 
@@ -100,6 +100,14 @@ qmdiConfigItem::Builder &qmdiConfigItem::Builder::setKey(const QString &key) {
 
 qmdiConfigItem::Builder &qmdiConfigItem::Builder::setType(const ClassType type) {
     this->type = type;
+    if (type == Button) {
+        this->userEditable = false;
+        this->forceShow = true;
+    }
+    if (type == Label) {
+        this->userEditable = false;
+        this->forceShow = true;
+    }
     return *this;
 }
 
@@ -133,6 +141,11 @@ qmdiConfigItem::Builder &qmdiConfigItem::Builder::setValue(const QVariant &value
     return *this;
 }
 
+qmdiConfigItem::Builder &qmdiConfigItem::Builder::setForceShow(const bool value) {
+    this->forceShow = value;
+    return *this;
+}
+
 qmdiConfigItem qmdiConfigItem::Builder::build() const {
     qmdiConfigItem item;
     item.key = key;
@@ -143,6 +156,7 @@ qmdiConfigItem qmdiConfigItem::Builder::build() const {
     item.value = value.isNull() ? defaultValue : value;
     item.userEditable = userEditable;
     item.possibleValue = possibleValue;
+    item.forceShow = forceShow;
     return item;
 }
 
