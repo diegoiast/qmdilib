@@ -1,3 +1,10 @@
+/**
+ * \file qmdiconfigwidgetfactory.cpp
+ * \brief Widget factory implementation
+ * \author Diego Iastrubni (diegoiast@gmail.com)
+ * SPDX-License-Identifier: LGPL 2 or 3
+ */
+
 #include "qmdiconfigwidgetfactory.h"
 #include "pathwidget.h"
 
@@ -86,6 +93,13 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
         }
         widget = pathWidget;
     } break;
+    case qmdiConfigItem::Button: {
+        auto *button = new QPushButton(item.displayName, parent);
+        if (!item.defaultValue.toString().isEmpty()) {
+            button->setIcon(QIcon::fromTheme(item.defaultValue.toString()));
+        }
+        widget = button;
+    } break;
     case qmdiConfigItem::Last:
         break;
     }
@@ -132,6 +146,9 @@ QVariant qmdiDefaultConfigWidgetFactory::getValue(QWidget *widget) {
     if (auto *pathWidget = qobject_cast<PathWidget *>(widget)) {
         return pathWidget->path();
     }
+    if (auto *button = qobject_cast<QPushButton *>(widget)) {
+        return button->text();
+    }
     return {};
 }
 
@@ -144,6 +161,8 @@ void qmdiDefaultConfigWidgetFactory::setValue(QWidget *widget, const QVariant &v
         spinBox->setValue(value.toInt());
     } else if (auto *doubleSpinBox = qobject_cast<QDoubleSpinBox *>(widget)) {
         doubleSpinBox->setValue(value.toDouble());
+    } else if (auto *button = qobject_cast<QPushButton *>(widget)) {
+        button->setText(value.toString());
     } else if (auto *stringListWidget = qobject_cast<StringListWidget *>(widget)) {
         stringListWidget->setList(value.toStringList());
     } else if (auto *comboBox = qobject_cast<QComboBox *>(widget)) {
@@ -203,6 +222,7 @@ void qmdiConfigWidgetRegistry::ensureDefaultFactoriesRegistered() {
         registerDefault(qmdiConfigItem::OneOf);
         registerDefault(qmdiConfigItem::Font);
         registerDefault(qmdiConfigItem::Path);
+        registerDefault(qmdiConfigItem::Button);
 
         defaultFactoriesRegistered = true;
     }

@@ -44,10 +44,13 @@ add_library(qmdilib
 
     src/qmdiconfigdialog.cpp
     src/qmdiconfigdialog.h
+    src/qmdidialogevents.hpp
     src/qmdipluginconfig.cpp
     src/qmdipluginconfig.h
     src/qmdiglobalconfig.cpp
     src/qmdiglobalconfig.h
+    src/qmdiconfigwidgetfactory.cpp
+    src/qmdiconfigwidgetfactory.h
     src/qmdiconfigwidgetfactory.cpp
     src/qmdiconfigwidgetfactory.h
     src/stringlistwidget.cpp

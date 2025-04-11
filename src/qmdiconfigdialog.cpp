@@ -8,6 +8,7 @@
 
 #include "qmdiconfigdialog.h"
 #include "qmdiconfigwidgetfactory.h"
+#include "qmdidialogevents.hpp"
 #include "qmdiglobalconfig.h"
 #include "qmdipluginconfig.h"
 
@@ -110,6 +111,14 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
 
         QWidget *widget = factory->createWidget(item, this);
         QLabel *label = factory->createLabel(item, this);
+
+        if (auto button = qobject_cast<QPushButton *>(widget)) {
+            auto pluginName = pluginConfig->pluginName;
+            auto buttonKey = item.key;
+            this->connect(button, &QPushButton::clicked, this, [=]() {
+                qmdiDialogEvents::instance().buttonClicked(pluginName, buttonKey);
+            });
+        }
 
         if (label) {
             configLayout->addWidget(label);

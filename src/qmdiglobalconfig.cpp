@@ -111,6 +111,12 @@ bool qmdiGlobalConfig::loadDefsFromJson(const QJsonObject &jsonObject) {
             case qmdiConfigItem::Font:
                 item.defaultValue = defaultValue.toString();
                 break;
+            case qmdiConfigItem::Path:
+                item.defaultValue = defaultValue.toString();
+                break;
+            case qmdiConfigItem::Button:
+            case qmdiConfigItem::Last:
+                break;
             }
 
             pluginConfig->configItems.append(item);
@@ -264,6 +270,14 @@ void qmdiGlobalConfig::fromJson(QJsonObject jsonObj) {
             }
             case qmdiConfigItem::Font:
                 p.value = val.toString();
+                break;
+
+            case qmdiConfigItem::Path:
+                p.value = val.toString();
+                break;
+
+            case qmdiConfigItem::Button:
+            case qmdiConfigItem::Last:
                 break;
             }
         }

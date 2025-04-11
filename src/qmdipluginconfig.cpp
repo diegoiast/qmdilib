@@ -42,6 +42,8 @@ qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr)
         return Font;
     } else if (lower == "path") {
         return Path;
+    } else if (lower == "button") {
+        return Button;
     } else if (lower == "last") {
         return Last;
     } else {
@@ -75,15 +77,13 @@ QString qmdiConfigItem::typeToString(ClassType type) {
         return "StringList";
     case OneOf:
         return "OneOf";
-        break;
     case Font:
         return "Font";
-        break;
     case Path:
         return "Path";
-        break;
+    case Button:
+        return "Button";
     case Last:
-        return "Last";
         break;
     }
     return "Unknown";
