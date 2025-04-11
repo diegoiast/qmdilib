@@ -7,6 +7,7 @@
 
 #include "qmdiconfigwidgetfactory.h"
 #include "pathwidget.h"
+#include "qmdidialogevents.hpp"
 
 QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item, QWidget *parent) {
     QWidget *widget = nullptr;
@@ -98,8 +99,18 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
         if (!item.defaultValue.toString().isEmpty()) {
             button->setIcon(QIcon::fromTheme(item.defaultValue.toString()));
         }
+        QObject::connect(button, &QPushButton::clicked, button,
+                         [item]() { qmdiDialogEvents::instance().buttonClicked(item.key); });
         widget = button;
     } break;
+    case qmdiConfigItem::Label: {
+        auto *label = new QLabel(parent);
+        label->setText(item.value.toString());
+        QObject::connect(label, &QLabel::linkActivated, label, [item](const QString &link) {
+            qmdiDialogEvents::instance().linkClicked(item.key, link);
+        });
+        widget = label;
+    }
     case qmdiConfigItem::Last:
         break;
     }
@@ -148,6 +159,9 @@ QVariant qmdiDefaultConfigWidgetFactory::getValue(QWidget *widget) {
     }
     if (auto *button = qobject_cast<QPushButton *>(widget)) {
         return button->text();
+    }
+    if (auto *label = qobject_cast<QLabel *>(widget)) {
+        return label->text();
     }
     return {};
 }
@@ -223,6 +237,7 @@ void qmdiConfigWidgetRegistry::ensureDefaultFactoriesRegistered() {
         registerDefault(qmdiConfigItem::Font);
         registerDefault(qmdiConfigItem::Path);
         registerDefault(qmdiConfigItem::Button);
+        registerDefault(qmdiConfigItem::Label);
 
         defaultFactoriesRegistered = true;
     }

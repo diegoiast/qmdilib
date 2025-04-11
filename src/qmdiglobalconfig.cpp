@@ -115,6 +115,7 @@ bool qmdiGlobalConfig::loadDefsFromJson(const QJsonObject &jsonObject) {
                 item.defaultValue = defaultValue.toString();
                 break;
             case qmdiConfigItem::Button:
+            case qmdiConfigItem::Label:
             case qmdiConfigItem::Last:
                 break;
             }
@@ -277,6 +278,7 @@ void qmdiGlobalConfig::fromJson(QJsonObject jsonObj) {
                 break;
 
             case qmdiConfigItem::Button:
+            case qmdiConfigItem::Label:
             case qmdiConfigItem::Last:
                 break;
             }

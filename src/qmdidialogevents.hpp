@@ -7,28 +7,26 @@
 
 #pragma once
 
-#include <QObject>
 #include <QMetaType>
+#include <QObject>
 #include <QString>
 
 class qmdiDialogEvents : public QObject {
     Q_OBJECT
-public:
-    static qmdiDialogEvents& instance() {
+  public:
+    static qmdiDialogEvents &instance() {
         static qmdiDialogEvents instance;
         return instance;
     }
 
     // Prevent copying
-    qmdiDialogEvents(const qmdiDialogEvents&) = delete;
-    qmdiDialogEvents& operator=(const qmdiDialogEvents&) = delete;
+    qmdiDialogEvents(const qmdiDialogEvents &) = delete;
+    qmdiDialogEvents &operator=(const qmdiDialogEvents &) = delete;
 
-signals:
-    void buttonClicked(const QString& pluginName, const QString& buttonKey);
+  signals:
+    void buttonClicked(const QString &buttonKey);
+    void linkClicked(const QString &labelKey, const QString &linkUrl);
 
-private:
+  private:
     qmdiDialogEvents() {}
 };
-
-// Register the global events class with Qt's meta type system
-Q_DECLARE_METATYPE(qmdiDialogEvents*)

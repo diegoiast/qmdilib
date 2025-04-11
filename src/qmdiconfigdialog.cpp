@@ -115,9 +115,6 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
         if (auto button = qobject_cast<QPushButton *>(widget)) {
             auto pluginName = pluginConfig->pluginName;
             auto buttonKey = item.key;
-            this->connect(button, &QPushButton::clicked, this, [=]() {
-                qmdiDialogEvents::instance().buttonClicked(pluginName, buttonKey);
-            });
         }
 
         if (label) {

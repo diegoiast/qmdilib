@@ -29,6 +29,7 @@ struct qmdiConfigItem {
         Font,
         Path,
         Button,
+        Label,
         Last = 100000
     };
 
