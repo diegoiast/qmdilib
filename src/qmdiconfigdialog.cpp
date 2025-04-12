@@ -44,14 +44,14 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
     pluginListView->setModel(pluginModel);
     mainLayout->addWidget(pluginListView, 1);
 
-    QWidget *configContainer = new QWidget(this);
-    QVBoxLayout *configAndButtonsLayout = new QVBoxLayout(configContainer);
+    auto configContainer = new QWidget(this);
+    auto configAndButtonsLayout = new QVBoxLayout(configContainer);
 
     configContainer->setLayout(configAndButtonsLayout);
     configAndButtonsLayout->addLayout(configLayout);
     configAndButtonsLayout->setContentsMargins(0, 0, 0, 0);
 
-    QSpacerItem *spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     configAndButtonsLayout->addItem(spacer);
     configAndButtonsLayout->addWidget(buttonBox);
     mainLayout->addWidget(configContainer, 3);
@@ -84,7 +84,7 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
 qmdiConfigDialog::~qmdiConfigDialog() { qDeleteAll(widgetMap); }
 
 void qmdiConfigDialog::updateWidgetsForPlugin(const QString &pluginName) {
-    const qmdiPluginConfig *pluginConfig = globalConfig->getPluginConfig(pluginName);
+    auto const pluginConfig = globalConfig->getPluginConfig(pluginName);
     if (pluginConfig) {
         createWidgetsFromConfig(pluginConfig);
     }
@@ -92,13 +92,14 @@ void qmdiConfigDialog::updateWidgetsForPlugin(const QString &pluginName) {
 
 void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginConfig) {
     QLayoutItem *item;
+
     while ((item = configLayout->takeAt(0))) {
         delete item->widget();
         delete item;
     }
     widgetMap.clear();
 
-    for (const qmdiConfigItem &item : pluginConfig->configItems) {
+    for (auto const item : pluginConfig->configItems) {
         if (!item.userEditable && !item.forceShow) {
             continue;
         }
@@ -109,13 +110,8 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
             continue;
         }
 
-        QWidget *widget = factory->createWidget(item, this);
-        QLabel *label = factory->createLabel(item, this);
-
-        if (auto button = qobject_cast<QPushButton *>(widget)) {
-            auto pluginName = pluginConfig->pluginName;
-            auto buttonKey = item.key;
-        }
+        auto widget = factory->createWidget(item, this);
+        auto label = factory->createLabel(item, this);
 
         if (label) {
             configLayout->addWidget(label);
@@ -123,6 +119,7 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
         if (widget) {
             configLayout->addWidget(widget);
             widgetMap[item.key] = widget;
+            widget->installEventFilter(this);
         }
     }
 }
@@ -135,20 +132,21 @@ void qmdiConfigDialog::onPluginSelectionChanged(const QModelIndex &index) {
 void qmdiConfigDialog::cancelConfiguration() { reject(); }
 
 void qmdiConfigDialog::acceptChanges() {
-    QString selectedPlugin = pluginModel->data(pluginListView->currentIndex()).toString();
-    qmdiPluginConfig *pluginConfig = globalConfig->getPluginConfig(selectedPlugin);
+    auto selectedPlugin = pluginModel->data(pluginListView->currentIndex()).toString();
+    auto pluginConfig = globalConfig->getPluginConfig(selectedPlugin);
+
     if (!pluginConfig) {
         qWarning() << "No plugin config found for:" << selectedPlugin;
         reject();
         return;
     }
 
-    for (qmdiConfigItem &item : pluginConfig->configItems) {
+    for (auto &item : pluginConfig->configItems) {
         if (!item.userEditable) {
             continue;
         }
 
-        QWidget *widget = widgetMap.value(item.key);
+        auto widget = widgetMap.value(item.key);
         if (!widget) {
             continue;
         }

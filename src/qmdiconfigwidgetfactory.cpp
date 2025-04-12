@@ -105,8 +105,13 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
     } break;
     case qmdiConfigItem::Label: {
         auto *label = new QLabel(parent);
+        label->setOpenExternalLinks(true);
+        label->setTextFormat(Qt::RichText);
+        label->setTextInteractionFlags(Qt::TextBrowserInteraction | Qt::TextSelectableByKeyboard);
         label->setText(item.value.toString());
-        QObject::connect(label, &QLabel::linkActivated, label, [item](const QString &link) {
+
+        // FIXME: why is this not working? signal is to connected
+        parent->connect(label, &QLabel::linkActivated, [item](const QString &link) {
             qmdiDialogEvents::instance().linkClicked(item.key, link);
         });
         widget = label;

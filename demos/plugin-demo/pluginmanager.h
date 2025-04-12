@@ -113,14 +113,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void newFileRequested();
     void newClientAdded(qmdiClient *);
 
-  protected:
-    void initGUI();
-
-    Ui::PluginManagedWindow *ui;
-    QSettings *settingsManager;
-    ClosedDocuments closedDocuments;
-    QMenu *closedDocumentsMenu;
-
+  public:
     QAction *actionNewFile;
     QAction *actionOpen;
     QAction *actionClose;
@@ -129,6 +122,14 @@ class PluginManager : public QMainWindow, public qmdiHost {
     QAction *actionNextTab;
     QAction *actionPrevTab;
     QAction *actionHideGUI;
+
+  protected:
+    void initGUI();
+
+    Ui::PluginManagedWindow *ui;
+    QSettings *settingsManager;
+    ClosedDocuments closedDocuments;
+    QMenu *closedDocumentsMenu;
 
     QList<IPlugin *> plugins;
     qmdiServer *mdiServer;
