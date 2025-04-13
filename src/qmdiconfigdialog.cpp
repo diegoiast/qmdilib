@@ -177,3 +177,29 @@ bool qmdiConfigDialog::eventFilter(QObject *o, QEvent *e) {
     }
     return QDialog::eventFilter(o, e);
 }
+
+void qmdiConfigDialog::updateWidgetValues() {
+    auto selectedPlugin = pluginModel->data(pluginListView->currentIndex()).toString();
+    auto pluginConfig = globalConfig->getPluginConfig(selectedPlugin);
+    if (!pluginConfig) {
+        return;
+    }
+
+    for (auto &item : pluginConfig->configItems) {
+        if (!item.userEditable) {
+            continue;
+        }
+
+        auto widget = widgetMap.value(item.key);
+        if (!widget) {
+            continue;
+        }
+
+        auto factory = qmdiConfigWidgetRegistry::instance().createFactory(item.type);
+        if (!factory) {
+            continue;
+        }
+
+        factory->setValue(widget, item.value);
+    }
+}

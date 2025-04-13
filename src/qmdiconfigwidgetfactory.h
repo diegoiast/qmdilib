@@ -1,3 +1,10 @@
+/**
+ * \file qmdiconfigwidgetfactory.h
+ * \brief Widget factory definition
+ * \author Diego Iastrubni (diegoiast@gmail.com)
+ * SPDX-License-Identifier: LGPL 2 or 3
+ */
+
 #pragma once
 
 #include "qmdipluginconfig.h"
@@ -15,19 +22,21 @@
 #include <QLineEdit>
 #include <QSpinBox>
 
+class qmdiConfigDialog;
+
 class qmdiConfigWidgetFactory {
   public:
     virtual ~qmdiConfigWidgetFactory() = default;
-    virtual QWidget *createWidget(const qmdiConfigItem &item, QWidget *parent) = 0;
-    virtual QLabel *createLabel(const qmdiConfigItem &item, QWidget *parent) = 0;
+    virtual QWidget *createWidget(const qmdiConfigItem &item, qmdiConfigDialog *parent) = 0;
+    virtual QLabel *createLabel(const qmdiConfigItem &item, qmdiConfigDialog *parent) = 0;
     virtual QVariant getValue(QWidget *widget) = 0;
     virtual void setValue(QWidget *widget, const QVariant &value) = 0;
 };
 
 class qmdiDefaultConfigWidgetFactory : public qmdiConfigWidgetFactory {
   public:
-    QWidget *createWidget(const qmdiConfigItem &item, QWidget *parent) override;
-    QLabel *createLabel(const qmdiConfigItem &item, QWidget *parent) override;
+    QWidget *createWidget(const qmdiConfigItem &item, qmdiConfigDialog *parent) override;
+    QLabel *createLabel(const qmdiConfigItem &item, qmdiConfigDialog *parent) override;
     QVariant getValue(QWidget *widget) override;
     void setValue(QWidget *widget, const QVariant &value) override;
 };

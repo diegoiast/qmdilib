@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <QMetaType>
+#include "qmdiconfigdialog.h"
 #include <QObject>
 #include <QString>
 
@@ -24,8 +24,8 @@ class qmdiDialogEvents : public QObject {
     qmdiDialogEvents &operator=(const qmdiDialogEvents &) = delete;
 
   signals:
-    void buttonClicked(const QString &buttonKey);
-    void linkClicked(const QString &labelKey, const QString &linkUrl);
+    void buttonClicked(qmdiConfigDialog *dialog, const QString &buttonKey);
+    void linkClicked(qmdiConfigDialog *dialog, const QString &labelKey, const QString &linkUrl);
 
   private:
     qmdiDialogEvents() {}

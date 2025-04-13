@@ -9,7 +9,8 @@
 #include "pathwidget.h"
 #include "qmdidialogevents.hpp"
 
-QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item, QWidget *parent) {
+QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item,
+                                                      qmdiConfigDialog *parent) {
     QWidget *widget = nullptr;
 
     switch (item.type) {
@@ -99,8 +100,9 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
         if (!item.defaultValue.toString().isEmpty()) {
             button->setIcon(QIcon::fromTheme(item.defaultValue.toString()));
         }
-        QObject::connect(button, &QPushButton::clicked, button,
-                         [item]() { qmdiDialogEvents::instance().buttonClicked(item.key); });
+        QObject::connect(button, &QPushButton::clicked, button, [parent, item]() {
+            qmdiDialogEvents::instance().buttonClicked(parent, item.key);
+        });
         widget = button;
     } break;
     case qmdiConfigItem::Label: {
@@ -111,8 +113,8 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
         label->setText(item.value.toString());
 
         // FIXME: why is this not working? signal is to connected
-        parent->connect(label, &QLabel::linkActivated, [item](const QString &link) {
-            qmdiDialogEvents::instance().linkClicked(item.key, link);
+        parent->connect(label, &QLabel::linkActivated, [parent, item](const QString &link) {
+            qmdiDialogEvents::instance().linkClicked(parent, item.key, link);
         });
         widget = label;
     }
@@ -127,7 +129,8 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
     return widget;
 }
 
-QLabel *qmdiDefaultConfigWidgetFactory::createLabel(const qmdiConfigItem &item, QWidget *parent) {
+QLabel *qmdiDefaultConfigWidgetFactory::createLabel(const qmdiConfigItem &item,
+                                                    qmdiConfigDialog *parent) {
     if (item.type == qmdiConfigItem::Bool) {
         // Checkbox includes its own label
         return nullptr;
