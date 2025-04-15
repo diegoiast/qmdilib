@@ -195,6 +195,8 @@ void qmdiDefaultConfigWidgetFactory::setValue(QWidget *widget, const QVariant &v
             label->setFont(font);
             label->setText(value.toString());
         }
+    } else if (auto *button = qobject_cast<QPushButton *>(widget)) {
+        button->setText(value.toString());
     } else if (auto *pathWidget = qobject_cast<PathWidget *>(widget)) {
         pathWidget->setPath(value.toString());
     }

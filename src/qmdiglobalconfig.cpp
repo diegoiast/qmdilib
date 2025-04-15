@@ -171,9 +171,11 @@ QJsonObject qmdiGlobalConfig::asJson() const {
         QJsonObject pluginObject;
         QJsonArray configItemsArray;
         for (const qmdiConfigItem &item : std::as_const(pluginConfig->configItems)) {
+            if (!item.saveValue) {
+                continue;
+            }
             QJsonObject itemObject;
             itemObject["key"] = item.key;
-
             if (item.value.typeId() == QMetaType::QStringList) {
                 QStringList stringList = item.value.value<QStringList>();
                 QJsonArray jsonArray;

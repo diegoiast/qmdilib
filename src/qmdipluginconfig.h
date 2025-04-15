@@ -43,8 +43,9 @@ struct qmdiConfigItem {
     QString description;
     QVariant defaultValue;
     QVariant value;
-    bool userEditable;
-    bool forceShow;
+    bool userEditable = true;
+    bool forceShow = false;
+    bool saveValue = true;
     QVariant possibleValue;
 
     struct Builder {
@@ -71,6 +72,7 @@ struct qmdiConfigItem {
         QVariant value;
         bool userEditable = true;
         bool forceShow = false;
+        bool saveValue = true;
         QVariant possibleValue;
     };
     void setDefault();

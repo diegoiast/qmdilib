@@ -260,6 +260,9 @@ void IPlugin::showAbout() {}
 void IPlugin::loadConfig(QSettings &settings) {
     settings.beginGroup(config.pluginName);
     for (auto &i : config.configItems) {
+        if (!i.saveValue) {
+            continue;
+        }
         if (settings.contains(i.key)) {
             i.value = settings.value(i.key);
         } else {
@@ -285,6 +288,9 @@ void IPlugin::loadConfig(QSettings &settings) {
 void IPlugin::saveConfig(QSettings &settings) {
     settings.beginGroup(config.pluginName);
     for (const auto &i : std::as_const(config.configItems)) {
+        if (!i.saveValue) {
+            continue;
+        }
         if (i.value.isValid()) {
             settings.setValue(i.key, i.value);
         }

@@ -100,13 +100,10 @@ qmdiConfigItem::Builder &qmdiConfigItem::Builder::setKey(const QString &key) {
 
 qmdiConfigItem::Builder &qmdiConfigItem::Builder::setType(const ClassType type) {
     this->type = type;
-    if (type == Button) {
+    if (type == Label || type == Button) {
         this->userEditable = false;
         this->forceShow = true;
-    }
-    if (type == Label) {
-        this->userEditable = false;
-        this->forceShow = true;
+        this->saveValue = false;
     }
     return *this;
 }
@@ -157,6 +154,12 @@ qmdiConfigItem qmdiConfigItem::Builder::build() const {
     item.userEditable = userEditable;
     item.possibleValue = possibleValue;
     item.forceShow = forceShow;
+
+    if (type == Button || type == Label) {
+        item.value = displayName;
+    }
+    item.saveValue = saveValue;
+
     return item;
 }
 

@@ -142,7 +142,7 @@ void qmdiConfigDialog::acceptChanges() {
     }
 
     for (auto &item : pluginConfig->configItems) {
-        if (!item.userEditable) {
+        if (!item.userEditable && !item.forceShow) {
             continue;
         }
 
@@ -186,7 +186,7 @@ void qmdiConfigDialog::updateWidgetValues() {
     }
 
     for (auto &item : pluginConfig->configItems) {
-        if (!item.userEditable) {
+        if (!item.userEditable && !item.forceShow) {
             continue;
         }
 
