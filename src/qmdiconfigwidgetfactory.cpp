@@ -106,17 +106,7 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
         widget = button;
     } break;
     case qmdiConfigItem::Label: {
-        auto *label = new QLabel(parent);
-        label->setOpenExternalLinks(true);
-        label->setTextFormat(Qt::RichText);
-        label->setTextInteractionFlags(Qt::TextBrowserInteraction | Qt::TextSelectableByKeyboard);
-        label->setText(item.value.toString());
-
-        // FIXME: why is this not working? signal is to connected
-        parent->connect(label, &QLabel::linkActivated, [parent, item](const QString &link) {
-            qmdiDialogEvents::instance().linkClicked(parent, item.key, link);
-        });
-        widget = label;
+        break;
     }
     case qmdiConfigItem::Last:
         break;
@@ -131,11 +121,20 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
 
 QLabel *qmdiDefaultConfigWidgetFactory::createLabel(const qmdiConfigItem &item,
                                                     qmdiConfigDialog *parent) {
+    // Checkbox includes its own label
     if (item.type == qmdiConfigItem::Bool) {
-        // Checkbox includes its own label
         return nullptr;
     }
-    return new QLabel(item.displayName, parent);
+    // Buttons do not need label
+    if (item.type == qmdiConfigItem::Button) {
+        return nullptr;
+    }
+
+    auto label = new QLabel(item.displayName, parent);
+    parent->connect(label, &QLabel::linkActivated, [parent, item](const QString &link) {
+        qmdiDialogEvents::instance().linkClicked(parent, item.key, link);
+    });
+    return label;
 }
 
 QVariant qmdiDefaultConfigWidgetFactory::getValue(QWidget *widget) {
