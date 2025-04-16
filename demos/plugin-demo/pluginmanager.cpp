@@ -62,6 +62,9 @@ QList<QString> ClosedDocuments::peekNext(int count) {
 }
 
 void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count) {
+    for (auto *a : menu->actions()) {
+        manager->removeAction(a);
+    }
     menu->clear();
     auto nextItems = peekNext(count);
 
@@ -76,6 +79,7 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
         }
         if (i == 0) {
             action->setShortcut(QKeySequence(Qt::ControlModifier | Qt::ShiftModifier | Qt::Key_T));
+            manager->addAction(action);
         }
         QObject::connect(action, &QAction::triggered, action, [this, doc, menu, manager, count]() {
             this->remove(doc);
@@ -705,6 +709,12 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
         }
     }
 
+    if (!bestPlugin) {
+        // no plugin can handle this file,
+        // this should not happen, and usually means a bug
+        return false;
+    }
+
     int i = tabForFileName(fileName);
     // see if it's already open
     if (i != -1) {
@@ -714,17 +724,9 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
         return true;
     }
 
-    // ok, not opened. who can open this file...?
-
     // ask best plugin to open the file
-    if (bestPlugin) {
-        auto fileOpened = bestPlugin->openFile(fileName, x, y, z);
-        return fileOpened;
-    } else {
-        // no plugin can handle this file,
-        // this should not happen, and usually means a bug
-        return false;
-    }
+    auto fileOpened = bestPlugin->openFile(fileName, x, y, z);
+    return fileOpened;
 }
 
 /**
