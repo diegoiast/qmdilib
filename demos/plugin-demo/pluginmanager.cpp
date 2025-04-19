@@ -90,6 +90,20 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
     }
 }
 
+QStringList ClosedDocuments::getAllDocuments() const {
+    if (closedDocuments.isEmpty()) {
+        return {};
+    }
+    return closedDocuments.toList();
+}
+
+void ClosedDocuments::setAllDocuments(const QStringList &newList) {
+    closedDocuments.clear();
+    for (const QString &file : newList) {
+        closedDocuments.enqueue(file);
+    }
+}
+
 /**
  * \class PluginManager
  * \brief A class which manages a list of plugins and merges their menus and
@@ -579,6 +593,10 @@ void PluginManager::restoreSettings() {
         if (current != -1) {
             mdiServer->setCurrentClientIndex(current);
         }
+
+        auto allClosedDocuments = settingsManager->value("closed").toStringList();
+        closedDocuments.setAllDocuments(allClosedDocuments);
+        closedDocuments.updateMenu(this, closedDocumentsMenu);
     }
     settingsManager->endGroup();
 }
@@ -645,6 +663,7 @@ void PluginManager::saveSettings() {
             }
         }
         settingsManager->setValue("current", mdiServer->getCurrentClientIndex());
+        settingsManager->setValue("closed", closedDocuments.getAllDocuments());
     }
     settingsManager->endGroup();
 

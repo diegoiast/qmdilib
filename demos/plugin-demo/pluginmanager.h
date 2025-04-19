@@ -44,6 +44,8 @@ class ClosedDocuments {
     QList<QString> peekNext(int count = 5);
     inline bool hasDocuments() const { return !closedDocuments.isEmpty(); }
     void updateMenu(PluginManager *manager, QMenu *menu, int count = 5);
+    QStringList getAllDocuments() const;
+    void setAllDocuments(const QStringList &newList);
 
   private:
     QQueue<QString> closedDocuments;
