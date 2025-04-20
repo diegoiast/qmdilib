@@ -332,7 +332,8 @@ PluginManager::PluginManager() {
 
     actionNewFile->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew));
     actionNewFile->setShortcut(QKeySequence::New);
-    connect(actionNewFile, &QAction::triggered, this, &PluginManager::newFileRequested);
+    connect(actionNewFile, &QAction::triggered, this,
+            [this]() { emit newFileRequested(sender()); });
 
     actionOpen->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentOpen));
     actionOpen->setShortcut(QKeySequence::Open);
@@ -1096,10 +1097,8 @@ void PluginManager::initGUI() {
     tabWidget->setCornerWidget(tabCloseBtn, Qt::TopRightCorner);
 
     auto addNewMdiClient = new QToolButton(tabWidget);
-    connect(addNewMdiClient, &QAbstractButton::clicked, addNewMdiClient, [this]() {
-        // we are not dealing with this
-        emit newFileRequested();
-    });
+    connect(addNewMdiClient, &QAbstractButton::clicked, addNewMdiClient,
+            [this]() { emit newFileRequested(sender()); });
     addNewMdiClient->setAutoRaise(true);
     addNewMdiClient->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew));
     tabWidget->setCornerWidget(addNewMdiClient, Qt::TopLeftCorner);

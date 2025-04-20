@@ -86,6 +86,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void showPanels(Qt::DockWidgetArea area);
     qmdiClient *currentClient() const;
     void replaceMdiServer(qmdiServer *newServer);
+    inline qmdiServer *getMdiServer() const { return mdiServer; }
 
     virtual void onClientClosed(qmdiClient *client) override;
 
@@ -112,7 +113,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
 
   signals:
     void configurationUpdated();
-    void newFileRequested();
+    void newFileRequested(QObject *sender);
     void newClientAdded(qmdiClient *);
 
   public:
