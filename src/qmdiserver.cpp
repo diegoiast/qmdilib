@@ -257,9 +257,10 @@ void qmdiServer::showClientMenu(int i, QPoint p) {
     auto closeOthers = new QAction(menu->tr("Close other windows"), menu);
     auto closeAll = new QAction(menu->tr("Close all windows"), menu);
 
-    if (clientMenuShowsName) {
+    if (client && clientMenuShowsName) {
         auto name = new QAction(client->mdiClientName, menu);
         name->setEnabled(false);
+        name->setToolTip(mdiClient->mdiClientFileName());
         actionGroupContext.addAction(name);
     }
     actionGroupContext.addAction(closeThis);
@@ -270,6 +271,9 @@ void qmdiServer::showClientMenu(int i, QPoint p) {
         actionGroupContext.mergeGroup(&mdiClient->contextMenu);
     }
     menu = actionGroupContext.updateMenu(menu);
+    if (mdiClient && clientMenuShowsName) {
+        menu->setToolTip(mdiClient->mdiClientFileName());
+    }
 
     if (w) {
         p = w->mapToGlobal(p);
