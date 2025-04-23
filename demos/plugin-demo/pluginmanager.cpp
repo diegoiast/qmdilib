@@ -339,7 +339,9 @@ PluginManager::PluginManager() {
     actionOpen->setShortcut(QKeySequence::Open);
 
     actionClose->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::WindowClose));
-    actionClose->setShortcut(QKeySequence::Close);
+    // On windows this is Control+F4, which is lame.
+    // actionClose->setShortcut(QKeySequence::Close);
+    actionClose->setShortcut(QKeySequence("Ctrl+W"));
 
     actionNextTab->setShortcuts({QKeySequence("Alt+Right"), QKeySequence::NextChild});
     actionPrevTab->setShortcuts({QKeySequence("Alt+Left"), QKeySequence::PreviousChild});
@@ -793,8 +795,8 @@ CommandArgs PluginManager::handleCommand(const QString &command, const CommandAr
     return {};
 }
 
-auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
-    -> QDockWidget * {
+auto static findFirstDockWidget(QMainWindow *mainWindow,
+                                Qt::DockWidgetArea dockArea) -> QDockWidget * {
     for (auto widget : mainWindow->findChildren<QWidget *>()) {
         if (auto dockWidget = qobject_cast<QDockWidget *>(widget)) {
             if (mainWindow->dockWidgetArea(dockWidget) == dockArea) {
