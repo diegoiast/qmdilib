@@ -298,6 +298,30 @@ PluginManager::PluginManager() {
     closedDocumentsMenu = new QMenu(this);
     closedDocumentsMenu->menuAction()->setText(tr("Closed documents..."));
 
+    toolbarsMenu = new QMenu(this);
+    connect(toolbarsMenu, &QMenu::aboutToShow, toolbarsMenu, [this]() {
+        toolbarsMenu->clear();
+        auto allToolbars = findChildren<QDockWidget *>();
+        for (auto toolbar : allToolbars) {
+            auto toggleAction = toolbar->toggleViewAction();
+            toggleAction->setEnabled(true);
+            connect(toggleAction, &QAction::toggled, toolbar, &QWidget::setVisible);
+            toolbarsMenu->addAction(toggleAction);
+        }
+    });
+
+    showDocksAction = new QAction("&Docks", this);
+    connect(showDocksAction, &QAction::triggered, this, [this]() {
+        QPoint menuPos;
+        if (menuBar()->isVisible()) {
+            auto localPos = menuBar()->actionGeometry(showDocksAction).bottomLeft();
+            menuPos = menuBar()->mapToGlobal(localPos);
+        } else {
+            menuPos = QCursor::pos();
+        }
+        toolbarsMenu->popup(menuPos);
+    });
+
     actionNewFile = new QAction(tr("&New..."), this);
     actionOpen = new QAction(tr("&Open..."), this);
     actionClose = new QAction(tr("C&lose"), this);
@@ -795,8 +819,8 @@ CommandArgs PluginManager::handleCommand(const QString &command, const CommandAr
     return {};
 }
 
-auto static findFirstDockWidget(QMainWindow *mainWindow,
-                                Qt::DockWidgetArea dockArea) -> QDockWidget * {
+auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
+    -> QDockWidget * {
     for (auto widget : mainWindow->findChildren<QWidget *>()) {
         if (auto dockWidget = qobject_cast<QDockWidget *>(widget)) {
             if (mainWindow->dockWidgetArea(dockWidget) == dockArea) {
@@ -1073,6 +1097,7 @@ void PluginManager::initGUI() {
     menus[tr("&Navigation")];
     menus[tr("&Tools")];
     menus[tr("Se&ttings")]->addAction(actionConfig);
+    menus[tr("Se&ttings")]->addAction(showDocksAction);
     menus[tr("Se&ttings")]->setMergePoint();
     menus[tr("Se&ttings")]->addSeparator();
     menus[tr("Se&ttings")]->addAction(actionNextTab);

@@ -133,6 +133,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     QSettings *settingsManager;
     ClosedDocuments closedDocuments;
     QMenu *closedDocumentsMenu;
+    QMenu *toolbarsMenu;
+    QAction *showDocksAction;
 
     QList<IPlugin *> plugins;
     qmdiServer *mdiServer;
