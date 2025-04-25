@@ -297,15 +297,12 @@ PluginManager::PluginManager() {
 
     closedDocumentsMenu = new QMenu(this);
     closedDocumentsMenu->menuAction()->setText(tr("Closed documents..."));
-
     toolbarsMenu = new QMenu(this);
     connect(toolbarsMenu, &QMenu::aboutToShow, toolbarsMenu, [this]() {
         toolbarsMenu->clear();
         auto allToolbars = findChildren<QDockWidget *>();
         for (auto toolbar : allToolbars) {
             auto toggleAction = toolbar->toggleViewAction();
-            toggleAction->setEnabled(true);
-            connect(toggleAction, &QAction::toggled, toolbar, &QWidget::setVisible);
             toolbarsMenu->addAction(toggleAction);
         }
     });
@@ -1342,7 +1339,7 @@ void PluginManager::on_actionHideGUI_changed() {
                            QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
         } else {
             d->setFeatures(d->features() & ~QDockWidget::DockWidgetMovable &
-                           ~QDockWidget::DockWidgetClosable & ~QDockWidget::DockWidgetFloatable);
+                           QDockWidget::DockWidgetClosable & ~QDockWidget::DockWidgetFloatable);
         }
     }
 
