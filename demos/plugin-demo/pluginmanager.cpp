@@ -37,17 +37,17 @@
 #include "ui_pluginwindow.h"
 
 void ClosedDocuments::push(const QString &docName) {
-    if (closedDocuments.size() >= maxSize) {
-        closedDocuments.dequeue();
+    closedDocuments.prepend(docName);
+    if (closedDocuments.size() > maxSize) {
+        closedDocuments.removeLast();
     }
-    closedDocuments.enqueue(docName);
 }
 
 QString ClosedDocuments::pop() {
     if (closedDocuments.isEmpty()) {
         return {};
     }
-    return closedDocuments.dequeue();
+    return closedDocuments.takeFirst();
 }
 
 void ClosedDocuments::remove(const QString &doc) { closedDocuments.removeAll(doc); }
@@ -67,7 +67,6 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
     }
     menu->clear();
     auto nextItems = peekNext(count);
-
     for (auto i = 0; i < nextItems.size(); ++i) {
         auto &doc = nextItems[i];
         QAction *action;
@@ -90,17 +89,10 @@ void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count)
     }
 }
 
-QStringList ClosedDocuments::getAllDocuments() const {
-    if (closedDocuments.isEmpty()) {
-        return {};
-    }
-    return closedDocuments.toList();
-}
-
 void ClosedDocuments::setAllDocuments(const QStringList &newList) {
     closedDocuments.clear();
     for (const QString &file : newList) {
-        closedDocuments.enqueue(file);
+        closedDocuments.append(file);
     }
 }
 
@@ -816,8 +808,8 @@ CommandArgs PluginManager::handleCommand(const QString &command, const CommandAr
     return {};
 }
 
-auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
-    -> QDockWidget * {
+auto static findFirstDockWidget(QMainWindow *mainWindow,
+                                Qt::DockWidgetArea dockArea) -> QDockWidget * {
     for (auto widget : mainWindow->findChildren<QWidget *>()) {
         if (auto dockWidget = qobject_cast<QDockWidget *>(widget)) {
             if (mainWindow->dockWidgetArea(dockWidget) == dockArea) {
