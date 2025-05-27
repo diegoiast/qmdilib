@@ -36,7 +36,7 @@ class qmdiServer {
     }
     virtual void mdiSelected(qmdiClient *client, int index) const = 0;
 
-    qmdiHost *mdiHost;
+    qmdiHost *mdiHost = nullptr;
     bool clientMenuShowsName = true;
 
   protected:

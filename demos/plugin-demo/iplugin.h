@@ -72,7 +72,7 @@ class IPlugin : public QObject, public qmdiClient {
     QString getsVersion() const;
     int getiVersion() const;
 
-    PluginManager *getManager() const {
+    inline PluginManager *getManager() const {
         if (!mdiServer || !mdiServer->mdiHost) {
             return nullptr;
         }

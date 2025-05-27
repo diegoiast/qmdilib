@@ -883,6 +883,11 @@ void PluginManager::replaceMdiServer(qmdiServer *newServer) {
     mdiServer = newServer;
     mdiServer->mdiHost = this;
     mdiServer->setOnMdiSelected([this](qmdiClient *, int) { updateActionsStatus(); });
+
+    // update the mdi server in each plugin
+    foreach (IPlugin *p, plugins) {
+        p->mdiServer = newServer;
+    }
     delete oldMdiServer;
 }
 
