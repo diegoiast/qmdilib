@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
     globalConfig.addPluginConfig(networkPluginConfig);
     globalConfig.addPluginConfig(editorPluginConfig);
 
-    // API for accesing config:
+    // API for accessing config:
     {
         // We can restore the defaults. When initializing the config
         // the values are set to defaults, so this is not strickly needed here.

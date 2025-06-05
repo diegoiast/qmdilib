@@ -36,7 +36,7 @@
 qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
     : QDialog(parent), configLayout(new QVBoxLayout), mainLayout(new QHBoxLayout(this)),
       pluginListView(new QListView(this)), pluginModel(new QStringListModel(this)),
-      buttonBox(new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this)),
+      buttonBox(new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::RestoreDefaults, this)),
       globalConfig(config) {
     setLayout(mainLayout);
 
@@ -79,6 +79,8 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
             &qmdiConfigDialog::cancelConfiguration);
     connect(buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this,
             &qmdiConfigDialog::acceptChanges);
+    connect(buttonBox->button(QDialogButtonBox::RestoreDefaults), &QPushButton::clicked, this,
+            &qmdiConfigDialog::resetToDefaults);
 }
 
 qmdiConfigDialog::~qmdiConfigDialog() { qDeleteAll(widgetMap); }
@@ -161,6 +163,10 @@ void qmdiConfigDialog::acceptChanges() {
     }
 
     accept();
+}
+void qmdiConfigDialog::resetToDefaults() {
+    globalConfig->setDefaults();
+    updateWidgetValues();
 }
 
 bool qmdiConfigDialog::eventFilter(QObject *o, QEvent *e) {

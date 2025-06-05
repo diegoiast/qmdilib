@@ -48,6 +48,7 @@ class qmdiConfigDialog : public QDialog {
     void onPluginSelectionChanged(const QModelIndex &index);
     void cancelConfiguration();
     void acceptChanges();
+    void resetToDefaults();
 
   protected:
     bool eventFilter(QObject *, QEvent *) override;
