@@ -261,6 +261,11 @@ void qmdiClient::on_client_merged(qmdiHost *host) {
         menus.addActionsToWidget(w);
         toolbars.addActionsToWidget(w);
     }
+
+    if (auto w = dynamic_cast<QWidget *>(this)) {
+        menus.addActionsToWidget(w);
+        toolbars.addActionsToWidget(w);
+    }
 }
 
 /**
@@ -279,6 +284,11 @@ void qmdiClient::on_client_merged(qmdiHost *host) {
  */
 void qmdiClient::on_client_unmerged(qmdiHost *host) {
     if (auto w = dynamic_cast<QWidget *>(host)) {
+        menus.removeActionsFromWidget(w);
+        toolbars.removeActionsFromWidget(w);
+    }
+
+    if (auto w = dynamic_cast<QWidget *>(this)) {
         menus.removeActionsFromWidget(w);
         toolbars.removeActionsFromWidget(w);
     }
