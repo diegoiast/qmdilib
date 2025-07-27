@@ -89,6 +89,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     inline qmdiServer *getMdiServer() const { return mdiServer; }
 
     virtual void onClientClosed(qmdiClient *client) override;
+    inline bool isInMinimizedMode() const { return actionHideGUI->isChecked(); }
 
   public slots:
     void addPlugin(IPlugin *newplugin);
@@ -115,6 +116,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void configurationUpdated();
     void newFileRequested(QObject *sender);
     void newClientAdded(qmdiClient *);
+    void minimizedModeChanged(bool isMinimized);
 
   public:
     QAction *actionNewFile;

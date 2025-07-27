@@ -1348,6 +1348,7 @@ void PluginManager::on_actionHideGUI_changed() {
     updateGUI();
 
     setUpdatesEnabled(true);
+    emit minimizedModeChanged(actionHideGUI->isChecked());
 }
 
 size_t PluginManager::visibleTabs() const { return mdiServer->getClientsCount(); }
