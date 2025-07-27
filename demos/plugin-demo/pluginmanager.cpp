@@ -29,6 +29,7 @@
 #include <qmdipluginconfig.h>
 #include <qmdiserver.h>
 #include <qmditabwidget.h>
+#include <qnamespace.h>
 #include <sstream>
 #include <tuple>
 
@@ -355,11 +356,11 @@ PluginManager::PluginManager() {
     // On windows this is Control+F4, which is lame.
     // actionClose->setShortcut(QKeySequence::Close);
     actionClose->setShortcut(QKeySequence("Ctrl+W"));
-
-    actionNextTab->setShortcuts({QKeySequence("Alt+Right"), QKeySequence::NextChild});
-    actionPrevTab->setShortcuts({QKeySequence("Alt+Left"), QKeySequence::PreviousChild});
-
-    actionHideGUI->setShortcut(QKeySequence("Ctrl+M"));
+    actionNextTab->setShortcuts(
+        {QKeySequence(Qt::Key_Alt | Qt::Key_Right), QKeySequence::NextChild});
+    actionPrevTab->setShortcuts(
+        {QKeySequence(Qt::Key_Alt | Qt::Key_Left), QKeySequence::PreviousChild});
+    actionHideGUI->setShortcut(QKeySequence(Qt::Key_Alt | Qt::Key_Control | Qt::Key_M));
 
     initGUI();
 
