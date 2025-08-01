@@ -1315,7 +1315,6 @@ void PluginManager::on_actionNext_triggered() {
 }
 
 void PluginManager::on_actionHideGUI_changed() {
-    updateMenusAndToolBars = !actionHideGUI->isChecked();
     setUpdatesEnabled(false);
 
     // TODO - no idea why I need to do this. Sometimes, the docking areas get borked
@@ -1340,11 +1339,7 @@ void PluginManager::on_actionHideGUI_changed() {
         }
     }
 
-    if (updateMenusAndToolBars) {
-        mergeClient(currentClient());
-    } else {
-        unmergeClient(currentClient());
-    }
+    mergeClient(currentClient());
     updateGUI();
 
     setUpdatesEnabled(true);

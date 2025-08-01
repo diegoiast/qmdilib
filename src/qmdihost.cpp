@@ -100,7 +100,6 @@
  * Construct a qmdiHost instance.
  */
 qmdiHost::qmdiHost() {
-    updateMenusAndToolBars = true;
     toolBarList = nullptr;
 }
 
@@ -145,10 +144,6 @@ void qmdiHost::updateGUI(QMainWindow *window) {
         return;
     }
 
-    if (!updateMenusAndToolBars) {
-        return;
-    }
-
     window->setUpdatesEnabled(false);
     toolBarList = toolbars.updateToolBar(toolBarList, window);
     menus.updateMenuBar(window->menuBar());
@@ -189,10 +184,8 @@ void qmdiHost::mergeClient(qmdiClient *client) {
     }
 
     client->on_client_merged(this);
-    if (updateMenusAndToolBars) {
-        menus.mergeGroupList(&client->menus);
-        toolbars.mergeGroupList(&client->toolbars);
-    }
+    menus.mergeGroupList(&client->menus);
+    toolbars.mergeGroupList(&client->toolbars);
 
     auto w = dynamic_cast<QWidget *>(client);
     if (!w) {
@@ -234,10 +227,8 @@ void qmdiHost::unmergeClient(qmdiClient *client) {
         return;
     }
 
-    if (updateMenusAndToolBars) {
-        menus.unmergeGroupList(&client->menus);
-        toolbars.unmergeGroupList(&client->toolbars);
-    }
+    menus.unmergeGroupList(&client->menus);
+    toolbars.unmergeGroupList(&client->toolbars);
     client->on_client_unmerged(this);
 
     auto w = dynamic_cast<QWidget *>(client);

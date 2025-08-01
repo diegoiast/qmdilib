@@ -29,7 +29,6 @@ class qmdiHost {
     void mergeClient(qmdiClient *client);
     void unmergeClient(qmdiClient *client);
     virtual void onClientClosed(qmdiClient *client) { Q_UNUSED(client); }
-    bool updateMenusAndToolBars;
 
   protected:
     QList<QToolBar *> *toolBarList;

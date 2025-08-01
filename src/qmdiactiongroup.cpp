@@ -621,6 +621,10 @@ QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
         toolbar->setWindowTitle(name);
     }
 
+    if (!toolbar->isVisible()) {
+        return toolbar;
+    }
+
     toolbar->setUpdatesEnabled(false);
     toolbar->hide();
     toolbar->clear();
