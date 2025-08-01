@@ -41,7 +41,8 @@ QStringList StringListWidget::getList() const {
 
 void StringListWidget::addItem() {
     bool ok;
-    QString text = QInputDialog::getText(this, tr("Add Item"), tr("Item:"), QLineEdit::Normal, "", &ok);
+    QString text =
+        QInputDialog::getText(this, tr("Add Item"), tr("Item:"), QLineEdit::Normal, "", &ok);
     if (ok && !text.isEmpty()) {
         comboBox->addItem(text);
     }

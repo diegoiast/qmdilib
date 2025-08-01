@@ -32,7 +32,6 @@ class QIcon;
     }
 // clang-format on
 
-
 struct CommandPriority {
     constexpr static int CannotHandle = -1;
     constexpr static int NoPriority = 0;

@@ -48,17 +48,17 @@ EditorPlugin::EditorPlugin() {
     auto monospacedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     config.pluginName = tr("Editor");
     config.configItems.push_back(qmdiConfigItem::Builder()
-                                                  .setDisplayName(tr("Editor font"))
-                                                  .setKey(CONFIG_KEY_FONT)
-                                                  .setType(qmdiConfigItem::Font)
-                                                  .setDefaultValue(monospacedFont)
-                                                  .build());
+                                     .setDisplayName(tr("Editor font"))
+                                     .setKey(CONFIG_KEY_FONT)
+                                     .setType(qmdiConfigItem::Font)
+                                     .setDefaultValue(monospacedFont)
+                                     .build());
     config.configItems.push_back(qmdiConfigItem::Builder()
-                                                  .setDisplayName(tr("Wrap text"))
-                                                  .setKey(CONFIG_KEY_WRAP_TEXT)
-                                                  .setDefaultValue(true)
-                                                  .setType(qmdiConfigItem::Bool)
-                                                  .build());
+                                     .setDisplayName(tr("Wrap text"))
+                                     .setKey(CONFIG_KEY_WRAP_TEXT)
+                                     .setDefaultValue(true)
+                                     .setType(qmdiConfigItem::Bool)
+                                     .build());
 }
 
 EditorPlugin::~EditorPlugin() { delete actionNew; }

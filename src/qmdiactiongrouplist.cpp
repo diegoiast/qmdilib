@@ -79,7 +79,7 @@ qmdiActionGroup *qmdiActionGroupList::operator[](const QString &name) {
 qmdiActionGroup *qmdiActionGroupList::getActionGroup(const QString &name) {
     qmdiActionGroup *item = nullptr;
 
-    foreach (auto i, actionGroups) {
+    for (auto &i : actionGroups) {
         if (i->getName() == name) {
             return i;
         }
@@ -110,7 +110,7 @@ qmdiActionGroup *qmdiActionGroupList::getActionGroup(const QString &name) {
  * \see updateToolBar
  */
 void qmdiActionGroupList::mergeGroupList(qmdiActionGroupList *group) {
-    foreach (auto i, group->actionGroups) {
+    for (auto &i : group->actionGroups) {
         auto mine = getActionGroup(i->getName());
         mine->mergeGroup(i);
     }
@@ -135,7 +135,7 @@ void qmdiActionGroupList::mergeGroupList(qmdiActionGroupList *group) {
  * \see updateToolBar
  */
 void qmdiActionGroupList::unmergeGroupList(qmdiActionGroupList *group) {
-    foreach (auto i, group->actionGroups) {
+    for (auto &i : group->actionGroups) {
         auto mine = getActionGroup(i->getName());
         mine->unmergeGroup(i);
     }
@@ -162,7 +162,7 @@ QMenuBar *qmdiActionGroupList::updateMenuBar(QMenuBar *menubar) {
         menubar = new QMenuBar(menubar);
     }
 
-    foreach (auto i, actionGroups) {
+    for (auto &i : actionGroups) {
         auto m = i->updateMenu();
         if (m) {
             menubar->addMenu(m);
@@ -192,7 +192,7 @@ QMenu *qmdiActionGroupList::updatePopMenu(QMenu *popupMenu) {
         popupMenu = new QMenu(popupMenu);
     }
 
-    foreach (auto i, actionGroups) {
+    for (auto &i : actionGroups) {
         auto m = i->updateMenu();
         if (m) {
             popupMenu->addMenu(m);
@@ -225,12 +225,12 @@ QList<QToolBar *> *qmdiActionGroupList::updateToolBar(QList<QToolBar *> *toolbar
         toolbars = new QList<QToolBar *>;
     }
 
-    foreach (auto i, actionGroups) {
+    for (auto &i : actionGroups) {
         QToolBar *tb = nullptr;
         auto actionName = i->getName();
 
         // find the correct toolbar
-        foreach (auto b, *toolbars) {
+        for (auto const &b : std::as_const(*toolbars)) {
             if (b->windowTitle() == actionName) {
                 tb = b;
                 break;
@@ -256,13 +256,13 @@ QList<QToolBar *> *qmdiActionGroupList::updateToolBar(QList<QToolBar *> *toolbar
 }
 
 void qmdiActionGroupList::addActionsToWidget(QWidget *widget) {
-    for (auto i : actionGroups) {
+    for (auto &i : actionGroups) {
         i->addActionsToWidget(widget);
     }
 }
 
 void qmdiActionGroupList::removeActionsFromWidget(QWidget *widget) {
-    for (auto i : actionGroups) {
+    for (auto &i : actionGroups) {
         i->removeActionsFromWidget(widget);
     }
 }

@@ -99,9 +99,7 @@
  *
  * Construct a qmdiHost instance.
  */
-qmdiHost::qmdiHost() {
-    toolBarList = nullptr;
-}
+qmdiHost::qmdiHost() { toolBarList = nullptr; }
 
 /**
  * \brief Default destructor
@@ -253,8 +251,8 @@ void qmdiHost::unmergeClient(qmdiClient *client) {
  * \see QWidget::addAction
  */
 void qmdiHost::addActionsToWidget(const qmdiActionGroupList &agl, QWidget *w) {
-    foreach (auto const g, agl.actionGroups) {
-        foreach (auto o, g->actionGroupItems) {
+    for (auto &g : agl.actionGroups) {
+        for (auto &o : g->actionGroupItems) {
             auto a = qobject_cast<QAction *>(o);
             if (!a) {
                 continue;
@@ -281,8 +279,8 @@ void qmdiHost::addActionsToWidget(const qmdiActionGroupList &agl, QWidget *w) {
  * \see QWidget::addAction
  */
 void qmdiHost::removeActionsFromWidget(const qmdiActionGroupList &agl, QWidget *w) {
-    foreach (auto const g, agl.actionGroups) {
-        foreach (auto o, g->actionGroupItems) {
+    for (auto &g : agl.actionGroups) {
+        for (auto &o : g->actionGroupItems) {
             auto a = qobject_cast<QAction *>(o);
             if (!a) {
                 continue;

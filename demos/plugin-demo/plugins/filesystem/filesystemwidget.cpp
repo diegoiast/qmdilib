@@ -541,7 +541,7 @@ static auto copyDirectoryRecursively(const QString &srcPath, const QString &dstP
     }
 
     auto filter = QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System;
-    foreach (const auto &dirItem, srcDir.entryList(filter)) {
+    for (const auto &dirItem : srcDir.entryList(filter)) {
         auto srcItemPath = srcPath + "/" + dirItem;
         auto dstItemPath = dstPath + "/" + dirItem;
         auto srcItemInfo = QFileInfo(srcItemPath);

@@ -36,7 +36,9 @@
 qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
     : QDialog(parent), configLayout(new QVBoxLayout), mainLayout(new QHBoxLayout(this)),
       pluginListView(new QListView(this)), pluginModel(new QStringListModel(this)),
-      buttonBox(new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::RestoreDefaults, this)),
+      buttonBox(new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
+                                         QDialogButtonBox::RestoreDefaults,
+                                     this)),
       globalConfig(config) {
     setLayout(mainLayout);
 

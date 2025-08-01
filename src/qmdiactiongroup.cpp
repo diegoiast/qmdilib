@@ -227,7 +227,7 @@ void qmdiActionGroup::addActions(QActionGroup *actions, int location) {
     if (location == -1) {
         location = actionGroupItems.count();
     }
-    foreach (auto a, actions->actions()) {
+    for (auto &a : actions->actions()) {
         addAction(a, location);
         location++;
     }
@@ -327,7 +327,6 @@ bool qmdiActionGroup::containsAction(QAction *action) { return actionGroupItems.
  */
 void qmdiActionGroup::removeAction(QAction *action) {
     auto i = actionGroupItems.indexOf(action);
-
     if (i != -1) {
         actionGroupItems.removeAt(i);
     }
@@ -345,7 +344,7 @@ void qmdiActionGroup::removeAction(QAction *action) {
  * \see addAction
  */
 void qmdiActionGroup::removeActions(QActionGroup *actions) {
-    foreach (auto a, actions->actions()) {
+    for (auto &a : actions->actions()) {
         removeAction(a);
     }
 }
@@ -419,9 +418,9 @@ void qmdiActionGroup::setMergePoint() { mergeLocation = actionGroupItems.count()
 int qmdiActionGroup::getMergePoint() {
     auto i = -1;
 
-    foreach (qmdiActionGroup *ag, actionGroups) {
-        if (ag->mergeLocation > i) {
-            i = ag->mergeLocation;
+    for (auto &actionGroup : actionGroups) {
+        if (actionGroup->mergeLocation > i) {
+            i = actionGroup->mergeLocation;
         }
     }
 
@@ -459,7 +458,7 @@ void qmdiActionGroup::mergeGroup(qmdiActionGroup *group) {
     }
 
     auto i = 0;
-    foreach (auto o, group->actionGroupItems) {
+    for (auto &o : group->actionGroupItems) {
         if (actionGroupItems.contains(o)) {
             continue;
         }
@@ -524,7 +523,7 @@ void qmdiActionGroup::unmergeGroup(qmdiActionGroup *group) {
         breakCount = breakCount > 1 ? -1 : breakCount - 1;
     }
 
-    foreach (auto o, group->actionGroupItems) {
+    for (auto &o : group->actionGroupItems) {
         if (!actionGroupItems.contains(o)) {
             continue;
         }
@@ -583,7 +582,7 @@ QMenu *qmdiActionGroup::updateMenu(QMenu *menu) {
     }
     menu->clear();
 
-    foreach (auto o, actionGroupItems) {
+    for (auto &o : actionGroupItems) {
         auto a = qobject_cast<QAction *>(o);
         if (a) {
             menu->addAction(a);
@@ -629,7 +628,7 @@ QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
     toolbar->hide();
     toolbar->clear();
     int i = 0;
-    foreach (auto o, actionGroupItems) {
+    for (auto &o : actionGroupItems) {
         auto a = dynamic_cast<QAction *>(o);
         if (a) {
             toolbar->addAction(a);
@@ -656,14 +655,14 @@ QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
 }
 
 void qmdiActionGroup::addActionsToWidget(QWidget *widget) {
-    for (auto a : actionGroups) {
+    for (auto &a : actionGroups) {
         a->addActionsToWidget(widget);
     }
-    for (auto const a : actionGroupItems) {
+    for (auto &a : actionGroupItems) {
         if (auto action = qobject_cast<QAction *>(a)) {
             widget->addAction(action);
         } else if (auto actionGroup = qobject_cast<QActionGroup *>(a)) {
-            for (auto action : actionGroup->actions()) {
+            for (auto &action : actionGroup->actions()) {
                 widget->addAction(action);
             }
         }
@@ -671,14 +670,14 @@ void qmdiActionGroup::addActionsToWidget(QWidget *widget) {
 }
 
 void qmdiActionGroup::removeActionsFromWidget(QWidget *widget) {
-    for (auto a : actionGroups) {
+    for (auto &a : actionGroups) {
         a->removeActionsFromWidget(widget);
     }
-    for (auto const a : actionGroupItems) {
+    for (auto &a : actionGroupItems) {
         if (auto action = qobject_cast<QAction *>(a)) {
             widget->removeAction(action);
         } else if (auto actionGroup = qobject_cast<QActionGroup *>(a)) {
-            for (auto action : actionGroup->actions()) {
+            for (auto &action : actionGroup->actions()) {
                 widget->removeAction(action);
             }
         }

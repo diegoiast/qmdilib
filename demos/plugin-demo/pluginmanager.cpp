@@ -63,7 +63,7 @@ QList<QString> ClosedDocuments::peekNext(int count) {
 }
 
 void ClosedDocuments::updateMenu(PluginManager *manager, QMenu *menu, int count) {
-    for (auto *a : menu->actions()) {
+    for (auto &a : menu->actions()) {
         manager->removeAction(a);
     }
     menu->clear();
@@ -294,7 +294,7 @@ PluginManager::PluginManager() {
     connect(toolbarsMenu, &QMenu::aboutToShow, toolbarsMenu, [this]() {
         toolbarsMenu->clear();
         auto allToolbars = findChildren<QDockWidget *>();
-        for (auto toolbar : allToolbars) {
+        for (auto &toolbar : allToolbars) {
             auto toggleAction = toolbar->toggleViewAction();
             toolbarsMenu->addAction(toggleAction);
         }
@@ -409,7 +409,7 @@ PluginManager::~PluginManager() {
         delete settingsManager;
     }
 
-    foreach (IPlugin *p, plugins) {
+    for (auto &p : plugins) {
         if (plugins.removeAll(p) == 1) {
             delete p;
         } else {
@@ -587,14 +587,14 @@ void PluginManager::restoreSettings() {
     }
     settingsManager->endGroup();
 
-    foreach (auto plugin, plugins) {
+    for (auto &plugin : plugins) {
         plugin->loadConfig(*settingsManager);
     }
 
     // restore opened files
     settingsManager->beginGroup("files");
     {
-        foreach (auto s, settingsManager->childKeys()) {
+        for (auto const &s : settingsManager->childKeys()) {
             if (!s.startsWith("file")) {
                 continue;
             }
@@ -605,7 +605,7 @@ void PluginManager::restoreSettings() {
         }
 
         // re-select the current tab
-        int current = settingsManager->value("current", -1).toInt();
+        auto current = settingsManager->value("current", -1).toInt();
         if (current != -1) {
             mdiServer->setCurrentClientIndex(current);
         }
@@ -684,7 +684,7 @@ void PluginManager::saveSettings() {
     settingsManager->endGroup();
 
     // let each ones of the plugins save it's state
-    foreach (auto p, plugins) {
+    for (auto &p : plugins) {
         p->saveConfig(*settingsManager);
     }
 
@@ -730,8 +730,8 @@ void PluginManager::updateActionsStatus() {
 bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
     // see which plugin is the most suited for openning this file
     IPlugin *bestPlugin = nullptr;
-    int highestScore = -1;
-    foreach (auto p, plugins) {
+    auto highestScore = -1;
+    for (auto &p : plugins) {
         if (!p->enabled) {
             continue;
         }
@@ -750,7 +750,7 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
         return false;
     }
 
-    int i = tabForFileName(fileName);
+    auto i = tabForFileName(fileName);
     // see if it's already open
     if (i != -1) {
         auto client = mdiServer->getClient(i);
@@ -778,7 +778,7 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
  */
 bool PluginManager::openFiles(const QStringList &fileNames) {
     auto b = true;
-    foreach (auto const &s, fileNames) {
+    for (auto const &s : fileNames) {
         b = b && openFile(s);
         QApplication::processEvents();
     }
@@ -790,7 +790,7 @@ CommandArgs PluginManager::handleCommand(const QString &command, const CommandAr
     IPlugin *bestPlugin = nullptr;
     auto highestScore = 0;
 
-    foreach (auto p, plugins) {
+    for (auto &p : plugins) {
         if (!p->enabled) {
             continue;
         }
@@ -808,9 +808,9 @@ CommandArgs PluginManager::handleCommand(const QString &command, const CommandAr
     return {};
 }
 
-auto static findFirstDockWidget(QMainWindow *mainWindow,
-                                Qt::DockWidgetArea dockArea) -> QDockWidget * {
-    for (auto widget : mainWindow->findChildren<QWidget *>()) {
+auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
+    -> QDockWidget * {
+    for (auto &widget : mainWindow->findChildren<QWidget *>()) {
         if (auto dockWidget = qobject_cast<QDockWidget *>(widget)) {
             if (mainWindow->dockWidgetArea(dockWidget) == dockArea) {
                 return dockWidget;
@@ -822,7 +822,7 @@ auto static findFirstDockWidget(QMainWindow *mainWindow,
 
 QDockWidget *PluginManager::createNewPanel(Panels p, const QString &name, const QString &title,
                                            QWidget *widget) {
-    auto const dock = new QDockWidget(this);
+    auto dock = new QDockWidget(this);
     dock->setWidget(widget);
     dock->setWindowTitle(title);
     dock->setObjectName(name);
@@ -854,7 +854,7 @@ QDockWidget *PluginManager::createNewPanel(Panels p, const QString &name, const 
 }
 
 void PluginManager::hidePanels(Qt::DockWidgetArea area) {
-    for (auto dockWidget : findChildren<QDockWidget *>()) {
+    for (auto &dockWidget : findChildren<QDockWidget *>()) {
         if (dockWidgetArea(dockWidget) == area) {
             dockWidget->hide();
         }
@@ -862,7 +862,7 @@ void PluginManager::hidePanels(Qt::DockWidgetArea area) {
 }
 
 void PluginManager::showPanels(Qt::DockWidgetArea area) {
-    for (auto dockWidget : findChildren<QDockWidget *>()) {
+    for (auto &dockWidget : findChildren<QDockWidget *>()) {
         if (dockWidgetArea(dockWidget) == area) {
             dockWidget->show();
         }
@@ -885,7 +885,7 @@ void PluginManager::replaceMdiServer(qmdiServer *newServer) {
     mdiServer->setOnMdiSelected([this](qmdiClient *, int) { updateActionsStatus(); });
 
     // update the mdi server in each plugin
-    foreach (IPlugin *p, plugins) {
+    for (auto p : std::as_const(plugins)) {
         p->mdiServer = newServer;
     }
     delete oldMdiServer;
@@ -1184,10 +1184,9 @@ void PluginManager::on_actionOpen_triggered() {
     static QString workingDir;
     QString extens, allExtens;
     QStringList extensAvailable;
-    IPlugin *p;
 
     // get list of available extensions to open from each plugin
-    foreach (p, plugins) {
+    for (auto p : std::as_const(plugins)) {
         if (!p->enabled) {
             continue;
         }
@@ -1325,11 +1324,11 @@ void PluginManager::on_actionHideGUI_changed() {
     setTabPosition(Qt::RightDockWidgetArea, QTabWidget::TabPosition::East);
 
     menuBar()->setVisible(!actionHideGUI->isChecked());
-    foreach (auto b, findChildren<QToolBar *>()) {
+    for (auto b : findChildren<QToolBar *>()) {
         b->setVisible(!actionHideGUI->isChecked());
     }
 
-    foreach (auto d, findChildren<QDockWidget *>()) {
+    for (auto d : findChildren<QDockWidget *>()) {
         if (!actionHideGUI->isChecked()) {
             d->setFeatures(d->features() | QDockWidget::DockWidgetMovable |
                            QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
