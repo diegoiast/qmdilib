@@ -319,10 +319,14 @@ PluginManager::PluginManager() {
     actionConfig = new QAction(tr("&Config"), this);
     actionNextTab = new QAction(tr("&Next tab"), this);
     actionPrevTab = new QAction(tr("&Previous tab"), this);
+    actionMoveTabRight = new QAction(tr("Move tab &forward"), this);
+    actionMoveTabLeft = new QAction(tr("Move tab &backward"), this);
     actionHideGUI = new QAction(tr("&Hide menus"), this);
 
     actionNextTab->setEnabled(false);
     actionPrevTab->setEnabled(false);
+    actionMoveTabRight->setEnabled(false);
+    actionMoveTabLeft->setEnabled(false);
     actionClose->setEnabled(false);
 
     actionNewFile->setObjectName("actionNewFile");
@@ -352,15 +356,18 @@ PluginManager::PluginManager() {
     actionOpen->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentOpen));
     actionOpen->setShortcut(QKeySequence::Open);
 
-    actionClose->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::WindowClose));
+    actionClose->setIcon(QIcon::fromTheme("document-close"));
     // On windows this is Control+F4, which is lame.
     // actionClose->setShortcut(QKeySequence::Close);
     actionClose->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_W));
-    actionNextTab->setShortcuts({QKeySequence(Qt::ALT | Qt::Key_Right), QKeySequence::NextChild});
-    actionPrevTab->setShortcuts(
-        {QKeySequence(Qt::ALT | Qt::Key_Left), QKeySequence::PreviousChild});
-    actionHideGUI->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_M));
+    actionNextTab->setShortcuts({Qt::ALT | Qt::Key_Right, QKeySequence::NextChild});
+    actionPrevTab->setShortcuts({Qt::ALT | Qt::Key_Left, QKeySequence::PreviousChild});
+    actionMoveTabRight->setShortcut(Qt::ALT | Qt::SHIFT | Qt::Key_Right);
+    actionMoveTabLeft->setShortcut(Qt::ALT | Qt::SHIFT | Qt::Key_Left);
+    connect(actionMoveTabLeft, &QAction::triggered, this, &PluginManager::doMoveTabBackward);
+    connect(actionMoveTabRight, &QAction::triggered, this, &PluginManager::doMoveTabForward);
 
+    actionHideGUI->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_M));
     initGUI();
 
     for (auto i = 0; i < 8; ++i) {
@@ -594,7 +601,7 @@ void PluginManager::restoreSettings() {
     // restore opened files
     settingsManager->beginGroup("files");
     {
-        for (auto const &s : settingsManager->childKeys()) {
+        for (auto &s : settingsManager->childKeys()) {
             if (!s.startsWith("file")) {
                 continue;
             }
@@ -702,6 +709,8 @@ void PluginManager::updateActionsStatus() {
     actionClose->setEnabled(widgetsCount != 0);
     actionNextTab->setEnabled(widgetsCount > 1);
     actionPrevTab->setEnabled(widgetsCount > 1);
+    actionMoveTabLeft->setEnabled(widgetsCount > 1);
+    actionMoveTabRight->setEnabled(widgetsCount > 1);
 }
 
 /**
@@ -1097,6 +1106,8 @@ void PluginManager::initGUI() {
     menus[tr("Se&ttings")]->addAction(actionNextTab);
     menus[tr("Se&ttings")]->addAction(actionPrevTab);
     menus[tr("Se&ttings")]->addAction(actionHideGUI);
+    menus[tr("Se&ttings")]->addAction(actionMoveTabLeft);
+    menus[tr("Se&ttings")]->addAction(actionMoveTabRight);
     menus[tr("&Window")];
     menus[tr("&Help")];
 
@@ -1343,6 +1354,18 @@ void PluginManager::on_actionHideGUI_changed() {
 
     setUpdatesEnabled(true);
     emit minimizedModeChanged(actionHideGUI->isChecked());
+}
+
+void PluginManager::doMoveTabForward()
+{
+    auto i = mdiServer->getCurrentClientIndex();
+    mdiServer->moveClient(i, i + 1);
+}
+
+void PluginManager::doMoveTabBackward()
+{
+    auto i = mdiServer->getCurrentClientIndex();
+    mdiServer->moveClient(i, i - 1);
 }
 
 size_t PluginManager::visibleTabs() const { return mdiServer->getClientsCount(); }

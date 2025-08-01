@@ -25,6 +25,7 @@ class qmdiServer {
     virtual qmdiClient *getCurrentClient() const = 0;
     virtual void setCurrentClientIndex(int i) = 0;
     virtual int getCurrentClientIndex() const = 0;
+    virtual void moveClient(int oldPosition, int newPosition) = 0;
     virtual void updateClientName(const qmdiClient *client) = 0;
 
     void tryCloseClient(int i);

@@ -106,10 +106,12 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void on_actionPrev_triggered();
     void on_actionNext_triggered();
     void on_actionHideGUI_changed();
+    void doMoveTabForward();
+    void doMoveTabBackward();
 
+  public:
     size_t visibleTabs() const;
     qmdiClient *getMdiClient(int i) const;
-
     void loadConfig(const QString &fileName);
 
   signals:
@@ -126,6 +128,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     QAction *actionConfig;
     QAction *actionNextTab;
     QAction *actionPrevTab;
+    QAction *actionMoveTabRight;
+    QAction *actionMoveTabLeft;
     QAction *actionHideGUI;
 
   protected:

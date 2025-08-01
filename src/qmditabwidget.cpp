@@ -272,6 +272,10 @@ void qmdiTabWidget::setCurrentClientIndex(int i) { this->setCurrentIndex(i); }
 
 int qmdiTabWidget::getCurrentClientIndex() const { return this->currentIndex(); }
 
+void qmdiTabWidget::moveClient(int oldPosition, int newPosition) {
+    tabBar()->moveTab(oldPosition, newPosition);
+}
+
 void qmdiTabWidget::updateClientName(const qmdiClient *client) {
     auto w = dynamic_cast<const QWidget *>(client);
     if (!w) {
