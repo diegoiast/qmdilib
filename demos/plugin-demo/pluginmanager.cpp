@@ -416,7 +416,7 @@ PluginManager::~PluginManager() {
         delete settingsManager;
     }
 
-    for (auto &p : plugins) {
+    for (auto p : std::as_const(plugins)) {
         if (plugins.removeAll(p) == 1) {
             delete p;
         } else {
@@ -815,6 +815,37 @@ CommandArgs PluginManager::handleCommand(const QString &command, const CommandAr
         return result;
     }
     return {};
+}
+
+std::future<CommandArgs> PluginManager::handleCommandAsync(const QString &command, const CommandArgs &args) {
+    // Find the best plugin that can handle this command
+    IPlugin *bestPlugin = nullptr;
+    auto highestScore = 0;
+
+    for (auto &p : plugins) {
+        if (!p->isEnabled()) {
+            continue;
+        }
+        
+        // Check if the plugin can handle this command asynchronously
+        int asyncScore = p->canHandleAsyncCommand(command, args);
+        if (asyncScore > highestScore) {
+            bestPlugin = p;
+            highestScore = asyncScore;
+        }
+    }
+
+    // If we found a plugin that supports async for this command, use it
+    if (bestPlugin) {
+        return bestPlugin->handleCommandAsync(command, args);
+    }
+    
+    // Fall back to running the sync version in a separate thread
+    return std::async(std::launch::async, 
+        [this, command, args]() -> CommandArgs {
+            return handleCommand(command, args);
+        }
+    );
 }
 
 auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)

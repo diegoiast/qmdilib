@@ -62,6 +62,8 @@ class IPlugin : public QObject, public qmdiClient {
 
     virtual int canHandleCommand(const QString &command, const CommandArgs &args) const;
     virtual CommandArgs handleCommand(const QString &command, const CommandArgs &args);
+    virtual int canHandleAsyncCommand(const QString &command, const CommandArgs &args) const;
+    virtual std::future<CommandArgs> handleCommandAsync(const QString &command, const CommandArgs &args);
 
     bool isEnabled() const;
     void setEnabled(bool enable);

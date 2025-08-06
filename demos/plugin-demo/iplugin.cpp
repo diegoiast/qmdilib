@@ -499,4 +499,14 @@ int IPlugin::getiVersion() const { return iVersion; }
 
 int IPlugin::canHandleCommand(const QString &, const CommandArgs &) const { return 0; }
 
+std::future<CommandArgs> IPlugin::handleCommandAsync(const QString &command, const CommandArgs &args) {
+    return std::async(std::launch::async,
+        [this, command, args]() -> CommandArgs {
+            return handleCommand(command, args);
+        }
+    );
+}
+
 CommandArgs IPlugin::handleCommand(const QString &, const CommandArgs &) { return {}; }
+
+int IPlugin::canHandleAsyncCommand(const QString &, const CommandArgs &) const {return 0; }

@@ -10,6 +10,7 @@
 
 #include <QMainWindow>
 #include <QQueue>
+#include <future>
 
 #include "qmdiglobalconfig.h"
 #include "qmdihost.h"
@@ -78,7 +79,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     bool openFiles(const QStringList &fileNames);
 
     CommandArgs handleCommand(const QString &command, const CommandArgs &args);
-
+    std::future<CommandArgs> handleCommandAsync(const QString &command, const CommandArgs &args);
+    
   public:
     QDockWidget *createNewPanel(Panels p, const QString &name, const QString &title,
                                 QWidget *widget);
