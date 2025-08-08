@@ -26,7 +26,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QMDILIB_VERSION "0.1.0")
 set(QMDILIB_SOVERSION "0")
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport Test)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent Test)
 
 add_library(qmdilib 
     src/qmdiactiongroup.h
@@ -59,7 +59,7 @@ add_library(qmdilib
     src/pathwidget.h
 )
 
-target_link_libraries(qmdilib Qt::Widgets)
+target_link_libraries(qmdilib Qt::Widgets Qt6::Concurrent)
 target_include_directories(qmdilib PUBLIC src)
 set_property(TARGET qmdilib PROPERTY AUTOMOC ON)
 

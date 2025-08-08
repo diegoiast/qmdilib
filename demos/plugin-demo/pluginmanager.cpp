@@ -23,15 +23,14 @@
 #include <QTabWidget>
 #include <QToolBar>
 #include <QToolButton>
+#include <QtConcurrent>
+
 #include <qmdiconfigdialog.h>
 #include <qmdiglobalconfig.h>
 #include <qmdihost.h>
 #include <qmdipluginconfig.h>
 #include <qmdiserver.h>
 #include <qmditabwidget.h>
-#include <qnamespace.h>
-#include <sstream>
-#include <tuple>
 
 #include "iplugin.h"
 #include "pluginmanager.h"
@@ -817,7 +816,7 @@ CommandArgs PluginManager::handleCommand(const QString &command, const CommandAr
     return {};
 }
 
-std::future<CommandArgs> PluginManager::handleCommandAsync(const QString &command, const CommandArgs &args) {
+QFuture<CommandArgs> PluginManager::handleCommandAsync(const QString &command, const CommandArgs &args) {
     // Find the best plugin that can handle this command
     IPlugin *bestPlugin = nullptr;
     auto highestScore = 0;
@@ -840,12 +839,10 @@ std::future<CommandArgs> PluginManager::handleCommandAsync(const QString &comman
         return bestPlugin->handleCommandAsync(command, args);
     }
     
-    // Fall back to running the sync version in a separate thread
-    return std::async(std::launch::async, 
-        [this, command, args]() -> CommandArgs {
-            return handleCommand(command, args);
-        }
-    );
+    // Fall back to running the sync version in a QtConcurrent thread
+    return QtConcurrent::run([this, command, args]() -> CommandArgs {
+        return handleCommand(command, args);
+    });
 }
 
 auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
