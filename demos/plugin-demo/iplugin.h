@@ -66,6 +66,7 @@ class IPlugin : public QObject, public qmdiClient {
     virtual CommandArgs handleCommand(const QString &command, const CommandArgs &args);
     virtual int canHandleAsyncCommand(const QString &command, const CommandArgs &args) const;
     virtual QFuture<CommandArgs> handleCommandAsync(const QString &command, const CommandArgs &args);
+    virtual qmdiActionGroup *getContextMenuActions(const QString &menuId, const QString &filePath);
 
     bool isEnabled() const;
     void setEnabled(bool enable);

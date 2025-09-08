@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QFileSystemModel>
 #include <QStack>
 #include <QTreeView>
@@ -18,6 +20,8 @@ class qmdiActionGroup;
 class FileSystemWidget : public QWidget {
     Q_OBJECT
   public:
+    static constexpr const char *POPUPMENU = "FileSystemWidget::popupmenu";
+
     FileSystemWidget(QWidget *parent = nullptr);
     ~FileSystemWidget() override;
 

@@ -27,6 +27,7 @@ class qmdiActionGroup {
     ~qmdiActionGroup();
 
     void setName(const QString &newName);
+    bool empty() const { return actionGroupItems.empty() && actionGroups.empty(); }
     QString getName();
     void addAction(QAction *action, int location = -1);
     void addActions(QActionGroup *actions, int location = -1);

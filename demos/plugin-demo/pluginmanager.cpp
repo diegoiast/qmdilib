@@ -1352,6 +1352,25 @@ void PluginManager::on_actionNext_triggered() {
     mdiServer->setCurrentClientIndex(i);
 }
 
+qmdiActionGroup *PluginManager::getContextMenuActions(const QString &menuId,
+                                                      const QString &filePath) {
+    auto* actionGroup = new qmdiActionGroup(tr("Plugin Actions for %1").arg(menuId));
+    for (auto *plugin : std::as_const(plugins)) {
+        if (!plugin->isEnabled()) {
+            continue;
+        }
+        if (auto *pluginActions = plugin->getContextMenuActions(menuId, filePath)) {
+            actionGroup->mergeGroup(pluginActions);
+            delete pluginActions;
+        }
+    }
+    if (actionGroup->empty()) {
+        delete actionGroup;
+        return nullptr;
+    }
+    return actionGroup;
+}
+
 void PluginManager::on_actionHideGUI_changed() {
     setUpdatesEnabled(false);
 

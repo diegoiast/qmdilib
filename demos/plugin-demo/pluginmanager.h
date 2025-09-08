@@ -99,6 +99,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void disablePlugin(IPlugin *plugin);
     void closeClient();
     void focusCenter();
+    qmdiActionGroup *getContextMenuActions(const QString &menuId, const QString &filePath);
 
     void on_actionOpen_triggered();
     void on_actionClose_triggered();

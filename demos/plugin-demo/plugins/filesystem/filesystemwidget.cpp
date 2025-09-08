@@ -16,8 +16,9 @@
 #include <QProcess>
 #include <QPushButton>
 
+#include <pluginmanager.h>
+
 #include "filesystemwidget.h"
-#include "qmdiactiongroup.h"
 
 #if defined(WIN32)
 // clang-format off
@@ -362,14 +363,29 @@ void FileSystemWidget::showContextMenu(const QPoint &pos) {
     selectedFileIndex = index;
     index = selectedFileIndex.sibling(selectedFileIndex.row(), 0);
 
-    QFileInfo fileInfo = model->fileInfo(index);
+    qmdiActionGroup *extraActions = nullptr;
+    auto manager = qobject_cast<PluginManager *>(window());
+    auto fileInfo = model->fileInfo(index);
+    auto fileName = fileInfo.absoluteFilePath();
     editAction->setEnabled(fileInfo.isFile());
+    if (manager) {
+        extraActions = manager->getContextMenuActions(FileSystemWidget::POPUPMENU, fileName);
+        if (extraActions) {
+            contextMenu->mergeGroup(extraActions);
+        }
+    }
 
     auto menu = contextMenu->updateMenu(new QMenu(this));
     auto nameAction = new QAction(index.data().toString(), menu);
     nameAction->setEnabled(false);
     menu->insertAction(menu->actions().first(), nameAction);
     menu->exec(QCursor::pos());
+
+    if (extraActions) {
+        contextMenu->unmergeGroup(extraActions);
+        delete extraActions;
+    }
+    delete menu;
 }
 
 std::tuple<QString, QString> findUniqueName(const QModelIndex &currentIndex,

@@ -503,6 +503,12 @@ CommandArgs IPlugin::handleCommand(const QString &, const CommandArgs &) { retur
 
 int IPlugin::canHandleAsyncCommand(const QString &, const CommandArgs &) const {return 0; }
 
-QFuture<CommandArgs> IPlugin::handleCommandAsync(const QString &command, const CommandArgs &args) {
+QFuture<CommandArgs> IPlugin::handleCommandAsync(const QString &, const CommandArgs &) {
     return {};
+}
+
+qmdiActionGroup *IPlugin::getContextMenuActions(const QString &menuId, const QString &filePath) {
+    Q_UNUSED(menuId);
+    Q_UNUSED(filePath);
+    return nullptr;
 }
