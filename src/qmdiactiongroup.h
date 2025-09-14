@@ -22,31 +22,31 @@ class qmdiActionGroup {
     friend class qmdiHost;
 
   public:
-    qmdiActionGroup(const QString &name);
+    explicit qmdiActionGroup(const QString &name);
     qmdiActionGroup();
     ~qmdiActionGroup();
 
     void setName(const QString &newName);
     bool empty() const { return actionGroupItems.empty() && actionGroups.empty(); }
-    QString getName();
+    QString getName() const;
     void addAction(QAction *action, int location = -1);
     void addActions(QActionGroup *actions, int location = -1);
     void addWidget(QWidget *widget, int location = -1);
     void addMenu(QMenu *menu, int location = -1);
     void addSeparator(int location = -1);
-    bool containsAction(QAction *action);
-    void removeAction(QAction *action);
+    bool containsAction(const QAction *action) const;
+    void removeAction(const QAction *action);
     void removeActions(QActionGroup *actions);
-    void removeMenu(QMenu *menu);
-    void removeWidget(QWidget *widget);
+    void removeMenu(const QMenu *menu);
+    void removeWidget(const QWidget *widget);
     void setMergePoint();
-    int getMergePoint();
+    int getMergePoint() const;
 
     void mergeGroup(qmdiActionGroup *group);
-    void unmergeGroup(qmdiActionGroup *group);
+    void unmergeGroup(const qmdiActionGroup *group);
 
-    QMenu *updateMenu(QMenu *menu = nullptr);
-    QToolBar *updateToolBar(QToolBar *toolbar);
+    QMenu *updateMenu(QMenu *menu = nullptr, bool needeEmptyIcon = false) const;
+    QToolBar *updateToolBar(QToolBar *toolbar) const;
     void addActionsToWidget(QWidget *widget);
     void removeActionsFromWidget(QWidget *widget);
 

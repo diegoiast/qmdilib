@@ -9,8 +9,10 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
+#include <QIcon>
 #include <QMainWindow>
 #include <QMenu>
+#include <QStyle>
 #include <QToolBar>
 
 #include "qmdiactiongroup.h"
@@ -178,7 +180,7 @@ void qmdiActionGroup::setName(const QString &newName) { this->name = newName; }
  * for describing the toolbar or menu item, and thus is very
  * important to set it correctly.
  */
-QString qmdiActionGroup::getName() { return name; }
+QString qmdiActionGroup::getName() const { return name; }
 
 /**
  * \brief add a new action to the action group
@@ -314,7 +316,9 @@ void qmdiActionGroup::addSeparator(int location) {
  * Use this function for testing if some action is found on
  * the action group.
  */
-bool qmdiActionGroup::containsAction(QAction *action) { return actionGroupItems.contains(action); }
+bool qmdiActionGroup::containsAction(const QAction *action) const {
+    return actionGroupItems.contains(action);
+}
 
 /**
  * \brief remove an action from the action group
@@ -325,7 +329,7 @@ bool qmdiActionGroup::containsAction(QAction *action) { return actionGroupItems.
  *
  * \see addAction
  */
-void qmdiActionGroup::removeAction(QAction *action) {
+void qmdiActionGroup::removeAction(const QAction *action) {
     auto i = actionGroupItems.indexOf(action);
     if (i != -1) {
         actionGroupItems.removeAt(i);
@@ -344,7 +348,7 @@ void qmdiActionGroup::removeAction(QAction *action) {
  * \see addAction
  */
 void qmdiActionGroup::removeActions(QActionGroup *actions) {
-    for (auto &a : actions->actions()) {
+    for (auto const &a : actions->actions()) {
         removeAction(a);
     }
 }
@@ -362,7 +366,7 @@ void qmdiActionGroup::removeActions(QActionGroup *actions) {
  * \see addMenu
  * \see updateMenu
  */
-void qmdiActionGroup::removeMenu(QMenu *menu) {
+void qmdiActionGroup::removeMenu(const QMenu *menu) {
     auto i = actionGroupItems.indexOf(menu);
     if (i != -1) {
         actionGroupItems.removeAt(i);
@@ -382,7 +386,7 @@ void qmdiActionGroup::removeMenu(QMenu *menu) {
  * \see updateMenu
  * \see updateToolBar
  */
-void qmdiActionGroup::removeWidget(QWidget *widget) {
+void qmdiActionGroup::removeWidget(const QWidget *widget) {
     auto i = actionGroupItems.indexOf(widget);
     if (i != -1) {
         actionGroupItems.removeAt(i);
@@ -415,10 +419,10 @@ void qmdiActionGroup::setMergePoint() { mergeLocation = actionGroupItems.count()
  * \todo action groups should also have merging priorities
  * \see mergeGroup
  */
-int qmdiActionGroup::getMergePoint() {
+int qmdiActionGroup::getMergePoint() const {
     auto i = -1;
 
-    for (auto &actionGroup : actionGroups) {
+    for (auto const actionGroup : actionGroups) {
         if (actionGroup->mergeLocation > i) {
             i = actionGroup->mergeLocation;
         }
@@ -514,7 +518,7 @@ void qmdiActionGroup::mergeGroup(qmdiActionGroup *group) {
  *
  * \see mergeGroup
  */
-void qmdiActionGroup::unmergeGroup(qmdiActionGroup *group) {
+void qmdiActionGroup::unmergeGroup(const qmdiActionGroup *group) {
     if (!group) {
         return;
     }
@@ -523,7 +527,7 @@ void qmdiActionGroup::unmergeGroup(qmdiActionGroup *group) {
         breakCount = breakCount > 1 ? -1 : breakCount - 1;
     }
 
-    for (auto &o : group->actionGroupItems) {
+    for (auto const o : group->actionGroupItems) {
         if (!actionGroupItems.contains(o)) {
             continue;
         }
@@ -569,7 +573,7 @@ void qmdiActionGroup::unmergeGroup(qmdiActionGroup *group) {
  *
  * \see updateToolBar
  */
-QMenu *qmdiActionGroup::updateMenu(QMenu *menu) {
+QMenu *qmdiActionGroup::updateMenu(QMenu *menu, bool needEmptyIcon) const {
     if (actionGroupItems.isEmpty()) {
         delete menu;
         return nullptr;
@@ -577,6 +581,16 @@ QMenu *qmdiActionGroup::updateMenu(QMenu *menu) {
 
     if (!menu) {
         menu = new QMenu(name);
+        if (needEmptyIcon) {
+            auto iconSize =
+                QSize(menu->style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, menu),
+                      menu->style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, menu));
+
+            auto emptyPixmap = QPixmap(iconSize);
+            emptyPixmap.fill(Qt::transparent);
+            auto emptyIcon = QIcon(emptyPixmap);
+            menu->setIcon(emptyIcon);
+        }
     } else {
         menu->setTitle(name);
     }
@@ -613,7 +627,7 @@ QMenu *qmdiActionGroup::updateMenu(QMenu *menu) {
  *
  * \see updateMenu
  */
-QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) {
+QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) const {
     if (!toolbar) {
         toolbar = new QToolBar(name);
     } else {

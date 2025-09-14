@@ -193,7 +193,7 @@ QMenu *qmdiActionGroupList::updatePopMenu(QMenu *popupMenu) {
     }
 
     for (auto &i : actionGroups) {
-        auto m = i->updateMenu();
+        auto m = i->updateMenu(nullptr, true);
         if (m) {
             popupMenu->addMenu(m);
         }
