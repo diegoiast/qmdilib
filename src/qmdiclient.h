@@ -11,12 +11,15 @@
 // the reason for including this file, and not declare the classes
 // is for the developer using this library - one single include
 #include "qmdiactiongroup.h"
-
 #include "qmdiactiongrouplist.h"
+
+#include <QHash>
 
 class QString;
 class qmdiServer;
 class qmdiHost;
+
+using qmdiClientState = QHash<QString, QVariant>;
 
 class qmdiClient {
   public:
@@ -30,6 +33,9 @@ class qmdiClient {
     virtual void on_client_merged(qmdiHost *host);
     virtual void on_client_unmerged(qmdiHost *host);
     virtual std::optional<std::tuple<int, int, int>> get_coordinates() const;
+
+    virtual qmdiClientState getState() const { return {}; }
+    virtual void setState(const qmdiClientState &state) { Q_UNUSED(state); };
 
     qmdiActionGroupList menus;
     qmdiActionGroupList toolbars;

@@ -240,33 +240,56 @@ void ClosedDocuments::setAllDocuments(const QStringList &newList) {
  * A simple pointer to a QSettings variable.
  */
 
-// When reading a file from the config file, it might have line/row/col/zoom it needs to be splitted
-// format is "{string}#{int},{int},{int}". First string is mandatory, all other optional
-std::tuple<QString, int, int, int> parseFilename(const QString &input) {
-    auto hashPos = input.indexOf('#');
-    if (hashPos == -1) {
-        return std::make_tuple(input, 0, 0, 0);
+auto static parseFilename(const QString &input) -> std::tuple<QString, qmdiClientState> {
+    QString path;
+    qmdiClientState state;
+
+    auto hashIndex = input.indexOf('#');
+    if (hashIndex == -1) {
+        return {input, state};
     }
 
-    auto filename = input.left(hashPos);
-    auto extraData = input.mid(hashPos + 1).toStdString();
-    auto row = 0;
-    auto col = 0;
-    auto zoom = 0;
+    path = input.left(hashIndex);
+    auto paramString = input.mid(hashIndex + 1);
+    auto pairs = paramString.split(',', Qt::SkipEmptyParts);
+    for (auto const &pair : pairs) {
+        auto equalIndex = pair.indexOf('=');
+        if (equalIndex != -1) {
+            QVariant value;
+            auto key = pair.left(equalIndex).trimmed();
+            auto valueStr = pair.mid(equalIndex + 1).trimmed();
+            auto ok = false;
+            auto intValue = valueStr.toInt(&ok);
 
-    std::istringstream iss(extraData);
-    std::string rowStr, colStr, zoomStr;
-
-    if (std::getline(iss, rowStr, ',')) {
-        std::istringstream(rowStr) >> row;
-        if (std::getline(iss, colStr, ',')) {
-            std::istringstream(colStr) >> col;
-            if (std::getline(iss, zoomStr)) {
-                std::istringstream(zoomStr) >> zoom;
+            if (ok) {
+                value = intValue;
+            } else {
+                auto doubleValue = valueStr.toDouble(&ok);
+                if (ok) {
+                    value = doubleValue;
+                } else {
+                    value = valueStr;
+                }
             }
+            state.insert(key, value);
         }
     }
-    return std::make_tuple(filename, row, col, zoom);
+    return {path, state};
+}
+
+auto static encodeFileName(const QString &filename, const qmdiClientState &state) -> QString {
+    if (state.isEmpty()) {
+        return filename;
+    }
+
+    QStringList paramList;
+    for (auto it = state.constBegin(); it != state.constEnd(); ++it) {
+        auto key = it.key();
+        auto value = it.value().toString();
+        paramList.append(QString("%1=%2").arg(key, value));
+    }
+    auto paramString = paramList.join(',');
+    return QString("%1#%2").arg(filename, paramString);
 }
 
 /**
@@ -605,9 +628,13 @@ void PluginManager::restoreSettings() {
                 continue;
             }
             auto fileNameDetails = settingsManager->value(s).toString();
-            auto [fileName, row, col, zoom] = parseFilename(fileNameDetails);
-            QApplication::processEvents();
-            openFile(fileName, row, col, zoom);
+            auto [fileName, state] = parseFilename(fileNameDetails);
+            if (openFile(fileName)) {
+                auto c = clientForFileName(fileName);
+                if (c) {
+                    c->setState(state);
+                }
+            }
         }
 
         // re-select the current tab
@@ -657,8 +684,8 @@ void PluginManager::saveSettings() {
     }
     settingsManager->endGroup();
 
-    // store saved files
-    settingsManager->remove("files"); // remove all old loaded files
+    // store saved opened files
+    settingsManager->remove("files");
     settingsManager->beginGroup("files");
     if (mdiServer->getClientsCount() != 0) {
         qmdiClient *c = nullptr;
@@ -668,21 +695,12 @@ void PluginManager::saveSettings() {
             if (!c) {
                 continue;
             }
-            s = c->mdiClientFileName();
-            if (!s.isEmpty()) {
-                auto coords = c->get_coordinates();
-                if (coords.has_value()) {
-                    auto [col, row, zoom] = coords.value();
-                    settingsManager->setValue(
-                        QString("file%1").arg(i),
-                        QString("%1#%2,%3,%4").arg(s).arg(col).arg(row).arg(zoom));
-                } else {
-                    settingsManager->setValue(QString("file%1").arg(i), s);
-                }
 
-            } else {
-                settingsManager->setValue(QString("file%1").arg(i), "");
-            }
+            auto savedFileName = c->mdiClientFileName();
+            auto state = c->getState();
+            auto valueName = QString("file%1").arg(i);
+            auto fullValue = encodeFileName(savedFileName, state);
+            settingsManager->setValue(valueName, fullValue);
         }
         settingsManager->setValue("current", mdiServer->getCurrentClientIndex());
         settingsManager->setValue("closed", closedDocuments.getAllDocuments());
