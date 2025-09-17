@@ -80,19 +80,6 @@
  * to remove the toolBarList
  */
 
-/**
- * \var qmdiHost::updateMenusAndToolBars
- * \brief lock modifications of menus and toolbars
- *
- * If this variable is set to true (default) when merging the menus/toolbars
- * of a qmdiClient the menus and toolbars of the host are modified as well.
- *
- * You can disable this if you don't want to update the menus or toolbars when
- * changing tabs in a qmdiTabWidget for example.
- *
- * \since 0.0.5
- * \see mergeClient
- */
 
 /**
  * \brief default constructor
@@ -168,12 +155,8 @@ void qmdiHost::updateGUI(QMainWindow *window) {
  * widget. This way when changing tabs in a qmdiHost (like qmdiTabWidget) and
  * menus are hidden, the actions are still available.
  *
- * Since version 0.0.5 this method will update the menus and toolbars only if
- * updateMenusAndToolBars is true (default).
- *
  * \see updateGUI
  * \see unmergeClient
- * \see updateMenusAndToolBars
  * \see qmdiClient::on_client_merged()
  */
 void qmdiHost::mergeClient(qmdiClient *client) {
@@ -212,12 +195,8 @@ void qmdiHost::mergeClient(qmdiClient *client) {
  * and if it's succesful, it will remove all it's menus+toolbars actions from
  * the widget.
  *
- * Since version 0.0.5 this method will update the menus and toolbars only if
- * updateMenusAndToolBars is true (default).
- *
  * \see updateGUI
  * \see mergeClient
- * \see updateMenusAndToolBars
  * \see qmdiClient::on_client_unmerged()
  */
 void qmdiHost::unmergeClient(qmdiClient *client) {
