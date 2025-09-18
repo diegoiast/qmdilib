@@ -617,7 +617,7 @@ QMenu *qmdiActionGroup::updateMenu(QMenu *menu, bool needEmptyIcon) const {
  * \return an updated toolbar
  *
  * Call this function to update a QToolBar from these definitions.
- * If \param toolbar is \b nullptr then a new toolbar will be allocated.
+ * If \param toolbar is \b nullptr then nothing is done.
  *
  * The returned value is not unallocated by this function, and it's
  * up to the programmer to un-allocate the memory used by the created menu.
@@ -628,20 +628,15 @@ QMenu *qmdiActionGroup::updateMenu(QMenu *menu, bool needEmptyIcon) const {
  * \see updateMenu
  */
 QToolBar *qmdiActionGroup::updateToolBar(QToolBar *toolbar) const {
-    if (!toolbar) {
-        toolbar = new QToolBar(name);
-    } else {
-        toolbar->setWindowTitle(name);
-    }
-
-    if (!toolbar->isVisible()) {
+    if (!toolbar || toolbar->isHidden()) {
         return toolbar;
     }
 
+    toolbar->setWindowTitle(name);
     toolbar->setUpdatesEnabled(false);
     toolbar->hide();
     toolbar->clear();
-    int i = 0;
+    auto i = 0;
     for (auto &o : actionGroupItems) {
         auto a = dynamic_cast<QAction *>(o);
         if (a) {
