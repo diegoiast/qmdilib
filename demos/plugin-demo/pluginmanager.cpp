@@ -470,6 +470,15 @@ PluginManager::~PluginManager() {
  * \see openFile()
  */
 int PluginManager::tabForFileName(const QString &fileName) const {
+    auto url = QUrl(fileName);
+
+    // Some plugins notify about status of files, this is not really
+    // a file to be opened.
+    auto scheme = url.scheme();
+    auto isLocalFile = url.isLocalFile();
+    if (!scheme.isEmpty() && !isLocalFile) {
+        return -1;
+    }
     if (fileName.isEmpty()) {
         return -1;
     }
@@ -480,7 +489,8 @@ int PluginManager::tabForFileName(const QString &fileName) const {
             continue;
         }
 
-        if (c->mdiClientFileName() == fileName) {
+        auto clientName = c->mdiClientFileName();
+        if (clientName == fileName) {
             return i;
         }
     }
