@@ -397,20 +397,21 @@ int IPlugin::canOpenFile(const QString &fileName) {
  *
  * \see IPlugin::newFileActions()
  */
-bool IPlugin::openFile(const QString &fileName, int x, int y, int z) {
+qmdiClient *IPlugin::openFile(const QString &fileName, int x, int y, int z) {
     Q_UNUSED(fileName);
     Q_UNUSED(x);
     Q_UNUSED(y);
     Q_UNUSED(z);
     // refuse to open any file
-    return false;
+    return nullptr;
 }
 
-void IPlugin::navigateFile(qmdiClient *client, int x, int y, int z) {
+qmdiClient *IPlugin::navigateFile(qmdiClient *client, int x, int y, int z) {
     Q_UNUSED(client);
     Q_UNUSED(x);
     Q_UNUSED(y);
     Q_UNUSED(z);
+    return nullptr;
 }
 
 /**

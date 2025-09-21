@@ -74,7 +74,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void restoreSettings();
     void saveSettings();
     void updateActionsStatus();
-    bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
+    qmdiClient *openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
     bool openFiles(const QStringList &fileNames);
 
     CommandArgs handleCommand(const QString &command, const CommandArgs &args);

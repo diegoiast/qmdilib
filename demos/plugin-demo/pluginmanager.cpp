@@ -639,11 +639,8 @@ void PluginManager::restoreSettings() {
             }
             auto fileNameDetails = settingsManager->value(s).toString();
             auto [fileName, state] = parseFilename(fileNameDetails);
-            if (openFile(fileName)) {
-                auto c = clientForFileName(fileName);
-                if (c) {
-                    c->setState(state);
-                }
+            if (auto c = openFile(fileName)) {
+                c->setState(state);
             }
         }
 
@@ -763,7 +760,7 @@ void PluginManager::updateActionsStatus() {
  * \see IPlugin::openFile()
  * \todo how does a developer know why the loading of a file failed?
  */
-bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
+qmdiClient *PluginManager::openFile(const QString &fileName, int x, int y, int z) {
     // see which plugin is the most suited for openning this file
     IPlugin *bestPlugin = nullptr;
     auto highestScore = -1;
@@ -783,7 +780,7 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
     if (!bestPlugin) {
         // no plugin can handle this file,
         // this should not happen, and usually means a bug
-        return false;
+        return nullptr;
     }
 
     auto i = tabForFileName(fileName);
@@ -791,8 +788,7 @@ bool PluginManager::openFile(const QString &fileName, int x, int y, int z) {
     if (i != -1) {
         auto client = mdiServer->getClient(i);
         mdiServer->setCurrentClientIndex(i);
-        bestPlugin->navigateFile(client, x, y, x);
-        return true;
+        return bestPlugin->navigateFile(client, x, y, x);
     }
 
     // ask best plugin to open the file

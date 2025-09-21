@@ -59,8 +59,8 @@ class IPlugin : public QObject, public qmdiClient {
 
     virtual QStringList myExtensions();
     virtual int canOpenFile(const QString &fileName);
-    virtual bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
-    virtual void navigateFile(qmdiClient *client, int x, int y, int z);
+    virtual qmdiClient *openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
+    virtual qmdiClient *navigateFile(qmdiClient *client, int x, int y, int z);
 
     virtual int canHandleCommand(const QString &command, const CommandArgs &args) const;
     virtual CommandArgs handleCommand(const QString &command, const CommandArgs &args);
