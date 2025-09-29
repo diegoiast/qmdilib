@@ -1423,6 +1423,7 @@ void PluginManager::on_actionHideGUI_changed() {
     mergeClient(currentClient());
     updateGUI();
 
+    saveSettings();
     setUpdatesEnabled(true);
     emit minimizedModeChanged(actionHideGUI->isChecked());
 }
