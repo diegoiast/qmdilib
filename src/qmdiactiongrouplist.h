@@ -10,6 +10,7 @@
 
 #include <QList>
 
+class QWidget;
 class QToolBar;
 class QObject;
 class QAction;

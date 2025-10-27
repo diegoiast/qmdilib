@@ -41,6 +41,7 @@ class qmdiActionGroup {
     void removeWidget(const QWidget *widget);
     void setMergePoint();
     int getMergePoint() const;
+    QAction *findActionNamed(const QString &);
 
     void mergeGroup(qmdiActionGroup *group);
     void unmergeGroup(const qmdiActionGroup *group);

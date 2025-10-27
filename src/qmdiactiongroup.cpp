@@ -436,6 +436,34 @@ int qmdiActionGroup::getMergePoint() const {
 }
 
 /**
+ * \brief finds an action
+ * \param name the action name
+ * \return the found action, or nullptr if not found
+ *
+ * This will search inside the action group for an action with the specified name. There is
+ * an assumption that the action has been set an object name (`QObject::setObjectName()`). It will
+ * look for the action in all nested action groups.
+ *
+ * If not found, then it will look in local group items.
+ */
+QAction *qmdiActionGroup::findActionNamed(const QString &name) {
+    for (auto &actionGroup : actionGroups) {
+        auto action = actionGroup->findActionNamed(name);
+        if (action) {
+            return action;
+        }
+    }
+    for (auto &groupItem : actionGroupItems) {
+        if (groupItem->objectName() == name) {
+            if (auto action = qobject_cast<QAction *>(groupItem)) {
+                return action;
+            }
+        }
+    }
+    return {};
+}
+
+/**
  * \brief merges another action group actions into this action group
  * \param group the new group to be merged
  *
@@ -466,9 +494,7 @@ void qmdiActionGroup::mergeGroup(qmdiActionGroup *group) {
         if (actionGroupItems.contains(o)) {
             continue;
         }
-
         auto a = qobject_cast<QAction *>(o);
-
         if (a) {
             int m = getMergePoint();
 
