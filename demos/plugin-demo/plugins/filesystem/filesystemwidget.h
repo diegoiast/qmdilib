@@ -58,7 +58,7 @@ class FileSystemWidget : public QWidget {
     void updateButtonStates();
 
   public:
-    qmdiActionGroup *contextMenu;
+    qmdiActionGroup *contextMenu = nullptr;
 
     QFileSystemModel *model;
     QTreeView *treeView;

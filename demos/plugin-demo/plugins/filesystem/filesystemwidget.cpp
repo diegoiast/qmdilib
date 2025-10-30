@@ -208,6 +208,7 @@ FileSystemWidget::~FileSystemWidget() {
 }
 
 void FileSystemWidget::initContextMenu() {
+    delete contextMenu;
     contextMenu = new qmdiActionGroup(tr("File actions"));
     editAction = new QAction(tr("Edit"), this);
     editAction->setObjectName("editAction");

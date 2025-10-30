@@ -447,6 +447,7 @@ PluginManager::~PluginManager() {
             return;
         }
     }
+    delete ui;
 }
 
 /**

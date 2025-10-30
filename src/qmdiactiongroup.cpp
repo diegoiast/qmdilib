@@ -136,7 +136,8 @@ qmdiActionGroup::qmdiActionGroup() : qmdiActionGroup(QString()) {}
  * Empty destructor. Destroys the object.
  */
 qmdiActionGroup::~qmdiActionGroup() {
-    // TODO should we delete all ?
+    actionGroupItems.clear();
+    actionGroups.clear();
 }
 
 /**
