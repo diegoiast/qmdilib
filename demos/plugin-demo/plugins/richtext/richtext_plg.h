@@ -22,8 +22,9 @@ class RichTextPlugin : public IPlugin {
     QWidget *getConfigDialog();
     virtual QStringList myExtensions() override;
     virtual int canOpenFile(const QString &fileName) override;
-    virtual bool canCloseClient() override;
-    virtual bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1) override;
+    virtual bool canCloseClient(CloseReason) override;
+    virtual qmdiClient *openFile(const QString &fileName, int x = -1, int y = -1,
+                                 int z = -1) override;
 
   public slots:
     void fileNew();

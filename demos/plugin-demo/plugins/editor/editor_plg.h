@@ -20,7 +20,8 @@ class EditorPlugin : public IPlugin {
     virtual void showAbout() override;
     virtual QStringList myExtensions() override;
     virtual int canOpenFile(const QString &fileName) override;
-    virtual bool openFile(const QString &fileName, int x = -1, int y = -1, int z = -1) override;
+    virtual qmdiClient *openFile(const QString &fileName, int x = -1, int y = -1,
+                                 int z = -1) override;
 
   public slots:
     void fileNew();

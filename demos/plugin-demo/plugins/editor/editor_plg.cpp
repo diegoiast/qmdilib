@@ -135,7 +135,7 @@ int EditorPlugin::canOpenFile(const QString &fileName) {
  * without any problems.
  *
  */
-bool EditorPlugin::openFile(const QString &fileName, int x, int y, int z) {
+qmdiClient *EditorPlugin::openFile(const QString &fileName, int x, int y, int z) {
     auto editor = new QexTextEdit2(fileName, true, dynamic_cast<QMainWindow *>(mdiServer));
     auto fontName = config.getVariable<QString>(CONFIG_KEY_FONT);
     auto newFont = QFont();
@@ -152,7 +152,7 @@ bool EditorPlugin::openFile(const QString &fileName, int x, int y, int z) {
     // TODO
     // 1) move the cursor as specified in the parameters
     // 2) return false if the was was not open for some reason
-    return true;
+    return editor;
     Q_UNUSED(x);
     Q_UNUSED(y);
     Q_UNUSED(z);

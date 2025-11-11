@@ -87,7 +87,7 @@ int RichTextPlugin::canOpenFile(const QString &fileName) {
     }
 }
 
-bool RichTextPlugin::canCloseClient() {
+bool RichTextPlugin::canCloseClient(CloseReason) {
     qDebug("RichTextPlugin::canCloseClient()");
     return true;
 }
@@ -112,16 +112,12 @@ bool RichTextPlugin::canCloseClient() {
  * without any problems.
  *
  */
-bool RichTextPlugin::openFile(const QString &fileName, int x, int y, int z) {
+qmdiClient *RichTextPlugin::openFile(const QString &fileName, int x, int y, int z) {
     RichTextClient *editor = new RichTextClient(fileName, dynamic_cast<QMainWindow *>(mdiServer));
     //	editor-setMDIclientName( tr("RichText") );
     editor->hide();
     mdiServer->addClient(editor);
-
-    // TODO
-    // 1) move the cursor as specified in the parameters
-    // 2) return false if the was was not open for some reason
-    return true;
+    return editor;
     Q_UNUSED(x);
     Q_UNUSED(y);
     Q_UNUSED(z);
