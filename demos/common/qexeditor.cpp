@@ -82,7 +82,7 @@ QexTextEdit::QexTextEdit(QString file, bool singleToolbar, QWidget *parent) : QT
 
 QexTextEdit::~QexTextEdit() {}
 
-bool QexTextEdit::canCloseClient() {
+bool QexTextEdit::canCloseClient(CloseReason) {
     if (!document()->isModified()) {
         return true;
     }
@@ -226,12 +226,6 @@ bool QexTextEdit::fileSaveAs() {
     return saveFile(fileName);
 }
 
-bool QexTextEdit::fileClose() { return closeClient(); }
+bool QexTextEdit::fileClose() { return closeClient(CloseReason::CloseTab); }
 
-void QexTextEdit::helpShowHelp() {
-    if (!mdiServer) {
-        return;
-    }
-
-    // 	mdiServer->
-}
+void QexTextEdit::helpShowHelp() {}

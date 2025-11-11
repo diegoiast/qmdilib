@@ -10,9 +10,11 @@
 
 #include <functional>
 
+// Needed for CloseReason
+#include <qmdiclient.h>
+
 class QPoint;
 class qmdiClient;
-class qmdiHost;
 
 class qmdiServer {
   public:
@@ -30,7 +32,7 @@ class qmdiServer {
 
     void tryCloseClient(int i);
     void tryCloseAllButClient(int i);
-    void tryCloseAllClients();
+    void tryCloseAllClients(CloseReason reason);
     void showClientMenu(int i, QPoint p);
     void setOnMdiSelected(std::function<void(qmdiClient *, int)> &&callback) {
         onMdiSelected = std::move(callback);

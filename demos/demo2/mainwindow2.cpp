@@ -125,7 +125,7 @@ void MainWindow2::fileClose() {
         delete tabWidget->currentWidget();
     } else {
         // otherwise, ask politelly for it to close it
-        c->closeClient();
+        c->closeClient(CloseReason::CloseTab);
     }
 }
 

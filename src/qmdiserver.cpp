@@ -11,6 +11,7 @@
 
 #include "qmdiclient.h"
 #include "qmdiserver.h"
+#include "qmdiactiongroup.h"
 
 /**
  * \class qmdiServer
@@ -161,7 +162,7 @@ void qmdiServer::tryCloseClient(int i) {
         return;
     }
 
-    client->closeClient();
+    client->closeClient(CloseReason::CloseTab);
 }
 
 /**
@@ -202,7 +203,7 @@ void qmdiServer::tryCloseAllButClient(int i) {
             continue;
         }
 
-        c->closeClient();
+        c->closeClient(CloseReason::CloseTab);
     }
 }
 
@@ -216,14 +217,14 @@ void qmdiServer::tryCloseAllButClient(int i) {
  *
  * \since 0.0.4
  */
-void qmdiServer::tryCloseAllClients() {
+void qmdiServer::tryCloseAllClients(CloseReason reason) {
     auto c = getClientsCount();
     for (auto i = 0; i < c; i++) {
-        qmdiClient *client = getClient(i);
+        auto client = getClient(i);
         if (!client) {
             continue;
         }
-        client->closeClient();
+        client->closeClient(reason);
     }
 }
 
@@ -285,7 +286,7 @@ void qmdiServer::showClientMenu(int i, QPoint p) {
     } else if (q == closeOthers) {
         tryCloseAllButClient(i);
     } else if (q == closeAll) {
-        tryCloseAllClients();
+        tryCloseAllClients(CloseReason::CloseTab);
     }
 }
 

@@ -15,7 +15,7 @@ class RichTextClient : public RichTextWidget, public qmdiClient {
     Q_OBJECT
   public:
     RichTextClient(QString fileName, QWidget *parent);
-    bool canCloseClient();
+    bool canCloseClient(CloseReason);
     QString mdiClientFileName();
 
   private:

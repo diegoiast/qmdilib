@@ -190,8 +190,8 @@ qmdiClient::~qmdiClient() {
  * \see QObject::deleteLater()
  * \see qmdiHost::onClientClosed()
  */
-bool qmdiClient::closeClient() {
-    if (!canCloseClient()) {
+bool qmdiClient::closeClient(CloseReason reason) {
+    if (!canCloseClient(reason)) {
         return false;
     }
     this->mdiServer->mdiHost->unmergeClient(this);
@@ -219,7 +219,7 @@ bool qmdiClient::closeClient() {
  *
  * \see closeClient()
  */
-bool qmdiClient::canCloseClient() { return true; }
+bool qmdiClient::canCloseClient(CloseReason) { return true; }
 
 /**
  * \brief The file opened by this MDI client
@@ -310,3 +310,8 @@ void qmdiClient::on_client_unmerged(qmdiHost *host) {
  * \since 0.1.1
  */
 std::optional<std::tuple<int, int, int>> qmdiClient::get_coordinates() const { return {}; }
+
+qmdiClientState qmdiClient::getState() const { return {}; }
+
+void qmdiClient::setState(const qmdiClientState &) {}
+

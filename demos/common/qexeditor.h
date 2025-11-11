@@ -24,7 +24,7 @@ class QexTextEdit : public QTextEdit, public qmdiClient {
     QexTextEdit(QString file = QString(), bool singleToolbar = false, QWidget *parent = 0);
     virtual ~QexTextEdit() override;
 
-    virtual bool canCloseClient() override;
+    virtual bool canCloseClient(CloseReason) override;
     virtual QString mdiClientFileName() override;
 
     void initInterface(bool singleToolbar = false);

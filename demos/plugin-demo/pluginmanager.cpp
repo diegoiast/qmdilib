@@ -543,7 +543,7 @@ void PluginManager::closeEvent(QCloseEvent *event) {
         if (!client) {
             continue;
         }
-        if (!client->canCloseClient()) {
+        if (!client->canCloseClient(CloseReason::ApplicationQuit)) {
             event->ignore();
             return;
         }
@@ -1211,7 +1211,7 @@ void PluginManager::closeClient() {
             ui->mdiTabWidget->currentWidget()->deleteLater();
         }
     } else {
-        client->closeClient();
+        client->closeClient(CloseReason::CloseTab);
     }
 }
 

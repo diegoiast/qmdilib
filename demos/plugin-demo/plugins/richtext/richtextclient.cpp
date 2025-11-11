@@ -40,7 +40,7 @@ RichTextClient::RichTextClient(QString fileName, QWidget *parent)
     actionUnderline->setIcon(QIcon(":/images/textunder.png"));
 }
 
-bool RichTextClient::canCloseClient() {
+bool RichTextClient::canCloseClient(CloseReason) {
 #if 0
 	if (!editor->document()->isModified())
 		return true;
