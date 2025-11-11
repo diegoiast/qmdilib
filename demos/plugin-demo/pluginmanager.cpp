@@ -1265,7 +1265,7 @@ void PluginManager::on_actionOpen_triggered() {
             extens += ";;";
         }
 
-        auto static regexp = QRegularExpression("\\((.*)\\)");
+        auto static regexp = QRegularExpression("\\(.*\\)");
         auto static regexp2 = QRegularExpression("\\b*\\b");
         auto m = regexp.match(s);
         auto s1 = m.captured(1).simplified();
