@@ -157,11 +157,9 @@ qmdiServer::~qmdiServer() {}
  */
 void qmdiServer::tryCloseClient(int i) {
     auto client = getClient(i);
-
     if (!client) {
         return;
     }
-
     client->closeClient(CloseReason::CloseTab);
 }
 
@@ -190,20 +188,17 @@ void qmdiServer::tryCloseClient(int i) {
 void qmdiServer::tryCloseAllButClient(int i) {
     auto n = getClientsCount();
     auto client = getClient(i);
-
     for (auto j = 0; j < n; j++) {
         auto c = getClient(j);
-
-        // item is not an mdi client
         if (!c) {
             continue;
         }
-
         if (c == client) {
             continue;
         }
-
-        c->closeClient(CloseReason::CloseTab);
+        if (!c->closeClient(CloseReason::CloseTab)) {
+            return;
+        }
     }
 }
 
@@ -224,7 +219,9 @@ void qmdiServer::tryCloseAllClients(CloseReason reason) {
         if (!client) {
             continue;
         }
-        client->closeClient(reason);
+        if (!client->closeClient(reason)) {
+            return;
+        }
     }
 }
 
