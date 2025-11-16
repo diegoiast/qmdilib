@@ -193,7 +193,7 @@ QMenu *qmdiActionGroupList::updatePopMenu(QMenu *popupMenu) {
     }
 
     for (auto &i : actionGroups) {
-        auto m = i->updateMenu(nullptr, true);
+        auto const m = i->updateMenu(nullptr, true);
         if (m) {
             popupMenu->addMenu(m);
         }
@@ -225,7 +225,7 @@ QList<QToolBar *> *qmdiActionGroupList::updateToolBar(QList<QToolBar *> *toolbar
         toolbars = new QList<QToolBar *>;
     }
 
-    for (auto &i : actionGroups) {
+    for (auto const i : actionGroups) {
         QToolBar *tb = nullptr;
         auto actionName = i->getName();
 
