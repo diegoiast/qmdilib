@@ -9,7 +9,7 @@ OUTPUT_FILE=${OUTPUT}.tar.gz
 TEMP=$(mktemp -d /tmp/${OUTPUT}-XXXXXXXX)
 #mkdir ${TEMP}
 
-git archive master --format=tar.gz --prefix=${OUTPUT}/ > ${OUTPUT_FILE}
+git archive main --format=tar.gz --prefix=${OUTPUT}/ > ${OUTPUT_FILE}
 pushd .
 mv ${OUTPUT_FILE} ${TEMP}
 cd ${TEMP}
