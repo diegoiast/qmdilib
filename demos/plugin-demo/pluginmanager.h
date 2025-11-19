@@ -99,6 +99,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     void disablePlugin(IPlugin *plugin);
     void closeClient();
     void focusCenter();
+    void updateToolbarsMenu();
     qmdiActionGroup *getContextMenuActions(const QString &menuId, const QString &filePath);
 
     void on_actionOpen_triggered();
@@ -132,6 +133,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     QAction *actionPrevTab;
     QAction *actionMoveTabRight;
     QAction *actionMoveTabLeft;
+    QList<QDockWidget*> getAllDockWidgets() const;
     QAction *actionHideGUI;
 
   protected:

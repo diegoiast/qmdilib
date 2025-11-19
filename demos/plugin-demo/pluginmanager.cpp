@@ -313,14 +313,6 @@ PluginManager::PluginManager() {
     closedDocumentsMenu = new QMenu(this);
     closedDocumentsMenu->menuAction()->setText(tr("Closed documents..."));
     toolbarsMenu = new QMenu(this);
-    connect(toolbarsMenu, &QMenu::aboutToShow, toolbarsMenu, [this]() {
-        toolbarsMenu->clear();
-        auto allToolbars = findChildren<QDockWidget *>();
-        for (auto &toolbar : allToolbars) {
-            auto toggleAction = toolbar->toggleViewAction();
-            toolbarsMenu->addAction(toggleAction);
-        }
-    });
 
     showDocksAction = new QAction("&Docks", this);
     connect(showDocksAction, &QAction::triggered, this, [this]() {
@@ -907,11 +899,11 @@ QDockWidget *PluginManager::createNewPanel(Panels p, const QString &name, const 
 
     auto currentDock = findFirstDockWidget(this, dockArea);
     if (currentDock) {
-        tabifyDockWidget(currentDock, dock);
+        tabifyDockWidget(dock, currentDock);
     } else {
         addDockWidget(dockArea, dock);
     }
-
+    QTimer::singleShot(0, this, &PluginManager::updateToolbarsMenu);
     return dock;
 }
 
@@ -1229,6 +1221,47 @@ void PluginManager::focusCenter() {
     ui->mdiTabWidget->currentWidget()->setFocus();
 }
 
+void PluginManager::updateToolbarsMenu() {
+    for (auto d : toolbarsMenu->actions()) {
+        delete d;
+    }
+    toolbarsMenu->clear();
+
+    auto allDocks = getAllDockWidgets();
+    auto index = 0;
+    for (auto dock : allDocks) {
+        auto action = new QAction(dock->windowTitle(), toolbarsMenu);
+        action->setCheckable(true);
+        action->setChecked(dock->isVisible());
+        if (index < 9) {
+            action->setShortcut(QKeySequence(Qt::ControlModifier | (Qt::Key_1 + index)));
+            action->setShortcutContext(Qt::ApplicationShortcut);
+        }
+        connect(action, &QAction::triggered, this, [dock] {
+            if (!dock->isVisible()) {
+                dock->show();
+                dock->raise();
+                dock->widget()->setFocus();
+                return;
+            }
+
+            if (dock->widget()->hasFocus()) {
+                dock->hide();
+            } else {
+                dock->show();
+                dock->raise();
+                dock->widget()->setFocus();
+            }
+        });
+        connect(dock, &QDockWidget::visibilityChanged, action, &QAction::setChecked);
+        toolbarsMenu->addAction(action);
+        addAction(action);
+        dock->setToolTip(dock->windowTitle() + " " +
+                         action->shortcut().toString(QKeySequence::NativeText));
+        ++index;
+    }
+}
+
 /**
  * \brief show the open dialog and load files
  *
@@ -1446,3 +1479,56 @@ size_t PluginManager::visibleTabs() const { return mdiServer->getClientsCount();
 qmdiClient *PluginManager::getMdiClient(int i) const { return mdiServer->getClient(i); }
 
 void PluginManager::loadConfig(const QString &fileName) { config.loadFromFile(fileName); }
+
+QList<QDockWidget *> PluginManager::getAllDockWidgets() const {
+    auto docks = findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly);
+
+    std::stable_sort(docks.begin(), docks.end(), [this](QDockWidget *a, QDockWidget *b) -> bool {
+        auto areaA = dockWidgetArea(a);
+        auto areaB = dockWidgetArea(b);
+
+        // Global area order: Top → Left → Bottom → Right (counter-clockwise)
+        auto areaOrderA = (areaA == Qt::TopDockWidgetArea)      ? 0
+                          : (areaA == Qt::LeftDockWidgetArea)   ? 1
+                          : (areaA == Qt::BottomDockWidgetArea) ? 2
+                          : (areaA == Qt::RightDockWidgetArea)  ? 3
+                                                                : 4;
+
+        auto areaOrderB = (areaB == Qt::TopDockWidgetArea)      ? 0
+                          : (areaB == Qt::LeftDockWidgetArea)   ? 1
+                          : (areaB == Qt::BottomDockWidgetArea) ? 2
+                          : (areaB == Qt::RightDockWidgetArea)  ? 3
+                                                                : 4;
+        if (areaOrderA != areaOrderB) {
+            return areaOrderA < areaOrderB;
+        }
+
+        auto tabGroupA = tabifiedDockWidgets(a);
+        auto tabGroupB = tabifiedDockWidgets(b);
+        if (tabGroupA != tabGroupB) {
+            auto ra = a->geometry();
+            auto rb = b->geometry();
+            if (ra.y() != rb.y()) {
+                return ra.y() < rb.y(); // top-most first
+            }
+            return ra.x() < rb.x();
+        }
+
+        auto indexA = tabGroupA.indexOf(a);
+        auto indexB = tabGroupA.indexOf(b);
+        if (areaA == Qt::LeftDockWidgetArea) {
+            return indexA > indexB;
+        }
+        if (areaA == Qt::RightDockWidgetArea) {
+            return indexA < indexB;
+        }
+        if (areaA == Qt::TopDockWidgetArea) {
+            return indexA < indexB;
+        }
+        if (areaA == Qt::BottomDockWidgetArea) {
+            return indexA > indexB;
+        }
+        return indexA < indexB;
+    });
+    return docks;
+}
