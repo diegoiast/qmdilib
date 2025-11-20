@@ -30,6 +30,7 @@ class qmdiActionGroupList {
 
     qmdiActionGroup *operator[](const QString &name);
     qmdiActionGroup *getActionGroup(const QString &name);
+    qmdiActionGroup *addActionGroup(const QString &name, const QString &after);
     void mergeGroupList(qmdiActionGroupList *group);
     void unmergeGroupList(qmdiActionGroupList *group);
 

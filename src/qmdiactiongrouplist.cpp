@@ -92,6 +92,41 @@ qmdiActionGroup *qmdiActionGroupList::getActionGroup(const QString &name) {
 }
 
 /**
+ * \brief qmdiActionGroupList::addActionGroup
+ * \param name how to name the new action group
+ * \param after which action group this should follow
+ * \return the generated action group
+ *
+ * This method will create a new action group. The new group will be added after the named
+ * group you requested. If that group is not found, the new group will be appended.
+ *
+ * If you want to append - just pass a {} string.
+ *
+ * Note you can add the same group name several times. Unline getActionGroup which does validation
+ * this function does not, and unless you save the group, you might not be able to find it (if
+ * several group exist with the same name).
+ *
+ * \see getActionGroup()
+ */
+qmdiActionGroup *qmdiActionGroupList::addActionGroup(const QString &name, const QString &after) {
+    auto index = -1;
+    for (auto j = 0; j < actionGroups.size(); j++) {
+        auto ag = actionGroups.at(j);
+        if (ag->getName() == after) {
+            index = j;
+            break;
+        }
+    }
+    auto item = new qmdiActionGroup(name);
+    if (index != -1) {
+        actionGroups.insert(index + 1, item);
+    } else {
+        actionGroups.append(item);
+    }
+    return item;
+}
+
+/**
  * \brief merge another action group list
  * \param group the new group to merge into this one
  *
