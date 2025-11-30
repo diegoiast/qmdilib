@@ -876,9 +876,8 @@ auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dock
 
 QDockWidget *PluginManager::createNewPanel(Panels p, const QString &name, const QString &title,
                                            QWidget *widget) {
-    auto dock = new QDockWidget(this);
+    auto dock = new QDockWidget(title, this);
     dock->setWidget(widget);
-    dock->setWindowTitle(title);
     dock->setObjectName(name);
 
     auto dockArea = Qt::NoDockWidgetArea;
@@ -895,11 +894,13 @@ QDockWidget *PluginManager::createNewPanel(Panels p, const QString &name, const 
     case Panels::South:
         dockArea = Qt::BottomDockWidgetArea;
         break;
+    default:
+        return dock;
     }
 
     auto currentDock = findFirstDockWidget(this, dockArea);
     if (currentDock) {
-        tabifyDockWidget(dock, currentDock);
+        tabifyDockWidget(currentDock, dock);
     } else {
         addDockWidget(dockArea, dock);
     }
