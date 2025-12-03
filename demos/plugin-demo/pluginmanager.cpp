@@ -842,7 +842,7 @@ QFuture<CommandArgs> PluginManager::handleCommandAsync(const QString &command, c
         if (!p->isEnabled()) {
             continue;
         }
-        
+
         // Check if the plugin can handle this command asynchronously
         int asyncScore = p->canHandleAsyncCommand(command, args);
         if (asyncScore > highestScore) {
@@ -855,7 +855,7 @@ QFuture<CommandArgs> PluginManager::handleCommandAsync(const QString &command, c
     if (bestPlugin) {
         return bestPlugin->handleCommandAsync(command, args);
     }
-    
+
     // Fall back to running the sync version in a QtConcurrent thread
     return QtConcurrent::run([this, command, args]() -> CommandArgs {
         return handleCommand(command, args);
@@ -1103,7 +1103,7 @@ void PluginManager::disablePlugin(IPlugin *plugin) {
  * The actions available are:
  *  - File / New (a pop up menu, see IPlugin::newFileActions )
  *  - File / Open (see on_actionOpen_triggered() )
- *  - File / <- this is the merge point
+ *  - File / < -- this is the merge point
  *  - File / Quit
  *  - Settings / Configure (see on_actionConfigure_triggered() )
  *  - Settings / Next tab (see on_actionConfigure_triggered() )
@@ -1444,21 +1444,9 @@ void PluginManager::on_actionHideGUI_changed() {
     for (auto b : findChildren<QToolBar *>()) {
         b->setVisible(!actionHideGUI->isChecked());
     }
-
-    for (auto d : findChildren<QDockWidget *>()) {
-        if (!actionHideGUI->isChecked()) {
-            d->setFeatures(d->features() | QDockWidget::DockWidgetMovable |
-                           QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
-        } else {
-            d->setFeatures(d->features() & ~QDockWidget::DockWidgetMovable &
-                           QDockWidget::DockWidgetClosable & ~QDockWidget::DockWidgetFloatable);
-        }
-    }
-
     mergeClient(currentClient());
     updateGUI();
 
-    saveSettings();
     setUpdatesEnabled(true);
     emit minimizedModeChanged(actionHideGUI->isChecked());
 }
