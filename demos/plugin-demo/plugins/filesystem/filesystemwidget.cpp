@@ -47,6 +47,135 @@ void showFileProperties(const QFileInfo &fileInfo) {
     QProcess::startDetached("open", QStringList() << "-R" << filePath);
 }
 #else
+
+#include <QCheckBox>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QFileIconProvider>
+#include <QFileInfo>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QStyle>
+#include <QTabWidget>
+#include <QVBoxLayout>
+
+auto showFilePropertiesDialog(const QFileInfo &info) -> bool {
+    if (!info.exists()) {
+        return false;
+    }
+
+    auto dialog = new QDialog;
+    auto mainLayout = new QVBoxLayout(dialog);
+    auto topLayout = new QHBoxLayout;
+    auto iconLabel = new QLabel;
+    auto icon = QFileIconProvider{}.icon(info);
+    auto infoLayout = new QVBoxLayout;
+    auto nameLabel = new QLabel("<big><b>" + info.fileName().toHtmlEscaped() + "</b></big>");
+
+    mainLayout->setContentsMargins(12, 12, 12, 12);
+
+    dialog->setWindowTitle(info.fileName() + " Properties");
+    dialog->setModal(true);
+    dialog->setWindowFlags(dialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    mainLayout->setSpacing(10);
+    topLayout->setSpacing(12);
+
+    if (icon.isNull()) {
+        icon = dialog->style()->standardIcon(QStyle::SP_FileIcon);
+    }
+
+    iconLabel->setPixmap(icon.pixmap(48, 48));
+    infoLayout->setSpacing(4);
+    nameLabel->setTextFormat(Qt::RichText);
+    auto typeText = info.isDir()              ? "File Folder"
+                    : info.suffix().isEmpty() ? "File"
+                                              : info.suffix().toUpper() + " File";
+
+    auto typeLabel = new QLabel("Type: " + typeText);
+    auto locationLabel = new QLabel("Location: " + info.absolutePath());
+
+    infoLayout->addWidget(nameLabel);
+    infoLayout->addWidget(typeLabel);
+    infoLayout->addWidget(locationLabel);
+    infoLayout->addStretch();
+    topLayout->addWidget(iconLabel);
+    topLayout->addLayout(infoLayout);
+    topLayout->addStretch();
+    mainLayout->addLayout(topLayout);
+
+    auto tabWidget = new QTabWidget;
+    auto generalTab = new QWidget;
+    auto grid = new QGridLayout(generalTab);
+
+    mainLayout->addWidget(tabWidget, 1);
+    grid->setColumnStretch(1, 1);
+    grid->setHorizontalSpacing(12);
+    grid->setVerticalSpacing(6);
+
+    auto dateFmt = "ddd MMM d yyyy  h:mm AP";
+    auto row = 0;
+    auto bytes = info.size();
+    auto sizeStr = [bytes] {
+        if (bytes < 1024) {
+            return QString::number(bytes) + " bytes";
+        }
+        if (bytes < 1024 * 1024) {
+            return QString("%1 KB").arg(bytes / 1024.0, 0, 'f', 1);
+        }
+        return QString("%1 MB").arg(bytes / (1024.0 * 1024.0), 0, 'f', 2);
+    }();
+
+    grid->addWidget(new QLabel("Size:"), row, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(sizeStr), row++, 1);
+    grid->addWidget(new QLabel("Size on disk:"), row, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(sizeStr), row++, 1);
+    grid->addWidget(new QLabel("Created:"), row, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(info.birthTime().isValid() ? info.birthTime().toString(dateFmt)
+                                                          : info.lastModified().toString(dateFmt)),
+                    row++, 1);
+    grid->addWidget(new QLabel("Modified:"), row, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(info.lastModified().toString(dateFmt)), row++, 1);
+    grid->addWidget(new QLabel("Accessed:"), row, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(info.lastRead().toString(dateFmt)), row++, 1);
+
+    auto permBox = new QGroupBox("Permissions");
+    auto permLayout = new QGridLayout(permBox);
+    auto p = info.permissions();
+    auto addRow = [&](int r, const QString &who, bool rOk, bool wOk, bool xOk) {
+        permLayout->addWidget(new QLabel(who), r, 0);
+        auto *cbR = new QCheckBox("Read");
+        cbR->setChecked(rOk);
+        cbR->setEnabled(false);
+        auto *cbW = new QCheckBox("Write");
+        cbW->setChecked(wOk);  // clean up
+        cbW->setEnabled(false);
+        auto *cbX = new QCheckBox("Execute");
+        cbX->setChecked(xOk);
+        cbX->setEnabled(false);
+        permLayout->addWidget(cbR, r, 1);
+        permLayout->addWidget(cbW, r, 2);
+        permLayout->addWidget(cbX, r, 3);
+    };
+
+    permLayout->setColumnStretch(3, 1);
+    addRow(0, "Owner", p & QFile::ReadOwner, p & QFile::WriteOwner, p & QFile::ExeOwner);
+    addRow(1, "Group", p & QFile::ReadGroup, p & QFile::WriteGroup, p & QFile::ExeGroup);
+    addRow(2, "Others", p & QFile::ReadOther, p & QFile::WriteOther, p & QFile::ExeOther);
+    grid->addWidget(permBox, row, 0, 1, 2);
+    grid->setRowStretch(row++, 1);
+    tabWidget->addTab(generalTab, "&General");
+
+    auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
+    mainLayout->addWidget(buttonBox);
+    QObject::connect(buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
+    dialog->adjustSize();
+    auto accepted = dialog->exec() == QDialog::Accepted;
+    delete dialog;
+    return accepted;
+}
+
 void showFileProperties(const QFileInfo &fileInfo) {
     if (!fileInfo.exists()) {
         qWarning() << "File does not exist:" << fileInfo.absoluteFilePath();
@@ -56,9 +185,10 @@ void showFileProperties(const QFileInfo &fileInfo) {
     // Detect the desktop environment
     QString desktopEnv;
     QString envDesktop = qgetenv("XDG_CURRENT_DESKTOP").toUpper();
-    if (envDesktop.contains("GNOME")) {
+    /*if (envDesktop.contains("GNOME")) {
         desktopEnv = "GNOME";
-    } else if (envDesktop.contains("KDE") || envDesktop.contains("KWIN")) {
+    } else */
+    if (envDesktop.contains("KDE") || envDesktop.contains("KWIN")) {
         desktopEnv = "KDE";
     } else if (envDesktop.contains("XFCE") || envDesktop.contains("Xfce")) {
         desktopEnv = "Xfce";
@@ -77,19 +207,7 @@ void showFileProperties(const QFileInfo &fileInfo) {
         args << "--properties" << fileInfo.absoluteFilePath();
         QProcess::startDetached("thunar", args);
     } else {
-        QString properties =
-            QCoreApplication::translate("showFileProperties",
-                                        "Path: %1\nSize: %2 bytes\nType: %3\nLast Modified: %4")
-                .arg(fileInfo.absoluteFilePath())
-                .arg(fileInfo.size())
-                .arg(fileInfo.isDir()
-                         ? QCoreApplication::translate("showFileProperties", "Directory")
-                         : QCoreApplication::translate("showFileProperties", "File"))
-                .arg(fileInfo.lastModified().toString());
-
-        QMessageBox::information(
-            nullptr, QCoreApplication::translate("showFileProperties", "File Properties"),
-            properties);
+        showFilePropertiesDialog(fileInfo);
     }
 }
 #endif
