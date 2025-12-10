@@ -156,6 +156,9 @@ qmdiServer::~qmdiServer() {}
  * \see qmdiClient::closeClient()
  */
 void qmdiServer::tryCloseClient(int i) {
+    if (getClientsCount() < 2 && keepSingleClient) {
+        return;
+    }
     auto client = getClient(i);
     if (!client) {
         return;
@@ -215,6 +218,9 @@ void qmdiServer::tryCloseAllButClient(int i) {
 void qmdiServer::tryCloseAllClients(CloseReason reason) {
     auto c = getClientsCount();
     for (auto i = 0; i < c; i++) {
+        if (getClientsCount() < 2 && keepSingleClient) {
+            return;
+        }
         auto client = getClient(i);
         if (!client) {
             continue;

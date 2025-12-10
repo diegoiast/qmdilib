@@ -1198,6 +1198,9 @@ void PluginManager::initGUI() {
  * it will just delete the widget by calling QObject::deleteLater()
  */
 void PluginManager::closeClient() {
+    if (mdiServer->getClientsCount() < 2 && mdiServer->keepSingleClient) {
+        return;
+    }
     auto client = mdiServer->getCurrentClient();
     if (client == nullptr) {
         if (ui->mdiTabWidget) {

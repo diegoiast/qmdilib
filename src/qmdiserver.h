@@ -41,6 +41,7 @@ class qmdiServer {
 
     qmdiHost *mdiHost = nullptr;
     bool clientMenuShowsName = true;
+    bool keepSingleClient = false;
 
   protected:
     std::function<void(qmdiClient *, int)> onMdiSelected;
