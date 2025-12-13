@@ -163,7 +163,9 @@ void qmdiServer::tryCloseClient(int i) {
     if (!client) {
         return;
     }
-    client->closeClient(CloseReason::CloseTab);
+    if (client->closeClient(CloseReason::CloseTab)) {
+        delete client;
+    }
 }
 
 /**
@@ -192,16 +194,10 @@ void qmdiServer::tryCloseAllButClient(int i) {
     auto n = getClientsCount();
     auto client = getClient(i);
     for (auto j = 0; j < n; j++) {
-        auto c = getClient(j);
-        if (!c) {
+        if (i == j) {
             continue;
         }
-        if (c == client) {
-            continue;
-        }
-        if (!c->closeClient(CloseReason::CloseTab)) {
-            return;
-        }
+        tryCloseClient(i);
     }
 }
 
@@ -216,18 +212,12 @@ void qmdiServer::tryCloseAllButClient(int i) {
  * \since 0.0.4
  */
 void qmdiServer::tryCloseAllClients(CloseReason reason) {
-    auto c = getClientsCount();
-    for (auto i = 0; i < c; i++) {
-        if (getClientsCount() < 2 && keepSingleClient) {
+    auto const count = getClientsCount();
+    for (auto i = count-1; i >= 0; i--) {
+        if (i == 0 && keepSingleClient) {
             return;
         }
-        auto client = getClient(i);
-        if (!client) {
-            continue;
-        }
-        if (!client->closeClient(reason)) {
-            return;
-        }
+        tryCloseClient(i);
     }
 }
 
