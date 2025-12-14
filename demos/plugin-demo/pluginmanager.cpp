@@ -1207,7 +1207,9 @@ void PluginManager::closeClient() {
             ui->mdiTabWidget->currentWidget()->deleteLater();
         }
     } else {
-        client->closeClient(CloseReason::CloseTab);
+        if (client->closeClient(CloseReason::CloseTab)) {
+            delete client;
+        }
     }
 }
 

@@ -200,7 +200,6 @@ bool qmdiClient::closeClient(CloseReason reason) {
         if (auto w = qobject_cast<QWidget *>(o)) {
             w->hide();
         }
-        o->deleteLater();
     }
     return true;
 }
