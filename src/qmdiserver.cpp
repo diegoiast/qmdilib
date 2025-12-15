@@ -193,11 +193,14 @@ void qmdiServer::tryCloseClient(int i) {
 void qmdiServer::tryCloseAllButClient(int i) {
     auto n = getClientsCount();
     auto client = getClient(i);
-    for (auto j = 0; j < n; j++) {
-        if (i == j) {
+    for (auto j = n-1; j >= 0; j--) {
+        auto c = getClient(j);
+        if (client == c) {
             continue;
         }
-        tryCloseClient(i);
+        if (c->closeClient(CloseReason::CloseTab)) {
+            delete c;
+        }
     }
 }
 
