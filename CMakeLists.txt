@@ -1,25 +1,27 @@
 cmake_minimum_required(VERSION 3.20)
 project(qmdilib VERSION 0.1.1 LANGUAGES CXX)
 
-
 option(QMDILIB_BUILD_EXAMPLES "Build examples for qmdilib" ON)
 option(QMDILIB_USE_MOLD "Link using mold, if available" ON)
 option(QMDILIB_TESTS "Build and run tests for qmdilib" ON)
+option(QMDILIB_USE_CMAKEFORMAT "Should we add an clang-format target" ON)
 
 include(FetchContent)
-include(cmake/CPM.cmake)
 include(cmake/mold-linker.cmake)
 
-cpmaddpackage(
-    NAME     Format.cmake
-    VERSION     1.8.2
-    GITHUB_REPOSITORY
-    TheLartians/Format.cmake
-    OPTIONS # set to yes skip cmake formatting
-    "FORMAT_SKIP_CMAKE NO"
-    # path to exclude (optional, supports regular expressions)
-    "CMAKE_FORMAT_EXCLUDE cmake/*"
-)
+if (QMDILIB_USE_CMAKEFORMAT)
+    include(cmake/CPM.cmake)
+    cpmaddpackage(
+        NAME     Format.cmake
+        VERSION     1.8.2
+        GITHUB_REPOSITORY
+        TheLartians/Format.cmake
+        OPTIONS # set to yes skip cmake formatting
+        "FORMAT_SKIP_CMAKE NO"
+        # path to exclude (optional, supports regular expressions)
+        "CMAKE_FORMAT_EXCLUDE cmake/*"
+    )
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
