@@ -252,7 +252,7 @@ auto static parseFilename(const QString &input) -> std::tuple<QString, qmdiClien
     path = input.left(hashIndex);
     auto paramString = input.mid(hashIndex + 1);
     auto pairs = paramString.split(',', Qt::SkipEmptyParts);
-    for (auto const &pair : pairs) {
+    for (auto const &pair : std::as_const(pairs)) {
         auto equalIndex = pair.indexOf('=');
         if (equalIndex != -1) {
             QVariant value;
@@ -615,7 +615,10 @@ void PluginManager::restoreSettings() {
     {
         restoreState(settingsManager->value("state").toByteArray());
         restoreGeometry(settingsManager->value("geometry").toByteArray());
-        actionHideGUI->setChecked(settingsManager->value("hidegui").toBool());
+        if (settingsManager->contains("hidegui")) {
+            auto status = settingsManager->value("hidegui").toBool();
+            actionHideGUI->setChecked(status);
+        }
     }
     settingsManager->endGroup();
 
@@ -1235,7 +1238,7 @@ void PluginManager::updateToolbarsMenu() {
 
     auto allDocks = getAllDockWidgets();
     auto index = 0;
-    for (auto dock : allDocks) {
+    for (auto dock : std::as_const(allDocks)) {
         auto action = new QAction(dock->windowTitle(), toolbarsMenu);
         action->setCheckable(true);
         action->setChecked(dock->isVisible());
