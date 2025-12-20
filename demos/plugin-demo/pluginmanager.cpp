@@ -1288,47 +1288,67 @@ void PluginManager::updateToolbarsMenu() {
  */
 void PluginManager::on_actionOpen_triggered() {
     static QString workingDir;
-    QString extens, allExtens;
-    QStringList extensAvailable;
+    static const QRegularExpression re(R"(\((.*)\))");
 
-    // get list of available extensions to open from each plugin
+    QStringList filters;
+    QStringList allSupportedExtensions;
+    QString allFilter;
+    QSet<QString> uniquePatterns;
+
     for (auto p : std::as_const(plugins)) {
         if (!p->enabled) {
             continue;
         }
-        extensAvailable << p->myExtensions();
-    }
-
-    auto j = extensAvailable.size();
-    for (auto i = 0; i < j; ++i) {
-        auto s = extensAvailable.at(i);
-        extens += s;
-        if (i < j - 1) {
-            extens += ";;";
-        }
-
-        auto static regexp = QRegularExpression("\\(.*\\)");
-        auto static regexp2 = QRegularExpression("\\b*\\b");
-        auto m = regexp.match(s);
-        auto s1 = m.captured(1).simplified();
-        if (!s1.isEmpty()) {
-            s1.remove("*.*");
-            s1.remove(regexp2);
-            allExtens += " " + s1;
+        auto pluginFilters = p->myExtensions();
+        for (auto &filter : pluginFilters) {
+            if (filter.isEmpty()) {
+                continue;
+            }
+            filters << filter;
+            auto match = re.match(filter);
+            if (match.hasMatch()) {
+                auto patternsBlock = match.captured(1).trimmed();
+                auto individualPatterns = patternsBlock.split(' ', Qt::SkipEmptyParts);
+                for (auto &pat : individualPatterns) {
+                    auto cleaned = pat.trimmed();
+                    if (!cleaned.isEmpty()) {
+                        uniquePatterns.insert(cleaned);
+                    }
+                }
+            }
         }
     }
-    // all supported files is the first item
-    extens = tr("All supported files") + QString(" (%1);;").arg(allExtens) + extens;
 
-    // 	TODO do we need to add "all files"?
-    // 	extens = extens + ";;" + tr("All files") + " (*.*)";
-    // 	qDebug("all extensions: %s", qPrintable(allExtens) );
+    if (!uniquePatterns.isEmpty()) {
+        allSupportedExtensions = uniquePatterns.values();
+        auto allPatterns = allSupportedExtensions.join(' ');
+        allFilter = tr("All supported files") + allPatterns;
+    }
 
-    auto s = QFileDialog::getOpenFileNames(nullptr, tr("Choose a file"), workingDir, extens);
-    if (s.isEmpty()) {
+    QStringList sortedFilters;
+    for (auto &filter : filters) {
+        if (!filter.startsWith(tr("All supported files"))) {
+            sortedFilters.append(filter);
+        }
+    }
+
+    std::sort(sortedFilters.begin(), sortedFilters.end());
+    filters.clear();
+    if (!allFilter.isEmpty()) {
+        filters.prepend(allFilter);
+    }
+    filters.append(sortedFilters);
+
+    auto filterString = filters.join(";;");
+    auto selectedFiles =
+        QFileDialog::getOpenFileNames(nullptr, tr("Open File(s)"), workingDir, filterString);
+    if (selectedFiles.isEmpty()) {
         return;
     }
-    openFiles(s);
+
+    QFileInfo fi(selectedFiles.first());
+    workingDir = fi.absolutePath();
+    openFiles(selectedFiles);
 }
 
 /**
