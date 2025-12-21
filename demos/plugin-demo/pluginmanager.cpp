@@ -1322,7 +1322,7 @@ void PluginManager::on_actionOpen_triggered() {
     if (!uniquePatterns.isEmpty()) {
         allSupportedExtensions = uniquePatterns.values();
         auto allPatterns = allSupportedExtensions.join(' ');
-        allFilter = tr("All supported files") + allPatterns;
+        allFilter = tr("All supported files") + " " + allPatterns;
     }
 
     QStringList sortedFilters;
@@ -1331,6 +1331,7 @@ void PluginManager::on_actionOpen_triggered() {
             sortedFilters.append(filter);
         }
     }
+    sortedFilters.append(")");
 
     std::sort(sortedFilters.begin(), sortedFilters.end());
     filters.clear();
