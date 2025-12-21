@@ -34,7 +34,7 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer {
 
   public:
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
-    virtual void addClient(qmdiClient *client) override;
+    virtual void addClient(qmdiClient *client, int position = -1) override;
     virtual void deleteClient(qmdiClient *client) override;
     virtual int getClientsCount() const override;
 
@@ -42,6 +42,7 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer {
     virtual qmdiClient *getCurrentClient() const override;
     virtual void setCurrentClientIndex(int i) override;
     virtual int getCurrentClientIndex() const override;
+    virtual int getClientIndex(qmdiClient *client) const override;
     virtual void moveClient(int oldPosition, int newPosition) override;
     virtual void updateClientName(const qmdiClient *client) override;
 

@@ -20,13 +20,14 @@ class qmdiServer {
   public:
     qmdiServer();
     virtual ~qmdiServer();
-    virtual void addClient(qmdiClient *client) = 0;
+    virtual void addClient(qmdiClient *client, int position = -1) = 0;
     virtual void deleteClient(qmdiClient *) = 0;
     virtual int getClientsCount() const = 0;
     virtual qmdiClient *getClient(int i) const = 0;
     virtual qmdiClient *getCurrentClient() const = 0;
     virtual void setCurrentClientIndex(int i) = 0;
     virtual int getCurrentClientIndex() const = 0;
+    virtual int getClientIndex(qmdiClient *client) const = 0;
     virtual void moveClient(int oldPosition, int newPosition) = 0;
     virtual void updateClientName(const qmdiClient *client) = 0;
 

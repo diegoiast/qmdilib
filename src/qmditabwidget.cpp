@@ -172,7 +172,7 @@ void qmdiTabWidget::on_rightMouse_pressed(int i, QPoint p) { showClientMenu(i, p
  * be inserted into QTabWidget. If the client does not derive
  * QWidget the function returns without doing anything.
  */
-void qmdiTabWidget::addClient(qmdiClient *client) {
+void qmdiTabWidget::addClient(qmdiClient *client, int position) {
     auto w = dynamic_cast<QWidget *>(client);
 
     if (w == nullptr) {
@@ -182,7 +182,7 @@ void qmdiTabWidget::addClient(qmdiClient *client) {
         return;
     }
 
-    auto i = addTab(w, client->mdiClientName);
+    auto i = insertTab(position, w, client->mdiClientName);
     w->setFocus();
     setTabToolTip(i, client->mdiClientFileName());
     setCurrentIndex(i);
@@ -271,6 +271,13 @@ qmdiClient *qmdiTabWidget::getCurrentClient() const {
 void qmdiTabWidget::setCurrentClientIndex(int i) { this->setCurrentIndex(i); }
 
 int qmdiTabWidget::getCurrentClientIndex() const { return this->currentIndex(); }
+
+int qmdiTabWidget::getClientIndex(qmdiClient *client) const {
+    if (auto w = dynamic_cast<QWidget *>(client)) {
+        return this->indexOf(w);
+    }
+    return -1;
+}
 
 void qmdiTabWidget::moveClient(int oldPosition, int newPosition) {
     tabBar()->moveTab(oldPosition, newPosition);
