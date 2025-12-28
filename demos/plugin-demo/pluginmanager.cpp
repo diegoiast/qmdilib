@@ -1288,13 +1288,11 @@ void PluginManager::updateToolbarsMenu() {
  */
 void PluginManager::on_actionOpen_triggered() {
     static QString workingDir;
-    static const QRegularExpression re(R"(\((.*)\))");
 
+    if (workingDir.isEmpty()) {
+        workingDir = QDir::homePath();
+    }
     QStringList filters;
-    QStringList allSupportedExtensions;
-    QString allFilter;
-    QSet<QString> uniquePatterns;
-
     for (auto p : std::as_const(plugins)) {
         if (!p->enabled) {
             continue;
@@ -1304,50 +1302,18 @@ void PluginManager::on_actionOpen_triggered() {
             if (filter.isEmpty()) {
                 continue;
             }
-            filters << filter;
-            auto match = re.match(filter);
-            if (match.hasMatch()) {
-                auto patternsBlock = match.captured(1).trimmed();
-                auto individualPatterns = patternsBlock.split(' ', Qt::SkipEmptyParts);
-                for (auto &pat : individualPatterns) {
-                    auto cleaned = pat.trimmed();
-                    if (!cleaned.isEmpty()) {
-                        uniquePatterns.insert(cleaned);
-                    }
-                }
-            }
+            filters.append(filter);
         }
     }
 
-    if (!uniquePatterns.isEmpty()) {
-        allSupportedExtensions = uniquePatterns.values();
-        auto allPatterns = allSupportedExtensions.join(' ');
-        allFilter = tr("All supported files") + " " + allPatterns;
-    }
-
-    QStringList sortedFilters;
-    for (auto &filter : filters) {
-        if (!filter.startsWith(tr("All supported files"))) {
-            sortedFilters.append(filter);
-        }
-    }
-    sortedFilters.append(")");
-
-    std::sort(sortedFilters.begin(), sortedFilters.end());
-    filters.clear();
-    if (!allFilter.isEmpty()) {
-        filters.prepend(allFilter);
-    }
-    filters.append(sortedFilters);
-
+    std::sort(filters.begin(), filters.end());
     auto filterString = filters.join(";;");
-    auto selectedFiles =
-        QFileDialog::getOpenFileNames(nullptr, tr("Open File(s)"), workingDir, filterString);
+    auto selectedFiles = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), workingDir, filterString);
     if (selectedFiles.isEmpty()) {
         return;
     }
 
-    QFileInfo fi(selectedFiles.first());
+    auto fi = QFileInfo (selectedFiles.first());
     workingDir = fi.absolutePath();
     openFiles(selectedFiles);
 }
