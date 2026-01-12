@@ -361,6 +361,8 @@ PluginManager::PluginManager() {
     actionQuit->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::ApplicationExit));
     actionNextTab->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::GoNext));
     actionPrevTab->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::GoPrevious));
+    actionMoveTabRight->setIcon(QIcon::fromTheme("arrow-right-double"));
+    actionMoveTabLeft->setIcon(QIcon::fromTheme("arrow-left-double"));
 
     actionNewFile->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew));
     actionNewFile->setShortcut(QKeySequence::New);
