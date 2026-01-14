@@ -171,21 +171,6 @@ void qmdiConfigDialog::resetToDefaults() {
     updateWidgetValues();
 }
 
-bool qmdiConfigDialog::eventFilter(QObject *o, QEvent *e) {
-    if (o->property("isFontWidget").toBool()) {
-        auto w = qobject_cast<QWidget *>(o);
-        if (e->type() == QEvent::MouseButtonRelease) {
-            auto ok = false;
-            auto newFont = QFontDialog::getFont(&ok, w->font(), this);
-            if (ok) {
-                w->setFont(newFont);
-                static_cast<QLabel *>(w)->setText(newFont.toString());
-            }
-        }
-    }
-    return QDialog::eventFilter(o, e);
-}
-
 void qmdiConfigDialog::updateWidgetValues() {
     auto selectedPlugin = pluginModel->data(pluginListView->currentIndex()).toString();
     auto pluginConfig = globalConfig->getPluginConfig(selectedPlugin);

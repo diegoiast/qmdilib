@@ -5,7 +5,10 @@
  * SPDX-License-Identifier: LGPL 2 or 3
  */
 
+#include <QMouseEvent>
+
 #include "qmdiconfigwidgetfactory.h"
+#include "fontwidget.hpp"
 #include "pathwidget.h"
 #include "qmdidialogevents.hpp"
 
@@ -76,14 +79,8 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
         widget = comboBox;
     } break;
     case qmdiConfigItem::Font: {
-        auto *label = new QLabel(parent);
-        auto font = label->font();
-        font.fromString(item.value.toString());
-        label->setFont(font);
-        label->setProperty("isFontWidget", true);
-        label->setFrameShape(QFrame::StyledPanel);
-        label->setText(item.value.toString());
-        widget = label;
+        auto str = item.value.toString();
+        widget = new FontWidget(parent, str);
     } break;
     case qmdiConfigItem::Path: {
         auto *pathWidget = new PathWidget(parent);
@@ -156,10 +153,8 @@ QVariant qmdiDefaultConfigWidgetFactory::getValue(QWidget *widget) {
     if (auto *comboBox = qobject_cast<QComboBox *>(widget)) {
         return comboBox->currentIndex();
     }
-    if (auto *label = qobject_cast<QLabel *>(widget)) {
-        if (label->property("isFontWidget").toBool()) {
-            return label->font().toString();
-        }
+    if (auto *label = qobject_cast<FontWidget *>(widget)) {
+        return label->font().toString();
     }
     if (auto *pathWidget = qobject_cast<PathWidget *>(widget)) {
         return pathWidget->path();
@@ -188,13 +183,11 @@ void qmdiDefaultConfigWidgetFactory::setValue(QWidget *widget, const QVariant &v
         stringListWidget->setList(value.toStringList());
     } else if (auto *comboBox = qobject_cast<QComboBox *>(widget)) {
         comboBox->setCurrentIndex(value.toInt());
-    } else if (auto *label = qobject_cast<QLabel *>(widget)) {
-        if (label->property("isFontWidget").toBool()) {
-            auto font = label->font();
-            font.fromString(value.toString());
-            label->setFont(font);
-            label->setText(value.toString());
-        }
+    } else if (auto *label = qobject_cast<FontWidget *>(widget)) {
+        auto font = label->font();
+        font.fromString(value.toString());
+        label->setFont(font);
+        label->setText(value.toString());
     } else if (auto *button = qobject_cast<QPushButton *>(widget)) {
         button->setText(value.toString());
     } else if (auto *pathWidget = qobject_cast<PathWidget *>(widget)) {

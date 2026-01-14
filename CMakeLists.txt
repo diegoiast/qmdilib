@@ -59,6 +59,8 @@ add_library(qmdilib
     src/stringlistwidget.h
     src/pathwidget.cpp
     src/pathwidget.h
+    src/fontwidget.cpp
+    src/fontwidget.hpp
 )
 
 target_link_libraries(qmdilib Qt::Widgets Qt6::Concurrent)

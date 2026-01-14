@@ -51,7 +51,6 @@ class qmdiConfigDialog : public QDialog {
     void resetToDefaults();
 
   protected:
-    bool eventFilter(QObject *, QEvent *) override;
     void updateWidgetsForPlugin(const QString &pluginName);
     void createWidgetsFromConfig(const qmdiPluginConfig *pluginConfig);
 
