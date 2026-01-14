@@ -6,8 +6,43 @@
  */
 
 #include <QApplication>
+#include <QColorDialog>
+#include <QPushButton>
+#include <qmdiconfigwidgetfactory.h>
 #include <qmdiconfigdialog.h>
 #include <qmdiglobalconfig.h>
+
+const auto ColorType = (qmdiConfigItem::ClassType)(qmdiConfigItem::Last + 1);
+
+class ColorWidgetFactory : public qmdiDefaultConfigWidgetFactory {
+  public:
+    QWidget *createWidget(const qmdiConfigItem &item, qmdiConfigDialog *parent) override {
+        auto *btn = new QPushButton(parent);
+        btn->setText(item.value.toString());
+        btn->setStyleSheet(QString("background-color: %1").arg(item.value.toString()));
+
+        QObject::connect(btn, &QPushButton::clicked, [btn, parent]() {
+            QColor color = QColorDialog::getColor(QColor(btn->text()), parent);
+            if (color.isValid()) {
+                btn->setText(color.name());
+                btn->setStyleSheet(QString("background-color: %1").arg(color.name()));
+            }
+        });
+        return btn;
+    }
+
+    QVariant getValue(QWidget *widget) override {
+        auto *btn = qobject_cast<QPushButton *>(widget);
+        return btn ? btn->text() : QVariant{};
+    }
+
+    void setValue(QWidget *widget, const QVariant &value) override {
+        if (auto *btn = qobject_cast<QPushButton *>(widget)) {
+            btn->setText(value.toString());
+            btn->setStyleSheet(QString("background-color: %1").arg(value.toString()));
+        }
+    }
+};
 
 auto getNetworkConfig() -> qmdiPluginConfig * {
     qmdiPluginConfig *networkPluginConfig = new qmdiPluginConfig();
@@ -75,6 +110,12 @@ auto getEditorConfig(QFont defaultFont) -> qmdiPluginConfig * {
                                                                                << "Keep original")
                                                .build());
     editorPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
+                                                  .setKey("backgroundColor")
+                                                  .setType(ColorType)
+                                                  .setDisplayName("Background Color")
+                                                  .setDefaultValue("#FFFFFF")
+                                                  .build());
+    editorPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
                                                   .setKey("font")
                                                   .setType(qmdiConfigItem::Font)
                                                   .setDisplayName("Display font")
@@ -88,18 +129,26 @@ auto getEditorConfig(QFont defaultFont) -> qmdiPluginConfig * {
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
 
+    qmdiConfigWidgetRegistry::instance().registerFactory(ColorType, []() {
+        return std::make_unique<ColorWidgetFactory>();
+    });
+
     auto globalConfig = qmdiGlobalConfig();
     auto networkPluginConfig = getNetworkConfig();
     auto editorPluginConfig = getEditorConfig(app.font());
     globalConfig.addPluginConfig(networkPluginConfig);
     globalConfig.addPluginConfig(editorPluginConfig);
 
+    // We can restore the defaults. When initializing the config
+    // the values are set to defaults, so this is not strickly needed here.
+    globalConfig.setDefaults();
+
+    // We can store the config on files. Only the values are saved.
+    // We will load the user modifications
+    globalConfig.loadFromFile("demo3-config.json");
+
     // API for accessing config:
     {
-        // We can restore the defaults. When initializing the config
-        // the values are set to defaults, so this is not strickly needed here.
-        globalConfig.setDefaults();
-
         // Note how we can get the config from the plugin
         auto host = networkPluginConfig->getVariable<QString>("host");
         auto port = networkPluginConfig->getVariable<int>("port");
@@ -112,6 +161,9 @@ int main(int argc, char **argv) {
         // Usually nothing, the proper conversion is done
         auto useSSLStr = globalConfig.getVariable<QString>("NetworkPlugin", "useSSL");
         auto useSSLInt = globalConfig.getVariable<int>("NetworkPlugin", "useSSL");
+        
+        // Our custom widget.
+        auto color = globalConfig.getVariable<QColor>("Editor", "backgroundColor");
 
         qDebug() << "Config for network plugin";
         qDebug() << " host    = " << host;
@@ -120,11 +172,9 @@ int main(int argc, char **argv) {
         qDebug() << " list    = " << denyList;
         qDebug() << " useSSL (?) = " << useSSLStr;
         qDebug() << " useSSL (?) = " << useSSLInt;
+        qDebug() << "Config for editor";
+        qDebug() << " color = " << color;
     }
-
-    // We can store the config on files. Only the values are saved.
-    // We will load the user modifications
-    globalConfig.loadFromFile("demo3-config.json");
 
     // We can ask users to modify th config. All the UI is auto generated
     // depending on the config defined by the plugins

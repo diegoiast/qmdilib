@@ -283,6 +283,11 @@ void qmdiGlobalConfig::fromJson(QJsonObject jsonObj) {
             case qmdiConfigItem::Label:
             case qmdiConfigItem::Last:
                 break;
+            default:
+                if (!val.isUndefined()) {
+                    p.value = val.toVariant();
+                }
+                break;
             }
         }
     }

@@ -153,4 +153,9 @@ target_link_libraries(globalConfigTests qmdilib Qt6::Test)
 set_property(TARGET globalConfigTests PROPERTY AUTOMOC ON)
 add_test(NAME globalConfigTests COMMAND globalConfigTests)
 
+add_executable(customConfigTypeTests tests/customConfigTypeTests.cpp)
+target_link_libraries(customConfigTypeTests qmdilib Qt6::Test)
+set_property(TARGET customConfigTypeTests PROPERTY AUTOMOC ON)
+add_test(NAME customConfigTypeTests COMMAND customConfigTypeTests)
+
 endif()
