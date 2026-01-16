@@ -158,4 +158,9 @@ target_link_libraries(customConfigTypeTests qmdilib Qt6::Test)
 set_property(TARGET customConfigTypeTests PROPERTY AUTOMOC ON)
 add_test(NAME customConfigTypeTests COMMAND customConfigTypeTests)
 
+add_executable(registrationTests tests/registrationTests.cpp)
+target_link_libraries(registrationTests qmdilib Qt::Gui Qt6::Test)
+set_property(TARGET registrationTests PROPERTY AUTOMOC ON)
+add_test(NAME registrationTests COMMAND registrationTests)
+
 endif()

@@ -41,22 +41,27 @@ class qmdiGlobalConfig : public QObject {
     qmdiPluginConfig *getPluginConfig(const QString &pluginName) const;
     void addPluginConfig(qmdiPluginConfig *pluginConfig);
 
-    template <typename T> T getVariable(const QString &pluginName, const QString &key) const {
+    QVariant getVariable(const QString &pluginName, const QString &key) const {
         const qmdiPluginConfig *pluginConfig = getPluginConfig(pluginName);
         if (pluginConfig) {
-            return pluginConfig->getVariable<T>(key);
+            return pluginConfig->getVariable(key);
         }
-        // TODO - this is out of line with the library behiaviour
-        throw std::runtime_error("Plugin not found or key not found");
+        return {};
+    }
+
+    template <typename T> T getVariable(const QString &pluginName, const QString &key) const {
+        return getVariable(pluginName, key).value<T>();
+    }
+
+    void setVariable(const QString &pluginName, const QString &key, const QVariant &value) {
+        qmdiPluginConfig *pluginConfig = getPluginConfig(pluginName);
+        if (pluginConfig) {
+            pluginConfig->setVariable(key, value);
+        }
     }
 
     template <typename T> void setVariable(const QString &pluginName, const QString &key, T value) {
-        qmdiPluginConfig *pluginConfig = getPluginConfig(pluginName);
-        if (pluginConfig) {
-            return pluginConfig->setVariable<T>(key, value);
-        }
-        // TODO - this is out of line with the library behiaviour
-        throw std::runtime_error("Plugin not found or key not found");
+        setVariable(pluginName, key, QVariant::fromValue(value));
     }
 
     QList<qmdiPluginConfig *> plugins;

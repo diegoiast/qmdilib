@@ -6,6 +6,7 @@
  */
 
 #include <QMouseEvent>
+#include <QJsonArray>
 
 #include "qmdiconfigwidgetfactory.h"
 #include "fontwidget.hpp"
@@ -195,6 +196,57 @@ void qmdiDefaultConfigWidgetFactory::setValue(QWidget *widget, const QVariant &v
     }
 }
 
+QVariant qmdiDefaultConfigWidgetFactory::parse(const qmdiConfigItem &item, const QJsonValue &v) {
+    switch (item.type) {
+    case qmdiConfigItem::String:
+        return v.toString();
+    case qmdiConfigItem::Bool:
+        return v.toBool();
+    case qmdiConfigItem::Int8:
+    case qmdiConfigItem::Int16:
+    case qmdiConfigItem::Int32:
+    case qmdiConfigItem::UInt8:
+    case qmdiConfigItem::UInt16:
+    case qmdiConfigItem::UInt32:
+        return v.toInt();
+    case qmdiConfigItem::Float:
+    case qmdiConfigItem::Double:
+        return v.toDouble();
+    case qmdiConfigItem::StringList:
+        return v.toVariant().toStringList();
+    case qmdiConfigItem::OneOf:
+        return v.toVariant();
+    case qmdiConfigItem::Font:
+        return v.toString();
+    case qmdiConfigItem::Path:
+        return v.toString();
+    case qmdiConfigItem::Json:
+        return v.toVariant();
+    case qmdiConfigItem::Button:
+    case qmdiConfigItem::Label:
+    case qmdiConfigItem::Custom:
+    case qmdiConfigItem::Last:
+        break;
+    }
+    return {};
+}
+
+QJsonValue qmdiDefaultConfigWidgetFactory::serialize(const qmdiConfigItem &item,
+                                                     const QVariant &v) {
+    if (item.type == qmdiConfigItem::Json) {
+        return QJsonValue::fromVariant(v);
+    }
+    if (item.type == qmdiConfigItem::StringList) {
+        QStringList stringList = v.toStringList();
+        QJsonArray jsonArray;
+        for (const QString &str : std::as_const(stringList)) {
+            jsonArray.append(str);
+        }
+        return jsonArray;
+    }
+    return v.toString();
+}
+
 qmdiConfigWidgetRegistry &qmdiConfigWidgetRegistry::instance() {
     static qmdiConfigWidgetRegistry registry;
     return registry;
@@ -205,14 +257,72 @@ void qmdiConfigWidgetRegistry::registerFactory(qmdiConfigItem::ClassType type,
     factories[type] = creator;
 }
 
+void qmdiConfigWidgetRegistry::registerCustomFactory(const QString &customType,
+                                                     FactoryCreator creator) {
+    customFactories[customType] = creator;
+}
+
+void qmdiConfigWidgetRegistry::clearCustomFactories() { customFactories.clear(); }
+
 std::unique_ptr<qmdiConfigWidgetFactory>
-qmdiConfigWidgetRegistry::createFactory(qmdiConfigItem::ClassType type) {
+qmdiConfigWidgetRegistry::getHandler(const qmdiConfigItem &item) {
     ensureDefaultFactoriesRegistered();
-    auto it = factories.find(type);
-    if (it != factories.end()) {
-        return it->second();
+
+    auto createSafe = [](const FactoryCreator &creator) -> std::unique_ptr<qmdiConfigWidgetFactory> {
+        if (creator) {
+            if (auto handler = creator()) {
+                return handler;
+            }
+        }
+        return std::make_unique<qmdiDefaultConfigWidgetFactory>();
+    };
+
+    if (item.type == qmdiConfigItem::Custom && !item.customTypeString.isEmpty()) {
+        auto it = customFactories.find(item.customTypeString);
+        if (it != customFactories.end()) {
+            return createSafe(it.value());
+        }
     }
-    return nullptr;
+
+    auto it = factories.find(item.type);
+    if (it != factories.end()) {
+        return createSafe(it->second);
+    }
+
+    return std::make_unique<qmdiDefaultConfigWidgetFactory>();
+}
+
+QWidget *qmdiConfigWidgetRegistry::createWidget(const qmdiConfigItem &item, qmdiConfigDialog *parent) {
+    auto handler = getHandler(item);
+    return handler ? handler->createWidget(item, parent) : nullptr;
+}
+
+QLabel *qmdiConfigWidgetRegistry::createLabel(const qmdiConfigItem &item, qmdiConfigDialog *parent) {
+    auto handler = getHandler(item);
+    return handler ? handler->createLabel(item, parent) : nullptr;
+}
+
+QVariant qmdiConfigWidgetRegistry::getValue(const qmdiConfigItem &item, QWidget *widget) {
+    auto handler = getHandler(item);
+    return (handler && widget) ? handler->getValue(widget) : QVariant();
+}
+
+void qmdiConfigWidgetRegistry::setValue(const qmdiConfigItem &item, QWidget *widget,
+                                        const QVariant &value) {
+    auto handler = getHandler(item);
+    if (handler && widget) {
+        handler->setValue(widget, value);
+    }
+}
+
+QVariant qmdiConfigWidgetRegistry::parse(const qmdiConfigItem &item, const QJsonValue &v) {
+    auto handler = getHandler(item);
+    return handler ? handler->parse(item, v) : QVariant();
+}
+
+QJsonValue qmdiConfigWidgetRegistry::serialize(const qmdiConfigItem &item, const QVariant &v) {
+    auto handler = getHandler(item);
+    return handler ? handler->serialize(item, v) : QJsonValue();
 }
 
 qmdiConfigWidgetRegistry::qmdiConfigWidgetRegistry() { ensureDefaultFactoriesRegistered(); }

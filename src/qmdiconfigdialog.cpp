@@ -42,6 +42,11 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
       globalConfig(config) {
     setLayout(mainLayout);
 
+    if (!globalConfig) {
+        qWarning() << "qmdiConfigDialog: globalConfig is null!";
+        return;
+    }
+
     setWindowTitle(tr("Config"));
     pluginListView->setModel(pluginModel);
     mainLayout->addWidget(pluginListView, 1);
@@ -60,6 +65,9 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
 
     QStringList pluginNames;
     for (auto const pluginConfig : std::as_const(globalConfig->plugins)) {
+        if (!pluginConfig) {
+            continue;
+        }
         if (pluginConfig->editableConfigs() == 0) {
             continue;
         }
@@ -88,6 +96,9 @@ qmdiConfigDialog::qmdiConfigDialog(qmdiGlobalConfig *config, QWidget *parent)
 qmdiConfigDialog::~qmdiConfigDialog() { qDeleteAll(widgetMap); }
 
 void qmdiConfigDialog::updateWidgetsForPlugin(const QString &pluginName) {
+    if (!globalConfig) {
+        return;
+    }
     auto const pluginConfig = globalConfig->getPluginConfig(pluginName);
     if (pluginConfig) {
         createWidgetsFromConfig(pluginConfig);
@@ -95,6 +106,9 @@ void qmdiConfigDialog::updateWidgetsForPlugin(const QString &pluginName) {
 }
 
 void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginConfig) {
+    if (!pluginConfig) {
+        return;
+    }
     QLayoutItem *item;
 
     while ((item = configLayout->takeAt(0))) {
@@ -108,14 +122,9 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
             continue;
         }
 
-        auto factory = qmdiConfigWidgetRegistry::instance().createFactory(item.type);
-        if (!factory) {
-            qWarning() << "No factory registered for type:" << item.type;
-            continue;
-        }
-
-        auto widget = factory->createWidget(item, this);
-        auto label = factory->createLabel(item, this);
+        auto &registry = qmdiConfigWidgetRegistry::instance();
+        auto widget = registry.createWidget(item, this);
+        auto label = registry.createLabel(item, this);
 
         if (label) {
             configLayout->addWidget(label);
@@ -136,6 +145,10 @@ void qmdiConfigDialog::onPluginSelectionChanged(const QModelIndex &index) {
 void qmdiConfigDialog::cancelConfiguration() { reject(); }
 
 void qmdiConfigDialog::acceptChanges() {
+    if (!globalConfig) {
+        reject();
+        return;
+    }
     auto selectedPlugin = pluginModel->data(pluginListView->currentIndex()).toString();
     auto pluginConfig = globalConfig->getPluginConfig(selectedPlugin);
 
@@ -155,23 +168,22 @@ void qmdiConfigDialog::acceptChanges() {
             continue;
         }
 
-        auto factory = qmdiConfigWidgetRegistry::instance().createFactory(item.type);
-        if (!factory) {
-            qWarning() << "No factory found for type:" << item.type;
-            continue;
-        }
-
-        item.value = factory->getValue(widget);
+        item.value = qmdiConfigWidgetRegistry::instance().getValue(item, widget);
     }
 
     accept();
 }
 void qmdiConfigDialog::resetToDefaults() {
-    globalConfig->setDefaults();
+    if (globalConfig) {
+        globalConfig->setDefaults();
+    }
     updateWidgetValues();
 }
 
 void qmdiConfigDialog::updateWidgetValues() {
+    if (!globalConfig) {
+        return;
+    }
     auto selectedPlugin = pluginModel->data(pluginListView->currentIndex()).toString();
     auto pluginConfig = globalConfig->getPluginConfig(selectedPlugin);
     if (!pluginConfig) {
@@ -188,11 +200,6 @@ void qmdiConfigDialog::updateWidgetValues() {
             continue;
         }
 
-        auto factory = qmdiConfigWidgetRegistry::instance().createFactory(item.type);
-        if (!factory) {
-            continue;
-        }
-
-        factory->setValue(widget, item.value);
+        qmdiConfigWidgetRegistry::instance().setValue(item, widget, item.value);
     }
 }

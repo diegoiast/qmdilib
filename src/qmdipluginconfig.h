@@ -8,9 +8,11 @@
 
 #pragma once
 
+#include <QJsonValue>
 #include <QList>
 #include <QString>
 #include <QVariant>
+#include <climits>
 
 struct qmdiConfigItem {
     enum ClassType {
@@ -30,7 +32,9 @@ struct qmdiConfigItem {
         Path,
         Button,
         Label,
-        Last = 100000
+        Json,
+        Custom,
+        Last = INT_MAX
     };
 
     static ClassType typeFromString(const QString &typeStr);
@@ -39,6 +43,7 @@ struct qmdiConfigItem {
     qmdiConfigItem();
     QString key;
     ClassType type;
+    QString customTypeString;
     QString displayName;
     QString description;
     QVariant defaultValue;
@@ -53,9 +58,21 @@ struct qmdiConfigItem {
 
         Builder &setKey(const QString &key);
         Builder &setType(const ClassType type);
+        Builder &setCustomType(const QString &typeStr);
         Builder &setDisplayName(const QString &displayName);
         Builder &setDescription(const QString &description);
         Builder &setDefaultValue(const QVariant defaultValue);
+
+        Builder &setDefaultValue(const char *val) {
+            this->defaultValue = QString::fromUtf8(val);
+            return *this;
+        }
+
+        template <typename T> Builder &setDefaultValue(const T &val) {
+            this->defaultValue = QVariant::fromValue(val);
+            return *this;
+        }
+
         Builder &setValue(const QVariant &value);
         Builder &setUserEditable(const bool value);
         Builder &setPossibleValue(const QVariant &value);
@@ -66,6 +83,7 @@ struct qmdiConfigItem {
       private:
         QString key;
         ClassType type;
+        QString customTypeString;
         QString displayName;
         QString description;
         QVariant defaultValue;
@@ -88,27 +106,30 @@ class qmdiPluginConfig {
     void setDefault();
     int editableConfigs() const;
 
-    template <typename T> void setVariable(const QString &key, T value) {
-        for (auto &item : configItems) {
-            if (item.key != key) {
-                continue;
-            }
-            item.value = value;
-            return;
-        }
-    }
-
-    template <typename T> T getVariable(const QString &key) const {
+    QVariant getVariable(const QString &key) const {
         for (const auto &item : configItems) {
             if (item.key == key) {
-                if (!item.value.isNull()) {
-                    return item.value.value<T>();
-                } else {
-                    return item.defaultValue.value<T>();
-                }
+                return !item.value.isNull() ? item.value : item.defaultValue;
             }
         }
         return {};
+    }
+
+    template <typename T> T getVariable(const QString &key) const {
+        return getVariable(key).value<T>();
+    }
+
+    void setVariable(const QString &key, const QVariant &value) {
+        for (auto &item : configItems) {
+            if (item.key == key) {
+                item.value = value;
+                return;
+            }
+        }
+    }
+
+    template <typename T> void setVariable(const QString &key, T value) {
+        setVariable(key, QVariant::fromValue(value));
     }
 
     class Builder {

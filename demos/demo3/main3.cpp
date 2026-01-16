@@ -12,17 +12,84 @@
 #include <qmdiconfigdialog.h>
 #include <qmdiglobalconfig.h>
 
-const auto ColorType = (qmdiConfigItem::ClassType)(qmdiConfigItem::Last + 1);
+struct Point3D {
+    int x = 0, y = 0, z = 0;
+};
+Q_DECLARE_METATYPE(Point3D)
 
-class ColorWidgetFactory : public qmdiDefaultConfigWidgetFactory {
+class Point3DWidgetFactory : public qmdiTypedConfigWidgetFactory<Point3D> {
   public:
-    QWidget *createWidget(const qmdiConfigItem &item, qmdiConfigDialog *parent) override {
+    static constexpr auto name = "Point3D";
+    QWidget *createWidget(const qmdiConfigItem &item, const Point3D &initialValue,
+                          qmdiConfigDialog *parent) override {
+        Q_UNUSED(item);
+        auto *lineEdit = new QLineEdit(parent);
+        setValue(lineEdit, initialValue);
+        return lineEdit;
+    }
+
+    Point3D value(QWidget *widget) override {
+        auto *lineEdit = qobject_cast<QLineEdit *>(widget);
+        if (!lineEdit) {
+            return {};
+        }
+
+        QStringList parts = lineEdit->text().split(",");
+        if (parts.size() != 3) {
+            return {};
+        }
+
+        bool okX, okY, okZ;
+        Point3D p;
+        p.x = parts[0].trimmed().toInt(&okX);
+        p.y = parts[1].trimmed().toInt(&okY);
+        p.z = parts[2].trimmed().toInt(&okZ);
+
+        if (!okX || !okY || !okZ) {
+            return {};
+        }
+        return p;
+    }
+
+    void setValue(QWidget *widget, const Point3D &value) override {
+        if (auto *lineEdit = qobject_cast<QLineEdit *>(widget)) {
+            lineEdit->setText(QString("%1,%2,%3").arg(value.x).arg(value.y).arg(value.z));
+        }
+    }
+
+    // Direct JSON handling
+    Point3D parseValue(const qmdiConfigItem &item, const QJsonValue &v) override {
+        Q_UNUSED(item);
+        QStringList parts = v.toString().split(",");
+        if (parts.size() != 3) {
+            return {};
+        }
+        Point3D p;
+        p.x = parts[0].toInt();
+        p.y = parts[1].toInt();
+        p.z = parts[2].toInt();
+        return p;
+    }
+
+    QJsonValue serializeValue(const qmdiConfigItem &item, const Point3D &v) override {
+        Q_UNUSED(item);
+        return QString("%1,%2,%3").arg(v.x).arg(v.y).arg(v.z);
+    }
+};
+
+class ColorWidgetFactory : public qmdiTypedConfigWidgetFactory<QColor> {
+  public:
+    static constexpr auto name = "Color";
+    QWidget *createWidget(const qmdiConfigItem &item, const QColor &initialValue, qmdiConfigDialog *parent) override {
+        QString colorName = initialValue.name();
+        
         auto *btn = new QPushButton(parent);
-        btn->setText(item.value.toString());
-        btn->setStyleSheet(QString("background-color: %1").arg(item.value.toString()));
+        btn->setText(colorName);
+        btn->setStyleSheet(QString("background-color: %1").arg(colorName));
 
         QObject::connect(btn, &QPushButton::clicked, [btn, parent]() {
-            QColor color = QColorDialog::getColor(QColor(btn->text()), parent);
+            QColor initial(btn->text());
+            QColor color = QColorDialog::getColor(initial, parent);
             if (color.isValid()) {
                 btn->setText(color.name());
                 btn->setStyleSheet(QString("background-color: %1").arg(color.name()));
@@ -31,16 +98,26 @@ class ColorWidgetFactory : public qmdiDefaultConfigWidgetFactory {
         return btn;
     }
 
-    QVariant getValue(QWidget *widget) override {
+    QColor value(QWidget *widget) override {
         auto *btn = qobject_cast<QPushButton *>(widget);
-        return btn ? btn->text() : QVariant{};
+        return btn ? QColor(btn->text()) : QColor{};
     }
 
-    void setValue(QWidget *widget, const QVariant &value) override {
+    void setValue(QWidget *widget, const QColor &value) override {
         if (auto *btn = qobject_cast<QPushButton *>(widget)) {
-            btn->setText(value.toString());
-            btn->setStyleSheet(QString("background-color: %1").arg(value.toString()));
+            btn->setText(value.name());
+            btn->setStyleSheet(QString("background-color: %1").arg(value.name()));
         }
+    }
+
+    QColor parseValue(const qmdiConfigItem &item, const QJsonValue &v) override {
+        Q_UNUSED(item);
+        return QColor(v.toString());
+    }
+
+    QJsonValue serializeValue(const qmdiConfigItem &item, const QColor &v) override {
+        Q_UNUSED(item);
+        return v.name(QColor::HexArgb);
     }
 };
 
@@ -111,9 +188,15 @@ auto getEditorConfig(QFont defaultFont) -> qmdiPluginConfig * {
                                                .build());
     editorPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
                                                   .setKey("backgroundColor")
-                                                  .setType(ColorType)
+                                                  .setCustomType(ColorWidgetFactory::name)
                                                   .setDisplayName("Background Color")
-                                                  .setDefaultValue("#FFFFFF")
+                                                  .setDefaultValue(QColor("#FFFFFF"))
+                                                  .build());
+    editorPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
+                                                  .setKey("position")
+                                                  .setCustomType(Point3DWidgetFactory::name)
+                                                  .setDisplayName("Position (x,y,z)")
+                                                  .setDefaultValue(Point3D{10, 20, 30})
                                                   .build());
     editorPluginConfig->configItems.push_back(qmdiConfigItem::Builder()
                                                   .setKey("font")
@@ -129,9 +212,10 @@ auto getEditorConfig(QFont defaultFont) -> qmdiPluginConfig * {
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
 
-    qmdiConfigWidgetRegistry::instance().registerFactory(ColorType, []() {
-        return std::make_unique<ColorWidgetFactory>();
-    });
+    // 1. Unified Registration for "Color": Handles UI, Parsing, and Serialization in one place.
+    qmdiConfigWidgetRegistry::instance().registerCustomFactory<ColorWidgetFactory>(ColorWidgetFactory::name);
+    qmdiConfigWidgetRegistry::instance().registerCustomFactory<Point3DWidgetFactory>(
+        Point3DWidgetFactory::name);
 
     auto globalConfig = qmdiGlobalConfig();
     auto networkPluginConfig = getNetworkConfig();
@@ -150,20 +234,28 @@ int main(int argc, char **argv) {
     // API for accessing config:
     {
         // Note how we can get the config from the plugin
-        auto host = networkPluginConfig->getVariable<QString>("host");
-        auto port = networkPluginConfig->getVariable<int>("port");
+        QString host = networkPluginConfig->getVariable<QString>("host");
+        int port = networkPluginConfig->getVariable<int>("port");
 
         // Or query the global config, for the plugin and the config item
-        auto useSSL = globalConfig.getVariable<bool>("NetworkPlugin", "useSSL");
-        auto denyList = globalConfig.getVariable<QStringList>("NetworkPlugin", "dns");
+        bool useSSL = globalConfig.getVariable<bool>("NetworkPlugin", "useSSL");
+        QStringList denyList = globalConfig.getVariable<QStringList>("NetworkPlugin", "dns");
 
         // What happens if we use the wrong type?
         // Usually nothing, the proper conversion is done
-        auto useSSLStr = globalConfig.getVariable<QString>("NetworkPlugin", "useSSL");
-        auto useSSLInt = globalConfig.getVariable<int>("NetworkPlugin", "useSSL");
+        QString useSSLStr = globalConfig.getVariable<QString>("NetworkPlugin", "useSSL");
+        int useSSLInt = globalConfig.getVariable<int>("NetworkPlugin", "useSSL");
+        
+        // Note we can still use the QVariant system as wel.
+        QVariant useSSLVariant = globalConfig.getVariable("NetworkPlugin", "useSSL");
         
         // Our custom widget.
-        auto color = globalConfig.getVariable<QColor>("Editor", "backgroundColor");
+        QColor color = globalConfig.getVariable<QColor>("Editor", "backgroundColor");
+        QVariant colorVar = globalConfig.getVariable("Editor", "backgroundColor");
+        
+        // Another custom widget, with non Qt types
+        // Point3DWidgetFactory pointFactory;
+        Point3D point = editorPluginConfig->getVariable<Point3D>("position");
 
         qDebug() << "Config for network plugin";
         qDebug() << " host    = " << host;
@@ -172,11 +264,14 @@ int main(int argc, char **argv) {
         qDebug() << " list    = " << denyList;
         qDebug() << " useSSL (?) = " << useSSLStr;
         qDebug() << " useSSL (?) = " << useSSLInt;
+        qDebug() << " useSSL (?) = " << useSSLVariant;
         qDebug() << "Config for editor";
         qDebug() << " color = " << color;
+        qDebug() << " color (as variant) = " << colorVar;
+        qDebug() << " position:" << point.x << point.y << point.z;
     }
 
-    // We can ask users to modify th config. All the UI is auto generated
+    // We can ask users to modify the config. All the UI is auto generated
     // depending on the config defined by the plugins
     qmdiConfigDialog dialog(&globalConfig);
     if (dialog.exec()) {

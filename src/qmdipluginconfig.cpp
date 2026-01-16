@@ -46,10 +46,12 @@ qmdiConfigItem::ClassType qmdiConfigItem::typeFromString(const QString &typeStr)
         return Button;
     } else if (lower == "label") {
         return Label;
+    } else if (lower == "json" || lower == "qvariant") {
+        return Json;
     } else if (lower == "last") {
         return Last;
     } else {
-        return String;
+        return Last;
     }
 }
 
@@ -87,6 +89,8 @@ QString qmdiConfigItem::typeToString(ClassType type) {
         return "Button";
     case Label:
         return "Label";
+    case Custom:
+        return "Custom";
     case Last:
         break;
     }
@@ -143,10 +147,17 @@ qmdiConfigItem::Builder &qmdiConfigItem::Builder::setForceShow(const bool value)
     return *this;
 }
 
+qmdiConfigItem::Builder &qmdiConfigItem::Builder::setCustomType(const QString &typeStr) {
+    this->type = Custom;
+    this->customTypeString = typeStr;
+    return *this;
+}
+
 qmdiConfigItem qmdiConfigItem::Builder::build() const {
     qmdiConfigItem item;
     item.key = key;
     item.type = type;
+    item.customTypeString = customTypeString;
     item.displayName = displayName;
     item.description = description;
     item.defaultValue = defaultValue;

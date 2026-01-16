@@ -7,6 +7,7 @@
  */
 
 #include "qmdiglobalconfig.h"
+#include "qmdiconfigwidgetfactory.h"
 #include <QDebug>
 #include <QFile>
 #include <QFont>
@@ -19,8 +20,10 @@ qmdiGlobalConfig::qmdiGlobalConfig(QObject *parent) : QObject(parent) {}
 void qmdiGlobalConfig::setDefaults() {
     for (auto it = pluginMap.begin(); it != pluginMap.end(); ++it) {
         qmdiPluginConfig *pluginConfig = it.value();
-        for (auto &config : pluginConfig->configItems) {
-            config.setDefault();
+        if (pluginConfig) {
+            for (auto &config : pluginConfig->configItems) {
+                config.setDefault();
+            }
         }
     }
 }
@@ -65,64 +68,31 @@ bool qmdiGlobalConfig::loadDefsFromJson(const QJsonObject &jsonObject) {
             QJsonObject itemObject = itemValue.toObject();
             qmdiConfigItem item;
 
-            item.key = itemObject["key"].toString();
-            item.type = qmdiConfigItem::typeFromString(itemObject["type"].toString());
-            item.displayName = itemObject["displayName"].toString();
-            item.description = itemObject["description"].toString();
+                                    item.key = itemObject["key"].toString();
 
-            QJsonValue defaultValue = itemObject["defaultValue"];
-            switch (item.type) {
-            case qmdiConfigItem::String:
-                item.defaultValue = defaultValue.toString();
-                break;
-            case qmdiConfigItem::Bool:
-                item.defaultValue = defaultValue.toBool();
-                break;
-            case qmdiConfigItem::Int8:
-                item.defaultValue = defaultValue.toInt();
-                break;
-            case qmdiConfigItem::Int16:
-                item.defaultValue = defaultValue.toInt();
-                break;
-            case qmdiConfigItem::Int32:
-                item.defaultValue = defaultValue.toInt();
-                break;
-            case qmdiConfigItem::UInt8:
-                item.defaultValue = defaultValue.toInt();
-                break;
-            case qmdiConfigItem::UInt16:
-                item.defaultValue = defaultValue.toInt();
-                break;
-            case qmdiConfigItem::UInt32:
-                item.defaultValue = defaultValue.toInt();
-                break;
-            case qmdiConfigItem::Float:
-                item.defaultValue = defaultValue.toDouble();
-                break;
-            case qmdiConfigItem::Double:
-                item.defaultValue = defaultValue.toDouble();
-                break;
-            case qmdiConfigItem::StringList:
-                item.defaultValue = defaultValue.toVariant().toStringList();
-                break;
-            case qmdiConfigItem::OneOf:
-                item.defaultValue = defaultValue.toVariant();
-                break;
-            case qmdiConfigItem::Font:
-                item.defaultValue = defaultValue.toString();
-                break;
-            case qmdiConfigItem::Path:
-                item.defaultValue = defaultValue.toString();
-                break;
-            case qmdiConfigItem::Button:
-            case qmdiConfigItem::Label:
-            case qmdiConfigItem::Last:
-                break;
-            }
+                                    QString typeStr = itemObject["type"].toString();
 
-            pluginConfig->configItems.append(item);
-        }
+                        
 
+                                    item.type = qmdiConfigItem::typeFromString(typeStr);
+
+                                    if (item.type == qmdiConfigItem::Last) {
+
+                                        item.type = qmdiConfigItem::Custom;
+
+                                        item.customTypeString = typeStr;
+
+                                    } else if (item.type == qmdiConfigItem::Json) {
+
+                                        item.customTypeString = typeStr;
+
+                                    }
+                        item.displayName = itemObject["displayName"].toString();
+                        item.description = itemObject["description"].toString();
+                        QJsonValue defaultValue = itemObject["defaultValue"];
+                        item.defaultValue = qmdiConfigWidgetRegistry::instance().parse(item, defaultValue);
+                        pluginConfig->configItems.append(item);
+                    }
         pluginMap[pluginConfig->pluginName] = pluginConfig;
         plugins.append(pluginConfig);
     }
@@ -168,6 +138,9 @@ QJsonObject qmdiGlobalConfig::asJson() const {
 
     for (auto it = pluginMap.begin(); it != pluginMap.end(); ++it) {
         const qmdiPluginConfig *pluginConfig = it.value();
+        if (!pluginConfig) {
+            continue;
+        }
         QJsonObject pluginObject;
         QJsonArray configItemsArray;
         for (const qmdiConfigItem &item : std::as_const(pluginConfig->configItems)) {
@@ -176,16 +149,7 @@ QJsonObject qmdiGlobalConfig::asJson() const {
             }
             QJsonObject itemObject;
             itemObject["key"] = item.key;
-            if (item.value.typeId() == QMetaType::QStringList) {
-                QStringList stringList = item.value.value<QStringList>();
-                QJsonArray jsonArray;
-                for (const QString &str : std::as_const(stringList)) {
-                    jsonArray.append(str);
-                }
-                itemObject["value"] = jsonArray;
-            } else {
-                itemObject["value"] = item.value.toString();
-            }
+            itemObject["value"] = qmdiConfigWidgetRegistry::instance().serialize(item, item.value);
             configItemsArray.append(itemObject);
         }
         pluginObject["configItems"] = configItemsArray;
@@ -232,62 +196,8 @@ void qmdiGlobalConfig::fromJson(QJsonObject jsonObj) {
             auto savedConfig = findKey(configItemsArray, p.key);
             auto val = savedConfig.value("value");
 
-            switch (p.type) {
-            case qmdiConfigItem::StringList: {
-                QJsonArray jsonArray = val.toArray();
-                QStringList stringList;
-                for (const auto &item : std::as_const(jsonArray)) {
-                    if (item.isString()) {
-                        stringList.append(item.toString());
-                    }
-                }
-                p.value = stringList;
-                break;
-            }
-            case qmdiConfigItem::Bool:
-                p.value = val.toVariant().toBool();
-                break;
-            case qmdiConfigItem::Int8:
-            case qmdiConfigItem::Int16:
-            case qmdiConfigItem::Int32:
-                p.value = val.toInteger();
-                break;
-            case qmdiConfigItem::UInt8:
-            case qmdiConfigItem::UInt16:
-            case qmdiConfigItem::UInt32:
-                p.value = val.toVariant().toUInt();
-                break;
-            case qmdiConfigItem::Float:
-            case qmdiConfigItem::Double:
-                p.value = val.toDouble();
-                break;
-            case qmdiConfigItem::String:
-                p.value = val.toString();
-                break;
-            case qmdiConfigItem::OneOf: {
-                auto i = val.toInt();
-                if (i > p.possibleValue.toStringList().size()) {
-                    i = p.defaultValue.toInt();
-                }
-                p.value = i;
-            }
-            case qmdiConfigItem::Font:
-                p.value = val.toString();
-                break;
-
-            case qmdiConfigItem::Path:
-                p.value = val.toString();
-                break;
-
-            case qmdiConfigItem::Button:
-            case qmdiConfigItem::Label:
-            case qmdiConfigItem::Last:
-                break;
-            default:
-                if (!val.isUndefined()) {
-                    p.value = val.toVariant();
-                }
-                break;
+            if (!val.isUndefined()) {
+                p.value = qmdiConfigWidgetRegistry::instance().parse(p, val);
             }
         }
     }

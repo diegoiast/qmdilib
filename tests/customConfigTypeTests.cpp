@@ -1,5 +1,6 @@
 #include <QtTest>
 #include <qmdiglobalconfig.h>
+#include <qmdiconfigwidgetfactory.h>
 
 class CustomConfigTypeTests : public QObject {
     Q_OBJECT
@@ -9,17 +10,19 @@ class CustomConfigTypeTests : public QObject {
 };
 
 void CustomConfigTypeTests::testCustomConfigType() {
-    // Define a custom type ID, similar to demo3
-    const auto CustomType = (qmdiConfigItem::ClassType)(qmdiConfigItem::Last + 1);
+    // 0. Register a handler for our custom type
+    qmdiConfigWidgetRegistry::instance().registerCustomFactory("MyCustomType", []() {
+        return std::make_unique<qmdiDefaultConfigWidgetFactory>();
+    });
 
     // Create a plugin config with this custom type
-    auto createConfig = [CustomType]() -> qmdiPluginConfig * {
+    auto createConfig = []() -> qmdiPluginConfig * {
         qmdiPluginConfig *config = new qmdiPluginConfig();
         config->pluginName = "TestPlugin";
         config->description = "Test Plugin Description";
         config->configItems.push_back(qmdiConfigItem::Builder()
                                           .setKey("customColor")
-                                          .setType(CustomType)
+                                          .setCustomType("MyCustomType")
                                           .setDisplayName("Custom Color")
                                           .setDefaultValue("#FFFFFF")
                                           .build());

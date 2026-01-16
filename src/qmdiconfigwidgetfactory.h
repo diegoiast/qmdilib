@@ -31,6 +31,10 @@ class qmdiConfigWidgetFactory {
     virtual QLabel *createLabel(const qmdiConfigItem &item, qmdiConfigDialog *parent) = 0;
     virtual QVariant getValue(QWidget *widget) = 0;
     virtual void setValue(QWidget *widget, const QVariant &value) = 0;
+
+    // Data conversion
+    virtual QVariant parse(const qmdiConfigItem &item, const QJsonValue &v) = 0;
+    virtual QJsonValue serialize(const qmdiConfigItem &item, const QVariant &v) = 0;
 };
 
 class qmdiDefaultConfigWidgetFactory : public qmdiConfigWidgetFactory {
@@ -39,6 +43,56 @@ class qmdiDefaultConfigWidgetFactory : public qmdiConfigWidgetFactory {
     QLabel *createLabel(const qmdiConfigItem &item, qmdiConfigDialog *parent) override;
     QVariant getValue(QWidget *widget) override;
     void setValue(QWidget *widget, const QVariant &value) override;
+
+    QVariant parse(const qmdiConfigItem &item, const QJsonValue &v) override;
+    QJsonValue serialize(const qmdiConfigItem &item, const QVariant &v) override;
+};
+
+/**
+ * @brief A type-safe wrapper for widget factories.
+ * 
+ * Inherit from this class to create a factory that works with a concrete type T
+ * instead of QVariant.
+ */
+template <typename T>
+class qmdiTypedConfigWidgetFactory : public qmdiDefaultConfigWidgetFactory {
+  public:
+    using ValueType = T;
+
+    virtual QWidget *createWidget(const qmdiConfigItem &item, const T &initialValue, qmdiConfigDialog *parent) = 0;
+    virtual T value(QWidget *widget) = 0;
+    virtual void setValue(QWidget *widget, const T &value) = 0;
+
+    // Data conversion (Typed)
+    virtual T parseValue(const qmdiConfigItem &item, const QJsonValue &v) {
+        Q_UNUSED(item);
+        return v.toVariant().value<T>();
+    }
+    virtual QJsonValue serializeValue(const qmdiConfigItem &item, const T &v) {
+        Q_UNUSED(item);
+        return QJsonValue::fromVariant(QVariant::fromValue(v));
+    }
+
+    // Bridges...
+    QWidget *createWidget(const qmdiConfigItem &item, qmdiConfigDialog *parent) override {
+        return createWidget(item, item.value.value<T>(), parent);
+    }
+
+    QVariant getValue(QWidget *widget) override {
+        return QVariant::fromValue(value(widget));
+    }
+
+    void setValue(QWidget *widget, const QVariant &value) override {
+        setValue(widget, value.value<T>());
+    }
+
+    QVariant parse(const qmdiConfigItem &item, const QJsonValue &v) override {
+        return QVariant::fromValue(parseValue(item, v));
+    }
+
+    QJsonValue serialize(const qmdiConfigItem &item, const QVariant &v) override {
+        return serializeValue(item, v.value<T>());
+    }
 };
 
 class qmdiConfigWidgetRegistry {
@@ -46,13 +100,47 @@ class qmdiConfigWidgetRegistry {
     using FactoryCreator = std::function<std::unique_ptr<qmdiConfigWidgetFactory>()>;
 
     static qmdiConfigWidgetRegistry &instance();
+    
+    // Registration
     void registerFactory(qmdiConfigItem::ClassType type, FactoryCreator creator);
-    std::unique_ptr<qmdiConfigWidgetFactory> createFactory(qmdiConfigItem::ClassType type);
+    void registerCustomFactory(const QString &customType, FactoryCreator creator);
+    void clearCustomFactories();
+
+    template <typename FactoryType>
+    void registerCustomFactory(const QString &customType) {
+        registerCustomFactory(customType, []() { return std::make_unique<FactoryType>(); });
+    }
+
+    // Dispatcher methods (The Registry acts as the Factory)
+    QWidget *createWidget(const qmdiConfigItem &item, qmdiConfigDialog *parent);
+    QLabel *createLabel(const qmdiConfigItem &item, qmdiConfigDialog *parent);
+    QVariant getValue(const qmdiConfigItem &item, QWidget *widget);
+    void setValue(const qmdiConfigItem &item, QWidget *widget, const QVariant &value);
+
+    // Data Dispatcher methods
+    QVariant parse(const qmdiConfigItem &item, const QJsonValue &v);
+    QJsonValue serialize(const qmdiConfigItem &item, const QVariant &v);
+
+    // Template Dispatcher methods for Non-MetaTypes
+    template <typename T>
+    QVariant toVariant(const QString &customType, const T &value) {
+        qmdiConfigItem item;
+        item.type = qmdiConfigItem::Custom;
+        item.customTypeString = customType;
+        
+        auto handler = getHandler(item);
+        if (auto typed = dynamic_cast<qmdiTypedConfigWidgetFactory<T>*>(handler.get())) {
+            return typed->toVariant(value);
+        }
+        return QVariant();
+    }
 
   private:
     qmdiConfigWidgetRegistry();
+    std::unique_ptr<qmdiConfigWidgetFactory> getHandler(const qmdiConfigItem &item);
 
     void ensureDefaultFactoriesRegistered();
     bool defaultFactoriesRegistered = false;
     std::map<qmdiConfigItem::ClassType, FactoryCreator> factories;
+    QMap<QString, FactoryCreator> customFactories;
 };
