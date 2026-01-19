@@ -63,35 +63,50 @@ class qmdiTypedConfigWidgetFactory : public qmdiDefaultConfigWidgetFactory {
     virtual T value(QWidget *widget) = 0;
     virtual void setValue(QWidget *widget, const T &value) = 0;
 
-    // Data conversion (Typed)
-    virtual T parseValue(const qmdiConfigItem &item, const QJsonValue &v) {
+    // Data conversion (Typed) - Defaults to using the variant conversion system
+    virtual T parseValue(const qmdiConfigItem &item, const QString &s) {
         Q_UNUSED(item);
-        return v.toVariant().value<T>();
+        return fromVariant(s);
     }
-    virtual QJsonValue serializeValue(const qmdiConfigItem &item, const T &v) {
+    virtual QString serializeValue(const qmdiConfigItem &item, const T &v) {
         Q_UNUSED(item);
-        return QJsonValue::fromVariant(QVariant::fromValue(v));
+        return toVariant(v).toString();
+    }
+
+    // Conversion hooks: Default to Qt MetaType system if available, otherwise return default/empty.
+    virtual T fromVariant(const QVariant &v) {
+        if constexpr (QMetaTypeId2<T>::Defined) {
+            return v.value<T>();
+        }
+        return T{};
+    }
+
+    virtual QVariant toVariant(const T &v) {
+        if constexpr (QMetaTypeId2<T>::Defined) {
+            return QVariant::fromValue(v);
+        }
+        return QVariant();
     }
 
     // Bridges...
     QWidget *createWidget(const qmdiConfigItem &item, qmdiConfigDialog *parent) override {
-        return createWidget(item, item.value.value<T>(), parent);
+        return createWidget(item, fromVariant(item.value), parent);
     }
 
     QVariant getValue(QWidget *widget) override {
-        return QVariant::fromValue(value(widget));
+        return toVariant(value(widget));
     }
 
     void setValue(QWidget *widget, const QVariant &value) override {
-        setValue(widget, value.value<T>());
+        setValue(widget, fromVariant(value));
     }
 
     QVariant parse(const qmdiConfigItem &item, const QJsonValue &v) override {
-        return QVariant::fromValue(parseValue(item, v));
+        return toVariant(parseValue(item, v.toString()));
     }
 
     QJsonValue serialize(const qmdiConfigItem &item, const QVariant &v) override {
-        return serializeValue(item, v.value<T>());
+        return serializeValue(item, fromVariant(v));
     }
 };
 

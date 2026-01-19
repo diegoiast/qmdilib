@@ -14,82 +14,60 @@
 
 struct Point3D {
     int x = 0, y = 0, z = 0;
+
+    QString toString() const { return QString("%1,%2,%3").arg(x).arg(y).arg(z); }
+
+    static Point3D fromString(const QString &s) {
+        QStringList parts = s.split(",");
+        if (parts.size() != 3) return {};
+        bool okX, okY, okZ;
+        Point3D p;
+        p.x = parts[0].trimmed().toInt(&okX);
+        p.y = parts[1].trimmed().toInt(&okY);
+        p.z = parts[2].trimmed().toInt(&okZ);
+        return (okX && okY && okZ) ? p : Point3D{};
+    }
 };
 Q_DECLARE_METATYPE(Point3D)
 
 class Point3DWidgetFactory : public qmdiTypedConfigWidgetFactory<Point3D> {
   public:
     static constexpr auto name = "Point3D";
-    QWidget *createWidget(const qmdiConfigItem &item, const Point3D &initialValue,
+    QWidget *createWidget(const qmdiConfigItem &, const Point3D &initialValue,
                           qmdiConfigDialog *parent) override {
-        Q_UNUSED(item);
-        auto *lineEdit = new QLineEdit(parent);
-        setValue(lineEdit, initialValue);
-        return lineEdit;
+        return new QLineEdit(initialValue.toString(), parent);
     }
 
     Point3D value(QWidget *widget) override {
         auto *lineEdit = qobject_cast<QLineEdit *>(widget);
-        if (!lineEdit) {
-            return {};
-        }
-
-        QStringList parts = lineEdit->text().split(",");
-        if (parts.size() != 3) {
-            return {};
-        }
-
-        bool okX, okY, okZ;
-        Point3D p;
-        p.x = parts[0].trimmed().toInt(&okX);
-        p.y = parts[1].trimmed().toInt(&okY);
-        p.z = parts[2].trimmed().toInt(&okZ);
-
-        if (!okX || !okY || !okZ) {
-            return {};
-        }
-        return p;
+        return lineEdit ? Point3D::fromString(lineEdit->text()) : Point3D{};
     }
 
     void setValue(QWidget *widget, const Point3D &value) override {
         if (auto *lineEdit = qobject_cast<QLineEdit *>(widget)) {
-            lineEdit->setText(QString("%1,%2,%3").arg(value.x).arg(value.y).arg(value.z));
+            lineEdit->setText(value.toString());
         }
     }
 
-    // Direct JSON handling
-    Point3D parseValue(const qmdiConfigItem &item, const QJsonValue &v) override {
-        Q_UNUSED(item);
-        QStringList parts = v.toString().split(",");
-        if (parts.size() != 3) {
-            return {};
-        }
-        Point3D p;
-        p.x = parts[0].toInt();
-        p.y = parts[1].toInt();
-        p.z = parts[2].toInt();
-        return p;
+    Point3D parseValue(const qmdiConfigItem &, const QString &s) override {
+        return Point3D::fromString(s);
     }
 
-    QJsonValue serializeValue(const qmdiConfigItem &item, const Point3D &v) override {
-        Q_UNUSED(item);
-        return QString("%1,%2,%3").arg(v.x).arg(v.y).arg(v.z);
+    QString serializeValue(const qmdiConfigItem &, const Point3D &v) override {
+        return v.toString();
     }
 };
 
 class ColorWidgetFactory : public qmdiTypedConfigWidgetFactory<QColor> {
   public:
     static constexpr auto name = "Color";
-    QWidget *createWidget(const qmdiConfigItem &item, const QColor &initialValue, qmdiConfigDialog *parent) override {
-        QString colorName = initialValue.name();
-        
-        auto *btn = new QPushButton(parent);
-        btn->setText(colorName);
-        btn->setStyleSheet(QString("background-color: %1").arg(colorName));
+    QWidget *createWidget(const qmdiConfigItem &, const QColor &initialValue,
+                          qmdiConfigDialog *parent) override {
+        auto *btn = new QPushButton(initialValue.name(), parent);
+        btn->setStyleSheet(QString("background-color: %1").arg(initialValue.name()));
 
         QObject::connect(btn, &QPushButton::clicked, [btn, parent]() {
-            QColor initial(btn->text());
-            QColor color = QColorDialog::getColor(initial, parent);
+            QColor color = QColorDialog::getColor(QColor(btn->text()), parent);
             if (color.isValid()) {
                 btn->setText(color.name());
                 btn->setStyleSheet(QString("background-color: %1").arg(color.name()));
@@ -100,7 +78,7 @@ class ColorWidgetFactory : public qmdiTypedConfigWidgetFactory<QColor> {
 
     QColor value(QWidget *widget) override {
         auto *btn = qobject_cast<QPushButton *>(widget);
-        return btn ? QColor(btn->text()) : QColor{};
+        return btn ? btn->text() : QColor{};
     }
 
     void setValue(QWidget *widget, const QColor &value) override {
@@ -108,16 +86,6 @@ class ColorWidgetFactory : public qmdiTypedConfigWidgetFactory<QColor> {
             btn->setText(value.name());
             btn->setStyleSheet(QString("background-color: %1").arg(value.name()));
         }
-    }
-
-    QColor parseValue(const qmdiConfigItem &item, const QJsonValue &v) override {
-        Q_UNUSED(item);
-        return QColor(v.toString());
-    }
-
-    QJsonValue serializeValue(const qmdiConfigItem &item, const QColor &v) override {
-        Q_UNUSED(item);
-        return v.name(QColor::HexArgb);
     }
 };
 
