@@ -24,6 +24,8 @@ class qmdiDialogEvents : public QObject {
     qmdiDialogEvents &operator=(const qmdiDialogEvents &) = delete;
 
   signals:
+    void widgetCreated(qmdiConfigDialog *dialog, const qmdiConfigItem &item, QLabel *label,
+                       QWidget *widget);
     void buttonClicked(qmdiConfigDialog *dialog, const QString &buttonKey);
     void linkClicked(qmdiConfigDialog *dialog, const QString &labelKey, const QString &linkUrl);
 

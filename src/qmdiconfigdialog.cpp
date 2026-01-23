@@ -134,6 +134,7 @@ void qmdiConfigDialog::createWidgetsFromConfig(const qmdiPluginConfig *pluginCon
             widgetMap[item.key] = widget;
             widget->installEventFilter(this);
         }
+        emit qmdiDialogEvents::instance().widgetCreated(this, item, label, widget);
     }
 }
 
