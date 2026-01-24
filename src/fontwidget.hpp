@@ -17,6 +17,9 @@ class FontWidget : public QLabel {
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
+  signals:
+    void fontUpdated();
+
   protected:
     void mousePressEvent(QMouseEvent *event) override;
 };

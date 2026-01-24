@@ -6,15 +6,13 @@
  * \see qmdiActionGroup
  */
 
+#include <QApplication>
 #include <QFontDialog>
 #include <QMouseEvent>
-#include <QApplication>
 
 #include "fontwidget.hpp"
 
-FontWidget::FontWidget(QWidget* parent, const QString& fontStr)
-    : QLabel(parent)
-{
+FontWidget::FontWidget(QWidget *parent, const QString &fontStr) : QLabel(parent) {
     setFrameShape(QFrame::StyledPanel);
     setCursor(Qt::PointingHandCursor);
 
@@ -26,8 +24,7 @@ FontWidget::FontWidget(QWidget* parent, const QString& fontStr)
     }
 }
 
-QSize FontWidget::sizeHint() const
-{
+QSize FontWidget::sizeHint() const {
     QFont f = QApplication::font();
     if (parentWidget()) {
         f = parentWidget()->font();
@@ -39,14 +36,12 @@ QSize FontWidget::sizeHint() const
     return QSize(s.width() + m * 2, std::max(s.height(), fm.lineSpacing()) + m * 2);
 }
 
-QSize FontWidget::minimumSizeHint() const
-{
+QSize FontWidget::minimumSizeHint() const {
     QSize s = sizeHint();
     return QSize(1, s.height());
 }
 
-void FontWidget::mousePressEvent(QMouseEvent* event)
-{
+void FontWidget::mousePressEvent(QMouseEvent *event) {
     if (event->button() != Qt::LeftButton) {
         return;
     }
@@ -55,7 +50,7 @@ void FontWidget::mousePressEvent(QMouseEvent* event)
     if (ok) {
         setFont(newFont);
         setText(newFont.toString());
+        emit fontUpdated();
     }
     QLabel::mousePressEvent(event);
 }
-
