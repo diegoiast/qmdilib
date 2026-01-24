@@ -91,6 +91,8 @@ QString qmdiConfigItem::typeToString(ClassType type) {
         return "Label";
     case Custom:
         return "Custom";
+    case Json:
+        return "Json";
     case Last:
         break;
     }
