@@ -5,13 +5,32 @@
  * SPDX-License-Identifier: LGPL 2 or 3
  */
 
-#include <QMouseEvent>
 #include <QJsonArray>
+#include <QMouseEvent>
 
-#include "qmdiconfigwidgetfactory.h"
 #include "fontwidget.hpp"
 #include "pathwidget.h"
+#include "qmdiconfigwidgetfactory.h"
 #include "qmdidialogevents.hpp"
+
+QLabel *qmdiDefaultConfigWidgetFactory::createLabel(const qmdiConfigItem &item,
+                                                    qmdiConfigDialog *parent) {
+    // Checkbox includes its own label
+    if (item.type == qmdiConfigItem::Bool) {
+        return nullptr;
+    }
+    // Buttons do not need label
+    if (item.type == qmdiConfigItem::Button) {
+        return nullptr;
+    }
+
+    auto label = new QLabel(item.displayName, parent);
+    label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    parent->connect(label, &QLabel::linkActivated, [parent, item](const QString &link) {
+        qmdiDialogEvents::instance().linkClicked(parent, item.key, link);
+    });
+    return label;
+}
 
 QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item,
                                                       qmdiConfigDialog *parent) {
@@ -103,7 +122,14 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
         });
         widget = button;
     } break;
+    case qmdiConfigItem::Json:
+    case qmdiConfigItem::Custom: {
+        // JSON and custom - are special, we assume they are store for random
+        // data. We do not provide edit widget for them.
+        break;
+    }
     case qmdiConfigItem::Label: {
+        // labels are special case - no actual edit widget is created
         break;
     }
     case qmdiConfigItem::Last:
@@ -115,24 +141,6 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
     }
 
     return widget;
-}
-
-QLabel *qmdiDefaultConfigWidgetFactory::createLabel(const qmdiConfigItem &item,
-                                                    qmdiConfigDialog *parent) {
-    // Checkbox includes its own label
-    if (item.type == qmdiConfigItem::Bool) {
-        return nullptr;
-    }
-    // Buttons do not need label
-    if (item.type == qmdiConfigItem::Button) {
-        return nullptr;
-    }
-
-    auto label = new QLabel(item.displayName, parent);
-    parent->connect(label, &QLabel::linkActivated, [parent, item](const QString &link) {
-        qmdiDialogEvents::instance().linkClicked(parent, item.key, link);
-    });
-    return label;
 }
 
 QVariant qmdiDefaultConfigWidgetFactory::getValue(QWidget *widget) {
@@ -268,7 +276,8 @@ std::unique_ptr<qmdiConfigWidgetFactory>
 qmdiConfigWidgetRegistry::getHandler(const qmdiConfigItem &item) {
     ensureDefaultFactoriesRegistered();
 
-    auto createSafe = [](const FactoryCreator &creator) -> std::unique_ptr<qmdiConfigWidgetFactory> {
+    auto createSafe =
+        [](const FactoryCreator &creator) -> std::unique_ptr<qmdiConfigWidgetFactory> {
         if (creator) {
             if (auto handler = creator()) {
                 return handler;
@@ -292,12 +301,14 @@ qmdiConfigWidgetRegistry::getHandler(const qmdiConfigItem &item) {
     return std::make_unique<qmdiDefaultConfigWidgetFactory>();
 }
 
-QWidget *qmdiConfigWidgetRegistry::createWidget(const qmdiConfigItem &item, qmdiConfigDialog *parent) {
+QWidget *qmdiConfigWidgetRegistry::createWidget(const qmdiConfigItem &item,
+                                                qmdiConfigDialog *parent) {
     auto handler = getHandler(item);
     return handler ? handler->createWidget(item, parent) : nullptr;
 }
 
-QLabel *qmdiConfigWidgetRegistry::createLabel(const qmdiConfigItem &item, qmdiConfigDialog *parent) {
+QLabel *qmdiConfigWidgetRegistry::createLabel(const qmdiConfigItem &item,
+                                              qmdiConfigDialog *parent) {
     auto handler = getHandler(item);
     return handler ? handler->createLabel(item, parent) : nullptr;
 }
@@ -328,29 +339,27 @@ QJsonValue qmdiConfigWidgetRegistry::serialize(const qmdiConfigItem &item, const
 qmdiConfigWidgetRegistry::qmdiConfigWidgetRegistry() { ensureDefaultFactoriesRegistered(); }
 
 void qmdiConfigWidgetRegistry::ensureDefaultFactoriesRegistered() {
-    if (!defaultFactoriesRegistered) {
-        auto registerDefault = [this](qmdiConfigItem::ClassType type) {
-            registerFactory(type,
-                            []() { return std::make_unique<qmdiDefaultConfigWidgetFactory>(); });
-        };
-
-        registerDefault(qmdiConfigItem::String);
-        registerDefault(qmdiConfigItem::Bool);
-        registerDefault(qmdiConfigItem::Int8);
-        registerDefault(qmdiConfigItem::Int16);
-        registerDefault(qmdiConfigItem::Int32);
-        registerDefault(qmdiConfigItem::UInt8);
-        registerDefault(qmdiConfigItem::UInt16);
-        registerDefault(qmdiConfigItem::UInt32);
-        registerDefault(qmdiConfigItem::Float);
-        registerDefault(qmdiConfigItem::Double);
-        registerDefault(qmdiConfigItem::StringList);
-        registerDefault(qmdiConfigItem::OneOf);
-        registerDefault(qmdiConfigItem::Font);
-        registerDefault(qmdiConfigItem::Path);
-        registerDefault(qmdiConfigItem::Button);
-        registerDefault(qmdiConfigItem::Label);
-
-        defaultFactoriesRegistered = true;
+    if (defaultFactoriesRegistered) {
+        return;
     }
+    auto registerDefault = [this](qmdiConfigItem::ClassType type) {
+        registerFactory(type, []() { return std::make_unique<qmdiDefaultConfigWidgetFactory>(); });
+    };
+    registerDefault(qmdiConfigItem::String);
+    registerDefault(qmdiConfigItem::Bool);
+    registerDefault(qmdiConfigItem::Int8);
+    registerDefault(qmdiConfigItem::Int16);
+    registerDefault(qmdiConfigItem::Int32);
+    registerDefault(qmdiConfigItem::UInt8);
+    registerDefault(qmdiConfigItem::UInt16);
+    registerDefault(qmdiConfigItem::UInt32);
+    registerDefault(qmdiConfigItem::Float);
+    registerDefault(qmdiConfigItem::Double);
+    registerDefault(qmdiConfigItem::StringList);
+    registerDefault(qmdiConfigItem::OneOf);
+    registerDefault(qmdiConfigItem::Font);
+    registerDefault(qmdiConfigItem::Path);
+    registerDefault(qmdiConfigItem::Button);
+    registerDefault(qmdiConfigItem::Label);
+    defaultFactoriesRegistered = true;
 }
