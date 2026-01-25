@@ -191,3 +191,33 @@ int qmdiPluginConfig::editableConfigs() const {
     }
     return editable;
 }
+
+QVariant qmdiPluginConfig::getVariable(const QString &key) const
+{
+    for (const auto &item : configItems) {
+        if (item.key == key) {
+            return !item.value.isNull() ? item.value : item.defaultValue;
+        }
+    }
+    return {};
+}
+
+void qmdiPluginConfig::setVariable(const QString &key, const QVariant &value)
+{
+    for (auto &item : configItems) {
+        if (item.key == key) {
+            item.value = value;
+            return;
+        }
+    }
+}
+
+qmdiConfigItem *qmdiPluginConfig::getConfigItem(const QString &key)
+{
+    for (auto &item : configItems) {
+        if (item.key == key) {
+            return &item;
+        }
+    }
+    return nullptr;
+}

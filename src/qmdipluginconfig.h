@@ -106,31 +106,19 @@ class qmdiPluginConfig {
     void setDefault();
     int editableConfigs() const;
 
-    QVariant getVariable(const QString &key) const {
-        for (const auto &item : configItems) {
-            if (item.key == key) {
-                return !item.value.isNull() ? item.value : item.defaultValue;
-            }
-        }
-        return {};
-    }
+    QVariant getVariable(const QString &key) const;
+
+    void setVariable(const QString &key, const QVariant &value);
 
     template <typename T> T getVariable(const QString &key) const {
         return getVariable(key).value<T>();
     }
 
-    void setVariable(const QString &key, const QVariant &value) {
-        for (auto &item : configItems) {
-            if (item.key == key) {
-                item.value = value;
-                return;
-            }
-        }
-    }
-
     template <typename T> void setVariable(const QString &key, T value) {
         setVariable(key, QVariant::fromValue(value));
     }
+
+    qmdiConfigItem *getConfigItem(const QString &key);
 
     class Builder {
       public:
