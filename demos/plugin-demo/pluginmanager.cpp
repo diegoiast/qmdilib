@@ -1358,8 +1358,8 @@ void PluginManager::on_actionConfigure_triggered() {
     qmdiConfigDialog dialog(&config, this);
     if (dialog.exec()) {
         saveSettings();
+        emit configurationUpdated();
     }
-    emit configurationUpdated();
 }
 
 /**
