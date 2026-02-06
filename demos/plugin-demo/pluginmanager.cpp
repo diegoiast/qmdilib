@@ -432,15 +432,8 @@ PluginManager::~PluginManager() {
         delete settingsManager;
     }
 
-    for (auto p : std::as_const(plugins)) {
-        if (plugins.removeAll(p) == 1) {
-            delete p;
-        } else {
-            qDebug("%s - %d: could not remove plugin from the plugin manager (%s)", __FILE__,
-                   __LINE__, qPrintable(p->getName()));
-            return;
-        }
-    }
+    qDeleteAll(plugins);
+    plugins.clear();
     delete ui;
 }
 
