@@ -997,6 +997,15 @@ void PluginManager::addPlugin(IPlugin *newplugin) {
             &IPlugin::configurationHasBeenModified);
 }
 
+IPlugin* PluginManager::findPlugin(const QString &name) const {
+    for (auto plugin : plugins) {
+        if (plugin->getName() == name) {
+            return plugin;
+        }
+    }
+    return nullptr;
+}
+
 /**
  * \brief remove a plugin from the plugin manager
  * \param oldplugin the plugin to be removed from the system

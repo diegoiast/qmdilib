@@ -94,6 +94,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
 
   public slots:
     void addPlugin(IPlugin *newplugin);
+    IPlugin* findPlugin(const QString &name) const;
     void removePlugin(IPlugin *oldplugin);
     void enablePlugin(IPlugin *plugin);
     void disablePlugin(IPlugin *plugin);
