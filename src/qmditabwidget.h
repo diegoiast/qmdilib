@@ -22,7 +22,7 @@ class qmdiTabWidget : public QTabWidget, public qmdiServer {
     Q_OBJECT
   public:
     explicit qmdiTabWidget(QWidget *parent = nullptr, qmdiHost *host = nullptr);
-    ~qmdiTabWidget() override = default;
+    ~qmdiTabWidget() override;
 
   public slots:
     void tabChanged(int i);

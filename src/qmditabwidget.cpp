@@ -87,6 +87,15 @@ qmdiTabWidget::qmdiTabWidget(QWidget *parent, qmdiHost *host) : QTabWidget(paren
     tabBar()->installEventFilter(this);
 }
 
+qmdiTabWidget::~qmdiTabWidget() {
+    auto count = getClientsCount();
+    for (auto i = 0; i < count; ++i) {
+        if (auto client = getClient(i)) {
+            client->mdiServer = nullptr;
+        }
+    }
+}
+
 /**
  * \brief callback function for modifying the menu structure
  * \param i the number of the new widget
