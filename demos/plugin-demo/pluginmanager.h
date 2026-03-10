@@ -105,6 +105,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
 
     void on_actionOpen_triggered();
     void on_actionClose_triggered();
+    void on_actionCloseAll_triggered();
+    void on_actionCloseOthers_triggered();
     void on_actionConfigure_triggered();
     void on_actionQuit_triggered();
     void on_actionPrev_triggered();
@@ -128,6 +130,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     QAction *actionNewFile;
     QAction *actionOpen;
     QAction *actionClose;
+    QAction *actionCloseAll;
+    QAction *actionCloseOthers;
     QAction *actionQuit;
     QAction *actionConfig;
     QAction *actionNextTab;

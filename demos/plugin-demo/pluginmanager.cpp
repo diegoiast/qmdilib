@@ -329,6 +329,8 @@ PluginManager::PluginManager() {
     actionNewFile = new QAction(tr("&New..."), this);
     actionOpen = new QAction(tr("&Open..."), this);
     actionClose = new QAction(tr("C&lose"), this);
+    actionCloseAll = new QAction(tr("Close &all"), this);
+    actionCloseOthers = new QAction(tr("Close &others"), this);
     actionQuit = new QAction(tr("Ex&it"), this);
     actionConfig = new QAction(tr("&Config"), this);
     actionNextTab = new QAction(tr("&Next tab"), this);
@@ -346,6 +348,8 @@ PluginManager::PluginManager() {
     actionNewFile->setObjectName("actionNewFile");
     actionOpen->setObjectName("actionOpen");
     actionClose->setObjectName("actionClose");
+    actionCloseAll->setObjectName("actionCloseAll");
+    actionCloseOthers->setObjectName("actionCloseOthers");
     actionQuit->setObjectName("actionQuit");
     actionConfig->setObjectName("actionConfigure");
     actionNextTab->setObjectName("actionNext");
@@ -1142,6 +1146,8 @@ void PluginManager::initGUI() {
     menus[tr("&File")]->addSeparator();
     menus[tr("&File")]->setMergePoint();
     menus[tr("&File")]->addAction(actionClose);
+    menus[tr("&File")]->addAction(actionCloseAll);
+    menus[tr("&File")]->addAction(actionCloseOthers);
     menus[tr("&File")]->addSeparator();
     menus[tr("&File")]->addAction(actionQuit);
     menus[tr("&Edit")];
@@ -1331,10 +1337,34 @@ void PluginManager::on_actionOpen_triggered() {
  * This slot is auto connected. This slot is triggered by the actionClose found
  * in the \b File menu.
  *
- * \see qmdiTabWidget::tryCloseClient()
+ * \see qmdiServer::tryCloseClient()
  */
 void PluginManager::on_actionClose_triggered() {
     mdiServer->tryCloseClient(mdiServer->getCurrentClientIndex());
+}
+
+/**
+ * @brief close all clients
+ *
+ * This slot will close all the clients. Clients will be closed with reason
+ * `CloseReason::CloseTab`.
+ *
+ * \see qmdiServer::tryCloseAllClients()
+ */
+void PluginManager::on_actionCloseAll_triggered() {
+    mdiServer->tryCloseAllClients(CloseReason::CloseTab);
+}
+
+/**
+ * @brief close all other clients
+ *
+ * This slot will close all the other clients. In best case scenario - only the current client
+ * will be kept open in after calling this.
+ *
+ * \see qmdiServer::tryCloseAllButClient()
+ */
+void PluginManager::on_actionCloseOthers_triggered() {
+    mdiServer->tryCloseAllButClient(mdiServer->getCurrentClientIndex());
 }
 
 /**
