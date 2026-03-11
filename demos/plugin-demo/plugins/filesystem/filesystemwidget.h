@@ -57,6 +57,9 @@ class FileSystemWidget : public QWidget {
     void navigateTo(const QString &path);
     void updateButtonStates();
 
+  protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
   public:
     qmdiActionGroup *contextMenu = nullptr;
 

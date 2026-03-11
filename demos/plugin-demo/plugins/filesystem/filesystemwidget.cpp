@@ -13,6 +13,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QMouseEvent>
 #include <QProcess>
 #include <QPushButton>
 
@@ -318,6 +319,9 @@ FileSystemWidget::FileSystemWidget(QWidget *parent) : QWidget(parent) {
             &FileSystemWidget::showContextMenu);
     connect(iconView, &QListView::customContextMenuRequested, this,
             &FileSystemWidget::showContextMenu);
+
+    treeView->viewport()->installEventFilter(this);
+    iconView->viewport()->installEventFilter(this);
 }
 
 FileSystemWidget::~FileSystemWidget() {
@@ -831,10 +835,11 @@ void FileSystemWidget::itemDoubleClicked(const QModelIndex &index) {
 }
 
 void FileSystemWidget::navigateUp() {
-    QDir currentDir = QDir::current();
-    currentDir.cdUp();
-    QString path = currentDir.absolutePath();
-    navigateTo(path);
+    auto currentPath = model->filePath(treeView->rootIndex());
+    QDir dir(currentPath);
+    if (dir.cdUp()) {
+        navigateTo(dir.absolutePath());
+    }
 }
 
 void FileSystemWidget::navigateBack() {
@@ -886,16 +891,36 @@ void FileSystemWidget::showIconView() {
     treeView->hide();
 }
 
+bool FileSystemWidget::eventFilter(QObject *obj, QEvent *event) {
+    if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease) {
+        auto *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->button() == Qt::BackButton) {
+            if (event->type() == QEvent::MouseButtonRelease) {
+                navigateBack();
+            }
+            return true;
+        } else if (mouseEvent->button() == Qt::ForwardButton) {
+            if (event->type() == QEvent::MouseButtonRelease) {
+                navigateNext();
+            }
+            return true;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
 void FileSystemWidget::navigateTo(const QString &path) {
-    if (!QDir(path).exists()) {
+    if (path.isEmpty() || !QDir(path).exists()) {
         return;
     }
-    treeView->setRootIndex(model->index(path));
-    iconView->setRootIndex(model->index(path));
+
+    auto index = model->index(path);
+    treeView->setRootIndex(index);
+    iconView->setRootIndex(index);
     rootPathEdit->setText(QDir::toNativeSeparators(path));
     QDir::setCurrent(path);
 
-    if (historyStack.isEmpty() || historyStack.top() != path) {
+    if (historyStack.isEmpty() || historyStack.at(currentHistoryIndex) != path) {
         while (historyStack.size() > currentHistoryIndex + 1) {
             historyStack.pop();
         }

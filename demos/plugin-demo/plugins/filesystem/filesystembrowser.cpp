@@ -61,12 +61,11 @@ void FileSystemBrowserPlugin::loadConfig(QSettings &settings) {
     auto savedDir = getConfig().getDirectory();
     auto savedFilter = getConfig().getFilter();
     auto isTreeVisible = getConfig().getDisplayTree();
-    auto indexPath = this->panel->model->index(savedDir);
 
     this->panel->filterEdit->setText(savedFilter);
-    this->panel->rootPathEdit->setText(QDir::toNativeSeparators(savedDir));
-    this->panel->treeView->setRootIndex(indexPath);
-    this->panel->iconView->setRootIndex(indexPath);
+    this->panel->onFilterChanged();
+    this->panel->navigateTo(savedDir);
+
     if (isTreeVisible) {
         this->panel->showTreeView();
     } else {
