@@ -8,8 +8,8 @@
  * \see PluginManager
  */
 
-#include <QMainWindow>
 #include <QFuture>
+#include <QMainWindow>
 
 #include "qmdiglobalconfig.h"
 #include "qmdihost.h"
@@ -77,9 +77,8 @@ class PluginManager : public QMainWindow, public qmdiHost {
     qmdiClient *openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
     bool openFiles(const QStringList &fileNames);
 
-    CommandArgs handleCommand(const QString &command, const CommandArgs &args);
     QFuture<CommandArgs> handleCommandAsync(const QString &command, const CommandArgs &args);
-    
+
   public:
     QDockWidget *createNewPanel(Panels p, const QString &name, const QString &title,
                                 QWidget *widget);
@@ -94,7 +93,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
 
   public slots:
     void addPlugin(IPlugin *newplugin);
-    IPlugin* findPlugin(const QString &name) const;
+    IPlugin *findPlugin(const QString &name) const;
     void removePlugin(IPlugin *oldplugin);
     void enablePlugin(IPlugin *plugin);
     void disablePlugin(IPlugin *plugin);
@@ -138,7 +137,7 @@ class PluginManager : public QMainWindow, public qmdiHost {
     QAction *actionPrevTab;
     QAction *actionMoveTabRight;
     QAction *actionMoveTabLeft;
-    QList<QDockWidget*> getAllDockWidgets() const;
+    QList<QDockWidget *> getAllDockWidgets() const;
     QAction *actionHideGUI;
 
   protected:

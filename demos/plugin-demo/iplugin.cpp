@@ -498,10 +498,6 @@ int IPlugin::getiVersion() const { return iVersion; }
  * you created, and apply this configuration on them.
  */
 
-int IPlugin::canHandleCommand(const QString &, const CommandArgs &) const { return 0; }
-
-CommandArgs IPlugin::handleCommand(const QString &, const CommandArgs &) { return {}; }
-
 int IPlugin::canHandleAsyncCommand(const QString &, const CommandArgs &) const {return 0; }
 
 QFuture<CommandArgs> IPlugin::handleCommandAsync(const QString &, const CommandArgs &) {

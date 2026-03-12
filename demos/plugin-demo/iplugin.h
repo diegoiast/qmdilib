@@ -62,10 +62,9 @@ class IPlugin : public QObject, public qmdiClient {
     virtual qmdiClient *openFile(const QString &fileName, int x = -1, int y = -1, int z = -1);
     virtual qmdiClient *navigateFile(qmdiClient *client, int x, int y, int z);
 
-    virtual int canHandleCommand(const QString &command, const CommandArgs &args) const;
-    virtual CommandArgs handleCommand(const QString &command, const CommandArgs &args);
     virtual int canHandleAsyncCommand(const QString &command, const CommandArgs &args) const;
-    virtual QFuture<CommandArgs> handleCommandAsync(const QString &command, const CommandArgs &args);
+    virtual QFuture<CommandArgs> handleCommandAsync(const QString &command,
+                                                    const CommandArgs &args);
     virtual qmdiActionGroup *getContextMenuActions(const QString &menuId, const QString &filePath);
 
     bool isEnabled() const;

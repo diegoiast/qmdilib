@@ -813,28 +813,6 @@ bool PluginManager::openFiles(const QStringList &fileNames) {
     return b;
 }
 
-CommandArgs PluginManager::handleCommand(const QString &command, const CommandArgs &args) {
-    IPlugin *bestPlugin = nullptr;
-    auto highestScore = 0;
-
-    for (auto &p : plugins) {
-        if (!p->enabled) {
-            continue;
-        }
-        auto i = p->canHandleCommand(command, args);
-        if (i > highestScore) {
-            bestPlugin = p;
-            highestScore = i;
-        }
-    }
-
-    if (bestPlugin) {
-        auto result = bestPlugin->handleCommand(command, args);
-        return result;
-    }
-    return {};
-}
-
 QFuture<CommandArgs> PluginManager::handleCommandAsync(const QString &command, const CommandArgs &args) {
     // Find the best plugin that can handle this command
     IPlugin *bestPlugin = nullptr;
@@ -858,10 +836,7 @@ QFuture<CommandArgs> PluginManager::handleCommandAsync(const QString &command, c
         return bestPlugin->handleCommandAsync(command, args);
     }
 
-    // Fall back to running the sync version in a QtConcurrent thread
-    return QtConcurrent::run([this, command, args]() -> CommandArgs {
-        return handleCommand(command, args);
-    });
+    return {};
 }
 
 auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
