@@ -40,6 +40,7 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
     case qmdiConfigItem::String: {
         auto *lineEdit = new QLineEdit(parent);
         lineEdit->setText(item.value.toString());
+        lineEdit->setPlaceholderText(item.description);
         widget = lineEdit;
     } break;
     case qmdiConfigItem::Bool: {
