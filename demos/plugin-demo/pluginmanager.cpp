@@ -103,14 +103,14 @@ void ClosedDocuments::setAllDocuments(const QStringList &newList) {
  * (diegoiast@gmail.com)
  *
  * The plugin manager is a main window, and can save and restore it's state if a
- * settings manager has been defined. A settings manager (and instace of
+ * settings manager has been defined. A settings manager (and instance of
  * QSettings) can be set to work on a local file (an ini file).
  *
  * The plugin manager is a mdi host (qmdiHost) which can load menus and toolbars
  * from a the selected mdi client mdi server, and also maintain another set of
  * mdi clients, which have no real GUI, but their menus and toolbars are merged
  * to the main host. This can be used to enable or disable functionality of the
- * application on run time - by enabling or disabling IPlugin objetcs.
+ * application on run time - by enabling or disabling IPlugin objects.
  *
  * Each plugin has defines a set of menus and toolbars, and has some methods
  * for saving and restoring it's state. The menus and toolbars will create
@@ -154,7 +154,7 @@ void ClosedDocuments::setAllDocuments(const QStringList &newList) {
  * \var PluginManager::tabWidget
  * \brief the main widget of the form
  *
- * The plugin manager is built arround a QMainWindow, which it's main widget is
+ * The plugin manager is built around a QMainWindow, which it's main widget is
  * this tab widget. This serves also as the qmdiServer.
  *
  * \see qmdiServer
@@ -845,8 +845,8 @@ QFuture<CommandArgs> PluginManager::handleCommandAsync(const QString &command,
     return {};
 }
 
-auto static findFirstDockWidget(QMainWindow *mainWindow,
-                                Qt::DockWidgetArea dockArea) -> QDockWidget * {
+auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
+    -> QDockWidget * {
     for (auto &widget : mainWindow->findChildren<QWidget *>()) {
         if (auto dockWidget = qobject_cast<QDockWidget *>(widget)) {
             if (mainWindow->dockWidgetArea(dockWidget) == dockArea) {
