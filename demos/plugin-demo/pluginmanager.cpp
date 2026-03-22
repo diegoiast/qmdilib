@@ -468,6 +468,11 @@ int PluginManager::tabForFileName(const QString &fileName) const {
     // a file to be opened.
     auto scheme = url.scheme();
     auto isLocalFile = url.isLocalFile();
+
+    if (scheme.length() == 1) {
+        // This is a Windows path
+        isLocalFile = true;
+    }
     if (!scheme.isEmpty() && !isLocalFile) {
         return -1;
     }
@@ -813,7 +818,8 @@ bool PluginManager::openFiles(const QStringList &fileNames) {
     return b;
 }
 
-QFuture<CommandArgs> PluginManager::handleCommandAsync(const QString &command, const CommandArgs &args) {
+QFuture<CommandArgs> PluginManager::handleCommandAsync(const QString &command,
+                                                       const CommandArgs &args) {
     // Find the best plugin that can handle this command
     IPlugin *bestPlugin = nullptr;
     auto highestScore = 0;
@@ -839,8 +845,8 @@ QFuture<CommandArgs> PluginManager::handleCommandAsync(const QString &command, c
     return {};
 }
 
-auto static findFirstDockWidget(QMainWindow *mainWindow, Qt::DockWidgetArea dockArea)
-    -> QDockWidget * {
+auto static findFirstDockWidget(QMainWindow *mainWindow,
+                                Qt::DockWidgetArea dockArea) -> QDockWidget * {
     for (auto &widget : mainWindow->findChildren<QWidget *>()) {
         if (auto dockWidget = qobject_cast<QDockWidget *>(widget)) {
             if (mainWindow->dockWidgetArea(dockWidget) == dockArea) {
@@ -976,7 +982,7 @@ void PluginManager::addPlugin(IPlugin *newplugin) {
             &IPlugin::configurationHasBeenModified);
 }
 
-IPlugin* PluginManager::findPlugin(const QString &name) const {
+IPlugin *PluginManager::findPlugin(const QString &name) const {
     for (auto plugin : plugins) {
         if (plugin->getName() == name) {
             return plugin;
@@ -1293,12 +1299,13 @@ void PluginManager::on_actionOpen_triggered() {
 
     std::sort(filters.begin(), filters.end());
     auto filterString = filters.join(";;");
-    auto selectedFiles = QFileDialog::getOpenFileNames(this, tr("Open File(s)"), workingDir, filterString);
+    auto selectedFiles =
+        QFileDialog::getOpenFileNames(this, tr("Open File(s)"), workingDir, filterString);
     if (selectedFiles.isEmpty()) {
         return;
     }
 
-    auto fi = QFileInfo (selectedFiles.first());
+    auto fi = QFileInfo(selectedFiles.first());
     workingDir = fi.absolutePath();
     openFiles(selectedFiles);
 }
@@ -1417,7 +1424,7 @@ void PluginManager::on_actionNext_triggered() {
 
 qmdiActionGroup *PluginManager::getContextMenuActions(const QString &menuId,
                                                       const QString &filePath) {
-    auto* actionGroup = new qmdiActionGroup(tr("Plugin Actions for %1").arg(menuId));
+    auto *actionGroup = new qmdiActionGroup(tr("Plugin Actions for %1").arg(menuId));
     for (auto *plugin : std::as_const(plugins)) {
         if (!plugin->isEnabled()) {
             continue;
@@ -1455,14 +1462,12 @@ void PluginManager::on_actionHideGUI_changed() {
     emit minimizedModeChanged(actionHideGUI->isChecked());
 }
 
-void PluginManager::doMoveTabForward()
-{
+void PluginManager::doMoveTabForward() {
     auto i = mdiServer->getCurrentClientIndex();
     mdiServer->moveClient(i, i + 1);
 }
 
-void PluginManager::doMoveTabBackward()
-{
+void PluginManager::doMoveTabBackward() {
     auto i = mdiServer->getCurrentClientIndex();
     mdiServer->moveClient(i, i - 1);
 }
