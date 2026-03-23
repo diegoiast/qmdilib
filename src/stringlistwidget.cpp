@@ -1,5 +1,7 @@
 #include "stringlistwidget.h"
 
+#include <QFileDialog>
+
 StringListWidget::StringListWidget(QWidget *parent) : QWidget(parent) {
     comboBox = new QComboBox(this);
     addButton = new QPushButton(tr("Add"), this);
@@ -39,12 +41,28 @@ QStringList StringListWidget::getList() const {
     return items;
 }
 
+void StringListWidget::setMode(StringListMode mode) {
+    listMode = mode;
+}
+
 void StringListWidget::addItem() {
-    bool ok;
-    QString text =
-        QInputDialog::getText(this, tr("Add Item"), tr("Item:"), QLineEdit::Normal, "", &ok);
-    if (ok && !text.isEmpty()) {
-        comboBox->addItem(text);
+    if (listMode == StringListMode::File) {
+        QString path = QFileDialog::getOpenFileName(this, tr("Select File"), QString());
+        if (!path.isEmpty()) {
+            comboBox->addItem(path);
+        }
+    } else if (listMode == StringListMode::Directory) {
+        QString path = QFileDialog::getExistingDirectory(this, tr("Select Directory"), QString());
+        if (!path.isEmpty()) {
+            comboBox->addItem(path);
+        }
+    } else {
+        bool ok;
+        QString text =
+            QInputDialog::getText(this, tr("Add Item"), tr("Item:"), QLineEdit::Normal, "", &ok);
+        if (ok && !text.isEmpty()) {
+            comboBox->addItem(text);
+        }
     }
 }
 
@@ -62,10 +80,23 @@ void StringListWidget::modifyItem() {
     if (index == -1) {
         return;
     }
-    bool ok;
-    QString text = QInputDialog::getText(this, tr("Modify Item"), tr("Item:"), QLineEdit::Normal,
-                                         comboBox->itemText(index), &ok);
-    if (ok && !text.isEmpty()) {
-        comboBox->setItemText(index, text);
+
+    if (listMode == StringListMode::File) {
+        QString path = QFileDialog::getOpenFileName(this, tr("Select File"), comboBox->itemText(index));
+        if (!path.isEmpty()) {
+            comboBox->setItemText(index, path);
+        }
+    } else if (listMode == StringListMode::Directory) {
+        QString path = QFileDialog::getExistingDirectory(this, tr("Select Directory"), comboBox->itemText(index));
+        if (!path.isEmpty()) {
+            comboBox->setItemText(index, path);
+        }
+    } else {
+        bool ok;
+        QString text = QInputDialog::getText(this, tr("Modify Item"), tr("Item:"), QLineEdit::Normal,
+                                             comboBox->itemText(index), &ok);
+        if (ok && !text.isEmpty()) {
+            comboBox->setItemText(index, text);
+        }
     }
 }

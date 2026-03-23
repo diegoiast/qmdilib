@@ -30,6 +30,8 @@ struct qmdiConfigItem {
         OneOf,
         Font,
         Path,
+        PathList,
+        FileList,
         Button,
         Label,
         Json,

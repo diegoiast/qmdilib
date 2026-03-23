@@ -10,6 +10,7 @@
 
 #include "fontwidget.hpp"
 #include "pathwidget.h"
+#include "stringlistwidget.h"
 #include "qmdiconfigwidgetfactory.h"
 #include "qmdidialogevents.hpp"
 
@@ -91,6 +92,18 @@ QWidget *qmdiDefaultConfigWidgetFactory::createWidget(const qmdiConfigItem &item
     case qmdiConfigItem::StringList: {
         auto *stringListWidget = new StringListWidget(parent);
         stringListWidget->setList(item.value.toStringList());
+        widget = stringListWidget;
+    } break;
+    case qmdiConfigItem::PathList: {
+        auto *stringListWidget = new StringListWidget(parent);
+        stringListWidget->setList(item.value.toStringList());
+        stringListWidget->setMode(StringListMode::Directory);
+        widget = stringListWidget;
+    } break;
+    case qmdiConfigItem::FileList: {
+        auto *stringListWidget = new StringListWidget(parent);
+        stringListWidget->setList(item.value.toStringList());
+        stringListWidget->setMode(StringListMode::File);
         widget = stringListWidget;
     } break;
     case qmdiConfigItem::OneOf: {
@@ -222,6 +235,7 @@ QVariant qmdiDefaultConfigWidgetFactory::parse(const qmdiConfigItem &item, const
     case qmdiConfigItem::Double:
         return v.toDouble();
     case qmdiConfigItem::StringList:
+    case qmdiConfigItem::PathList:
         return v.toVariant().toStringList();
     case qmdiConfigItem::OneOf:
         return v.toVariant();
@@ -245,7 +259,7 @@ QJsonValue qmdiDefaultConfigWidgetFactory::serialize(const qmdiConfigItem &item,
     if (item.type == qmdiConfigItem::Json) {
         return QJsonValue::fromVariant(v);
     }
-    if (item.type == qmdiConfigItem::StringList) {
+    if (item.type == qmdiConfigItem::StringList || item.type == qmdiConfigItem::PathList) {
         QStringList stringList = v.toStringList();
         QJsonArray jsonArray;
         for (const QString &str : std::as_const(stringList)) {
@@ -357,6 +371,7 @@ void qmdiConfigWidgetRegistry::ensureDefaultFactoriesRegistered() {
     registerDefault(qmdiConfigItem::Float);
     registerDefault(qmdiConfigItem::Double);
     registerDefault(qmdiConfigItem::StringList);
+    registerDefault(qmdiConfigItem::PathList);
     registerDefault(qmdiConfigItem::OneOf);
     registerDefault(qmdiConfigItem::Font);
     registerDefault(qmdiConfigItem::Path);

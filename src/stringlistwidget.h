@@ -8,13 +8,18 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+enum class StringListMode { String, File, Directory };
+
 class StringListWidget : public QWidget {
     Q_OBJECT
 
   public:
-    StringListWidget(QWidget *parent = nullptr);
+    explicit StringListWidget(QWidget *parent = nullptr);
     void setList(const QStringList &items);
     QStringList getList() const;
+
+    void setMode(StringListMode mode);
+    StringListMode mode() const { return listMode; }
 
   private slots:
     void addItem();
@@ -26,4 +31,5 @@ class StringListWidget : public QWidget {
     QPushButton *addButton;
     QPushButton *deleteButton;
     QPushButton *modifyButton;
+    StringListMode listMode = StringListMode::String;
 };
