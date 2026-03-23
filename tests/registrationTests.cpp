@@ -7,17 +7,17 @@
 template <typename T>
 class SimpleTypeFactory : public qmdiTypedConfigWidgetFactory<T> {
 public:
-    using Parser = std::function<T(const QJsonValue&)>;
-    using Serializer = std::function<QJsonValue(const T&)>;
+    using Parser = std::function<T(const QString&)>;
+    using Serializer = std::function<QString(const T&)>;
 
     SimpleTypeFactory(Parser p, Serializer s = nullptr) : m_parser(p), m_serializer(s) {}
 
     // Data
-    T parseValue(const qmdiConfigItem& item, const QJsonValue& v) override { 
+    T parseValue(const qmdiConfigItem& item, const QString& v) override { 
         Q_UNUSED(item);
         return m_parser(v); 
     }
-    QJsonValue serializeValue(const qmdiConfigItem& item, const T& v) override { 
+    QString serializeValue(const qmdiConfigItem& item, const T& v) override { 
         Q_UNUSED(item);
         return m_serializer ? m_serializer(v) : qmdiTypedConfigWidgetFactory<T>::serializeValue(item, v); 
     }
@@ -49,7 +49,7 @@ void RegistrationTests::testCustomTypeRegistration() {
     // 1. Register a custom "Color" type via unified registry
     qmdiConfigWidgetRegistry::instance().registerCustomFactory("Color", []() {
         return std::make_unique<SimpleTypeFactory<QColor>>(
-            [](const QJsonValue &val) { return QColor(val.toString()); },
+            [](const QString &val) { return QColor(val); },
             [](const QColor &c) { return c.name(QColor::HexArgb); }
         );
     });
@@ -101,16 +101,16 @@ void RegistrationTests::testMultipleCustomTypes() {
     // Register "Color" as well
     qmdiConfigWidgetRegistry::instance().registerCustomFactory("Color", []() {
         return std::make_unique<SimpleTypeFactory<QColor>>(
-            [](const QJsonValue &val) { return QColor(val.toString()); },
+            [](const QString &val) { return QColor(val); },
             [](const QColor &c) { return c.name(QColor::HexArgb); }
         );
     });
 
     // 1. Register "Point" type via unified registry
     qmdiConfigWidgetRegistry::instance().registerCustomFactory("Point", []() {
-        return std::make_unique<SimpleTypeFactory<QPoint>>([](const QJsonValue &val) {
+        return std::make_unique<SimpleTypeFactory<QPoint>>([](const QString &val) {
             // format "x,y"
-            QStringList parts = val.toString().split(",");
+            QStringList parts = val.split(",");
             if (parts.size() == 2) {
                 return QPoint(parts[0].toInt(), parts[1].toInt());
             }
@@ -231,14 +231,17 @@ void RegistrationTests::testCustomTypeRoundTrip() {
     // 1. Register "Size" type via unified registry
     qmdiConfigWidgetRegistry::instance().registerCustomFactory("Size", []() {
         return std::make_unique<SimpleTypeFactory<QSize>>(
-            // Parser: JSON Array [w, h] -> QSize
-            [](const QJsonValue &val) {
-                QJsonArray arr = val.toArray();
-                return QSize(arr[0].toInt(), arr[1].toInt());
+            // Parser: "w,h" -> QSize
+            [](const QString &val) {
+                QStringList parts = val.split(",");
+                if (parts.size() == 2) {
+                    return QSize(parts[0].toInt(), parts[1].toInt());
+                }
+                return QSize();
             },
-            // Serializer: QSize -> JSON Array [w, h]
+            // Serializer: QSize -> "w,h"
             [](const QSize &s) {
-                return QJsonArray{s.width(), s.height()};
+                return QString("%1,%2").arg(s.width()).arg(s.height());
             }
         );
     });
@@ -247,7 +250,7 @@ void RegistrationTests::testCustomTypeRoundTrip() {
     QJsonObject sizeItem;
     sizeItem["key"] = "window_size";
     sizeItem["type"] = "Size";
-    sizeItem["defaultValue"] = QJsonArray{800, 600};
+    sizeItem["defaultValue"] = "800,600";
 
     QJsonObject plugin;
     plugin["pluginName"] = "WindowPlugin";
@@ -267,11 +270,10 @@ void RegistrationTests::testCustomTypeRoundTrip() {
     // Verify the saved JSON structure
     QJsonObject savedPlugin = savedJson["WindowPlugin"].toObject();
     QJsonArray savedItems = savedPlugin["configItems"].toArray();
-    QJsonObject savedItem = savedItems[0].toObject(); // Find by iteration in real code, but here it's 0
-    QJsonArray savedValue = savedItem["value"].toArray();
+    QJsonObject savedItem = savedItems[0].toObject();
+    QString savedValue = savedItem["value"].toString();
     
-    QCOMPARE(savedValue[0].toInt(), 1024);
-    QCOMPARE(savedValue[1].toInt(), 768);
+    QCOMPARE(savedValue, QString("1024,768"));
 
     // 5. Deserialize from JSON (Simulate Load User Config)
     qmdiGlobalConfig config2;
@@ -280,7 +282,10 @@ void RegistrationTests::testCustomTypeRoundTrip() {
 
     // Verify the value was restored correctly using the Parser
     QSize restoredSize = config2.getVariable<QSize>("WindowPlugin", "window_size");
-    QCOMPARE(restoredSize, QSize(1024, 768));
+    QSize expected(1024, 768);
+    QVERIFY2(restoredSize == expected, qPrintable(QString("Expected %1,%2 but got %3,%4")
+        .arg(expected.width()).arg(expected.height())
+        .arg(restoredSize.width()).arg(restoredSize.height())));
 }
 
 QTEST_GUILESS_MAIN(RegistrationTests)

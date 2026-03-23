@@ -26,8 +26,7 @@ void TestQmdiConfigItem::typeFromString() {
     QCOMPARE(qmdiConfigItem::typeFromString("Double"), qmdiConfigItem::Double);
     QCOMPARE(qmdiConfigItem::typeFromString("StringList"), qmdiConfigItem::StringList);
 
-    QCOMPARE(qmdiConfigItem::typeFromString("InvalidType"),
-             qmdiConfigItem::String); // Assuming default is String
+    QVERIFY(qmdiConfigItem::typeFromString("InvalidType") == qmdiConfigItem::Last);
 }
 
 void TestQmdiConfigItem::typeToString() {

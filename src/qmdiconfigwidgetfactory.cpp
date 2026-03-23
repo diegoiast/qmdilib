@@ -223,19 +223,26 @@ QVariant qmdiDefaultConfigWidgetFactory::parse(const qmdiConfigItem &item, const
     case qmdiConfigItem::String:
         return v.toString();
     case qmdiConfigItem::Bool:
-        return v.toBool();
+        if (v.isBool()) return v.toBool();
+        return v.toString().toLower() == "true";
     case qmdiConfigItem::Int8:
     case qmdiConfigItem::Int16:
     case qmdiConfigItem::Int32:
+        if (v.isDouble()) return v.toInt();
+        return v.toString().toInt();
     case qmdiConfigItem::UInt8:
     case qmdiConfigItem::UInt16:
     case qmdiConfigItem::UInt32:
-        return v.toInt();
+        if (v.isDouble()) return v.toInt();
+        return v.toString().toInt();
     case qmdiConfigItem::Float:
     case qmdiConfigItem::Double:
+        if (v.isDouble()) return v.toDouble();
+        return v.toString().toDouble();
         return v.toDouble();
     case qmdiConfigItem::StringList:
     case qmdiConfigItem::PathList:
+    case qmdiConfigItem::FileList:
         return v.toVariant().toStringList();
     case qmdiConfigItem::OneOf:
         return v.toVariant();
@@ -245,9 +252,10 @@ QVariant qmdiDefaultConfigWidgetFactory::parse(const qmdiConfigItem &item, const
         return v.toString();
     case qmdiConfigItem::Json:
         return v.toVariant();
+    case qmdiConfigItem::Custom:
+        return v.toVariant();
     case qmdiConfigItem::Button:
     case qmdiConfigItem::Label:
-    case qmdiConfigItem::Custom:
     case qmdiConfigItem::Last:
         break;
     }
@@ -259,13 +267,16 @@ QJsonValue qmdiDefaultConfigWidgetFactory::serialize(const qmdiConfigItem &item,
     if (item.type == qmdiConfigItem::Json) {
         return QJsonValue::fromVariant(v);
     }
-    if (item.type == qmdiConfigItem::StringList || item.type == qmdiConfigItem::PathList) {
+    if (item.type == qmdiConfigItem::StringList || item.type == qmdiConfigItem::PathList || item.type == qmdiConfigItem::FileList) {
         QStringList stringList = v.toStringList();
         QJsonArray jsonArray;
         for (const QString &str : std::as_const(stringList)) {
             jsonArray.append(str);
         }
         return jsonArray;
+    }
+    if (item.type == qmdiConfigItem::Bool) {
+        return v.toBool();
     }
     return v.toString();
 }
