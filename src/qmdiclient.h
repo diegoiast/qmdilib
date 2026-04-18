@@ -28,6 +28,7 @@ class qmdiClient {
     virtual ~qmdiClient();
 
     virtual bool saveClientContent() { return true; }
+    virtual bool reloadClientContent() { return true; }
     virtual bool closeClient(CloseReason reason);
     virtual bool canCloseClient(CloseReason reason);
     virtual QString mdiClientFileName();
