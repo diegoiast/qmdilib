@@ -27,7 +27,7 @@ class qmdiClient {
     qmdiClient(const QString &newName = {});
     virtual ~qmdiClient();
 
-    virtual bool saveClientConent() { return true; }
+    virtual bool saveClientContent() { return true; }
     virtual bool closeClient(CloseReason reason);
     virtual bool canCloseClient(CloseReason reason);
     virtual QString mdiClientFileName();
