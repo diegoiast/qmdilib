@@ -467,8 +467,9 @@ int PluginManager::tabForFileName(const QString &fileName) const {
     // Some plugins notify about status of files, this is not really
     // a file to be opened.
     auto scheme = url.scheme();
-    auto isLocalFile = url.isLocalFile();
 
+#if 0
+    auto isLocalFile = url.isLocalFile();
     if (scheme.length() == 1) {
         // This is a Windows path
         isLocalFile = true;
@@ -476,6 +477,7 @@ int PluginManager::tabForFileName(const QString &fileName) const {
     if (!scheme.isEmpty() && !isLocalFile) {
         return -1;
     }
+#endif
     if (fileName.isEmpty()) {
         return -1;
     }
