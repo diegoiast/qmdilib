@@ -1336,9 +1336,16 @@ void PluginManager::on_actionOpen_triggered() {
 
     std::sort(filters.begin(), filters.end());
     auto filterString = filters.join(";;");
-    auto selectedFiles =
-        QFileDialog::getOpenFileNames(this, tr("Open File(s)"), dialogLocation, filterString);
+    auto dialog = QFileDialog(this, tr("Open File(s)"), dialogLocation);
+    dialog.setNameFilter(filterString);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setOption(QFileDialog::DontConfirmOverwrite, true);
 
+    QStringList selectedFiles;
+    if (dialog.exec() == QDialog::Accepted) {
+        selectedFiles = dialog.selectedFiles();
+    }
     if (selectedFiles.isEmpty()) {
         return;
     }
