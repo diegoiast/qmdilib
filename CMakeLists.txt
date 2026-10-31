@@ -7,7 +7,11 @@ option(QMDILIB_TESTS "Build and run tests for qmdilib" ON)
 option(QMDILIB_USE_CMAKEFORMAT "Should we add an clang-format target" ON)
 
 include(FetchContent)
-include(cmake/mold-linker.cmake)
+
+if(QMDILIB_USE_MOLD)
+    include(cmake/mold-linker.cmake)
+endif()
+
 
 if (QMDILIB_USE_CMAKEFORMAT)
     include(cmake/CPM.cmake)
@@ -30,7 +34,7 @@ set(QMDILIB_SOVERSION "0")
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent Test)
 
-add_library(qmdilib 
+add_library(qmdilib
     src/qmdiactiongroup.h
     src/qmdiactiongroup.cpp
     src/qmdiactiongrouplist.h
@@ -78,7 +82,7 @@ add_executable(demo1 demos/demo1/main.cpp demos/demo1/mainwindow.cpp)
 set_property(TARGET demo1 PROPERTY AUTOMOC ON)
 target_link_libraries(demo1 qmdilib)
 
-add_executable(demo2 
+add_executable(demo2
     demos/demo2/main2.cpp
     demos/demo2/mainwindow2.cpp
     demos/common/helpbrowse.cpp
