@@ -769,21 +769,7 @@ void PluginManager::updateActionsStatus() {
  */
 qmdiClient *PluginManager::openFile(const QString &fileName, int x, int y, int z) {
     // see which plugin is the most suited for openning this file
-    IPlugin *bestPlugin = nullptr;
-    auto highestScore = -1;
-    for (auto &p : plugins) {
-        if (!p->enabled) {
-            continue;
-        }
-
-        // is this plugin better then the selected?
-        auto i = p->canOpenFile(fileName);
-        if (i > highestScore) {
-            bestPlugin = p;
-            highestScore = i; // bestPlugin->canOpenFile(fileName);
-        }
-    }
-
+    auto bestPlugin = bestPluginForFile(fileName);
     if (!bestPlugin) {
         // no plugin can handle this file,
         // this should not happen, and usually means a bug
@@ -950,6 +936,30 @@ void PluginManager::onClientClosed(qmdiClient *client) {
         closedDocuments.push(client->mdiClientFileName());
         closedDocuments.updateMenu(this, closedDocumentsMenu);
     }
+}
+
+QList<IPlugin *> PluginManager::enabledPlugins() const {
+    auto result = QList<IPlugin *>();
+    for (auto *plugin : plugins) {
+        if (plugin && plugin->isEnabled()) {
+            result.append(plugin);
+        }
+    }
+    return result;
+}
+
+
+IPlugin *PluginManager::bestPluginForFile(const QString &fileName) const {
+    IPlugin *best = nullptr;
+    auto bestScore = -1;
+    for (auto *plugin : enabledPlugins()) {
+        auto score = plugin->canOpenFile(fileName);
+        if (score > bestScore) {
+            best = plugin;
+            bestScore = score;
+        }
+    }
+    return best;
 }
 
 /**

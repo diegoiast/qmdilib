@@ -91,6 +91,9 @@ class PluginManager : public QMainWindow, public qmdiHost {
     virtual void onClientClosed(qmdiClient *client) override;
     inline bool isInMinimizedMode() const { return actionHideGUI->isChecked(); }
 
+    QList<IPlugin *> enabledPlugins() const;
+    IPlugin *bestPluginForFile(const QString &fileName) const;
+
   public slots:
     void addPlugin(IPlugin *newplugin);
     IPlugin *findPlugin(const QString &name) const;
